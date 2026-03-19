@@ -55,142 +55,176 @@ function LoginForm() {
     var otpRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     var emailValueRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])('');
     var supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
-    function handleEmailSubmit(e) {
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_async_to_generator$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(function() {
-            var _emailRef_current_value, _emailRef_current, emailVal, siteUrl, error, unused;
-            return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tslib$2f$tslib$2e$es6$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$5f$_generator__as__$5f3e$__["_"])(this, function(_state) {
-                switch(_state.label){
-                    case 0:
-                        e.preventDefault();
-                        emailVal = ((_emailRef_current = emailRef.current) === null || _emailRef_current === void 0 ? void 0 : (_emailRef_current_value = _emailRef_current.value) === null || _emailRef_current_value === void 0 ? void 0 : _emailRef_current_value.trim()) || '';
-                        if (!emailVal) {
-                            setError('Maglagay ng email address.');
-                            return [
-                                2
-                            ];
+    var handleSendOtp = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "LoginForm.useCallback[handleSendOtp]": function() {
+            return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_async_to_generator$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])({
+                "LoginForm.useCallback[handleSendOtp]": function() {
+                    var _emailRef_current_value, _emailRef_current, emailVal, siteUrl, _ref, otpError, unused;
+                    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tslib$2f$tslib$2e$es6$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$5f$_generator__as__$5f3e$__["_"])(this, {
+                        "LoginForm.useCallback[handleSendOtp]": function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    emailVal = ((_emailRef_current = emailRef.current) === null || _emailRef_current === void 0 ? void 0 : (_emailRef_current_value = _emailRef_current.value) === null || _emailRef_current_value === void 0 ? void 0 : _emailRef_current_value.trim()) || '';
+                                    if (!emailVal) {
+                                        setError('Maglagay ng email address.');
+                                        return [
+                                            2
+                                        ];
+                                    }
+                                    emailValueRef.current = emailVal;
+                                    setLoading(true);
+                                    setError(null);
+                                    _state.label = 1;
+                                case 1:
+                                    _state.trys.push([
+                                        1,
+                                        3,
+                                        4,
+                                        5
+                                    ]);
+                                    siteUrl = ("TURBOPACK compile-time truthy", 1) ? "".concat(window.location.origin, "/auth/callback") : "TURBOPACK unreachable";
+                                    return [
+                                        4,
+                                        supabase.auth.signInWithOtp({
+                                            email: emailVal,
+                                            options: {
+                                                shouldCreateUser: true,
+                                                emailRedirectTo: siteUrl
+                                            }
+                                        })
+                                    ];
+                                case 2:
+                                    _ref = _state.sent(), otpError = _ref.error;
+                                    if (otpError) {
+                                        setError('May problema sa pagpapadala ng code. Subukan muli.');
+                                    } else {
+                                        setStep('otp');
+                                    }
+                                    return [
+                                        3,
+                                        5
+                                    ];
+                                case 3:
+                                    unused = _state.sent();
+                                    setError('May nangyaring mali. Subukan muli.');
+                                    return [
+                                        3,
+                                        5
+                                    ];
+                                case 4:
+                                    setLoading(false);
+                                    return [
+                                        7
+                                    ];
+                                case 5:
+                                    return [
+                                        2
+                                    ];
+                            }
                         }
-                        emailValueRef.current = emailVal;
-                        setLoading(true);
-                        setError(null);
-                        _state.label = 1;
-                    case 1:
-                        _state.trys.push([
-                            1,
-                            3,
-                            4,
-                            5
-                        ]);
-                        siteUrl = ("TURBOPACK compile-time truthy", 1) ? "".concat(window.location.origin, "/auth/callback") : "TURBOPACK unreachable";
-                        return [
-                            4,
-                            supabase.auth.signInWithOtp({
-                                email: emailVal,
-                                options: {
-                                    shouldCreateUser: true,
-                                    emailRedirectTo: siteUrl
-                                }
-                            })
-                        ];
-                    case 2:
-                        error = _state.sent().error;
-                        if (error) {
-                            setError('May problema sa pagpapadala ng code. Subukan muli.');
-                        } else {
-                            setStep('otp');
-                        }
-                        return [
-                            3,
-                            5
-                        ];
-                    case 3:
-                        unused = _state.sent();
-                        setError('May nangyaring mali. Subukan muli.');
-                        return [
-                            3,
-                            5
-                        ];
-                    case 4:
-                        setLoading(false);
-                        return [
-                            7
-                        ];
-                    case 5:
-                        return [
-                            2
-                        ];
+                    }["LoginForm.useCallback[handleSendOtp]"]);
                 }
-            });
-        })();
-    }
-    function handleOtpSubmit(e) {
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_async_to_generator$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(function() {
-            var _otpRef_current_value, _otpRef_current, otpVal, error, unused;
-            return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tslib$2f$tslib$2e$es6$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$5f$_generator__as__$5f3e$__["_"])(this, function(_state) {
-                switch(_state.label){
-                    case 0:
-                        e.preventDefault();
-                        otpVal = ((_otpRef_current = otpRef.current) === null || _otpRef_current === void 0 ? void 0 : (_otpRef_current_value = _otpRef_current.value) === null || _otpRef_current_value === void 0 ? void 0 : _otpRef_current_value.replace(/\D/g, '')) || '';
-                        if (otpVal.length < 6) {
-                            setError('Kailangan ng 6-digit code.');
-                            return [
-                                2
-                            ];
+            }["LoginForm.useCallback[handleSendOtp]"])();
+        }
+    }["LoginForm.useCallback[handleSendOtp]"], [
+        supabase
+    ]);
+    var handleVerifyOtp = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "LoginForm.useCallback[handleVerifyOtp]": function() {
+            return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_async_to_generator$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])({
+                "LoginForm.useCallback[handleVerifyOtp]": function() {
+                    var _otpRef_current_value, _otpRef_current, otpVal, _ref, verifyError, unused;
+                    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tslib$2f$tslib$2e$es6$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$5f$_generator__as__$5f3e$__["_"])(this, {
+                        "LoginForm.useCallback[handleVerifyOtp]": function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    otpVal = ((_otpRef_current = otpRef.current) === null || _otpRef_current === void 0 ? void 0 : (_otpRef_current_value = _otpRef_current.value) === null || _otpRef_current_value === void 0 ? void 0 : _otpRef_current_value.replace(/\D/g, '')) || '';
+                                    if (otpVal.length < 6) {
+                                        setError('Kailangan ng 6-digit code.');
+                                        return [
+                                            2
+                                        ];
+                                    }
+                                    setLoading(true);
+                                    setError(null);
+                                    _state.label = 1;
+                                case 1:
+                                    _state.trys.push([
+                                        1,
+                                        3,
+                                        4,
+                                        5
+                                    ]);
+                                    return [
+                                        4,
+                                        supabase.auth.verifyOtp({
+                                            email: emailValueRef.current,
+                                            token: otpVal,
+                                            type: 'email'
+                                        })
+                                    ];
+                                case 2:
+                                    _ref = _state.sent(), verifyError = _ref.error;
+                                    if (verifyError) {
+                                        setError('Mali ang code o nag-expire na. Subukan muli.');
+                                        if (otpRef.current) otpRef.current.value = '';
+                                    } else {
+                                        router.push('/chat');
+                                        router.refresh();
+                                    }
+                                    return [
+                                        3,
+                                        5
+                                    ];
+                                case 3:
+                                    unused = _state.sent();
+                                    setError('May nangyaring mali. Subukan muli.');
+                                    if (otpRef.current) otpRef.current.value = '';
+                                    return [
+                                        3,
+                                        5
+                                    ];
+                                case 4:
+                                    setLoading(false);
+                                    return [
+                                        7
+                                    ];
+                                case 5:
+                                    return [
+                                        2
+                                    ];
+                            }
                         }
-                        setLoading(true);
-                        setError(null);
-                        _state.label = 1;
-                    case 1:
-                        _state.trys.push([
-                            1,
-                            3,
-                            4,
-                            5
-                        ]);
-                        return [
-                            4,
-                            supabase.auth.verifyOtp({
-                                email: emailValueRef.current,
-                                token: otpVal,
-                                type: 'email'
-                            })
-                        ];
-                    case 2:
-                        error = _state.sent().error;
-                        if (error) {
-                            setError('Mali ang code o nag-expire na. Subukan muli.');
-                            if (otpRef.current) otpRef.current.value = '';
-                        } else {
-                            router.push('/chat');
-                            router.refresh();
-                        }
-                        return [
-                            3,
-                            5
-                        ];
-                    case 3:
-                        unused = _state.sent();
-                        setError('May nangyaring mali. Subukan muli.');
-                        if (otpRef.current) otpRef.current.value = '';
-                        return [
-                            3,
-                            5
-                        ];
-                    case 4:
-                        setLoading(false);
-                        return [
-                            7
-                        ];
-                    case 5:
-                        return [
-                            2
-                        ];
+                    }["LoginForm.useCallback[handleVerifyOtp]"]);
                 }
-            });
-        })();
-    }
+            }["LoginForm.useCallback[handleVerifyOtp]"])();
+        }
+    }["LoginForm.useCallback[handleVerifyOtp]"], [
+        supabase,
+        router
+    ]);
+    var handleEmailKeyDown = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "LoginForm.useCallback[handleEmailKeyDown]": function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSendOtp();
+            }
+        }
+    }["LoginForm.useCallback[handleEmailKeyDown]"], [
+        handleSendOtp
+    ]);
+    var handleOtpKeyDown = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "LoginForm.useCallback[handleOtpKeyDown]": function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleVerifyOtp();
+            }
+        }
+    }["LoginForm.useCallback[handleOtpKeyDown]"], [
+        handleVerifyOtp
+    ]);
     if (step === 'otp') {
-        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
-            onSubmit: handleOtpSubmit,
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "space-y-5",
             "data-testid": "otp-form",
             children: [
@@ -201,7 +235,7 @@ function LoginForm() {
                             children: "I-enter ang code"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 93,
+                            lineNumber: 111,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -214,20 +248,20 @@ function LoginForm() {
                                     children: emailValueRef.current
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/auth/login-form.tsx",
-                                    lineNumber: 96,
+                                    lineNumber: 114,
                                     columnNumber: 13
                                 }, this),
                                 "."
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 94,
+                            lineNumber: 112,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 92,
+                    lineNumber: 110,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -238,7 +272,7 @@ function LoginForm() {
                             children: "OTP Code"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 101,
+                            lineNumber: 119,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -248,19 +282,19 @@ function LoginForm() {
                             pattern: "[0-9]*",
                             maxLength: 6,
                             placeholder: "123456",
-                            required: true,
                             autoFocus: true,
+                            onKeyDown: handleOtpKeyDown,
                             className: "w-full bg-kai-card-alt border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-lg tracking-widest text-center focus:border-honey focus:ring-1 focus:ring-honey transition-colors",
                             "data-testid": "otp-input"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 104,
+                            lineNumber: 122,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 100,
+                    lineNumber: 118,
                     columnNumber: 9
                 }, this),
                 error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -269,18 +303,19 @@ function LoginForm() {
                     children: error
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 119,
+                    lineNumber: 137,
                     columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                    type: "submit",
+                    type: "button",
+                    onClick: handleVerifyOtp,
                     disabled: loading,
                     className: "w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50",
                     "data-testid": "verify-otp-btn",
                     children: loading ? 'Sine-verify...' : 'I-verify ang Code'
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 124,
+                    lineNumber: 142,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -294,18 +329,17 @@ function LoginForm() {
                     children: "Mag-back at magpadala ulit"
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 133,
+                    lineNumber: 152,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/auth/login-form.tsx",
-            lineNumber: 91,
+            lineNumber: 109,
             columnNumber: 7
         }, this);
     }
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
-        onSubmit: handleEmailSubmit,
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "space-y-5",
         "data-testid": "email-form",
         children: [
@@ -316,7 +350,7 @@ function LoginForm() {
                         children: "Mag-login po"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 151,
+                        lineNumber: 170,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -324,13 +358,13 @@ function LoginForm() {
                         children: "Magpapadala kami ng login code sa iyong email."
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 152,
+                        lineNumber: 171,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 150,
+                lineNumber: 169,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -341,26 +375,26 @@ function LoginForm() {
                         children: "Email"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 158,
+                        lineNumber: 177,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                         ref: emailRef,
                         type: "email",
                         placeholder: "you@example.com",
-                        required: true,
                         autoFocus: true,
+                        onKeyDown: handleEmailKeyDown,
                         className: "w-full bg-kai-card-alt border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-honey focus:ring-1 focus:ring-honey transition-colors",
                         "data-testid": "email-input"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 161,
+                        lineNumber: 180,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 157,
+                lineNumber: 176,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -369,28 +403,29 @@ function LoginForm() {
                 children: error
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 173,
+                lineNumber: 192,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                type: "submit",
+                type: "button",
+                onClick: handleSendOtp,
                 disabled: loading,
                 className: "w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50",
                 "data-testid": "send-otp-btn",
                 children: loading ? 'Nagpapadala...' : 'Magpadala ng Code'
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 178,
+                lineNumber: 197,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/auth/login-form.tsx",
-        lineNumber: 149,
+        lineNumber: 168,
         columnNumber: 5
     }, this);
 }
-_s(LoginForm, "c8l4C30fKU3DaJR2lY9w6C0pXHg=", false, function() {
+_s(LoginForm, "6SA9kMWvR2i1xEwSGZNJXhngVsI=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];

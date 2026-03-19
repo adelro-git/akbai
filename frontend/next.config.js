@@ -7,6 +7,7 @@ const nextConfig = {
   },
   allowedDevOrigins: [
     'akbai-preview.cluster-0.preview.emergentcf.cloud',
+    'akbai-preview.cluster-5.preview.emergentcf.cloud',
     'akbai-preview.preview.emergentagent.com',
   ],
   images: {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -17,8 +17,7 @@ export default function LoginForm() {
 
   const supabase = createClient()
 
-  async function handleEmailSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  const handleSendOtp = useCallback(async () => {
     const emailVal = emailRef.current?.value?.trim() || ''
     if (!emailVal) {
       setError('Maglagay ng email address.')
@@ -34,7 +33,7 @@ export default function LoginForm() {
           ? `${window.location.origin}/auth/callback`
           : '/auth/callback'
 
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error: otpError } = await supabase.auth.signInWithOtp({
         email: emailVal,
         options: {
           shouldCreateUser: true,
@@ -42,7 +41,7 @@ export default function LoginForm() {
         },
       })
 
-      if (error) {
+      if (otpError) {
         setError('May problema sa pagpapadala ng code. Subukan muli.')
       } else {
         setStep('otp')
@@ -52,10 +51,9 @@ export default function LoginForm() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
-  async function handleOtpSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  const handleVerifyOtp = useCallback(async () => {
     const otpVal = otpRef.current?.value?.replace(/\D/g, '') || ''
     if (otpVal.length < 6) {
       setError('Kailangan ng 6-digit code.')
@@ -65,13 +63,13 @@ export default function LoginForm() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.verifyOtp({
+      const { error: verifyError } = await supabase.auth.verifyOtp({
         email: emailValueRef.current,
         token: otpVal,
         type: 'email',
       })
 
-      if (error) {
+      if (verifyError) {
         setError('Mali ang code o nag-expire na. Subukan muli.')
         if (otpRef.current) otpRef.current.value = ''
       } else {
@@ -84,11 +82,31 @@ export default function LoginForm() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase, router])
+
+  const handleEmailKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        handleSendOtp()
+      }
+    },
+    [handleSendOtp]
+  )
+
+  const handleOtpKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        handleVerifyOtp()
+      }
+    },
+    [handleVerifyOtp]
+  )
 
   if (step === 'otp') {
     return (
-      <form onSubmit={handleOtpSubmit} className="space-y-5" data-testid="otp-form">
+      <div className="space-y-5" data-testid="otp-form">
         <div>
           <h2 className="text-xl font-bold text-white mb-1">I-enter ang code</h2>
           <p className="text-slate-400 text-sm">
@@ -108,8 +126,8 @@ export default function LoginForm() {
             pattern="[0-9]*"
             maxLength={6}
             placeholder="123456"
-            required
             autoFocus
+            onKeyDown={handleOtpKeyDown}
             className="w-full bg-kai-card-alt border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-lg tracking-widest text-center focus:border-honey focus:ring-1 focus:ring-honey transition-colors"
             data-testid="otp-input"
           />
@@ -122,7 +140,8 @@ export default function LoginForm() {
         )}
 
         <button
-          type="submit"
+          type="button"
+          onClick={handleVerifyOtp}
           disabled={loading}
           className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50"
           data-testid="verify-otp-btn"
@@ -141,12 +160,12 @@ export default function LoginForm() {
         >
           Mag-back at magpadala ulit
         </button>
-      </form>
+      </div>
     )
   }
 
   return (
-    <form onSubmit={handleEmailSubmit} className="space-y-5" data-testid="email-form">
+    <div className="space-y-5" data-testid="email-form">
       <div>
         <h2 className="text-xl font-bold text-white mb-1">Mag-login po</h2>
         <p className="text-slate-400 text-sm">
@@ -162,8 +181,8 @@ export default function LoginForm() {
           ref={emailRef}
           type="email"
           placeholder="you@example.com"
-          required
           autoFocus
+          onKeyDown={handleEmailKeyDown}
           className="w-full bg-kai-card-alt border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-honey focus:ring-1 focus:ring-honey transition-colors"
           data-testid="email-input"
         />
@@ -176,13 +195,14 @@ export default function LoginForm() {
       )}
 
       <button
-        type="submit"
+        type="button"
+        onClick={handleSendOtp}
         disabled={loading}
         className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50"
         data-testid="send-otp-btn"
       >
         {loading ? 'Nagpapadala...' : 'Magpadala ng Code'}
       </button>
-    </form>
+    </div>
   )
 }
