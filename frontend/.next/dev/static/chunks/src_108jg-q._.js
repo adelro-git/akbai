@@ -212,7 +212,7 @@ function LoginForm() {
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                     type: "submit",
                     disabled: loading || otp.length < 6,
-                    className: "w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+                    className: "w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50",
                     "data-testid": "verify-otp-btn",
                     children: loading ? 'Sine-verify...' : 'I-verify ang Code'
                 }, void 0, false, {
@@ -319,7 +319,7 @@ function LoginForm() {
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                 type: "submit",
                 disabled: loading || !email,
-                className: "w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+                className: "w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50",
                 "data-testid": "send-otp-btn",
                 children: loading ? 'Nagpapadala...' : 'Magpadala ng Code'
             }, void 0, false, {

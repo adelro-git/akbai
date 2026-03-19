@@ -6,8 +6,8 @@ const nextConfig = {
     root: path.resolve(__dirname),
   },
   allowedDevOrigins: [
-    'akbai-phase-guide.cluster-0.preview.emergentcf.cloud',
-    'akbai-phase-guide.preview.emergentagent.com',
+    'akbai-preview.cluster-0.preview.emergentcf.cloud',
+    'akbai-preview.preview.emergentagent.com',
   ],
   images: {
     remotePatterns: [

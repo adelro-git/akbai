@@ -2089,12 +2089,20 @@ input, textarea {
   cursor: not-allowed;
 }
 
+.disabled\:bg-honey\/50:disabled {
+  background-color: #f59e0b80;
+}
+
 .disabled\:opacity-40:disabled {
   opacity: .4;
 }
 
 .disabled\:opacity-50:disabled {
   opacity: .5;
+}
+
+.disabled\:hover\:bg-honey\/50:hover:disabled {
+  background-color: #f59e0b80;
 }
 
 .group:hover .group-hover\:opacity-100 {

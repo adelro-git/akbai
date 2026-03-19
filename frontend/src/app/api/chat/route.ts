@@ -79,6 +79,9 @@ export async function POST(req: NextRequest) {
       domain: 'general',
     })
 
+    // NOTE: Replace this with your own Anthropic API key for production use.
+    // Currently using Emergent Universal Key via the FastAPI backend.
+    // This Next.js route is a fallback — the primary endpoint is handled by FastAPI.
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey || apiKey === 'your-anthropic-api-key-here') {
       const fallback =

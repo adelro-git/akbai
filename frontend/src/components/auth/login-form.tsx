@@ -101,7 +101,7 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading || otp.length < 6}
-          className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50"
           data-testid="verify-otp-btn"
         >
           {loading ? 'Sine-verify...' : 'I-verify ang Code'}
@@ -158,7 +158,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading || !email}
-        className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50"
         data-testid="send-otp-btn"
       >
         {loading ? 'Nagpapadala...' : 'Magpadala ng Code'}

@@ -59,6 +59,6 @@
   "seed_data_creation": "None",
   "retest_needed": true,
   "should_main_agent_self_test": true,
-  "context_for_next_testing_agent": "6/8 routing/PWA/API tests PASS. The only remaining unverifiable tests via Playwright are: email input triggering button enable, OTP form transition, back button. These require manual testing. The onInput handler IS in the source code. The production URL is https://akbai-phase-guide.preview.emergentagent.com. All routing redirects work. /auth/callback returns 307 to /login when no code param.",
+  "context_for_next_testing_agent": "6/8 routing/PWA/API tests PASS. The only remaining unverifiable tests via Playwright are: email input triggering button enable, OTP form transition, back button. These require manual testing. The onInput handler IS in the source code. The production URL is https://akbai-preview.preview.emergentagent.com. All routing redirects work. /auth/callback returns 307 to /login when no code param.",
   "rca_of_issue": "Root cause: React 19 in production Next.js builds uses a different internal event queue (fiber reconciler with concurrent mode). Native DOM events dispatched via JavaScript (dispatchEvent) OR Playwright's page.type() do not trigger React synthetic event handlers in this environment. The email state remains empty. Fix options: (1) Replace controlled input with uncontrolled + ref, (2) Remove disabled prop and rely on HTML5 form required validation, (3) Use a different button enable strategy not based on React state."
 }
