@@ -21,25 +21,30 @@ export default function LoginForm() {
     setLoading(true)
     setError(null)
 
-    const siteUrl =
-      typeof window !== 'undefined'
-        ? `${window.location.origin}/auth/callback`
-        : '/auth/callback'
+    try {
+      const siteUrl =
+        typeof window !== 'undefined'
+          ? `${window.location.origin}/auth/callback`
+          : '/auth/callback'
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: siteUrl,
-      },
-    })
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: siteUrl,
+        },
+      })
 
-    if (error) {
-      setError('May problema sa pagpapadala ng code. Subukan muli.')
-    } else {
-      setStep('otp')
+      if (error) {
+        setError('May problema sa pagpapadala ng code. Subukan muli.')
+      } else {
+        setStep('otp')
+      }
+    } catch {
+      setError('May nangyaring mali. Subukan muli.')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   async function handleOtpSubmit(e: React.FormEvent) {
@@ -47,19 +52,26 @@ export default function LoginForm() {
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: otp,
-      type: 'email',
-    })
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: otp,
+        type: 'email',
+      })
 
-    if (error) {
-      setError('Mali ang code o nag-expire na. Subukan muli.')
-    } else {
-      router.push('/chat')
-      router.refresh()
+      if (error) {
+        setError('Mali ang code o nag-expire na. Subukan muli.')
+        setOtp('')
+      } else {
+        router.push('/chat')
+        router.refresh()
+      }
+    } catch {
+      setError('May nangyaring mali. Subukan muli.')
+      setOtp('')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   if (step === 'otp') {
