@@ -56,19 +56,21 @@ function LoginForm() {
     var supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
     function handleEmailSubmit(e) {
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_async_to_generator$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(function() {
-            var error;
+            var siteUrl, error;
             return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tslib$2f$tslib$2e$es6$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$5f$_generator__as__$5f3e$__["_"])(this, function(_state) {
                 switch(_state.label){
                     case 0:
                         e.preventDefault();
                         setLoading(true);
                         setError(null);
+                        siteUrl = ("TURBOPACK compile-time truthy", 1) ? "".concat(window.location.origin, "/auth/callback") : "TURBOPACK unreachable";
                         return [
                             4,
                             supabase.auth.signInWithOtp({
                                 email: email,
                                 options: {
-                                    shouldCreateUser: true
+                                    shouldCreateUser: true,
+                                    emailRedirectTo: siteUrl
                                 }
                             })
                         ];
@@ -133,7 +135,7 @@ function LoginForm() {
                             children: "I-enter ang code"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 61,
+                            lineNumber: 69,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -146,20 +148,20 @@ function LoginForm() {
                                     children: email
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/auth/login-form.tsx",
-                                    lineNumber: 64,
+                                    lineNumber: 72,
                                     columnNumber: 13
                                 }, this),
                                 "."
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 62,
+                            lineNumber: 70,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 60,
+                    lineNumber: 68,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -170,7 +172,7 @@ function LoginForm() {
                             children: "OTP Code"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 69,
+                            lineNumber: 77,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -189,13 +191,13 @@ function LoginForm() {
                             "data-testid": "otp-input"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 72,
+                            lineNumber: 80,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 68,
+                    lineNumber: 76,
                     columnNumber: 9
                 }, this),
                 error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -204,7 +206,7 @@ function LoginForm() {
                     children: error
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 88,
+                    lineNumber: 96,
                     columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -215,7 +217,7 @@ function LoginForm() {
                     children: loading ? 'Sine-verify...' : 'I-verify ang Code'
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 93,
+                    lineNumber: 101,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -230,13 +232,13 @@ function LoginForm() {
                     children: "Mag-back at magpadala ulit"
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 102,
+                    lineNumber: 110,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/auth/login-form.tsx",
-            lineNumber: 59,
+            lineNumber: 67,
             columnNumber: 7
         }, this);
     }
@@ -252,7 +254,7 @@ function LoginForm() {
                         children: "Mag-login po"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 121,
+                        lineNumber: 129,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -260,13 +262,13 @@ function LoginForm() {
                         children: "Magpapadala kami ng login code sa iyong email."
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 122,
+                        lineNumber: 130,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 120,
+                lineNumber: 128,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -277,13 +279,16 @@ function LoginForm() {
                         children: "Email"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 128,
+                        lineNumber: 136,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                         type: "email",
                         value: email,
                         onChange: function onChange(e) {
+                            return setEmail(e.target.value);
+                        },
+                        onInput: function onInput(e) {
                             return setEmail(e.target.value);
                         },
                         placeholder: "you@example.com",
@@ -293,13 +298,13 @@ function LoginForm() {
                         "data-testid": "email-input"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 131,
+                        lineNumber: 139,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 127,
+                lineNumber: 135,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -308,7 +313,7 @@ function LoginForm() {
                 children: error
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 144,
+                lineNumber: 153,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -319,13 +324,13 @@ function LoginForm() {
                 children: loading ? 'Nagpapadala...' : 'Magpadala ng Code'
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 149,
+                lineNumber: 158,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/auth/login-form.tsx",
-        lineNumber: 119,
+        lineNumber: 127,
         columnNumber: 5
     }, this);
 }

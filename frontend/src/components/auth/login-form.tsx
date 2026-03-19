@@ -21,9 +21,17 @@ export default function LoginForm() {
     setLoading(true)
     setError(null)
 
+    const siteUrl =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}/auth/callback`
+        : '/auth/callback'
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: siteUrl,
+      },
     })
 
     if (error) {
@@ -132,6 +140,7 @@ export default function LoginForm() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
           placeholder="you@example.com"
           required
           autoFocus
