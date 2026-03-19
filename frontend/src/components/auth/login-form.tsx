@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -9,15 +9,22 @@ type Step = 'email' | 'otp'
 export default function LoginForm() {
   const router = useRouter()
   const [step, setStep] = useState<Step>('email')
-  const [email, setEmail] = useState('')
-  const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const otpRef = useRef<HTMLInputElement>(null)
+  const emailValueRef = useRef('')
 
   const supabase = createClient()
 
   async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const emailVal = emailRef.current?.value?.trim() || ''
+    if (!emailVal) {
+      setError('Maglagay ng email address.')
+      return
+    }
+    emailValueRef.current = emailVal
     setLoading(true)
     setError(null)
 
@@ -28,7 +35,7 @@ export default function LoginForm() {
           : '/auth/callback'
 
       const { error } = await supabase.auth.signInWithOtp({
-        email,
+        email: emailVal,
         options: {
           shouldCreateUser: true,
           emailRedirectTo: siteUrl,
@@ -49,26 +56,31 @@ export default function LoginForm() {
 
   async function handleOtpSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const otpVal = otpRef.current?.value?.replace(/\D/g, '') || ''
+    if (otpVal.length < 6) {
+      setError('Kailangan ng 6-digit code.')
+      return
+    }
     setLoading(true)
     setError(null)
 
     try {
       const { error } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
+        email: emailValueRef.current,
+        token: otpVal,
         type: 'email',
       })
 
       if (error) {
         setError('Mali ang code o nag-expire na. Subukan muli.')
-        setOtp('')
+        if (otpRef.current) otpRef.current.value = ''
       } else {
         router.push('/chat')
         router.refresh()
       }
     } catch {
       setError('May nangyaring mali. Subukan muli.')
-      setOtp('')
+      if (otpRef.current) otpRef.current.value = ''
     } finally {
       setLoading(false)
     }
@@ -81,7 +93,7 @@ export default function LoginForm() {
           <h2 className="text-xl font-bold text-white mb-1">I-enter ang code</h2>
           <p className="text-slate-400 text-sm">
             Nagpadala kami ng 6-digit code sa{' '}
-            <span className="text-white font-medium">{email}</span>.
+            <span className="text-white font-medium">{emailValueRef.current}</span>.
           </p>
         </div>
 
@@ -90,12 +102,11 @@ export default function LoginForm() {
             OTP Code
           </label>
           <input
+            ref={otpRef}
             type="text"
             inputMode="numeric"
             pattern="[0-9]*"
             maxLength={6}
-            value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
             placeholder="123456"
             required
             autoFocus
@@ -112,7 +123,7 @@ export default function LoginForm() {
 
         <button
           type="submit"
-          disabled={loading || otp.length < 6}
+          disabled={loading}
           className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50"
           data-testid="verify-otp-btn"
         >
@@ -123,7 +134,6 @@ export default function LoginForm() {
           type="button"
           onClick={() => {
             setStep('email')
-            setOtp('')
             setError(null)
           }}
           className="w-full text-slate-400 text-sm py-2 hover:text-white transition-colors"
@@ -149,10 +159,8 @@ export default function LoginForm() {
           Email
         </label>
         <input
+          ref={emailRef}
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
           placeholder="you@example.com"
           required
           autoFocus
@@ -169,7 +177,7 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        disabled={loading || !email}
+        disabled={loading}
         className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50"
         data-testid="send-otp-btn"
       >

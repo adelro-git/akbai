@@ -49,18 +49,27 @@ function LoginForm() {
     _s();
     var router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     var _useState = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('email'), 2), step = _useState[0], setStep = _useState[1];
-    var _useState1 = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(''), 2), email = _useState1[0], setEmail = _useState1[1];
-    var _useState2 = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(''), 2), otp = _useState2[0], setOtp = _useState2[1];
-    var _useState3 = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false), 2), loading = _useState3[0], setLoading = _useState3[1];
-    var _useState4 = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null), 2), error = _useState4[0], setError = _useState4[1];
+    var _useState1 = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false), 2), loading = _useState1[0], setLoading = _useState1[1];
+    var _useState2 = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null), 2), error = _useState2[0], setError = _useState2[1];
+    var emailRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    var otpRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    var emailValueRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])('');
     var supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
     function handleEmailSubmit(e) {
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_async_to_generator$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(function() {
-            var siteUrl, error, unused;
+            var _emailRef_current_value, _emailRef_current, emailVal, siteUrl, error, unused;
             return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tslib$2f$tslib$2e$es6$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$5f$_generator__as__$5f3e$__["_"])(this, function(_state) {
                 switch(_state.label){
                     case 0:
                         e.preventDefault();
+                        emailVal = ((_emailRef_current = emailRef.current) === null || _emailRef_current === void 0 ? void 0 : (_emailRef_current_value = _emailRef_current.value) === null || _emailRef_current_value === void 0 ? void 0 : _emailRef_current_value.trim()) || '';
+                        if (!emailVal) {
+                            setError('Maglagay ng email address.');
+                            return [
+                                2
+                            ];
+                        }
+                        emailValueRef.current = emailVal;
                         setLoading(true);
                         setError(null);
                         _state.label = 1;
@@ -75,7 +84,7 @@ function LoginForm() {
                         return [
                             4,
                             supabase.auth.signInWithOtp({
-                                email: email,
+                                email: emailVal,
                                 options: {
                                     shouldCreateUser: true,
                                     emailRedirectTo: siteUrl
@@ -115,11 +124,18 @@ function LoginForm() {
     }
     function handleOtpSubmit(e) {
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_async_to_generator$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(function() {
-            var error, unused;
+            var _otpRef_current_value, _otpRef_current, otpVal, error, unused;
             return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tslib$2f$tslib$2e$es6$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$5f$_generator__as__$5f3e$__["_"])(this, function(_state) {
                 switch(_state.label){
                     case 0:
                         e.preventDefault();
+                        otpVal = ((_otpRef_current = otpRef.current) === null || _otpRef_current === void 0 ? void 0 : (_otpRef_current_value = _otpRef_current.value) === null || _otpRef_current_value === void 0 ? void 0 : _otpRef_current_value.replace(/\D/g, '')) || '';
+                        if (otpVal.length < 6) {
+                            setError('Kailangan ng 6-digit code.');
+                            return [
+                                2
+                            ];
+                        }
                         setLoading(true);
                         setError(null);
                         _state.label = 1;
@@ -133,8 +149,8 @@ function LoginForm() {
                         return [
                             4,
                             supabase.auth.verifyOtp({
-                                email: email,
-                                token: otp,
+                                email: emailValueRef.current,
+                                token: otpVal,
                                 type: 'email'
                             })
                         ];
@@ -142,7 +158,7 @@ function LoginForm() {
                         error = _state.sent().error;
                         if (error) {
                             setError('Mali ang code o nag-expire na. Subukan muli.');
-                            setOtp('');
+                            if (otpRef.current) otpRef.current.value = '';
                         } else {
                             router.push('/chat');
                             router.refresh();
@@ -154,7 +170,7 @@ function LoginForm() {
                     case 3:
                         unused = _state.sent();
                         setError('May nangyaring mali. Subukan muli.');
-                        setOtp('');
+                        if (otpRef.current) otpRef.current.value = '';
                         return [
                             3,
                             5
@@ -185,7 +201,7 @@ function LoginForm() {
                             children: "I-enter ang code"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 81,
+                            lineNumber: 93,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -195,23 +211,23 @@ function LoginForm() {
                                 ' ',
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: "text-white font-medium",
-                                    children: email
+                                    children: emailValueRef.current
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/auth/login-form.tsx",
-                                    lineNumber: 84,
+                                    lineNumber: 96,
                                     columnNumber: 13
                                 }, this),
                                 "."
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 82,
+                            lineNumber: 94,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 80,
+                    lineNumber: 92,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -222,18 +238,15 @@ function LoginForm() {
                             children: "OTP Code"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 89,
+                            lineNumber: 101,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                            ref: otpRef,
                             type: "text",
                             inputMode: "numeric",
                             pattern: "[0-9]*",
                             maxLength: 6,
-                            value: otp,
-                            onChange: function onChange(e) {
-                                return setOtp(e.target.value.replace(/\D/g, ''));
-                            },
                             placeholder: "123456",
                             required: true,
                             autoFocus: true,
@@ -241,13 +254,13 @@ function LoginForm() {
                             "data-testid": "otp-input"
                         }, void 0, false, {
                             fileName: "[project]/src/components/auth/login-form.tsx",
-                            lineNumber: 92,
+                            lineNumber: 104,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 88,
+                    lineNumber: 100,
                     columnNumber: 9
                 }, this),
                 error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -256,25 +269,24 @@ function LoginForm() {
                     children: error
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 108,
+                    lineNumber: 119,
                     columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                     type: "submit",
-                    disabled: loading || otp.length < 6,
+                    disabled: loading,
                     className: "w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50",
                     "data-testid": "verify-otp-btn",
                     children: loading ? 'Sine-verify...' : 'I-verify ang Code'
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 113,
+                    lineNumber: 124,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                     type: "button",
                     onClick: function onClick() {
                         setStep('email');
-                        setOtp('');
                         setError(null);
                     },
                     className: "w-full text-slate-400 text-sm py-2 hover:text-white transition-colors",
@@ -282,13 +294,13 @@ function LoginForm() {
                     children: "Mag-back at magpadala ulit"
                 }, void 0, false, {
                     fileName: "[project]/src/components/auth/login-form.tsx",
-                    lineNumber: 122,
+                    lineNumber: 133,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/auth/login-form.tsx",
-            lineNumber: 79,
+            lineNumber: 91,
             columnNumber: 7
         }, this);
     }
@@ -304,7 +316,7 @@ function LoginForm() {
                         children: "Mag-login po"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 141,
+                        lineNumber: 151,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -312,13 +324,13 @@ function LoginForm() {
                         children: "Magpapadala kami ng login code sa iyong email."
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 142,
+                        lineNumber: 152,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 140,
+                lineNumber: 150,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -329,18 +341,12 @@ function LoginForm() {
                         children: "Email"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 148,
+                        lineNumber: 158,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                        ref: emailRef,
                         type: "email",
-                        value: email,
-                        onChange: function onChange(e) {
-                            return setEmail(e.target.value);
-                        },
-                        onInput: function onInput(e) {
-                            return setEmail(e.target.value);
-                        },
                         placeholder: "you@example.com",
                         required: true,
                         autoFocus: true,
@@ -348,13 +354,13 @@ function LoginForm() {
                         "data-testid": "email-input"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/login-form.tsx",
-                        lineNumber: 151,
+                        lineNumber: 161,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 147,
+                lineNumber: 157,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -363,28 +369,28 @@ function LoginForm() {
                 children: error
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 165,
+                lineNumber: 173,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                 type: "submit",
-                disabled: loading || !email,
+                disabled: loading,
                 className: "w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50",
                 "data-testid": "send-otp-btn",
                 children: loading ? 'Nagpapadala...' : 'Magpadala ng Code'
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/login-form.tsx",
-                lineNumber: 170,
+                lineNumber: 178,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/auth/login-form.tsx",
-        lineNumber: 139,
+        lineNumber: 149,
         columnNumber: 5
     }, this);
 }
-_s(LoginForm, "hcp1Zb5V0iHLOSqGvxh1/k08zxA=", false, function() {
+_s(LoginForm, "c8l4C30fKU3DaJR2lY9w6C0pXHg=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
