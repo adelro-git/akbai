@@ -5,5 +5,6 @@
   "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/api/chat/route": "app/api/chat/route.js",
+  "/auth/callback/route": "app/auth/callback/route.js",
   "/page": "app/page.js"
 }
