@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — Email Templates</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e; --card:#0d1a2e;
+  --warm:#FEFAF3; --warm2:#FFF8ED;
+  --text:#07101e; --muted:#5a6a80;
+  --hs:#F59E0B; --he:#D97706;
+  --ts:#20C9A0; --te:#0FB8D9;
+  --dim:rgba(7,16,30,.08);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#E8EAED;color:var(--text);min-height:100vh;padding:0}
+
+/* Shell */
+.shell{background:var(--ink);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.shell-logo{font-size:16px;font-weight:800;display:flex;align-items:center;gap:10px}
+.shell-logo .akb{color:#fff}
+.shell-logo .ai{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.shell-title{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+
+/* Tabs */
+.tab-nav{background:#fff;border-bottom:1px solid var(--dim);padding:0 32px;display:flex;gap:0;overflow-x:auto}
+.tab-btn{padding:15px 22px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;font-family:inherit;transition:.2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--text);border-bottom-color:#F59E0B}
+
+/* Layout */
+.main{padding:32px;display:flex;gap:28px;align-items:flex-start;max-width:1200px;margin:0 auto}
+.preview-col{flex:1;min-width:0}
+.spec-col{width:320px;flex-shrink:0}
+
+/* Preview wrapper */
+.email-preview{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(7,16,30,.12)}
+.preview-browser{background:#F2F4F7;padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #DDE1E7}
+.browser-dots{display:flex;gap:5px}
+.browser-dot{width:10px;height:10px;border-radius:50%}
+.d1{background:#FF5F57}.d2{background:#FEBC2E}.d3{background:#28C840}
+.browser-bar{flex:1;background:#fff;border-radius:100px;padding:5px 14px;font-size:11px;color:#9CA3AF;font-family:monospace}
+
+/* Email body */
+.email-body{background:#F2F4F7;padding:28px 20px}
+
+/* Panel switching */
+.email-panel{display:none}
+.email-panel.active{display:block}
+
+/* ══════════════════════════
+   EMAIL DESIGN SYSTEM
+══════════════════════════ */
+/* All email content uses inline-ish styles in the HTML for realism */
+.em-wrap{max-width:560px;margin:0 auto;font-family:'-apple-system',BlinkMacSystemFont,'Segoe UI',sans-serif}
+.em-header{background:#07101e;border-radius:14px 14px 0 0;padding:28px 36px;position:relative;overflow:hidden}
+.em-header::before{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;background:radial-gradient(circle,rgba(245,158,11,.12) 0%,transparent 60%);pointer-events:none}
+.em-logo-row{display:flex;align-items:center;gap:10px;position:relative;z-index:1}
+.em-logo-mark{width:28px;height:28px;flex-shrink:0}
+.em-wordmark{font-size:17px;font-weight:800;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
+.em-wordmark .ai{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.em-body{background:#fff;padding:36px}
+.em-footer{background:#FEFAF3;border-radius:0 0 14px 14px;padding:20px 36px;border-top:1px solid rgba(7,16,30,.06)}
+
+/* Typography inside email */
+.em-body h1{font-size:26px;font-weight:800;color:#07101e;line-height:1.2;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif}
+.em-body h2{font-size:18px;font-weight:700;color:#07101e;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif}
+.em-body p{font-size:15px;color:#374151;line-height:1.7;margin-bottom:16px}
+.em-body p:last-child{margin-bottom:0}
+.em-divider{height:1px;background:rgba(7,16,30,.07);margin:24px 0}
+.em-highlight{color:#D97706;font-weight:700}
+.em-teal{color:#20C9A0;font-weight:700}
+
+/* Buttons */
+.em-btn{display:inline-block;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff !important;font-size:15px;font-weight:700;padding:13px 28px;border-radius:100px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;margin-top:4px}
+.em-btn-outline{display:inline-block;background:transparent;color:#D97706 !important;font-size:14px;font-weight:600;padding:10px 22px;border-radius:100px;text-decoration:none;border:2px solid rgba(245,158,11,.3);font-family:'Plus Jakarta Sans',sans-serif}
+
+/* Feature row inside email */
+.em-feature-row{display:flex;gap:12px;margin:20px 0}
+.em-feat{flex:1;background:#FEFAF3;border:1px solid rgba(245,158,11,.12);border-radius:12px;padding:16px;text-align:center}
+.em-feat-icon{font-size:22px;margin-bottom:8px;display:block}
+.em-feat-title{font-size:13px;font-weight:700;color:#07101e;margin-bottom:4px;font-family:'Plus Jakarta Sans',sans-serif}
+.em-feat-desc{font-size:11px;color:#6B7280;line-height:1.5}
+
+/* Step list */
+.em-steps{display:flex;flex-direction:column;gap:12px;margin:20px 0}
+.em-step{display:flex;gap:14px;align-items:flex-start}
+.em-step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif}
+.em-step-text h4{font-size:14px;font-weight:700;color:#07101e;margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif}
+.em-step-text p{font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:0}
+
+/* Stat callout */
+.em-stat-row{display:flex;gap:10px;margin:20px 0}
+.em-stat{flex:1;background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(245,158,11,.02));border:1px solid rgba(245,158,11,.14);border-radius:12px;padding:14px;text-align:center}
+.em-stat-num{font-size:26px;font-weight:800;background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Plus Jakarta Sans',sans-serif;line-height:1}
+.em-stat-desc{font-size:11px;color:#6B7280;margin-top:4px;line-height:1.4}
+
+/* Quote */
+.em-quote{background:#FEFAF3;border-left:3px solid #F59E0B;border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0}
+.em-quote-text{font-size:14px;font-style:italic;color:#374151;line-height:1.6;margin-bottom:8px}
+.em-quote-author{font-size:12px;color:#9CA3AF}
+
+/* Badge */
+.em-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.2);border-radius:100px;padding:5px 14px 5px 8px;margin-bottom:20px}
+.em-badge-dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);flex-shrink:0}
+.em-badge-text{font-size:12px;font-weight:700;color:#D97706;font-family:'Plus Jakarta Sans',sans-serif}
+
+/* Green check list */
+.em-check-list{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.em-check-item{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#374151}
+.em-check-icon{color:#20C9A0;font-weight:700;flex-shrink:0;font-size:15px;margin-top:1px}
+
+/* Footer */
+.em-footer p{font-size:12px;color:#9CA3AF;line-height:1.6;margin-bottom:6px}
+.em-footer a{color:#D97706;text-decoration:none}
+.em-footer-brand{font-size:13px;font-weight:700;color:#07101e;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif}
+.em-footer-brand span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── SPEC PANEL ── */
+.spec-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(7,16,30,.06);margin-bottom:16px}
+.spec-card h3{font-size:13px;font-weight:700;margin-bottom:14px;color:var(--ink)}
+.spec-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--dim);font-size:12px;gap:12px}
+.spec-row:last-child{border-bottom:none}
+.spec-label{color:var(--muted);flex-shrink:0}
+.spec-val{font-weight:600;color:var(--text);text-align:right}
+.spec-subject{font-family:monospace;font-size:11px;background:var(--warm2);border-radius:6px;padding:6px 10px;margin-top:8px;color:var(--ink);border:1px solid rgba(245,158,11,.12)}
+.copy-note{font-size:11px;color:var(--muted);line-height:1.6;margin-top:8px;padding:10px;background:var(--warm);border-radius:8px;border:1px solid var(--dim)}
+</style>
+</head>
+<body>
+
+<!-- SHELL -->
+<div class="shell">
+  <div class="shell-logo">
+    <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+      <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs>
+      <g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#sg)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.2"/></g>
+    </svg>
+    <span><span class="akb">AKB</span><span class="ai">ai</span></span>
+  </div>
+  <div class="shell-title">Email Templates</div>
+</div>
+
+<!-- TABS -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showEmail('waitlist',this)">01 · Waitlist Confirmation</button>
+  <button class="tab-btn" onclick="showEmail('beta',this)">02 · Beta Access</button>
+  <button class="tab-btn" onclick="showEmail('onboard',this)">03 · Onboarding Day 3</button>
+  <button class="tab-btn" onclick="showEmail('reengage',this)">04 · Re-engagement</button>
+</div>
+
+<div class="main">
+  <div class="preview-col">
+    <div class="email-preview">
+      <div class="preview-browser">
+        <div class="browser-dots"><div class="browser-dot d1"></div><div class="browser-dot d2"></div><div class="browser-dot d3"></div></div>
+        <div class="browser-bar">📧 inbox — AKBai</div>
+      </div>
+      <div class="email-body">
+
+        <!-- ═══════════════════════════════
+             EMAIL 1: WAITLIST CONFIRMATION
+             ═══════════════════════════════ -->
+        <div id="em-waitlist" class="email-panel active">
+          <div class="em-wrap">
+            <!-- Header -->
+            <div class="em-header">
+              <div class="em-logo-row">
+                <svg class="em-logo-mark" viewBox="0 0 100 100" fill="none">
+                  <defs><linearGradient id="eg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs>
+                  <g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#eg1)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g>
+                </svg>
+                <div class="em-wordmark">AKB<span class="ai">ai</span></div>
+              </div>
+            </div>
+            <!-- Body -->
+            <div class="em-body">
+              <div class="em-badge"><div class="em-badge-dot"></div><span class="em-badge-text">Naka-lista ka na! 🎉</span></div>
+              <h1>Kamusta, [First Name]! Naghihintay kami sa iyo.</h1>
+              <p>Salamat sa pagsali sa AKBai waitlist. Nasa listahan ka na — at isa sa mga unang makakaranas ng pinaka-simpleng paraan para pamahalaan ang iyong negosyo.</p>
+              <div class="em-stat-row">
+                <div class="em-stat">
+                  <div class="em-stat-num">2,400+</div>
+                  <div class="em-stat-desc">Negosyante sa<br/>waitlist na</div>
+                </div>
+                <div class="em-stat">
+                  <div class="em-stat-num">#[N]</div>
+                  <div class="em-stat-desc">Posisyon mo<br/>sa listahan</div>
+                </div>
+                <div class="em-stat">
+                  <div class="em-stat-num">Libre</div>
+                  <div class="em-stat-desc">Beta access<br/>para sa iyo</div>
+                </div>
+              </div>
+              <div class="em-divider"></div>
+              <h2>Habang naghihintay, ito ang gagawin namin para sa iyo:</h2>
+              <div class="em-steps">
+                <div class="em-step">
+                  <div class="em-step-num">1</div>
+                  <div class="em-step-text"><h4>Mag-send kami ng beta invite</h4><p>Kapag handa na kami, ikaw isa sa mga unang makakatanggap ng access.</p></div>
+                </div>
+                <div class="em-step">
+                  <div class="em-step-num">2</div>
+                  <div class="em-step-text"><h4>Setup in 5 minutes</h4><p>Sabihin mo lang sa AKBai ang iyong negosyo — at magsisimula na siya agad.</p></div>
+                </div>
+                <div class="em-step">
+                  <div class="em-step-num">3</div>
+                  <div class="em-step-text"><h4>Tanungin ang negosyo mo</h4><p>Sales, inventory, follow-ups — lahat, isang tanong lang ang layo.</p></div>
+                </div>
+              </div>
+              <div class="em-divider"></div>
+              <p>May tanong ka? I-reply lang sa email na ito — nandito kami.</p>
+              <p style="margin-bottom:0">— Ang AKBai Team 🇵🇭</p>
+            </div>
+            <!-- Footer -->
+            <div class="em-footer">
+              <div class="em-footer-brand">AKB<span>ai</span></div>
+              <p>Kaakbay mo sa negosyo. Ginawa para sa mga negosyanteng Pilipino.</p>
+              <p><a href="#">akbai.com</a> · <a href="#">hello@akbai.ph</a> · <a href="#">I-unsubscribe</a></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════
+             EMAIL 2: BETA ACCESS
+             ═══════════════════════════════ -->
+        <div id="em-beta" class="email-panel">
+          <div class="em-wrap">
+            <div class="em-header">
+              <div class="em-logo-row">
+                <svg class="em-logo-mark" viewBox="0 0 100 100" fill="none">
+                  <defs><linearGradient id="eg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs>
+                  <g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#eg2)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g>
+                </svg>
+                <div class="em-wordmark">AKB<span class="ai">ai</span></div>
+              </div>
+            </div>
+            <div class="em-body">
+              <div class="em-badge"><div class="em-badge-dot"></div><span class="em-badge-text">Beta access mo na ito! 🔓</span></div>
+              <h1>Handa na si AKBai para sa iyo, [First Name].</h1>
+              <p>Matagal kang naghintay — at dumating na ang araw na iyon. <span class="em-highlight">Ikaw ay isa sa aming unang 500 beta users.</span> Salamat sa tiwala mo sa amin.</p>
+              <div style="text-align:center;margin:28px 0">
+                <a href="#" class="em-btn">Simulan ang AKBai →</a>
+              </div>
+              <div class="em-divider"></div>
+              <h2>Ano ang magagawa mo ngayon?</h2>
+              <div class="em-feature-row">
+                <div class="em-feat">
+                  <span class="em-feat-icon">💰</span>
+                  <div class="em-feat-title">I-track ang sales</div>
+                  <div class="em-feat-desc">Sabihin lang sa AKBai ang iyong benta</div>
+                </div>
+                <div class="em-feat">
+                  <span class="em-feat-icon">📊</span>
+                  <div class="em-feat-title">Tingnan ang reports</div>
+                  <div class="em-feat-desc">Tanungin ang profit, cash flow, at trends</div>
+                </div>
+                <div class="em-feat">
+                  <span class="em-feat-icon">📨</span>
+                  <div class="em-feat-title">I-setup ang follow-ups</div>
+                  <div class="em-feat-desc">Auto-remind ng mga hindi pa nakabayad</div>
+                </div>
+              </div>
+              <div class="em-divider"></div>
+              <div class="em-quote">
+                <div class="em-quote-text">"Sa loob ng 10 minuto, naka-setup na agad si AKBai. Hindi ko inakala na ganito kadali."</div>
+                <div class="em-quote-author">— Maria S., Online Seller, Laguna · Beta user</div>
+              </div>
+              <p>May feedback o tanong? I-reply lang dito. Aktibo kaming nakikinig sa lahat ng aming early users.</p>
+              <p style="margin-bottom:0">— Ang AKBai Team 🇵🇭</p>
+            </div>
+            <div class="em-footer">
+              <div class="em-footer-brand">AKB<span>ai</span></div>
+              <p>Kaakbay mo sa negosyo. · <a href="#">akbai.com</a> · <a href="#">hello@akbai.ph</a></p>
+              <p><a href="#">I-unsubscribe</a> · <a href="#">Manage preferences</a></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════
+             EMAIL 3: ONBOARDING DAY 3
+             ═══════════════════════════════ -->
+        <div id="em-onboard" class="email-panel">
+          <div class="em-wrap">
+            <div class="em-header">
+              <div class="em-logo-row">
+                <svg class="em-logo-mark" viewBox="0 0 100 100" fill="none">
+                  <defs><linearGradient id="eg3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs>
+                  <g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#eg3)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g>
+                </svg>
+                <div class="em-wordmark">AKB<span class="ai">ai</span></div>
+              </div>
+            </div>
+            <div class="em-body">
+              <p style="font-size:13px;color:#9CA3AF;margin-bottom:16px">Araw 3 · Getting started series</p>
+              <h1>3 tanong na dapat mong subukan ngayon, [First Name].</h1>
+              <p>Tatlong araw ka nang gumagamit ng AKBai. Ngayon, gusto naming siguraduhin na nare-realize mo ang buong halaga nito para sa iyong negosyo.</p>
+              <p>Subukan mong tanungin ito ngayon:</p>
+              <div style="background:#FEFAF3;border:1px solid rgba(245,158,11,.15);border-radius:14px;padding:20px;margin:20px 0">
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div style="background:#fff;border:1px solid rgba(245,158,11,.12);border-radius:10px;padding:12px 16px;font-size:14px;color:#07101e;font-style:italic">"Magkano ang aking kita ngayong buwan?"</div>
+                  <div style="background:#fff;border:1px solid rgba(245,158,11,.12);border-radius:10px;padding:12px 16px;font-size:14px;color:#07101e;font-style:italic">"Aling produkto ang pinaka-mabenta ko?"</div>
+                  <div style="background:#fff;border:1px solid rgba(245,158,11,.12);border-radius:10px;padding:12px 16px;font-size:14px;color:#07101e;font-style:italic">"Sino ang hindi pa nakabayad?"</div>
+                </div>
+              </div>
+              <div style="text-align:center;margin:24px 0">
+                <a href="#" class="em-btn">Buksan ang AKBai →</a>
+              </div>
+              <div class="em-divider"></div>
+              <h2>Hindi ka pa handa? Narito kami.</h2>
+              <div class="em-check-list">
+                <div class="em-check-item"><span class="em-check-icon">✓</span><span>I-reply sa email na ito — sasagutin namin sa loob ng 24 oras</span></div>
+                <div class="em-check-item"><span class="em-check-icon">✓</span><span>Mag-book ng <a href="#" style="color:#D97706;font-weight:600">libreng 15-min onboarding call</a> kasama ang aming team</span></div>
+                <div class="em-check-item"><span class="em-check-icon">✓</span><span>Tingnan ang aming <a href="#" style="color:#D97706;font-weight:600">quick start guide</a> — 5 minuto lang</span></div>
+              </div>
+              <div class="em-divider"></div>
+              <p style="margin-bottom:0">Sama-sama tayong gagawin itong gumana para sa negosyo mo. 🤝<br/>— Ang AKBai Team</p>
+            </div>
+            <div class="em-footer">
+              <div class="em-footer-brand">AKB<span>ai</span></div>
+              <p>Ito ay bahagi ng iyong getting started series. Tatanggap ka ng 3 pa na emails.</p>
+              <p><a href="#">akbai.com</a> · <a href="#">hello@akbai.ph</a> · <a href="#">I-unsubscribe</a></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════
+             EMAIL 4: RE-ENGAGEMENT
+             ═══════════════════════════════ -->
+        <div id="em-reengage" class="email-panel">
+          <div class="em-wrap">
+            <div class="em-header">
+              <div class="em-logo-row">
+                <svg class="em-logo-mark" viewBox="0 0 100 100" fill="none">
+                  <defs><linearGradient id="eg4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs>
+                  <g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#eg4)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g>
+                </svg>
+                <div class="em-wordmark">AKB<span class="ai">ai</span></div>
+              </div>
+            </div>
+            <div class="em-body">
+              <h1>Nandito pa rin kami, [First Name]. 👋</h1>
+              <p>Ilang linggo na kaming hindi nagkita. Okay ka lang ba? Alam namin — abala ang buhay ng isang negosyante.</p>
+              <p>Gusto lang naming ipaalaala: <span class="em-highlight">nandito pa rin ang AKBai — handang-handa para tulungan ka.</span></p>
+              <div class="em-divider"></div>
+              <h2>Habang wala ka, nagdagdag kami ng bago:</h2>
+              <div class="em-check-list">
+                <div class="em-check-item"><span class="em-check-icon">✓</span><span><strong>Auto follow-up feature</strong> — si AKBai na ang bahala sa mga hindi pa nakabayad</span></div>
+                <div class="em-check-item"><span class="em-check-icon">✓</span><span><strong>Inventory alerts</strong> — abisuhan ka bago maubos ang stock</span></div>
+                <div class="em-check-item"><span class="em-check-icon">✓</span><span><strong>BIR summary reports</strong> — para sa mas madaling tax season</span></div>
+              </div>
+              <div style="text-align:center;margin:28px 0">
+                <a href="#" class="em-btn">Bumalik sa AKBai →</a>
+              </div>
+              <div class="em-divider"></div>
+              <div class="em-quote">
+                <div class="em-quote-text">"Hindi ko akalaing may ganitong malaking pagbabago ang laki nito sa aking negosyo. Nakalimutan ko pala buhay pa pala ito."</div>
+                <div class="em-quote-author">— Ramon C., Hardware Store, Cebu · Re-activated user</div>
+              </div>
+              <div class="em-divider"></div>
+              <p>Kung may reason bakit hindi mo ito nagagamit — gusto naming malaman. I-reply lang dito.</p>
+              <p style="margin-bottom:0">Nandito kami — kaakbay mo sa bawat hakbang. 🤝<br/>— Ang AKBai Team</p>
+            </div>
+            <div class="em-footer">
+              <div class="em-footer-brand">AKB<span>ai</span></div>
+              <p>Kaakbay mo sa negosyo. · <a href="#">akbai.com</a> · <a href="#">hello@akbai.ph</a></p>
+              <p>Ayaw mo nang makatanggap ng mga email na ito? <a href="#">I-unsubscribe dito.</a></p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /email-body -->
+    </div><!-- /email-preview -->
+  </div><!-- /preview-col -->
+
+  <!-- SPEC COLUMN -->
+  <div class="spec-col">
+
+    <!-- Specs for Email 1 -->
+    <div id="spec-waitlist" class="spec-card">
+      <h3>📧 Email Specs</h3>
+      <div class="spec-row"><span class="spec-label">Type</span><span class="spec-val">Transactional</span></div>
+      <div class="spec-row"><span class="spec-label">Trigger</span><span class="spec-val">On waitlist signup</span></div>
+      <div class="spec-row"><span class="spec-label">Send time</span><span class="spec-val">Immediately</span></div>
+      <div class="spec-row"><span class="spec-label">From name</span><span class="spec-val">AKBai Team</span></div>
+      <div class="spec-row"><span class="spec-label">From email</span><span class="spec-val">hello@akbai.ph</span></div>
+      <div class="spec-subject">Subject: Naka-lista ka na sa AKBai waitlist! 🎉</div>
+      <div class="spec-subject" style="margin-top:6px">Preview: Ikaw ay #[N] sa aming listahan — abisuhan ka namin pag handa na kami.</div>
+    </div>
+    <div id="spec-waitlist-2" class="spec-card">
+      <h3>✍️ Copy Notes</h3>
+      <div class="copy-note">Tone is warm and celebratory — like congratulating a friend. The position number (#[N]) creates excitement and exclusivity. Steps manage expectations so they know what to expect next.</div>
+    </div>
+
+    <!-- Specs for Email 2 -->
+    <div id="spec-beta" class="spec-card" style="display:none">
+      <h3>📧 Email Specs</h3>
+      <div class="spec-row"><span class="spec-label">Type</span><span class="spec-val">Transactional</span></div>
+      <div class="spec-row"><span class="spec-label">Trigger</span><span class="spec-val">Beta access granted</span></div>
+      <div class="spec-row"><span class="spec-label">Send time</span><span class="spec-val">Immediately on invite</span></div>
+      <div class="spec-row"><span class="spec-label">From name</span><span class="spec-val">AKBai Team</span></div>
+      <div class="spec-subject">Subject: Handa na si AKBai para sa iyo, [First Name] 🔓</div>
+      <div class="spec-subject" style="margin-top:6px">Preview: Ikaw ay isa sa aming unang 500 beta users — dito ang iyong access.</div>
+    </div>
+    <div id="spec-beta-2" class="spec-card" style="display:none">
+      <h3>✍️ Copy Notes</h3>
+      <div class="copy-note">The "first 500" framing creates genuine exclusivity. Features grid shows immediate value. The testimonial quote reduces first-use anxiety. CTA is single and prominent.</div>
+    </div>
+
+    <!-- Specs for Email 3 -->
+    <div id="spec-onboard" class="spec-card" style="display:none">
+      <h3>📧 Email Specs</h3>
+      <div class="spec-row"><span class="spec-label">Type</span><span class="spec-val">Onboarding drip</span></div>
+      <div class="spec-row"><span class="spec-label">Trigger</span><span class="spec-val">3 days after beta access</span></div>
+      <div class="spec-row"><span class="spec-label">Send time</span><span class="spec-val">9AM PHT</span></div>
+      <div class="spec-row"><span class="spec-label">Goal</span><span class="spec-val">First meaningful action</span></div>
+      <div class="spec-subject">Subject: 3 tanong para subukan sa AKBai ngayon 💬</div>
+      <div class="spec-subject" style="margin-top:6px">Preview: Ikaw na ang boss — tanungin mo na ang negosyo mo.</div>
+    </div>
+    <div id="spec-onboard-2" class="spec-card" style="display:none">
+      <h3>✍️ Copy Notes</h3>
+      <div class="copy-note">Specific example prompts lower the barrier to first use — no guessing what to type. Three support options let different user types self-select their help path. Light accountability ("3 days in") without pressure.</div>
+    </div>
+
+    <!-- Specs for Email 4 -->
+    <div id="spec-reengage" class="spec-card" style="display:none">
+      <h3>📧 Email Specs</h3>
+      <div class="spec-row"><span class="spec-label">Type</span><span class="spec-val">Re-engagement</span></div>
+      <div class="spec-row"><span class="spec-label">Trigger</span><span class="spec-val">14 days inactive</span></div>
+      <div class="spec-row"><span class="spec-label">Send time</span><span class="spec-val">Tuesday 10AM PHT</span></div>
+      <div class="spec-row"><span class="spec-label">Goal</span><span class="spec-val">Return to product</span></div>
+      <div class="spec-subject">Subject: Nandito pa rin kami, [First Name] 👋</div>
+      <div class="spec-subject" style="margin-top:6px">Preview: Ilang bagong features ang naghihintay sa iyo — at libre pa rin.</div>
+    </div>
+    <div id="spec-reengage-2" class="spec-card" style="display:none">
+      <h3>✍️ Copy Notes</h3>
+      <div class="copy-note">Empathetic opening — no guilt-tripping. "New features" gives a reason to return beyond just "come back." The testimonial from a re-activated user mirrors their situation. Ask for feedback in closing creates a two-way relationship.</div>
+    </div>
+
+    <!-- Sequence map -->
+    <div class="spec-card">
+      <h3>📬 Full Email Sequence</h3>
+      <div class="spec-row"><span class="spec-label" style="font-weight:700;color:#D97706">Day 0</span><span class="spec-val">Waitlist confirmation</span></div>
+      <div class="spec-row"><span class="spec-label" style="font-weight:700;color:#D97706">Day 1</span><span class="spec-val">Beta access granted</span></div>
+      <div class="spec-row"><span class="spec-label" style="font-weight:700;color:#D97706">Day 3</span><span class="spec-val">Onboarding tips</span></div>
+      <div class="spec-row"><span class="spec-label" style="font-weight:700;color:#D97706">Day 7</span><span class="spec-val">Feature deep dive</span></div>
+      <div class="spec-row"><span class="spec-label" style="font-weight:700;color:#D97706">Day 14</span><span class="spec-val">Re-engagement (if inactive)</span></div>
+      <div class="spec-row"><span class="spec-label" style="font-weight:700;color:#D97706">Day 28</span><span class="spec-val">Upgrade nudge (Negosyo plan)</span></div>
+    </div>
+
+  </div><!-- /spec-col -->
+</div><!-- /main -->
+
+<script>
+const emailIds = ['waitlist','beta','onboard','reengage'];
+function showEmail(id, btn) {
+  emailIds.forEach(e => {
+    document.getElementById('em-'+e).classList.remove('active');
+    const s1 = document.getElementById('spec-'+e);
+    const s2 = document.getElementById('spec-'+e+'-2');
+    if(s1) s1.style.display='none';
+    if(s2) s2.style.display='none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
+  document.getElementById('em-'+id).classList.add('active');
+  const s1=document.getElementById('spec-'+id);
+  const s2=document.getElementById('spec-'+id+'-2');
+  if(s1) s1.style.display='block';
+  if(s2) s2.style.display='block';
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

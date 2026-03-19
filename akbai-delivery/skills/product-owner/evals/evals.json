@@ -1,0 +1,23 @@
+{
+  "skill_name": "product-owner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm trying to decide whether to build the Reply Drafter or Costing Cards next. Both are in the Phase 1 backlog but I only have one sprint left before I need to focus on polish. Which should I prioritize and why?",
+      "expected_output": "A prioritization comparison using the MCTD framework, with scores for both features, a clear recommendation based on Maria Moment impact, and consideration of dependencies and Anton's solo-founder constraints.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Write me a user story with full acceptance criteria for the Resibo Scanner feature. Make sure it covers what happens when a Free user tries to use it.",
+      "expected_output": "A complete user story written for Maria (not generic 'user'), with Given/When/Then AC covering happy path, empty state, error state, and tier restriction. Should include Taglish KA voice notes and reference the ₱0.16/scan cost.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "We're at month 5 and I have 38 registered users, 12 paying, MRR of ₱4,788, conversion rate of 16%, 7-day retention at 35%, NPS of 22, support resolution at 18 hours, and unit economics are positive. Run a sense check — are we ready for Phase 2?",
+      "expected_output": "A structured sense check assessment using the 8-signal framework, each signal scored GREEN/YELLOW/RED against thresholds, with a YELLOW verdict (most signals are YELLOW), specific recommendations for the lagging signals, and a suggested 2-4 week extension plan.",
+      "files": []
+    }
+  ]
+}

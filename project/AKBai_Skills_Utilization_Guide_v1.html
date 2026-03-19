@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKBai — Skills Utilization Guide v1</title>
+<style>
+  :root {
+    --orange: #F97316;
+    --orange-light: #FED7AA;
+    --orange-dark: #C2410C;
+    --blue: #1E40AF;
+    --blue-light: #DBEAFE;
+    --green: #15803D;
+    --green-light: #DCFCE7;
+    --purple: #7E22CE;
+    --purple-light: #F3E8FF;
+    --red: #B91C1C;
+    --red-light: #FEE2E2;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-400: #9CA3AF;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #fff;
+    color: var(--gray-800);
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange) 60%, #FB923C 100%);
+    color: white;
+    padding: 48px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .header-label {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    opacity: 0.85; margin-bottom: 10px;
+  }
+  .header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; line-height: 1.2; }
+  .header-sub { font-size: 16px; opacity: 0.9; max-width: 620px; }
+  .header-meta {
+    margin-top: 20px; display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 13px; opacity: 0.85;
+  }
+  .header-meta span { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; }
+
+  /* ── NAV ── */
+  .toc {
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 20px 40px;
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  }
+  .toc-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-400); margin-right: 4px; }
+  .toc a {
+    font-size: 13px; color: var(--blue);
+    text-decoration: none; padding: 4px 10px;
+    background: var(--blue-light); border-radius: 12px;
+    white-space: nowrap;
+  }
+  .toc a:hover { background: #BFDBFE; }
+
+  /* ── LAYOUT ── */
+  .content { max-width: 1100px; margin: 0 auto; padding: 40px; }
+
+  /* ── SECTION HEADERS ── */
+  .section { margin-bottom: 56px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px; padding-bottom: 14px;
+    border-bottom: 2px solid var(--orange-light);
+  }
+  .phase-badge {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 20px; white-space: nowrap;
+  }
+  .badge-phase0 { background: #FEF3C7; color: #92400E; }
+  .badge-phase1 { background: var(--blue-light); color: var(--blue); }
+  .badge-phase2 { background: var(--green-light); color: var(--green); }
+  .badge-phase3 { background: var(--purple-light); color: var(--purple); }
+  .badge-ongoing { background: var(--gray-100); color: var(--gray-600); }
+  .section-header h2 { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+  .section-desc {
+    background: var(--gray-50); border-left: 3px solid var(--orange);
+    padding: 14px 18px; border-radius: 0 8px 8px 0;
+    font-size: 14px; color: var(--gray-600);
+    margin-bottom: 24px;
+  }
+  .section-desc strong { color: var(--gray-800); }
+
+  /* ── SKILL CARD ── */
+  .skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 20px; }
+  .skill-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .skill-card-header {
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .skill-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .icon-eng { background: var(--blue-light); }
+  .icon-design { background: var(--purple-light); }
+  .icon-mkt { background: var(--green-light); }
+  .icon-tools { background: var(--orange-light); }
+  .icon-plugin { background: #FEF3C7; }
+  .skill-name { font-size: 14px; font-weight: 700; color: var(--gray-900); line-height: 1.2; }
+  .skill-cmd {
+    font-size: 11px; font-family: monospace; background: var(--gray-100);
+    padding: 2px 7px; border-radius: 4px; color: var(--gray-600);
+    margin-top: 2px; display: inline-block;
+  }
+  .skill-body { padding: 16px 18px; }
+  .skill-when { margin-bottom: 12px; }
+  .skill-when-label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--orange-dark); font-weight: 700; margin-bottom: 4px;
+  }
+  .skill-when p { font-size: 13px; color: var(--gray-700); }
+  .prompt-box {
+    background: var(--gray-900);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 12px;
+  }
+  .prompt-label {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    color: #9CA3AF; margin-bottom: 8px; font-weight: 600;
+  }
+  .prompt-text {
+    font-family: monospace; font-size: 12px;
+    color: #E5E7EB; line-height: 1.6; white-space: pre-wrap;
+  }
+  .prompt-text em { color: #FCD34D; font-style: normal; }
+  .tip-box {
+    margin-top: 10px;
+    background: #FFFBEB; border: 1px solid #FDE68A;
+    border-radius: 6px; padding: 10px 12px;
+    font-size: 12px; color: #92400E;
+  }
+  .tip-box::before { content: '💡 '; }
+
+  /* ── PROCESS FLOW ── */
+  .process-flow { margin: 24px 0; }
+  .process-step {
+    display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start;
+  }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--orange); color: white;
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .step-content { flex: 1; }
+  .step-content h4 { font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .step-content p { font-size: 13px; color: var(--gray-600); }
+  .step-skills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .step-skill-tag {
+    font-size: 11px; padding: 2px 8px; border-radius: 10px;
+    font-weight: 600;
+  }
+  .tag-eng { background: var(--blue-light); color: var(--blue); }
+  .tag-design { background: var(--purple-light); color: var(--purple); }
+  .tag-mkt { background: var(--green-light); color: var(--green); }
+  .tag-tools { background: var(--orange-light); color: var(--orange-dark); }
+  .tag-plugin { background: #FEF3C7; color: #92400E; }
+
+  /* ── TOKEN EFFICIENCY ── */
+  .token-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .token-table th {
+    background: var(--gray-800); color: white;
+    padding: 10px 14px; text-align: left; font-weight: 600;
+  }
+  .token-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); }
+  .token-table tr:nth-child(even) td { background: var(--gray-50); }
+  .token-level {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;
+  }
+  .token-high { background: #FEE2E2; color: #B91C1C; }
+  .token-med { background: #FEF3C7; color: #92400E; }
+  .token-low { background: #DCFCE7; color: #15803D; }
+
+  /* ── CHEAT SHEET ── */
+  .cheatsheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .cheat-card {
+    border-radius: 10px; padding: 16px;
+    border: 1px solid var(--gray-200);
+  }
+  .cheat-phase { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .cheat-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+  .cheat-items { list-style: none; }
+  .cheat-items li {
+    font-size: 12px; padding: 4px 0;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: center; gap: 8px;
+    color: var(--gray-700);
+  }
+  .cheat-items li:last-child { border: none; }
+  .cheat-items li code {
+    font-size: 11px; background: var(--gray-100);
+    padding: 1px 5px; border-radius: 3px; color: var(--gray-600);
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 10px; padding: 16px 20px; margin: 16px 0;
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 13px;
+  }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-info { background: var(--blue-light); border: 1px solid #93C5FD; }
+  .callout-warn { background: #FFFBEB; border: 1px solid #FDE68A; }
+  .callout-success { background: var(--green-light); border: 1px solid #86EFAC; }
+  .callout h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+
+  /* ── SESSION TEMPLATE ── */
+  .session-template {
+    background: #0F172A;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .session-template .template-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: #64748B; margin-bottom: 12px; font-weight: 700;
+  }
+  .session-template pre {
+    font-family: monospace; font-size: 12px;
+    color: #E2E8F0; line-height: 1.8; white-space: pre-wrap;
+  }
+  .session-template .var { color: #FCD34D; }
+  .session-template .comment { color: #64748B; }
+  .session-template .cmd { color: #86EFAC; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--gray-900); color: var(--gray-400);
+    text-align: center; padding: 32px;
+    font-size: 13px; margin-top: 60px;
+  }
+  footer strong { color: white; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--gray-200); margin: 40px 0; }
+
+  /* ── SPRINT TABLE ── */
+  .sprint-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+  .sprint-table th {
+    background: var(--blue); color: white;
+    padding: 10px 14px; text-align: left;
+  }
+  .sprint-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+  .sprint-table tr:nth-child(even) td { background: var(--gray-50); }
+
+  @media (max-width: 720px) {
+    .content { padding: 20px; }
+    .skill-grid { grid-template-columns: 1fr; }
+    .cheatsheet { grid-template-columns: 1fr; }
+    .header { padding: 32px 20px; }
+    .header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════ HEADER -->
+<div class="header">
+  <div class="header-label">AKBai — Katuwang ng Negosyo Mo</div>
+  <h1>Skills Utilization Guide v1</h1>
+  <div class="header-sub">A step-by-step playbook for Anton: which Claude skills to invoke at each build phase, what context to give, and how to stay within Pro token limits.</div>
+  <div class="header-meta">
+    <span>📅 March 2026</span>
+    <span>🗺️ Based on Roadmap v13 + Ops Playbook v6</span>
+    <span>⚡ Claude Pro — Token-Efficient Patterns</span>
+    <span>👤 Solo Founder Workflow</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ TOC -->
+<div class="toc">
+  <span class="toc-label">Jump to</span>
+  <a href="#how-to-use">How To Use</a>
+  <a href="#phase0a">Phase 0A: Legal</a>
+  <a href="#phase0b">Phase 0B: Validation</a>
+  <a href="#phase1">Phase 1: MVP Build</a>
+  <a href="#phase2">Phase 2: Growth</a>
+  <a href="#phase3">Phase 3: Platform</a>
+  <a href="#ongoing">Ongoing Cadence</a>
+  <a href="#plugin">Build the Plugin</a>
+  <a href="#tokens">Token Efficiency</a>
+  <a href="#cheatsheet">Quick Reference</a>
+</div>
+
+<div class="content">
+
+<!-- ════════════════════════════════════════════ HOW TO USE -->
+<div class="section" id="how-to-use">
+  <div class="section-header">
+    <span class="phase-badge badge-ongoing">Foundation</span>
+    <h2>How to Use This Guide</h2>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-icon">🧭</div>
+    <div>
+      <h4>The Core Principle</h4>
+      Each skill is a specialized AI brain you summon for a specific job. The key is giving it the right context upfront so it doesn't waste your tokens asking clarifying questions. Think of each skill invocation as hiring a consultant for 30 minutes — brief them once, get the deliverable.
+    </div>
+  </div>
+
+  <div class="process-flow" style="margin-top:24px;">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Identify the task type</h4>
+        <p>Match your current task to one of the 5 categories: Engineering, Design, Marketing, Tools (docx/xlsx/pdf/pptx), or Plugin Management.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Find your phase in this guide</h4>
+        <p>Each roadmap phase has a curated set of skills with exact prompts. Use the cheatsheet at the bottom for quick lookup.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Start a fresh session for major work</h4>
+        <p>For any single-skill deep work session (building a feature, writing a doc, planning a campaign), start a new Claude conversation. Keeps tokens clean.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>Invoke the skill, then paste your context</h4>
+        <p>Say "use [skill name]" then immediately paste the relevant context block from the session templates in this guide.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h4>Save outputs to your Project Documents folder</h4>
+        <p>Every deliverable generated goes into <code>/AKBai/Project Documents/</code>. Reference documents become fuel for future skill sessions.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-icon">⚠️</div>
+    <div>
+      <h4>Token Budget Rule (Claude Pro)</h4>
+      Never invoke more than 2 skills in the same conversation. Each skill loads ~2K–4K tokens of instructions. For a single deep-work session: open a new conversation, invoke ONE skill, complete the full task, save the output. Context switching mid-session burns tokens fast.
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ PHASE 0A -->
+<div class="section" id="phase0a">
+  <div class="section-header">
+    <span class="phase-badge badge-phase0">Phase 0A</span>
+    <h2>Legal Foundation & Business Setup</h2>
+  </div>
+  <div class="section-desc">
+    <strong>Weeks 1–4. Goal:</strong> DTI/SEC registration, BIR Certificate of Registration, NPC pre-compliance setup, IP/trademark filing, employment contract review. You're building the legal scaffolding before writing a single line of product code.
+  </div>
+
+  <div class="skill-grid">
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-tools">📄</div>
+        <div>
+          <div class="skill-name">PDF — Read & Extract Legal Docs</div>
+          <div class="skill-cmd">anthropic-skills:pdf</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Reading DTI requirements, BIR COR procedures, NPC Data Privacy Act guidelines, or any scanned legal document you need to extract key obligations from.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use the PDF skill. I'm a solo founder building AKBai — a Filipino MSME SaaS. Read this [DTI/NPC/BIR] document and extract: (1) every requirement I must complete, (2) deadlines, (3) fees, (4) any compliance obligations that affect a software product handling user financial data. Output as a checklist I can act on.</div>
+        </div>
+        <div class="tip-box">After extraction, paste the checklist into a DOCX compliance tracker using the docx skill.</div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-tools">📝</div>
+        <div>
+          <div class="skill-name">DOCX — Compliance Tracker & Templates</div>
+          <div class="skill-cmd">anthropic-skills:docx</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Creating the NPC data processing agreement template, DPO designation letter, BIR COR application checklist, Notion runbook for legal tasks, or privacy policy draft.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use the docx skill. Create a Philippine NPC-compliant Privacy Policy template for "AKBai" (projectka.ph). The product: a PWA for Filipino MSMEs that processes: names, email, phone, business financial records, receipt images, GCash transactions. Data is stored in Supabase (US-based). Include: purpose of data collection, user rights under RA 10173, retention policy, and breach notification clause. Tone: plain Taglish-friendly English.</div>
+        </div>
+        <div class="tip-box">Run this once for Privacy Policy, once for Terms of Service, once for the DPO designation letter. Three sessions, three documents.</div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-tools">📊</div>
+        <div>
+          <div class="skill-name">XLSX — Investment & Budget Tracker</div>
+          <div class="skill-cmd">anthropic-skills:xlsx</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Tracking Year 1 cash investment (₱50K–₱120K range), categorizing legal fees, infrastructure costs, Meta API fees. Set up once in Phase 0A, update monthly.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use the xlsx skill. Create an AKBai Year 1 Budget Tracker spreadsheet. Categories: Legal (DTI, BIR, NPC, IP/trademark), Infrastructure (Supabase, Vercel, Cloudflare, Claude API, Xendit), Meta API, Marketing (organic vs paid), Outsourced DPO. Include columns: Category, Item, Estimated Low, Estimated High, Actual Spend, Month, Notes. Add a summary tab with total by category and running monthly burn.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">🏗️</div>
+        <div>
+          <div class="skill-name">Engineering: System Design — Data Privacy Architecture</div>
+          <div class="skill-cmd">engineering:system-design</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Designing the Supabase schema and data architecture to be NPC-compliant from Day 1: RLS policies, encryption at rest, data retention tables, audit logs.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use engineering system-design. Design the Supabase data architecture for AKBai (Next.js PWA) that is NPC-compliant under Philippine RA 10173. Requirements: (1) Row-level security per user_id, (2) encrypted PII fields, (3) soft-delete with retention policy table, (4) audit log table for data access, (5) account deletion endpoint that purges PII within 7 days. Stack: Supabase (Postgres), Next.js App Router, Vercel Edge. Output an ADR + schema diagram in text.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ PHASE 0B -->
+<div class="section" id="phase0b">
+  <div class="section-header">
+    <span class="phase-badge badge-phase0">Phase 0B</span>
+    <h2>Demand Validation, Brand & GTM Prep</h2>
+  </div>
+  <div class="section-desc">
+    <strong>Weeks 4–10. Goal:</strong> 100+ waitlist signups before writing product code. Build the brand, launch the waitlist page (projectka.ph), publish 5–6 SEO Taglish articles, post in FB MSME groups, run 10 founder interviews, prototype share. Claude writes 80% of the content.
+  </div>
+
+  <div class="skill-grid">
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-tools">🎨</div>
+        <div>
+          <div class="skill-name">Brand Identity — Full AKBai Brand System</div>
+          <div class="skill-cmd">anthropic-skills:brand-identity</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>ONE session, early in Phase 0B. Creates your full brand guide: logo concept, color palette, typography, Katuwang voice guidelines, and social media templates.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use the brand-identity skill. Brand: AKBai (projectka.ph). Tagline: "Katuwang ng negosyo mo." Target: Filipino female MSMEs (home food sellers, online sellers, freelancers), aged 25–45, earn ₱80K–₱250K/month, digitally literate. Positioning: NOT a bot, a Katuwang (equal partner). Tone: warm, hyper-competent, Taglish, never condescending. Uses "po" appropriately. Feels like a brilliant kababayan colleague. Color direction: Filipino warmth + digital trust. NOT corporate blue. Deliver: logo concept, primary/secondary palette, typography stack (Google Fonts), brand voice guide with 5 do/don't examples, social media card template.</div>
+        </div>
+        <div class="tip-box">This is your highest-leverage single session in Phase 0B. Every piece of content, copy, and marketing asset flows from this brand guide.</div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-mkt">🔍</div>
+        <div>
+          <div class="skill-name">Marketing: Competitive Analysis</div>
+          <div class="skill-cmd">marketing:competitive-analysis</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Before writing any positioning copy. Validate and expand the competitive brief against Taxumo, ChatGenie, SOFI AI, Packworks, and any new entrants found via web search.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use marketing competitive-analysis. Product: AKBai — integrated AI business OS for Filipino MSMEs (financial tracking + BIR compliance + customer comms + operations + AI VA). Analyze competitors: Taxumo (tax-only), ChatGenie (customer comms only), SOFI AI (generic chatbot), Packworks (sari-sari inventory). For each: pricing, feature set, Filipino-specific features, target segment, weaknesses. Conclude with: (1) AKBai's differentiated position, (2) messaging angles no competitor owns, (3) the single most dangerous competitive threat in the next 12 months.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-mkt">✍️</div>
+        <div>
+          <div class="skill-name">Marketing: Content Creation — SEO Taglish Articles</div>
+          <div class="skill-cmd">marketing:content-creation</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Writing each of the 5–6 SEO articles for projectka.ph/blog. One skill session per article. Target: long-tail Filipino search terms. Start in Phase 0B for 4+ months of SEO traction before Phase 2 launch.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt (one per article)</div>
+          <div class="prompt-text">Use marketing content-creation. Write a Taglish SEO blog article for projectka.ph/blog. Target keyword: "<em>[e.g. paano mag-file ng 1701Q online seller Philippines]</em>". Audience: Filipino online sellers/freelancers who are scared of BIR. Tone: warm, practical, like a knowledgeable kababayan explaining over coffee. No jargon. Length: 1,200–1,800 words. Structure: H1 (keyword-rich Taglish title), intro hook (relatable pain), step-by-step body, CTA at end pointing to AKBai waitlist. Do NOT use bullet points for body — write in paragraphs. Include a Taglish FAQ section with 3 questions.</div>
+        </div>
+        <div class="tip-box">Run 5–6 sessions total: one per keyword. Keywords: 1701Q filing, 8% flat tax, cost your baked goods, GCash income tracking, BIR registration online seller, freelancer tax Philippines.</div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-mkt">📣</div>
+        <div>
+          <div class="skill-name">Marketing: Campaign Planning — Phase 0 GTM</div>
+          <div class="skill-cmd">marketing:campaign-planning</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Planning the full Phase 0 GTM execution: FB group value-bombing posts, waitlist landing page copy, personal network outreach scripts, prototype share posts. One session, covers all tactics.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use marketing campaign-planning. Plan Phase 0 GTM for AKBai (projectka.ph). Goal: 100 waitlist signups, zero paid ads. Channels: Facebook MSME groups (Online Sellers PH, Home-Based Bakers PH, Freelancer PH), personal network DMs, TikTok/IG stories. Tactics needed: (1) 3 value-bombing FB post scripts that teach genuinely useful workflow, end with "Comment BETA", (2) waitlist landing page Taglish headline + subhead + social proof copy, (3) personal message script for 20 network DMs, (4) prototype share post for when Resibo Scanner first works. Tone: authentic, not salesy, build-in-public energy. Solo founder voice.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-design">✏️</div>
+        <div>
+          <div class="skill-name">Design: UX Writing — Waitlist & Onboarding Copy</div>
+          <div class="skill-cmd">design:ux-writing</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Writing the KA persona microcopy: waitlist confirmation email, Day 0–7 onboarding sequence messages, empty state copy, error messages — all in authentic Taglish.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use design ux-writing. Write the AKBai Day 0–7 automated onboarding sequence for new users. The AI persona is "KA" (Katuwang) — warm, hyper-competent, Taglish, calls user by name, uses "po" appropriately, never robotic. Day 0: welcome + 3 setup questions. Day 1: push notif nudge to scan first receipt. Day 2: if no scan, re-engage. Day 3: if scanned, cross-pillar discovery. Day 5: if inactive, check-in. Day 7: week summary. Each message: max 3 sentences, conversational, ends with ONE clear action. Reference persona: Maria the home baker, Jose the online seller.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-design">🔬</div>
+        <div>
+          <div class="skill-name">Design: User Research — Founder Interview Synthesis</div>
+          <div class="skill-cmd">design:user-research</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>After completing your 10 founder interviews from personal network outreach. Paste raw notes and get synthesized themes, validated pain points, and persona refinements.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use design user-research. I've completed 10 founder interviews with Filipino MSMEs (mix of: online sellers, home food sellers, freelancers). Here are my raw notes: <em>[paste notes]</em>. Synthesize: (1) top 3 pain points by frequency, (2) exact language they used about taxes/finances (for copy), (3) which features they got most excited about vs. confused by, (4) any assumptions from the roadmap that were contradicted, (5) recommendation on which persona (Maria/Jose/Ana/Andoy) to prioritize for MVP. Format as a research synthesis I can share with my future team.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ PHASE 1 -->
+<div class="section" id="phase1">
+  <div class="section-header">
+    <span class="phase-badge badge-phase1">Phase 1</span>
+    <h2>MVP Build — Sprint-by-Sprint Skills Map</h2>
+  </div>
+  <div class="section-desc">
+    <strong>Months 1–6. Goal:</strong> 50 registered users, 20 paying Pro subscribers (₱399/mo), ₱6K–₱10K MRR. Build in this exact order: Auth → Resibo Scanner → KA Core → BIR Deadlines → Invoices → Costing → Reply Drafter → Xendit → Onboarding sequence. Claude writes 80% of code.
+  </div>
+
+  <table class="sprint-table">
+    <thead>
+      <tr>
+        <th style="width:130px">Sprint / Module</th>
+        <th>What You're Building</th>
+        <th>Primary Skills</th>
+        <th>Key Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Sprint 0 Setup</strong><br><small style="color:#9CA3AF">Week 1–2</small></td>
+        <td>Repo, Supabase project, Next.js scaffold, Vercel CI/CD, Sentry, UptimeRobot</td>
+        <td><span class="step-skill-tag tag-eng">engineering:system-design</span> <span class="step-skill-tag tag-eng">engineering:architecture</span></td>
+        <td>ADR-001, schema v0, CI/CD pipeline live</td>
+      </tr>
+      <tr>
+        <td><strong>Sprint 1</strong><br><small style="color:#9CA3AF">Auth + Kilala Kita</small></td>
+        <td>Supabase Auth, Kilala Kita onboarding (3 questions), user profile schema, business type</td>
+        <td><span class="step-skill-tag tag-eng">engineering:documentation</span> <span class="step-skill-tag tag-design">design:ux-writing</span></td>
+        <td>Auth working, onboarding flow copy</td>
+      </tr>
+      <tr>
+        <td><strong>Sprint 2</strong><br><small style="color:#9CA3AF">Resibo Scanner (Core)</small></td>
+        <td>Camera input, Claude Haiku Vision OCR, expense card UI, category tagging, Supabase storage</td>
+        <td><span class="step-skill-tag tag-eng">engineering:system-design</span> <span class="step-skill-tag tag-eng">engineering:debug</span></td>
+        <td>Receipt → parsed expense card working</td>
+      </tr>
+      <tr>
+        <td><strong>Sprint 3</strong><br><small style="color:#9CA3AF">KA Core AI Layer</small></td>
+        <td>KA persona system prompt, Morning Briefing, Taglish response engine, context injection from user profile</td>
+        <td><span class="step-skill-tag tag-design">design:ux-writing</span> <span class="step-skill-tag tag-eng">engineering:system-design</span></td>
+        <td>KA voice guide, system prompt v1, Morning Briefing card</td>
+      </tr>
+      <tr>
+        <td><strong>Sprint 4</strong><br><small style="color:#9CA3AF">BIR Deadlines</small></td>
+        <td>BIR deadline calendar logic, countdown badge, Deadline Card UI, push notifications</td>
+        <td><span class="step-skill-tag tag-eng">engineering:documentation</span> <span class="step-skill-tag tag-eng">engineering:testing-strategy</span></td>
+        <td>BIR engine tested, deadline cards live</td>
+      </tr>
+      <tr>
+        <td><strong>Sprint 5</strong><br><small style="color:#9CA3AF">Invoices + Costing</small></td>
+        <td>Invoice Card (create/send/track), Costing Card (ingredients, margin calculator), PDF export</td>
+        <td><span class="step-skill-tag tag-eng">engineering:code-review</span> <span class="step-skill-tag tag-tools">anthropic-skills:pdf</span></td>
+        <td>Invoice + costing flows complete</td>
+      </tr>
+      <tr>
+        <td><strong>Sprint 6</strong><br><small style="color:#9CA3AF">Reply Drafter</small></td>
+        <td>Customer DM input, KA drafts reply, tone options, send via Meta Messenger (Phase 1: manual copy)</td>
+        <td><span class="step-skill-tag tag-design">design:ux-writing</span> <span class="step-skill-tag tag-eng">engineering:code-review</span></td>
+        <td>Reply Drafter feature live</td>
+      </tr>
+      <tr>
+        <td><strong>Sprint 7</strong><br><small style="color:#9CA3AF">Xendit + Paywall</small></td>
+        <td>Xendit subscription integration, Pro/Free tier gating, upgrade prompts, billing management</td>
+        <td><span class="step-skill-tag tag-eng">engineering:deploy-checklist</span> <span class="step-skill-tag tag-eng">engineering:testing-strategy</span></td>
+        <td>Payments live, Pro tier gated</td>
+      </tr>
+      <tr>
+        <td><strong>Sprint 8</strong><br><small style="color:#9CA3AF">Pre-launch Polish</small></td>
+        <td>WCAG accessibility pass, Taglish error messages, empty states, loading states, PWA manifest</td>
+        <td><span class="step-skill-tag tag-design">design:accessibility-review</span> <span class="step-skill-tag tag-design">design:design-critique</span></td>
+        <td>Accessibility report, polish fixes</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="skill-grid" style="margin-top:28px;">
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">🏛️</div>
+        <div>
+          <div class="skill-name">Engineering: System Design — Sprint 0 Architecture</div>
+          <div class="skill-cmd">engineering:system-design</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Once at the start of each major sprint where a new subsystem is introduced: Auth schema, Receipt OCR pipeline, KA AI context injection, Xendit webhook handler.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sprint 0 Setup Prompt</div>
+          <div class="prompt-text">Use engineering system-design. Design the full technical architecture for AKBai MVP. Stack: Next.js 14 App Router, Supabase (Postgres + Storage + Auth + Edge Functions), Claude API (Haiku for OCR/fast, Sonnet for KA reasoning), Xendit (subscriptions), Vercel (deploy), Cloudflare Pages (fallback Month 7+). Mobile-first PWA. Requirements: (1) Supabase schema for users, businesses, transactions, receipts, invoices, bir_deadlines, ka_conversations. (2) RLS policies per user_id. (3) Edge function for Xendit webhooks. (4) Claude API usage circuit breaker (daily spend cap). Output: schema DDL, folder structure, key architectural decisions as ADR format.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">🐛</div>
+        <div>
+          <div class="skill-name">Engineering: Debug — When Things Break</div>
+          <div class="skill-cmd">engineering:debug</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Any time you have a reproducible bug during development — especially Claude API response parsing, Supabase RLS policy failures, or Xendit webhook issues.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use engineering debug. Bug: <em>[describe behavior]</em>. Expected: <em>[what should happen]</em>. Stack trace / error: <em>[paste error]</em>. Relevant code: <em>[paste function]</em>. Environment: Next.js App Router, Supabase client v2, Vercel Edge runtime. I've already tried: <em>[what you tried]</em>. Diagnose root cause and give me the exact fix.</div>
+        </div>
+        <div class="tip-box">Always paste the FULL stack trace + the specific function. Vague descriptions waste tokens. Debug sessions should be 2–3 exchanges max.</div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">📖</div>
+        <div>
+          <div class="skill-name">Engineering: Documentation — Technical Docs & Runbooks</div>
+          <div class="skill-cmd">engineering:documentation</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>After completing each sprint: write the README section for the new feature, the BIR deadline calculation logic doc, the KA system prompt documentation, or the Freshdesk FAQ articles.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt — Feature Doc</div>
+          <div class="prompt-text">Use engineering documentation. Write technical documentation for the AKBai Resibo Scanner module. Audience: future engineer (or future me). Cover: (1) how it works (camera → Claude Haiku Vision → structured JSON → Supabase), (2) the Claude prompt used for OCR extraction, (3) edge cases handled (crumpled receipt, no date visible, etc.), (4) Supabase schema for receipts table, (5) how to test locally, (6) known limitations. Output as a Markdown README section.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">🔍</div>
+        <div>
+          <div class="skill-name">Engineering: Code Review — Before Every PR Merge</div>
+          <div class="skill-cmd">engineering:code-review</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Before merging any sprint to main. Especially critical for: Xendit webhook handler (payment security), Supabase RLS policies (data isolation), Claude API calls (prompt injection risks).</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use engineering code-review. Review this code for security, correctness, and performance. Context: AKBai — Next.js PWA handling Philippine MSME financial data. NPC compliance required. This is the <em>[Xendit webhook handler / Supabase RLS policy / Claude API wrapper]</em>. Focus on: (1) any data leakage risk, (2) auth bypass possibilities, (3) missing input validation, (4) error handling gaps. Code: <em>[paste code]</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">✅</div>
+        <div>
+          <div class="skill-name">Engineering: Testing Strategy — Sprint Test Plans</div>
+          <div class="skill-cmd">engineering:testing-strategy</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Before building each sprint. Use once at Sprint 4 (BIR engine — complex date logic needs tests) and Sprint 7 (Xendit — payment flows must not fail silently).</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt — BIR Engine Tests</div>
+          <div class="prompt-text">Use engineering testing-strategy. Write a test plan for the AKBai BIR Deadline Engine. This module: given a user's business type (sole proprietor / professional / VAT-registered), returns a list of upcoming BIR filing deadlines with dates and estimated amounts. Critical edge cases: deadline falls on a weekend/holiday (move to next banking day), user just registered mid-year (partial year deadlines), user crosses the P3M threshold mid-year. Output: Jest test cases structure (describe/it blocks) + the 5 most critical test scenarios written as full test functions.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">🚀</div>
+        <div>
+          <div class="skill-name">Engineering: Deploy Checklist — Before Every Production Push</div>
+          <div class="skill-cmd">engineering:deploy-checklist</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Before EVERY push to production. Takes 5 minutes. Non-negotiable for Sprint 7+ (when real user money is involved via Xendit).</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use engineering deploy-checklist. I'm deploying AKBai Sprint <em>[N]</em> to production (Vercel, main branch). New changes: <em>[list features/fixes]</em>. Stack: Next.js, Supabase, Claude API, Xendit. Current user count: <em>[N]</em> (Phase 1 beta). Generate a pre-deployment checklist specific to these changes. Include: environment variable check, Supabase migration verification, Xendit webhook URL update if needed, Sentry release tag, UptimeRobot alert pause/resume, rollback plan.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-design">♿</div>
+        <div>
+          <div class="skill-name">Design: Accessibility Review — Pre-Launch Pass</div>
+          <div class="skill-cmd">design:accessibility-review</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Sprint 8 only — once before public launch. Run on your 5 core screens: Morning Briefing, Receipt Scanner, BIR Deadline Card, Invoice Card, Upgrade Prompt.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use design accessibility-review. Audit these AKBai screens for WCAG 2.1 AA compliance. Context: Filipino MSME app, mobile-first PWA, Chat + Card hybrid UI. Screens: <em>[paste HTML/JSX for each screen or describe them]</em>. Focus on: color contrast (orange on white — our brand color may fail), touch target sizes (minimum 44x44px for mobile), form labels for receipt upload, error message patterns, screen reader compatibility for the card components.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-design">🎨</div>
+        <div>
+          <div class="skill-name">Design: Design Critique — UI Feedback Sessions</div>
+          <div class="skill-cmd">design:design-critique</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>After building each major card UI (Expense Card, Morning Briefing, BIR Deadline Card). Take a screenshot and get structured usability feedback before shipping.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use design design-critique. Review this AKBai <em>[Morning Briefing Dashboard / BIR Deadline Card / Expense Card]</em> UI. Context: Filipino MSME, mobile-first PWA, target user Maria (home food seller, 35–45yo, comfortable with Facebook but not enterprise software). The design goal: user opens app in 30 seconds before a delivery, scans the card, takes action. Evaluate: visual hierarchy, information density, actionability, Filipino cultural fit, and whether the urgency signals (red/green color coding) are immediately clear. Screenshot: <em>[attach or describe]</em></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:24px;">
+    <div class="callout callout-success">
+      <div class="callout-icon">🎯</div>
+      <div>
+        <h4>The "Maria Moment" Test — Use This Before Every Sprint Review</h4>
+        Before closing any sprint, ask yourself: does this feature get Maria (home baker, opens the app 30 seconds before a delivery) to see "Kumikita ka. ₱18,400 ang net mo this month" within 7 days of signing up? If the answer is unclear, run a <strong>design:design-critique</strong> session on the user flow before shipping.
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;margin-bottom:16px;font-size:16px;color:var(--gray-700);">🚨 Incident Response — When Production Breaks (Phase 1+)</h3>
+
+  <div class="skill-card" style="max-width:100%;">
+    <div class="skill-card-header">
+      <div class="skill-icon icon-eng">🔥</div>
+      <div>
+        <div class="skill-name">Engineering: Incident Response — P0/P1 Production Issues</div>
+        <div class="skill-cmd">engineering:incident-response</div>
+      </div>
+    </div>
+    <div class="skill-body">
+      <div class="skill-when">
+        <div class="skill-when-label">When to use</div>
+        <p>Any P0 (data loss, payment failure, NPC breach) or P1 (core feature broken for all users, auth down). This is your emergency playbook. Invoke even during Globe work hours via mobile.</p>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">P0/P1 Emergency Prompt</div>
+        <div class="prompt-text">Use engineering incident-response. ACTIVE INCIDENT — AKBai production. Severity: <em>[P0 / P1]</em>. Issue: <em>[describe what's broken]</em>. Time detected: <em>[timestamp]</em>. Affected users: <em>[estimated N users]</em>. Error/logs: <em>[paste Sentry error or Supabase logs]</em>. What I've checked so far: <em>[what you know]</em>. I need: (1) immediate mitigation steps in priority order, (2) draft status page message for users, (3) if P0 data breach — NPC notification checklist (72-hour window). I have a day job (Globe Telecom) so I need the fastest path to resolution.</div>
+      </div>
+      <div class="tip-box">Pre-draft your P0 incident response template in Notion (Phase 0B task). When a real P0 hits, you paste it here instead of typing under pressure.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ PHASE 2 -->
+<div class="section" id="phase2">
+  <div class="section-header">
+    <span class="phase-badge badge-phase2">Phase 2</span>
+    <h2>Growth — Viral Loops & Performance Marketing</h2>
+  </div>
+  <div class="section-desc">
+    <strong>Months 6–12. Goal:</strong> 200 registered users, 80 paying subscribers (Pro + Business), ₱30K–₱50K MRR. Key additions: WhatsApp Business API, referral loop, Kumikita Ba Ako free calculator tool, micro-influencer barter program. Shift from founder-led to product-led growth.
+  </div>
+
+  <div class="skill-grid">
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-mkt">📧</div>
+        <div>
+          <div class="skill-name">Marketing: Email Sequence — Waitlist Activation + Re-engagement</div>
+          <div class="skill-cmd">marketing:email-sequence</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Two sessions: (1) Phase 1 launch — waitlist activation email sequence (Day 0 invite, Day 3 nudge, Day 7 feature highlight). (2) Phase 2 — churn re-engagement for users inactive 14+ days.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt — Activation Sequence</div>
+          <div class="prompt-text">Use marketing email-sequence. Design the AKBai waitlist activation email sequence (Loops.so / Resend). Trigger: user joins waitlist → gets Phase 1 invite. 4-email sequence: Email 1 (Day 0): "KA is live — here's your invite" personalized by business type (baker vs. seller vs. freelancer). Email 2 (Day 3): "Scan your first receipt" — feature spotlight. Email 3 (Day 7): "Your first BIR reminder is set" — tax value prop. Email 4 (Day 14 if unpaid): upgrade prompt with price anchoring (AKBai ₱399/mo vs. bookkeeper ₱5,000+/mo). Tone: Taglish, warm, KA voice. No corporate-speak. Each email under 150 words.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-mkt">📊</div>
+        <div>
+          <div class="skill-name">Marketing: Performance Analytics — Monthly MRR Report</div>
+          <div class="skill-cmd">marketing:performance-analytics</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Monthly, starting Month 2 of Phase 1. Review GTM success metrics from the 8-Signal Sense Check (registered users, paying subscribers, MRR, free-to-paid conversion, social following).</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use marketing performance-analytics. Monthly review for AKBai — Month <em>[N]</em>. Metrics this month: Registered users: <em>[N]</em>. Paying Pro subscribers: <em>[N]</em>. MRR: ₱<em>[amount]</em>. Free-to-paid conversion: <em>[%]</em>. 7-day retention: <em>[%]</em>. Top support ticket categories: <em>[list]</em>. TikTok/IG followers: <em>[N]</em>. Waitlist signups: <em>[N]</em>. Phase target: 50 users, 20 paying, ₱6K–₱10K MRR. Analyze: what's on/off track, the single metric most at risk, the single highest-leverage action for next month. Format as a 1-page founder dashboard summary.</div>
+        </div>
+        <div class="tip-box">Schedule this as a recurring 30-minute Sunday session. Keeps you data-driven even as a solo founder with a day job.</div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-mkt">🌱</div>
+        <div>
+          <div class="skill-name">Marketing: Campaign Planning — Micro-Influencer & Referral</div>
+          <div class="skill-cmd">marketing:campaign-planning</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Phase 2 launch planning: micro-influencer barter program (5–10 TikTok/IG creators, 5K–20K followers), referral loop implementation plan (3 referrals = 1 free month), Monthly BIR deadline FB posts.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use marketing campaign-planning. Plan AKBai's Phase 2 Growth campaigns. Goal: 200 registered users, 80 paying (Pro + Business), 70% organic / 30% paid. Three campaigns needed: (1) Micro-influencer barter: identify 5–10 Filipino business vloggers (10K–100K followers, freelancer/food seller niche), script the outreach message, define what "authentic review" looks like (show scanning a real receipt, no scripted ads). (2) Referral loop: mechanics (refer 3 sellers, get 1 month free), where in the UX to trigger it (post first receipt scan + post first BIR deadline saved). (3) Monthly tax deadline organic posts for FB seller groups — template for each BIR month. Timeline: Month 6–12.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-mkt">🔎</div>
+        <div>
+          <div class="skill-name">Marketing: SEO Audit — 4-Month Check</div>
+          <div class="skill-cmd">marketing:seo-audit</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Once, at Month 5 of Phase 1 (4 months after publishing Phase 0B articles). Check organic rankings for target keywords, identify gaps, plan new content for Phase 2.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use marketing seo-audit. Run an SEO review for projectka.ph. Target keywords: paano mag-file 1701Q online seller, 8% flat tax Philippines freelancer, how to cost baked goods Philippines, BIR registration online seller, GCash income tax. Published articles: <em>[list URLs]</em>. Current organic traffic estimate: <em>[if available from Search Console]</em>. Identify: (1) which keywords are ranking (position 1–20), (2) content gaps vs. competitors, (3) 3 new article ideas for Phase 2 that compound the existing SEO base, (4) any technical SEO issues on the site. The Kumikita Ba Ako free calculator tool launches in Phase 2 — advise on keyword strategy for it.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">⚙️</div>
+        <div>
+          <div class="skill-name">Engineering: Tech Debt — Phase 1 → 2 Transition Audit</div>
+          <div class="skill-cmd">engineering:tech-debt</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Once, at the end of Phase 1 (Month 6), before adding Phase 2 complexity. Audit all shortcuts taken during rapid MVP sprints. Prioritize fixes before scaling.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use engineering tech-debt. Audit AKBai codebase for tech debt before Phase 2. I built Phase 1 in 6 months as a solo founder. Known shortcuts: <em>[list what you know, e.g. "no error boundaries, hardcoded BIR dates, no input sanitization on receipt upload"]</em>. Codebase: Next.js App Router, Supabase, Claude API wrapper. I'm about to add: WhatsApp Business API integration, referral system, business tier with multi-user features. Categorize debt by: (1) must fix before Phase 2 (security/stability risks), (2) should fix in Phase 2 sprints, (3) can defer to Phase 3. Output a prioritized backlog I can paste into GitHub Issues.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">🏗️</div>
+        <div>
+          <div class="skill-name">Engineering: System Design — WhatsApp Business API</div>
+          <div class="skill-cmd">engineering:system-design</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Before starting Phase 2 Month 7 build — WhatsApp Business API integration is the most complex addition in Phase 2. Design the webhook architecture before writing code.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use engineering system-design. Design the WhatsApp Business API integration for AKBai. Purpose: two-way customer messaging for Business tier users (receive customer DMs, KA drafts replies, user approves + sends). Stack: Meta Business API webhooks → Supabase Edge Function → AKBai database → Next.js notification push. Requirements: (1) webhook verification flow, (2) message storage schema (linked to user_id + customer profile), (3) KA reply draft pipeline (message → Claude Sonnet → draft → user review → send via WA), (4) rate limit handling (Meta has strict limits), (5) cost estimation per 1,000 messages. Phase 1 support was manual WhatsApp — this is the API upgrade.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ PHASE 3 -->
+<div class="section" id="phase3">
+  <div class="section-header">
+    <span class="phase-badge badge-phase3">Phase 3</span>
+    <h2>Platform — Build the AKBai Plugin</h2>
+  </div>
+  <div class="section-desc">
+    <strong>Month 12+. Goal:</strong> 500+ users, 200 paying, ₱100K–₱200K MRR. Custom AI behaviors, DTI partnerships, Business tier at ₱899/mo. This is also when you formalize your own development workflow into a dedicated AKBai plugin — so every future Claude session starts with full project context loaded automatically.
+  </div>
+
+  <div class="skill-grid">
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-plugin">🔌</div>
+        <div>
+          <div class="skill-name">Create AKBai Cowork Plugin</div>
+          <div class="skill-cmd">cowork-plugin-management:create-cowork-plugin</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>This is the big one. By Phase 3 you have stable patterns for how you build AKBai. Package them into a plugin so every new Claude session auto-loads your codebase conventions, stack decisions, and role-specific behaviors.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use cowork-plugin-management create-cowork-plugin. I want to build a plugin called "akbai-delivery" for developing AKBai (projectka.ph). Context: solo founder, Next.js + Supabase + Claude API + Xendit + Vercel. The plugin should encode: (1) AKBai stack conventions and codebase patterns, (2) role skills: architect (ADR creation), builder (feature scaffolding), reviewer (code + security), deploy-guard (pre-deploy checklist), support-drafter (Tier 2 response drafting), gtm (campaign + content), data-analyst (Supabase query + metrics). (3) Slash commands: /sprint-start, /sprint-review, /ship, /incident, /weekly-standup, /gtm-report. Build the full plugin structure with SKILL.md files for each role.</div>
+        </div>
+        <div class="tip-box">Start building this plugin at end of Phase 1 as you accumulate patterns. Finalize it in Phase 3. The tiyak-engineering plugin in your workspace is a perfect reference model.</div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-plugin">⚙️</div>
+        <div>
+          <div class="skill-name">Customize Existing Plugins for AKBai Context</div>
+          <div class="skill-cmd">cowork-plugin-management:cowork-plugin-customizer</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Before Phase 3 build starts — customize the engineering and marketing plugins to know AKBai's specific conventions (Taglish tone, Filipino MSME context, Supabase patterns) so you don't re-explain them every session.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use cowork-plugin-management cowork-plugin-customizer. I want to customize the "engineering" plugin for AKBai development. Add AKBai-specific context to all engineering skills: (1) Stack: Next.js 14 App Router, Supabase, Claude API (Haiku + Sonnet), Xendit, Vercel. (2) All code must have RLS policies. (3) Claude API calls must have circuit breakers. (4) BIR date logic has Philippine holiday calendar exceptions. (5) All user-facing text defaults to Taglish tone. Also customize the "marketing" plugin: audience is Filipino female MSMEs (Maria/Jose/Ana/Andoy personas), brand voice is Katuwang (warm, competent, Taglish, never corporate).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">🏛️</div>
+        <div>
+          <div class="skill-name">Engineering: System Design — Phase 3 Platform Architecture</div>
+          <div class="skill-cmd">engineering:system-design</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Designing the "custom AI behaviors" platform feature — allowing users to build their own KA automations — and the multi-seat Business tier architecture.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use engineering system-design. Design Phase 3 platform architecture for AKBai. Two additions: (1) User-customizable AI behaviors: users can define custom KA automations (e.g., "every Sunday, send me a weekly profit summary"). Design the automation builder schema, trigger system, and Claude API execution layer. (2) Business tier (₱899/mo): multi-user support (owner + 1 staff), shared business profile, role-based access. Current stack: Next.js, Supabase, Claude API. Design the schema changes, API changes, and UI additions needed for both. Flag any breaking changes to Phase 1/2 data structures.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-tools">📊</div>
+        <div>
+          <div class="skill-name">XLSX — Investor/Partnership Metrics Dashboard</div>
+          <div class="skill-cmd">anthropic-skills:xlsx</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Phase 3 — when approaching DTI partnerships or potential seed funding conversations. Build a metrics dashboard showing MRR growth, cohort retention, and unit economics.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use the xlsx skill. Create an AKBai investor metrics dashboard spreadsheet. Sheets: (1) MRR Tracker: monthly MRR, new MRR, churned MRR, net MRR growth. (2) Cohort Retention: user cohorts by signup month, 30/60/90/180-day retention %. (3) Unit Economics: Claude API cost per user, Xendit fee per transaction, gross margin per subscriber tier (Free/Pro/Business), CAC, LTV. (4) 18-Month Projection: 3 scenarios (conservative/base/bull) to ₱500K/month (1,000 paying users). Use actual data from <em>[paste your Supabase metrics]</em>.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ ONGOING -->
+<div class="section" id="ongoing">
+  <div class="section-header">
+    <span class="phase-badge badge-ongoing">Every Phase</span>
+    <h2>Ongoing Weekly Cadence</h2>
+  </div>
+  <div class="section-desc">
+    <strong>As a solo founder with a day job, your most scarce resource is focused time.</strong> This weekly routine maximizes output per session. Every interaction with Claude should start with a clear task and skill invocation — no vague conversations.
+  </div>
+
+  <div class="session-template">
+    <div class="template-label">Weekly Session Template — Copy This Each Week</div>
+    <pre>
+<span class="comment">── MONDAY (15 min) ─────────────────────────────────────</span>
+<span class="cmd">engineering:standup</span>
+"Generate my weekly standup for AKBai.
+Last week I completed: <span class="var">[what shipped]</span>
+This week I'm building: <span class="var">[sprint task]</span>
+Blockers: <span class="var">[any]</span>
+Current metrics: <span class="var">[MRR, users]</span>
+Format as a GitHub issue comment + a 3-sentence build-in-public TikTok/FB post."
+
+<span class="comment">── WEDNESDAY or SATURDAY (2–4 hrs) ─────────────────────</span>
+<span class="cmd">[Primary build session]</span>
+Use engineering code-review / debug / system-design
+One focused sprint task. One skill. Save output.
+
+<span class="comment">── SUNDAY (30 min) ─────────────────────────────────────</span>
+<span class="cmd">marketing:performance-analytics</span> (monthly, on 1st Sunday of month)
+Review metrics. Update XLSX budget tracker.
+Run competitor monitoring ritual (15 min — check Taxumo, ChatGenie pricing pages).
+
+<span class="comment">── ANYTIME — Content Creation ──────────────────────────</span>
+<span class="cmd">marketing:content-creation</span> or <span class="cmd">marketing:brand-voice</span>
+Batch write 2–3 FB posts / 1 article per session.
+Always check against brand voice before posting.
+    </pre>
+  </div>
+
+  <div class="skill-grid" style="margin-top:20px;">
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-eng">📋</div>
+        <div>
+          <div class="skill-name">Engineering: Standup — Weekly Progress Update</div>
+          <div class="skill-cmd">engineering:standup</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Every Monday morning. 5-minute session. Generates your GitHub sprint comment + a build-in-public social post. Keeps you accountable and feeds the organic "building in public" GTM strategy.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use engineering standup. AKBai weekly update. Week: <em>[date]</em>. Done: <em>[list tasks completed]</em>. In progress: <em>[current sprint task]</em>. Next: <em>[what's up this week]</em>. Metrics: <em>[users, MRR if applicable]</em>. Blockers: <em>[any]</em>. Generate: (1) GitHub issue sprint comment, (2) Taglish build-in-public FB/TikTok post (authentic, milestone-triggered, no spam — only post if there's a real win to share), (3) anything from my update that should be a new GitHub issue.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-mkt">🗣️</div>
+        <div>
+          <div class="skill-name">Marketing: Brand Voice — Content Consistency Check</div>
+          <div class="skill-cmd">marketing:brand-voice</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Before publishing ANY external content — FB posts, TikTok captions, website copy, email subject lines. Quick 5-minute check that the Katuwang voice is on-brand.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use marketing brand-voice. Review this AKBai content for brand voice consistency. Brand: Katuwang (Filipino business partner AI). Voice: warm, hyper-competent, Taglish, uses "po" naturally, never condescending, never spammy, never corporate. Content to review: <em>[paste post/email/copy]</em>. Flag: anything that sounds robotic, overly salesy, uses jargon a Maria wouldn't understand, or breaks the "Katuwang speaks first" proactive positioning. Rewrite any flagged sections.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-tools">🛠️</div>
+        <div>
+          <div class="skill-name">Skill Creator — Build New Skills As Patterns Emerge</div>
+          <div class="skill-cmd">anthropic-skills:skill-creator</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>When you notice you're giving Claude the same long context block 3+ times. That's a skill waiting to be created. Build it once, reuse forever. Good candidates: KA voice guidelines, BIR deadline logic patterns, Supabase RLS patterns.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use anthropic-skills skill-creator. I want to create a new skill called "ka-voice" for writing content in the AKBai Katuwang persona. The skill should load: the full KA voice guide (tone, Taglish rules, do/don't examples), the 4 user personas (Maria/Jose/Ana/Andoy) with their pain points, and the anti-patterns to avoid (robotic, spammy, corporate). Trigger on: "write as KA", "KA persona", "Katuwang voice", "draft a KA message". Create the SKILL.md file for this skill.</div>
+        </div>
+        <div class="tip-box">By Phase 2, you should have 3–5 custom AKBai skills built. This eliminates context re-loading and saves hundreds of tokens per session.</div>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-header">
+        <div class="skill-icon icon-tools">⏰</div>
+        <div>
+          <div class="skill-name">Schedule — Automated Recurring Tasks</div>
+          <div class="skill-cmd">anthropic-skills:schedule</div>
+        </div>
+      </div>
+      <div class="skill-body">
+        <div class="skill-when">
+          <div class="skill-when-label">When to use</div>
+          <p>Setting up recurring automated tasks: monthly metrics pull from Supabase, weekly competitor monitoring ritual reminder, BIR deadline calendar updates, monthly budget tracker update prompt.</p>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">Sample Prompt</div>
+          <div class="prompt-text">Use anthropic-skills schedule. Create a recurring task: every first Sunday of the month at 8:00 AM, remind me to: (1) pull AKBai metrics from Supabase (registered users, paying subscribers, MRR, churn), (2) run the 15-minute competitor monitoring ritual (check Taxumo pricing, ChatGenie updates, N3 AI releases), (3) update the AKBai budget tracker XLSX with actual infrastructure spend. Label: "AKBai Monthly Metrics Ritual".</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ BUILD THE PLUGIN -->
+<div class="section" id="plugin">
+  <div class="section-header">
+    <span class="phase-badge badge-phase3">Plugin Build</span>
+    <h2>Step-by-Step: Building the AKBai Plugin</h2>
+  </div>
+  <div class="section-desc">
+    <strong>The end state:</strong> A local Cowork plugin that auto-loads AKBai's full stack context, role skills, and slash commands into every session — eliminating the need to re-explain your tech stack, personas, and conventions every time you open a new chat.
+  </div>
+
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Phase 0B — Capture Patterns as You Build</h4>
+        <p>After every significant decision, save a one-paragraph "pattern note" in a Notion doc: "When building Supabase RLS, I always do X." These become your SKILL.md reference files.</p>
+        <div class="step-skills">
+          <span class="step-skill-tag tag-tools">anthropic-skills:docx</span>
+        </div>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Phase 1 End — Create First Custom Skills</h4>
+        <p>Use skill-creator to build: ka-voice (Katuwang writing), akbai-builder (stack conventions + feature scaffolding), bir-logic (BIR calculation rules). These replace the long context blocks you keep re-pasting.</p>
+        <div class="step-skills">
+          <span class="step-skill-tag tag-tools">anthropic-skills:skill-creator</span>
+          <span class="step-skill-tag tag-plugin">cowork-plugin-management:cowork-plugin-customizer</span>
+        </div>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Phase 2 — Build the Full Plugin Scaffold</h4>
+        <p>Use create-cowork-plugin to generate the full plugin directory: commands/ (sprint-start, ship, incident, gtm-report), skills/ (architect, builder, reviewer, deploy-guard, support-drafter, gtm), references/ (stack-spec, persona-guide, bir-calendar).</p>
+        <div class="step-skills">
+          <span class="step-skill-tag tag-plugin">cowork-plugin-management:create-cowork-plugin</span>
+        </div>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>Phase 3 — Publish as Local Plugin + Iterate</h4>
+        <p>Install the plugin locally, test every skill and command in a real dev session, refine based on what wastes tokens vs. what accelerates work. This plugin becomes the most valuable engineering asset you build alongside the product itself.</p>
+        <div class="step-skills">
+          <span class="step-skill-tag tag-plugin">cowork-plugin-management:cowork-plugin-customizer</span>
+          <span class="step-skill-tag tag-tools">anthropic-skills:skill-creator</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-success">
+    <div class="callout-icon">🚀</div>
+    <div>
+      <h4>Expected Plugin ROI</h4>
+      Without the plugin, each new session costs ~500–800 tokens re-explaining your stack, personas, and conventions. With the plugin loaded, you start with full context in ~100 tokens. At 5 sessions per week over Phase 2–3, that's 170K–280K tokens saved per month — roughly 3–5 additional productive sessions per month on Claude Pro.
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ TOKEN EFFICIENCY -->
+<div class="section" id="tokens">
+  <div class="section-header">
+    <span class="phase-badge badge-ongoing">Token Budget</span>
+    <h2>Token Efficiency Rules for Claude Pro</h2>
+  </div>
+
+  <table class="token-table">
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>Why It Matters</th>
+        <th>Token Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>One skill per conversation</strong></td>
+        <td>Each skill loads 2K–4K tokens of instructions. Two skills = 4K–8K gone before you start.</td>
+        <td><span class="token-level token-high">HIGH if broken</span></td>
+      </tr>
+      <tr>
+        <td><strong>Open new conversation for each major task</strong></td>
+        <td>Old conversation history accumulates. A 30-message thread has 8K–15K tokens of context you're paying to re-read on every new message.</td>
+        <td><span class="token-level token-high">HIGH if ignored</span></td>
+      </tr>
+      <tr>
+        <td><strong>Paste code, don't describe it</strong></td>
+        <td>Saying "my receipt scanner function" and then answering 3 clarifying questions wastes more tokens than just pasting the 40-line function upfront.</td>
+        <td><span class="token-level token-med">MEDIUM</span></td>
+      </tr>
+      <tr>
+        <td><strong>Use the sample prompts from this guide</strong></td>
+        <td>These prompts are pre-optimized to give Claude exactly the context it needs in one shot. Avoid freeform "can you help me with…" openers.</td>
+        <td><span class="token-level token-low">LOW if followed</span></td>
+      </tr>
+      <tr>
+        <td><strong>Save outputs immediately to /Project Documents/</strong></td>
+        <td>Never re-generate something you already have. Reference it by pasting the relevant section, not by asking Claude to recreate it.</td>
+        <td><span class="token-level token-low">LOW if disciplined</span></td>
+      </tr>
+      <tr>
+        <td><strong>Build custom skills for patterns you repeat 3+ times</strong></td>
+        <td>A custom skill replaces a 300-word context block with a 10-word trigger. After 10 sessions, you've saved 5K+ tokens.</td>
+        <td><span class="token-level token-low">VERY LOW at scale</span></td>
+      </tr>
+      <tr>
+        <td><strong>Keep document sharing tight</strong></td>
+        <td>Don't paste the entire 61-page roadmap into a session. Paste only the 1–2 relevant sections. The roadmap has already been read — reference it by section name.</td>
+        <td><span class="token-level token-high">HIGH if violated</span></td>
+      </tr>
+      <tr>
+        <td><strong>Use lightweight skills for quick checks</strong></td>
+        <td>engineering:standup and marketing:brand-voice are lightweight. Use them freely. engineering:system-design and engineering:testing-strategy are heavy — save for real architectural sessions.</td>
+        <td><span class="token-level token-med">VARIES by skill</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════ CHEAT SHEET -->
+<div class="section" id="cheatsheet">
+  <div class="section-header">
+    <span class="phase-badge badge-ongoing">Quick Reference</span>
+    <h2>Quick Reference Cheat Sheet</h2>
+  </div>
+
+  <div class="cheatsheet">
+
+    <div class="cheat-card" style="background:var(--gray-50); border-color:var(--gray-200);">
+      <div class="cheat-phase" style="color:var(--orange-dark)">⚡ Phase 0A — Legal</div>
+      <h4>Setup & Compliance</h4>
+      <ul class="cheat-items">
+        <li>📄 <code>pdf</code> Read legal docs, extract obligations</li>
+        <li>📝 <code>docx</code> Privacy Policy, T&C, DPO letter</li>
+        <li>📊 <code>xlsx</code> Year 1 budget tracker</li>
+        <li>🏗️ <code>engineering:system-design</code> NPC-compliant schema</li>
+      </ul>
+    </div>
+
+    <div class="cheat-card" style="background:#FFFBEB; border-color:#FDE68A;">
+      <div class="cheat-phase" style="color:#92400E">🌱 Phase 0B — Validation</div>
+      <h4>Brand & Demand</h4>
+      <ul class="cheat-items">
+        <li>🎨 <code>brand-identity</code> Full brand system (1 session)</li>
+        <li>🔍 <code>marketing:competitive-analysis</code> Competitor brief</li>
+        <li>✍️ <code>marketing:content-creation</code> 5–6 SEO articles</li>
+        <li>📣 <code>marketing:campaign-planning</code> Phase 0 GTM</li>
+        <li>✏️ <code>design:ux-writing</code> Waitlist + onboarding copy</li>
+        <li>🔬 <code>design:user-research</code> Interview synthesis</li>
+      </ul>
+    </div>
+
+    <div class="cheat-card" style="background:var(--blue-light); border-color:#93C5FD;">
+      <div class="cheat-phase" style="color:var(--blue)">🔨 Phase 1 — MVP Build</div>
+      <h4>Sprint Execution</h4>
+      <ul class="cheat-items">
+        <li>🏛️ <code>engineering:system-design</code> Each new subsystem</li>
+        <li>🏗️ <code>engineering:architecture</code> ADR documentation</li>
+        <li>🐛 <code>engineering:debug</code> Bug fixing sessions</li>
+        <li>📖 <code>engineering:documentation</code> Post-sprint docs</li>
+        <li>🔍 <code>engineering:code-review</code> Before every PR</li>
+        <li>✅ <code>engineering:testing-strategy</code> BIR + Xendit tests</li>
+        <li>🚀 <code>engineering:deploy-checklist</code> Every production push</li>
+        <li>♿ <code>design:accessibility-review</code> Pre-launch pass</li>
+        <li>🎨 <code>design:design-critique</code> Card UI feedback</li>
+        <li>✏️ <code>design:ux-writing</code> KA persona copy</li>
+        <li>🔥 <code>engineering:incident-response</code> P0/P1 emergencies</li>
+      </ul>
+    </div>
+
+    <div class="cheat-card" style="background:var(--green-light); border-color:#86EFAC;">
+      <div class="cheat-phase" style="color:var(--green)">📈 Phase 2 — Growth</div>
+      <h4>Marketing & Scale</h4>
+      <ul class="cheat-items">
+        <li>📧 <code>marketing:email-sequence</code> Activation + re-engage</li>
+        <li>📊 <code>marketing:performance-analytics</code> Monthly MRR review</li>
+        <li>🌱 <code>marketing:campaign-planning</code> Influencer + referral</li>
+        <li>🔎 <code>marketing:seo-audit</code> Month 5 keyword check</li>
+        <li>⚙️ <code>engineering:tech-debt</code> Phase 1 → 2 audit</li>
+        <li>🏗️ <code>engineering:system-design</code> WhatsApp API design</li>
+      </ul>
+    </div>
+
+    <div class="cheat-card" style="background:var(--purple-light); border-color:#C4B5FD;">
+      <div class="cheat-phase" style="color:var(--purple)">🚀 Phase 3 — Platform</div>
+      <h4>Plugin & Partnerships</h4>
+      <ul class="cheat-items">
+        <li>🔌 <code>create-cowork-plugin</code> Build AKBai plugin</li>
+        <li>⚙️ <code>cowork-plugin-customizer</code> Customize eng/mkt plugins</li>
+        <li>🏛️ <code>engineering:system-design</code> Platform architecture</li>
+        <li>📊 <code>xlsx</code> Investor metrics dashboard</li>
+      </ul>
+    </div>
+
+    <div class="cheat-card" style="background:var(--gray-50); border-color:var(--gray-200);">
+      <div class="cheat-phase" style="color:var(--gray-600)">🔄 Every Phase — Ongoing</div>
+      <h4>Weekly Cadence</h4>
+      <ul class="cheat-items">
+        <li>📋 <code>engineering:standup</code> Monday, 15 min</li>
+        <li>🗣️ <code>marketing:brand-voice</code> Before publishing anything</li>
+        <li>🛠️ <code>skill-creator</code> Build skills from repeated patterns</li>
+        <li>⏰ <code>schedule</code> Monthly metrics ritual</li>
+        <li>📊 <code>marketing:performance-analytics</code> 1st Sunday monthly</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div style="margin-top:32px;">
+    <div class="callout callout-info">
+      <div class="callout-icon">🎯</div>
+      <div>
+        <h4>The North Star Reminder (From the Roadmap)</h4>
+        Every feature decision, every sprint, every Claude session — ask this one question: <em>"Does this get Maria to her Maria Moment faster or more reliably?"</em> The Maria Moment: she opens AKBai and sees "Kumikita ka. ₱18,400 ang net mo this month" — something true about her business she didn't know, told in her language, before it's too late to act on it. If a skill session doesn't serve that goal, deprioritize it.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  <strong>AKBai — Skills Utilization Guide v1</strong> &nbsp;|&nbsp;
+  Based on Roadmap v13 + Operations Playbook v6 &nbsp;|&nbsp;
+  March 2026 &nbsp;|&nbsp;
+  Solo Founder: Anton del Rosario
+</footer>
+
+</body>
+</html>

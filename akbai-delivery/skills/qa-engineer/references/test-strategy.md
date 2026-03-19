@@ -1,0 +1,313 @@
+# AKBai — Test Strategy
+> Used by: qa-engineer, fullstack-engineer, devops-engineer, ai-engineer
+> Last updated: March 2026 | Source: Tech Stack, Gap Registry, all engineering skill specs
+
+---
+
+## 1. Testing Philosophy
+
+AKBai is built by a solo founder with 10–15 hours per sprint. The testing strategy must maximize defect prevention per hour invested. This means:
+
+- **Test business-critical logic exhaustively.** BIR deadlines, payment flows, data isolation, and financial calculations are existential — a bug here costs users real money, creates compliance violations, or leaks data.
+- **Skip commodity code.** Simple CRUD, basic rendering, and happy paths that TypeScript strict mode already enforces don't justify the maintenance overhead of tests.
+- **Prefer cheap tests.** A unit test that runs in 5ms catches the same BIR deadline bug as an e2e test that takes 30 seconds. Default to the cheapest layer that can catch the failure.
+
+---
+
+## 2. Testing Pyramid
+
+### Layer 1: Unit Tests (Vitest)
+**Purpose:** Test pure business logic with no external dependencies.
+**Speed:** < 10ms per test. Full unit suite < 5 seconds.
+**When to use:** Any function that takes input and returns output without side effects.
+
+**Primary targets:**
+- BIR deadline calculations (weekend/holiday rollover, mid-year registration, VAT threshold, partial-year)
+- Money utilities (centavos ↔ peso conversion, formatting with ₱ sign, rounding)
+- Tier permission checks (feature access by tier, scan limits, query limits)
+- Receipt deduplication hash (amount + date + merchant ±30 minutes)
+- OCR response validation (Zod schema parsing, field extraction)
+- Confidence scoring (per-field confidence calculation, threshold flagging)
+- Timezone conversions (UTC ↔ Asia/Manila, midnight boundary)
+- Query counter logic (daily limit tracking, midnight reset in Manila time)
+- Notification sequence generation (7-day, 3-day, 1-day before deadline)
+
+**Configuration:**
+```typescript
+// vitest.config.ts
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    include: ['tests/unit/**/*.test.ts', 'tests/integration/**/*.test.ts'],
+    environment: 'node',
+    globals: true,
+    coverage: {
+      provider: 'v8',
+      include: [
+        'lib/bir/**',        // BIR deadline logic
+        'lib/payments/**',   // Payment/subscription logic
+        'lib/utils/money*',  // Money utilities
+        'lib/utils/tier*',   // Tier permission logic
+        'lib/ocr/**',        // OCR pipeline (non-AI parts)
+      ],
+      thresholds: {
+        // Only enforce coverage on business-critical modules
+        'lib/bir/**': { branches: 95, functions: 95, lines: 90 },
+        'lib/payments/**': { branches: 90, functions: 90, lines: 85 },
+        'lib/utils/money*': { branches: 100, functions: 100, lines: 100 },
+      },
+    },
+  },
+});
+```
+
+### Layer 2: Integration Tests (Vitest + Supabase Local)
+**Purpose:** Test cross-layer behavior — API routes, RLS policies, webhook handlers, circuit breaker.
+**Speed:** < 500ms per test. Full integration suite < 60 seconds.
+**When to use:** Any flow that touches the database, auth system, or external service boundary.
+
+**Primary targets:**
+- RLS policy enforcement (user isolation across all tables)
+- Xendit webhook processing (idempotency, signature verification, state transitions)
+- API route auth/tier gating (every route checks auth, every paid feature checks tier)
+- Circuit breaker behavior (daily spend cap → graceful degradation)
+- Migration integrity (all migrations apply + rollback cleanly)
+- Soft-delete enforcement (no physical deletes, deleted_at filtering)
+
+**Setup:**
+```bash
+# Local Supabase for integration tests
+supabase start          # starts local Supabase (Postgres, Auth, Storage)
+vitest run tests/integration/
+supabase stop           # cleanup
+```
+
+**Test isolation pattern:**
+Each integration test creates its own test users via `supabase.auth.admin.createUser()` with unique emails. Tests clean up by soft-deleting their data. Never share test users across tests — this prevents test pollution and makes failures reproducible.
+
+### Layer 3: E2E Tests (Playwright)
+**Purpose:** Verify critical user journeys end-to-end in a real browser.
+**Speed:** 10–30 seconds per test. Full e2e suite < 5 minutes.
+**When to use:** Only for the 5–8 most critical user paths where a failure is catastrophic.
+
+**Primary targets (keep this list short):**
+1. **Onboarding (Kilala Kita):** 5-step flow completes, business profile created, user reaches dashboard
+2. **Receipt scan:** Camera → upload → OCR → review card → user confirms → transaction saved
+3. **Subscription upgrade:** Free → Pro → payment → features unlocked immediately
+4. **BIR deadline alert:** Deadline in calendar → 7-day notification → 3-day → 1-day → user sees each
+5. **Morning Briefing:** Ang Umaga Mo loads with correct data for user's tier (teaser vs full)
+
+**Configuration:**
+```typescript
+// playwright.config.ts
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: 'tests/e2e',
+  timeout: 30_000,
+  use: {
+    baseURL: 'http://localhost:3000',
+    viewport: { width: 375, height: 812 },  // iPhone SE — mobile-first
+    locale: 'en-PH',
+    timezoneId: 'Asia/Manila',
+  },
+  projects: [
+    { name: 'mobile-chrome', use: { ...devices['iPhone SE'] } },
+    // No desktop tests — AKBai is mobile-first PWA
+  ],
+  webServer: {
+    command: 'npm run dev',
+    port: 3000,
+    reuseExistingServer: !process.env.CI,
+  },
+});
+```
+
+---
+
+## 3. Coverage Targets
+
+Coverage is NOT a vanity metric. High coverage on business-critical modules prevents real damage. Zero coverage on commodity code is fine.
+
+| Module | Branch Coverage | Rationale |
+|--------|----------------|-----------|
+| `lib/bir/` | 95% | BIR deadline bugs = government fines for users |
+| `lib/payments/` | 90% | Payment bugs = lost revenue or double-charges |
+| `lib/utils/money*` | 100% | Money math must be correct — no excuses |
+| `lib/utils/tier*` | 90% | Tier bugs = revenue leakage or user lockout |
+| `lib/ocr/` (non-AI) | 80% | Pipeline validation matters; model output can't be covered |
+| Everything else | No target | Not worth the maintenance overhead |
+
+---
+
+## 4. Test Data Principles
+
+### Use Realistic Philippine Context
+
+Test data should feel like real AKBai data. This surfaces edge cases that generic data misses:
+
+- **Names:** Maria Santos, Jose Reyes, Ana Garcia, Andoy Cruz (from persona definitions)
+- **Amounts:** Always in centavos integers. ₱345.50 → `34550`. ₱18,400 → `1840000`.
+- **Dates:** Use `Asia/Manila` timezone. Format as ISO 8601 with +08:00 offset.
+- **BIR forms:** 1701Q (quarterly income tax), 2550M (monthly VAT), 2551Q (quarterly percentage tax), 1701 (annual income tax)
+- **Merchants:** SM Supermarket, Puregold, Mercury Drug, Shopee, Lazada, GCash
+- **Holidays:** Use actual Philippine holidays — not US holidays. Include both regular and special non-working days.
+
+### Philippine Holiday Calendar (2026 reference)
+
+The test suite should maintain a `fixtures/holidays/` directory with holiday calendars per year. At minimum include:
+
+**Regular holidays:** New Year's Day (Jan 1), Araw ng Kagitingan (Apr 9), Maundy Thursday, Good Friday, Labor Day (May 1), Independence Day (Jun 12), National Heroes Day (last Mon of Aug), Bonifacio Day (Nov 30), Christmas Day (Dec 25), Rizal Day (Dec 30)
+
+**Special non-working days:** EDSA Anniversary (Feb 25), Black Saturday, Ninoy Aquino Day (Aug 21), All Saints Day (Nov 1), Immaculate Conception (Dec 8), Last Day of Year (Dec 31)
+
+**Note:** The president may declare additional holidays. The test fixture must be updatable without changing test logic.
+
+### Fixture Files
+
+```
+tests/fixtures/
+  receipts/
+    sm-receipt-standard.json        — typical SM Supermarket receipt
+    gcash-screenshot.json           — GCash payment confirmation
+    handwritten-receipt.json        — low confidence, partial fields
+    faded-thermal.json              — low confidence on amount
+    shopee-waybill.json             — different format, no itemization
+    duplicate-receipt.json          — matches sm-receipt-standard by hash
+  webhooks/
+    payment-success.json            — valid Xendit payment.success payload
+    payment-failed.json             — valid Xendit payment.failed payload
+    subscription-cancelled.json     — valid Xendit subscription.cancelled
+    invalid-signature.json          — payload with wrong signature
+    malformed-body.json             — missing required fields
+  holidays/
+    2026.json                       — Philippine holidays for 2026
+    2027.json                       — Philippine holidays for 2027
+```
+
+---
+
+## 5. CI Pipeline Integration
+
+### Pipeline Stages (fail-fast)
+
+```yaml
+# .github/workflows/test.yml
+name: Test
+on: [push, pull_request]
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: npm ci
+      - run: npx tsc --noEmit
+    # Fails fast — type errors block everything
+
+  unit:
+    needs: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: npm ci
+      - run: npx vitest run tests/unit/ --coverage
+    # Fast — pure logic, no dependencies
+
+  integration:
+    needs: unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - uses: supabase/setup-cli@v1
+      - run: supabase start
+      - run: npm ci
+      - run: npx vitest run tests/integration/
+      - run: supabase stop
+    # Medium — needs local Supabase
+
+  e2e:
+    needs: integration
+    if: github.ref == 'refs/heads/main'   # Only on merge to main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - uses: supabase/setup-cli@v1
+      - run: supabase start
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build && npm start &
+      - run: npx playwright test
+    # Expensive — only on main branch merges
+```
+
+### PR Requirements
+
+Every PR that touches these areas MUST include corresponding test updates:
+
+| Code Area Changed | Required Test Update |
+|---|---|
+| `lib/bir/` | Unit tests in `bir-deadlines.test.ts` |
+| `lib/payments/` or Xendit webhook | Integration tests in `xendit-webhooks.test.ts` |
+| Any Supabase migration | Integration test in `migration-integrity.test.ts` |
+| RLS policy change | Integration test in `rls-isolation.test.ts` |
+| OCR pipeline or Zod schema | Unit tests in `ocr-schema-validation.test.ts` |
+| Tier permission logic | Unit tests in `tier-permissions.test.ts` |
+| System prompt change | Run Taglish regression library (20–30 cases) |
+
+---
+
+## 6. System Prompt Regression Testing
+
+This is a special testing category because it tests AI behavior, not deterministic code. The Design Gate (Roadmap v14) requires a 20–30 case Taglish regression test library.
+
+### What to Regression Test
+
+After any system prompt change:
+
+1. **KA voice consistency** — Does KA still sound like a kababayan colleague, not a corporate bot?
+2. **BIR disclaimer presence** — Does every tax-related response include the disclaimer?
+3. **Confidence flagging** — Are uncertain OCR fields still flagged?
+4. **Prompt injection defense** — Can a user input override KA's persona or extract the system prompt?
+5. **Taglish blend** — Is the Filipino-English mix natural? Does it use "po" appropriately?
+6. **Length constraint** — Are chat responses staying within 2-line bubble max?
+7. **First name usage** — Does KA use the user's first name when available?
+8. **No corporate filler** — Zero instances of "Certainly!", "As an AI...", "I'd be happy to"
+
+### Regression Test Structure
+
+```json
+{
+  "test_id": "taglish-001",
+  "category": "voice-consistency",
+  "user_input": "Magkano ang gastos ko this week?",
+  "user_context": { "name": "Maria", "tier": "pro", "business_type": "food_seller" },
+  "assertions": [
+    { "type": "contains_name", "expected": "Maria" },
+    { "type": "no_corporate_filler", "blocked_phrases": ["Certainly", "As an AI", "I'd be happy to"] },
+    { "type": "uses_peso_sign", "format": "₱ followed by digits" },
+    { "type": "max_lines", "max": 4 }
+  ]
+}
+```
+
+These tests are semi-automated — the assertions check measurable properties (presence of name, absence of filler phrases, ₱ format), but human review is still needed for subjective Taglish quality. Run the library after every prompt version bump.
+
+---
+
+## 7. Testing Anti-Patterns (What NOT to Do)
+
+These waste the solo founder's limited testing budget:
+
+- **Don't test simple CRUD.** If the Supabase client `.insert()` call works, it works. Test the business logic around it, not the database driver.
+- **Don't test basic rendering.** "Component mounts without throwing" tests catch almost nothing. If TypeScript compiles, the component structure is valid.
+- **Don't test third-party libraries.** Supabase, Xendit SDK, date-fns — they have their own test suites. Test your integration with them, not their internals.
+- **Don't test Claude model quality directly.** Model output varies between calls. Test the deterministic pipeline that wraps the model (pre-processing, Zod validation, confidence scoring, post-processing).
+- **Don't chase 100% coverage globally.** Coverage targets apply only to the business-critical modules listed above. Forcing coverage on utility code, UI components, or configuration files wastes time.
+- **Don't write flaky tests.** A test that fails intermittently is worse than no test — it trains the developer to ignore failures. If a test depends on timing, network, or AI output, it's either in the wrong layer or needs a mock.
+- **Don't duplicate type system checks as tests.** If TypeScript strict mode + Zod schemas already prevent a class of errors, writing tests for the same errors is redundant.

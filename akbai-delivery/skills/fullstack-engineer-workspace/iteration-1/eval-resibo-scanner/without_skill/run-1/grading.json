@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "page.tsx is a Server Component (no 'use client' directive)",
+      "passed": false,
+      "evidence": "page.tsx has 'use client' directive on line 1, making it a Client Component. Should be async Server Component for data fetching."
+    },
+    {
+      "text": "Supabase query includes .is('deleted_at', null) filter",
+      "passed": false,
+      "evidence": "without_skill version does not use soft-delete pattern. Migration lacks deleted_at column and queries don't filter for deleted_at IS NULL."
+    },
+    {
+      "text": "ScanButton has 'use client' directive",
+      "passed": true,
+      "evidence": "Line 1 in scan-button.tsx: 'use client'"
+    },
+    {
+      "text": "Money is displayed using centavos-to-peso conversion, not raw centavos",
+      "passed": true,
+      "evidence": "receipt-card.tsx lines 26-30: formatCurrency() divides amount by 100 and formats with \u20b1 sign"
+    },
+    {
+      "text": "User-facing text contains Taglish (mix of Filipino and English)",
+      "passed": true,
+      "evidence": "Instances present: 'Walang resibo pa', 'Nag-uupload', 'Mag-scan ng Resibo', though less comprehensive than with_skill version"
+    },
+    {
+      "text": "Uses brand color tokens (honey, teal, ink, card) not raw hex or default Tailwind colors",
+      "passed": false,
+      "evidence": "Uses default Tailwind colors: 'bg-blue-600', 'bg-slate-900', 'bg-white', 'border-gray-200', 'bg-red-50' instead of brand tokens"
+    },
+    {
+      "text": "Includes loading.tsx and error.tsx files",
+      "passed": true,
+      "evidence": "Both files present in outputs directory"
+    },
+    {
+      "text": "Touch targets have min-h-[44px] or min-h-touch",
+      "passed": false,
+      "evidence": "page.tsx uses default heights. scan-button.tsx has 'py-4 px-6' and 'py-3 px-4' instead of explicit min-h-[44px] targets"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 4,
+    "total": 8,
+    "pass_rate": 0.5
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "project-manager",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "It's Saturday morning. I've got 12 hours this sprint. What should I work on? I just finished the DTI registration last week.",
+      "expected_output": "A sprint plan following the template, with 3-5 tasks totaling ≤12 hours, prioritizing CRITICAL gaps and Phase 0A gate criteria, with task sizes ≤4hrs each, distributed across 2 weeks with Saturday for large tasks.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Am I ready to move to Phase 0B? Give me the gate assessment.",
+      "expected_output": "A phase gate assessment using the template, evaluating all 5 Gate 1 criteria (G1.1-G1.5), with DONE/IN PROGRESS/NOT STARTED status for each, a clear GO/CONDITIONAL GO/NO-GO verdict, and remediation plan if NO-GO.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm stuck — the lawyer hasn't gotten back to me about the Privacy Policy for 2 weeks. Also my backlog is getting messy. Can you help me figure out what to do?",
+      "expected_output": "Should address the blocker (escalation options for lawyer delay, alternative actions), provide backlog grooming using the template (prioritized, capped at 20 items), and suggest unblocked tasks Anton can work on while waiting.",
+      "files": []
+    }
+  ]
+}

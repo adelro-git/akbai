@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "Costing Cards",
+  "prompt": "I need to add a costing_cards table to Supabase for the Costing Cards feature (Build 7). Maria uses this to calculate profit margins on her ube cake — she inputs ingredients, quantities, and prices, and the system tells her per-unit cost and suggested selling price. The table needs to work with the existing transactions and businesses tables. Can you design the schema?",
+  "assertions": [
+    "follows_schema_convention",
+    "has_rls_policies",
+    "has_migration_sql",
+    "has_indexes",
+    "ingredients_as_structured_data"
+  ]
+}

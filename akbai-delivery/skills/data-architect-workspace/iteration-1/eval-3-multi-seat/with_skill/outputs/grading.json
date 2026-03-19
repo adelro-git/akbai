@@ -1,0 +1,31 @@
+{
+  "eval_id": 3,
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "new_business_members_table",
+      "passed": true,
+      "evidence": "Creates business_members table with business_id FK, user_id FK, role column (owner/accountant/viewer), and metadata fields (invited_by, invited_at, accepted_at)"
+    },
+    {
+      "text": "role_based_rls",
+      "passed": true,
+      "evidence": "RLS policies explicitly differentiate by role: owner can full access, accountant can read+update transactions, viewer can read dashboard only. Detailed role matrix provided in Step 3"
+    },
+    {
+      "text": "backward_compatible",
+      "passed": true,
+      "evidence": "Response explains backward compatibility: 'When a user is on Free or Pro, they have no rows in business_members. Their RLS policies route through the original select_own policy.' Existing policies remain unchanged"
+    },
+    {
+      "text": "has_migration_sql",
+      "passed": true,
+      "evidence": "Complete migration sequence provided: 20260315120000_create_business_members.sql with full DDL, RLS, triggers, and indexes, plus 5 additional migrations for team policies"
+    },
+    {
+      "text": "member_limit_enforcement",
+      "passed": true,
+      "evidence": "Address 5-member limit in Step 5 invite API: 'if (count >= 5) { return error 'Max 5 team members per business' }' with enforcement logic"
+    }
+  ]
+}

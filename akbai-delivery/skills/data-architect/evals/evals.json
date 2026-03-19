@@ -1,0 +1,23 @@
+{
+  "skill_name": "data-architect",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to make absolutely sure that no user can ever see another user's financial data in AKBai. We're handling receipts, transactions, invoices, BIR deadlines — this is sensitive stuff. Walk me through how our RLS policies prevent cross-user data leakage across all tables. I also want a test script I can run on my local Supabase to verify that isolation actually works — like, create two test users and prove that user A cannot read user B's transactions even if they try.",
+      "expected_output": "A comprehensive RLS audit across all user-facing tables showing the policy definitions, an explanation of how auth.uid() scoping works, identification of any gaps or edge cases (e.g., system tables without user_id, the redirect_logs table with nullable user_id), and a runnable SQL test script that creates two test users, inserts data for each, and verifies cross-user queries return zero rows. Should also cover Storage bucket RLS for receipt images.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I need to add a costing_cards table to Supabase for the Costing Cards feature (Build 7). Maria uses this to calculate profit margins on her ube cake — she inputs ingredients, quantities, and prices, and the system tells her per-unit cost and suggested selling price. The table needs to work with the existing transactions and businesses tables. Can you design the schema?",
+      "expected_output": "A complete table DDL following the AKBai schema conventions (UUID PK, user_id FK, business_id FK, soft-delete, audit columns), with RLS policies, indexes, migration SQL with rollback, and data classification notes. Should reference the items JSONB pattern from receipts/invoices.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I want to add multi-seat support for the Business tier. Up to 5 team members per business with roles: Owner, Accountant, and Viewer. The Accountant can see all financial data but can't delete anything. The Viewer can only see the dashboard. How do I modify the schema and RLS policies without breaking the existing single-user setup for Pro and Free tier users?",
+      "expected_output": "A new business_members table design, updated RLS policies for transactions/receipts/invoices/bir_deadlines that support team access based on role, migration SQL with rollback for all changes, and an explanation of how the existing user_id-scoped policies evolve to support team access without breaking Phase 1 single-user functionality.",
+      "files": []
+    }
+  ]
+}

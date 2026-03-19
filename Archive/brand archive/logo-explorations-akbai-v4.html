@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — D4 &amp; D4.1 Refined Iterations</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);font-size:15px;padding:52px 28px 100px}
+.container{max-width:1000px;margin:0 auto}
+
+.page-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+h1{font-size:36px;font-weight:800;line-height:1.1;margin-bottom:8px}
+.grad{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:14px;color:var(--muted);max-width:580px;margin-bottom:52px;line-height:1.6}
+.divider{border:none;border-top:1px solid var(--dim);margin:60px 0}
+
+.section-head{margin-bottom:28px}
+.section-head h2{font-size:22px;font-weight:800;margin-bottom:5px}
+.section-head p{font-size:13px;color:var(--muted);line-height:1.6;max-width:560px}
+.section-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;background:rgba(255,107,107,.10);color:#FF6B6B;border:1px solid rgba(255,107,107,.22);border-radius:6px;padding:3px 9px;margin-bottom:10px}
+
+.dir{margin-bottom:14px}
+.dir-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.badge-orig{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(138,155,181,.10);color:var(--muted);border:1px solid rgba(138,155,181,.18);border-radius:4px;padding:2px 7px}
+
+.dir-panels{display:grid;grid-template-columns:220px 1fr 300px;gap:1px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim)}
+.panel{display:flex;align-items:center;justify-content:center;background:var(--ink);padding:32px}
+.panel-icon{min-height:180px}
+.panel-lockup{min-height:180px}
+.panel-info{background:var(--card);padding:28px;flex-direction:column;align-items:flex-start;justify-content:center;min-height:180px}
+.panel-info h3{font-size:16px;font-weight:800;margin-bottom:6px}
+.panel-info .meta{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.panel-info p{font-size:13px;color:var(--muted);line-height:1.65}
+
+.wm{font-weight:800;letter-spacing:-.01em;line-height:1;font-size:28px}
+.wh{color:#fff}
+.wg{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lockup{display:flex;align-items:center;gap:16px}
+
+/* Comparison strip at the bottom */
+.compare-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;background:var(--card);border:1px solid var(--dim);border-radius:16px;padding:28px}
+.compare-item{display:flex;flex-direction:column;align-items:center;gap:10px}
+.compare-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+
+@media(max-width:760px){
+  .dir-panels{grid-template-columns:1fr}
+  h1{font-size:26px}
+  .compare-strip{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<defs>
+  <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF6B6B"/>
+    <stop offset="100%" stop-color="#FF8E53"/>
+  </linearGradient>
+</defs>
+</svg>
+
+<div class="container">
+
+<div class="page-label">AKBai · Logo Explorations · v4 — D4 &amp; D4.1 Deep Refinements</div>
+<h1>Refining the <span class="grad">Arc Relationship</span></h1>
+<p class="sub">D4 and D4.1 isolated and pushed further. Each variation tests a different spatial, weight, or compositional property of the two-arc system. Research confirmed: no PH tech or global AI brand is in this visual territory.</p>
+
+
+<!-- ══════════════════════════════════════════════
+     D4 FAMILY
+     Dominant coral arc + ghost arc, asymmetric
+     ══════════════════════════════════════════════ -->
+<div class="section-head">
+  <div class="section-tag">D4 Family</div>
+  <h2>The Open Gate — asymmetric pair</h2>
+  <p>One dominant coral arc, one ghost. Variations push the spread, the ghost's visibility, the scale relationship, and the vertical alignment between the two arcs.</p>
+</div>
+
+
+<!-- ─── D4 Original ─── -->
+<div class="dir">
+  <div class="dir-label">D4 — Original <span class="badge-orig">original</span></div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 50,24 A 26,26 0 0 0 50,76"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70"
+              fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Open Gate</h3>
+      <div class="meta">Coral dominant · Ghost opposite · Offset</div>
+      <p>Coral "(", ghost ")". Unequal sizes and a 10-unit horizontal offset create a depth relationship. The ghost is a presence, not an equal. Starting point for the D4 family.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4-A: Breathing Room ─── -->
+<div class="dir">
+  <div class="dir-label">D4-A — Breathing Room</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Arcs pulled further apart: coral at x=40 (r=30), ghost at x=68 (r=22).
+          More air between them. Coral is wider and taller; ghost is more compact.
+          The gap between coral tip and ghost center: 28 units vs. 10 in original.
+        -->
+        <path d="M 40,20 A 30,30 0 0 0 40,80"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 68,28 A 22,22 0 0 1 68,72"
+              fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 40,20 A 30,30 0 0 0 40,80" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 68,28 A 22,22 0 0 1 68,72" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Breathing Room</h3>
+      <div class="meta">Wider spread · More air · Distinct presences</div>
+      <p>The two arcs pulled apart: coral extends left, ghost sits distinctly right. The space between them becomes the composition — less layering, more two things that exist independently but in relationship.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4-B: Vivid Echo ─── -->
+<div class="dir">
+  <div class="dir-label">D4-B — Vivid Echo</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Same positions as original. Ghost opacity raised to 0.44 and weight to 15px.
+          The two arcs become more equal partners — less leader/shadow, more dialogue.
+        -->
+        <path d="M 50,24 A 26,26 0 0 0 50,76"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 62,28 A 22,22 0 0 1 62,72"
+              fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.44"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 62,28 A 22,22 0 0 1 62,72" fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.44"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Vivid Echo</h3>
+      <div class="meta">Ghost lifted to 44% · More balanced · Dialogue</div>
+      <p>The ghost arc becomes more present — opacity doubled from original. Still clearly secondary due to color, but it registers as a second voice rather than a shadow. Two forces in conversation rather than one lead and one support.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4-C: Scale Drama ─── -->
+<div class="dir">
+  <div class="dir-label">D4-C — Scale Drama</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Coral arc: very tall, r=36, spans full icon height (14 to 86).
+          Ghost arc: compact, r=18, spans only the center third (32 to 68).
+          Maximum scale contrast between the two forms.
+          Coral center: (48,50). Ghost center: (64,50).
+        -->
+        <path d="M 48,14 A 36,36 0 0 0 48,86"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 64,32 A 18,18 0 0 1 64,68"
+              fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.30"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 48,14 A 36,36 0 0 0 48,86" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 64,32 A 18,18 0 0 1 64,68" fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.30"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Scale Drama</h3>
+      <div class="meta">Tall coral r=36 · Compact ghost r=18 · 2× size ratio</div>
+      <p>Coral sweeps the full height of the icon; the ghost is compact, centred in the middle third. The 2:1 scale ratio is the strongest expression of the Katuwang relationship — large AI presence orienting a smaller, contained business signal.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4-D: Vertical Shift ─── -->
+<div class="dir">
+  <div class="dir-label">D4-D — Vertical Shift</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Coral arc: centered at y=50, standard position.
+          Ghost arc: shifted UP — centered at y=34, spans y=14 to y=54.
+          The vertical misalignment creates a diagonal relationship between the arcs
+          rather than the standard horizontal offset.
+          Ghost center: (63,34), r=20. Top=(63,14), Bottom=(63,54). chord=40=2*20 ✓
+        -->
+        <path d="M 50,24 A 26,26 0 0 0 50,76"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 63,14 A 20,20 0 0 1 63,54"
+              fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.30"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 63,14 A 20,20 0 0 1 63,54" fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.30"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Vertical Shift</h3>
+      <div class="meta">Ghost elevated · Diagonal tension · Off-axis</div>
+      <p>The ghost arc is shifted upward, sitting in the upper half of the icon while coral spans the full height. The vertical misalignment breaks the usual horizontal symmetry of the two-arc composition — the arcs relate diagonally, not just side by side.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── D4 family side-by-side comparison ── -->
+<div style="margin-top:8px;margin-bottom:0">
+  <div style="font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:14px">D4 family at a glance</div>
+  <div class="compare-strip">
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </svg>
+      <div class="compare-label">Original</div>
+    </div>
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 40,20 A 30,30 0 0 0 40,80" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 68,28 A 22,22 0 0 1 68,72" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </svg>
+      <div class="compare-label">A — Breathing Room</div>
+    </div>
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 62,28 A 22,22 0 0 1 62,72" fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.44"/>
+      </svg>
+      <div class="compare-label">B — Vivid Echo</div>
+    </div>
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 48,14 A 36,36 0 0 0 48,86" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 64,32 A 18,18 0 0 1 64,68" fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.30"/>
+      </svg>
+      <div class="compare-label">C — Scale Drama</div>
+    </div>
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 63,14 A 20,20 0 0 1 63,54" fill="none" stroke="white" stroke-width="15" stroke-linecap="round" opacity="0.30"/>
+      </svg>
+      <div class="compare-label">D — Vertical Shift</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     D4.1 FAMILY
+     Symmetric portal — two equal arcs facing each other
+     ══════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="section-head">
+  <div class="section-tag">D4.1 Family</div>
+  <h2>The Portal — symmetric pair</h2>
+  <p>Two arcs facing each other. Variations push the gap between them, the weight relationship, and the arc span — from near-semicircles to dramatically long arcs wrapping almost full-circle.</p>
+</div>
+
+
+<!-- ─── D4.1 Original ─── -->
+<div class="dir">
+  <div class="dir-label">D4.1 — Original <span class="badge-orig">original</span></div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 36,22 A 28,28 0 0 0 36,78"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 64,22 A 28,28 0 0 1 64,78"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 36,22 A 28,28 0 0 0 36,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 64,22 A 28,28 0 0 1 64,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Portal</h3>
+      <div class="meta">Facing arcs · Equal weight · Symmetric</div>
+      <p>Two arcs of equal size facing each other — a true gate or threshold. The right arc recedes at 55% opacity for depth. The opening between the arc tips (x=36 to x=64) is the focal point of the composition.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4.1-A: Narrow Gate ─── -->
+<div class="dir">
+  <div class="dir-label">D4.1-A — Narrow Gate</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Arcs moved closer: r=24, left center(38,50), right center(62,50).
+          Gap between tips: x=[38,62]=24 units (vs 28 in original).
+          The portal opening is tighter, more focused.
+        -->
+        <path d="M 38,26 A 24,24 0 0 0 38,74"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 62,26 A 24,24 0 0 1 62,74"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 38,26 A 24,24 0 0 0 38,74" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 62,26 A 24,24 0 0 1 62,74" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Narrow Gate</h3>
+      <div class="meta">Tighter gap · Focused opening · More tension</div>
+      <p>The two arcs are pulled inward — the portal mouth narrows. The composition feels more focused and decisive: the gap between them is where the attention goes, and it's tighter, more like a needle's eye than a doorway.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4.1-B: Wide Gate ─── -->
+<div class="dir">
+  <div class="dir-label">D4.1-B — Wide Gate</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Arcs pushed out: left center(30,50) r=28, right center(70,50) r=28.
+          Gap between tips: x=[30,70]=40 units (vs 28 in original).
+          Wide open portal — generous, welcoming, expansive.
+        -->
+        <path d="M 30,22 A 28,28 0 0 0 30,78"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 70,22 A 28,28 0 0 1 70,78"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 30,22 A 28,28 0 0 0 30,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 70,22 A 28,28 0 0 1 70,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Wide Gate</h3>
+      <div class="meta">Generous gap · Expansive · Open arms</div>
+      <p>The arcs push to the outer edges — the portal opens wide. The composition reads as open, welcoming, expansive. The space between them is no longer a needle's eye but a clearing. More invitation than filter.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4.1-C: Weight Split ─── -->
+<div class="dir">
+  <div class="dir-label">D4.1-C — Weight Split</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Same positions as original, same coral gradient on both.
+          Left arc: sw=22 (heavy dominant).
+          Right arc: sw=9 (thin, barely-there), opacity=0.85.
+          Breaking the perfect symmetry with weight — the left arc leads.
+        -->
+        <path d="M 36,22 A 28,28 0 0 0 36,78"
+              fill="none" stroke="url(#cg)" stroke-width="22" stroke-linecap="round"/>
+        <path d="M 64,22 A 28,28 0 0 1 64,78"
+              fill="none" stroke="url(#cg)" stroke-width="9" stroke-linecap="round" opacity="0.80"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 36,22 A 28,28 0 0 0 36,78" fill="none" stroke="url(#cg)" stroke-width="22" stroke-linecap="round"/>
+          <path d="M 64,22 A 28,28 0 0 1 64,78" fill="none" stroke="url(#cg)" stroke-width="9" stroke-linecap="round" opacity="0.80"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Weight Split</h3>
+      <div class="meta">Heavy left · Hairline right · Both coral · Same position</div>
+      <p>Same positions, same gradient, but a 2.5× weight difference breaks the symmetry. Both arcs are coral, both face each other — but one clearly leads. Asymmetric personality within a symmetric concept. The hierarchy is in the mass, not the colour.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4.1-D: Long Arc Portal ─── -->
+<div class="dir">
+  <div class="dir-label">D4.1-D — Long Arc Portal</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Each arc spans ~230° (large-arc-flag=1) rather than 180° (semicircle).
+          Left: M(44,30) A(24,24) 0 1 0 (44,70) — large CCW arc opening right.
+            chord=40 < 48=2*24. ✓ Center at (44-d,50) where d=sqrt(576-400)=sqrt(176)≈13.3
+            center≈(30.7,50). Leftmost: 30.7-24=6.7. With sw=17: -1.8 (clips slightly, ok).
+          Right: M(56,30) A(24,24) 0 1 1 (56,70) — large CW arc opening left.
+            Mirror: center≈(69.3,50). Rightmost: 93.3. With sw=17: 101.8 (clips slightly, ok).
+          Gap between endpoints: x=[44,56]=12 units — narrow, the drama is the long sweep.
+          The arcs each wrap 230° — almost complete circles — facing each other.
+        -->
+        <path d="M 44,30 A 24,24 0 1 0 44,70"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 56,30 A 24,24 0 1 1 56,70"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 44,30 A 24,24 0 1 0 44,70" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 56,30 A 24,24 0 1 1 56,70" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Long Arc Portal</h3>
+      <div class="meta">230° arc each · Almost-complete circles · Dramatic enclosure</div>
+      <p>Instead of semicircles (180°), each arc spans ~230° — nearly closing into a full circle before opening toward the other. The portal becomes dense and enclosing: less a gate you walk through, more two forces orbiting each other. Maximum visual weight within the portal concept.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── D4.1 family side-by-side comparison ── -->
+<div style="margin-top:8px">
+  <div style="font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:14px">D4.1 family at a glance</div>
+  <div class="compare-strip">
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 36,22 A 28,28 0 0 0 36,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 64,22 A 28,28 0 0 1 64,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+      <div class="compare-label">Original</div>
+    </div>
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 38,26 A 24,24 0 0 0 38,74" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 62,26 A 24,24 0 0 1 62,74" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+      <div class="compare-label">A — Narrow Gate</div>
+    </div>
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 30,22 A 28,28 0 0 0 30,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 70,22 A 28,28 0 0 1 70,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+      <div class="compare-label">B — Wide Gate</div>
+    </div>
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 36,22 A 28,28 0 0 0 36,78" fill="none" stroke="url(#cg)" stroke-width="22" stroke-linecap="round"/>
+        <path d="M 64,22 A 28,28 0 0 1 64,78" fill="none" stroke="url(#cg)" stroke-width="9" stroke-linecap="round" opacity="0.80"/>
+      </svg>
+      <div class="compare-label">C — Weight Split</div>
+    </div>
+    <div class="compare-item">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 44,30 A 24,24 0 1 0 44,70" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 56,30 A 24,24 0 1 1 56,70" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+      <div class="compare-label">D — Long Arc</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Bottom prompt -->
+<div style="margin-top:44px;background:rgba(255,255,255,.03);border:1px solid var(--dim);border-radius:12px;padding:22px 26px">
+  <p style="font-size:13px;color:var(--muted);line-height:1.8">
+    <strong style="color:var(--text)">Narrowing down:</strong> From D4 — which spatial relationship speaks to you: the original's tight layering, A's open spread, B's equal-weight dialogue, C's scale drama, or D's vertical tension? From D4.1 — does the portal work better tight (A), wide (B), weight-split (C), or with long enclosing arcs (D)? Pick one from each family and we'll deep-lock the geometry, wordmark spacing, and build the full lockup set.
+  </p>
+</div>
+
+</div>
+</body>
+</html>

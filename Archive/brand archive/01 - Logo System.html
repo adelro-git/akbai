@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — Final Logo Lockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+  --honey-start:#F59E0B;
+  --honey-end:#D97706;
+  --teal-start:#20C9A0;
+  --teal-end:#0FB8D9;
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);font-size:15px;padding:0 0 120px}
+
+/* ── Layout ── */
+.page-wrap{max-width:1040px;margin:0 auto;padding:0 32px}
+.section{padding:72px 0;border-bottom:1px solid var(--dim)}
+.section:last-child{border-bottom:none}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.section-title{font-size:20px;font-weight:800;margin-bottom:6px}
+.section-note{font-size:13px;color:var(--muted);line-height:1.6;max-width:560px;margin-bottom:36px}
+.divider{border:none;border-top:1px solid var(--dim);margin:0}
+.col2{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.col3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
+
+/* ── Canvas blocks ── */
+.canvas{display:flex;align-items:center;justify-content:center;border-radius:0;padding:52px 40px;position:relative}
+.canvas-dark{background:var(--ink)}
+.canvas-card{background:var(--card)}
+.canvas-light{background:#F5F0E8}
+.canvas-white{background:#FFFFFF}
+.canvas-gradient{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.canvas-teal{background:linear-gradient(135deg,#0d2a24,#0a1f2e)}
+
+/* Rounded corners only on standalone canvases */
+.canvas-rounded{border-radius:16px;border:1px solid var(--dim)}
+.canvas-light.canvas-rounded,.canvas-white.canvas-rounded{border-color:rgba(0,0,0,.08)}
+
+/* ── Wordmark ── */
+.wm{font-weight:800;letter-spacing:-.015em;line-height:1}
+.wm-xl{font-size:44px}
+.wm-lg{font-size:32px}
+.wm-md{font-size:24px}
+.wm-sm{font-size:18px}
+.wm-xs{font-size:14px}
+
+.wh{color:#fff}
+.wd{color:#07101e}
+.w-honey{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.w-honey-light{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── Tagline ── */
+.tagline{font-size:13px;font-weight:500;letter-spacing:.01em;color:rgba(255,255,255,.50);margin-top:5px;font-style:italic}
+.tagline-dark{color:rgba(7,16,30,.45)}
+.tagline-honey{color:#D97706;opacity:.75}
+
+/* ── Lockup ── */
+.lockup-h{display:flex;align-items:center;gap:20px}
+.lockup-h-sm{gap:13px}
+.lockup-stack{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+
+/* ── Spec chips ── */
+.spec-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.spec{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:6px;padding:4px 10px;color:var(--muted)}
+
+/* ── Color swatches ── */
+.swatch-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:8px}
+.swatch-block{border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.07)}
+.swatch-color{height:72px}
+.swatch-info{padding:12px;background:var(--card)}
+.swatch-name{font-size:12px;font-weight:700;margin-bottom:2px}
+.swatch-hex{font-size:11px;color:var(--muted);font-family:monospace}
+.swatch-role{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+
+/* ── Cover ── */
+.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:center;background:var(--ink);padding:80px 32px;position:relative;overflow:hidden;max-width:100%}
+.cover::after{content:'';position:absolute;top:-120px;right:-180px;width:600px;height:600px;background:radial-gradient(circle,rgba(245,158,11,.08) 0%,transparent 65%);pointer-events:none}
+.cover-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:52px;max-width:1040px}
+.cover-meta-item{border-left:2px solid rgba(245,158,11,.25);padding-left:16px}
+.cover-meta-item .label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.cover-meta-item .value{font-size:14px;font-weight:600}
+
+/* ── Scale row ── */
+.scale-row{display:flex;align-items:center;gap:32px;flex-wrap:wrap}
+.scale-item{display:flex;flex-direction:column;align-items:center;gap:10px}
+.scale-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* ── Do/Don't ── */
+.usage-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.usage-cell{padding:36px;display:flex;flex-direction:column;gap:24px}
+.usage-do{background:rgba(32,201,160,.04);border-top:2px solid #20C9A0}
+.usage-dont{background:rgba(255,80,80,.04);border-top:2px solid #FF5050}
+.usage-tag{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.usage-do .usage-tag{color:#20C9A0}
+.usage-dont .usage-tag{color:#FF5050}
+.usage-rule{font-size:13px;color:var(--muted);line-height:1.6}
+
+@media(max-width:760px){
+  .col2,.col3,.usage-grid{grid-template-columns:1fr}
+  .cover-meta{grid-template-columns:1fr 1fr}
+  .swatch-grid{grid-template-columns:repeat(3,1fr)}
+  .cover{padding:52px 20px}
+  .page-wrap{padding:0 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Shared SVG defs -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<defs>
+  <linearGradient id="honey" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#F59E0B"/>
+    <stop offset="100%" stop-color="#D97706"/>
+  </linearGradient>
+  <linearGradient id="teal" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#20C9A0"/>
+    <stop offset="100%" stop-color="#0FB8D9"/>
+  </linearGradient>
+  <linearGradient id="honey-v" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#F59E0B"/>
+    <stop offset="100%" stop-color="#D97706"/>
+  </linearGradient>
+</defs>
+</svg>
+
+
+<!-- ═══════════════════════════════════════════
+     COVER
+═══════════════════════════════════════════ -->
+<div class="cover">
+  <div style="max-width:1040px;margin:0 auto;width:100%">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px">AKBai · Brand Identity · Logo System</div>
+
+    <!-- Hero mark -->
+    <div style="display:flex;align-items:center;gap:28px;margin-bottom:28px">
+      <svg width="88" height="88" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(20, 50, 50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div>
+        <div class="wm wm-xl"><span class="wh">AKB</span><span class="w-honey">ai</span></div>
+        <div class="tagline" style="font-size:16px;margin-top:8px">Kaakbay mo sa negosyo.</div>
+      </div>
+    </div>
+
+    <p style="font-size:18px;color:var(--muted);max-width:560px;line-height:1.6">Final logo system — all lockup variants, colour specifications, and usage guidelines.</p>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Mark</div>
+        <div class="value">D4-E · 20° Lean</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Primary Color</div>
+        <div class="value" style="color:#F59E0B">Warm Honey</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Typeface</div>
+        <div class="value">Plus Jakarta Sans 800</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Tagline</div>
+        <div class="value" style="font-style:italic;color:var(--muted)">Kaakbay mo sa negosyo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     01 — THE MARK
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">01 — The Mark</div>
+  <div class="section-title">Logo Icon</div>
+  <div class="section-note">Two arcs — a dominant Warm Honey arc and a ghosted echo — rotated 20° clockwise. The lean signals momentum. The two-arc relationship encodes partnership.</div>
+
+  <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap">
+
+    <!-- Large mark display -->
+    <div class="canvas canvas-card canvas-rounded" style="flex:1;min-width:280px;min-height:280px">
+      <svg width="160" height="160" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(20, 50, 50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Anatomy -->
+    <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:16px">
+      <div style="background:var(--card);border:1px solid var(--dim);border-radius:12px;padding:20px">
+        <div class="section-label" style="margin-bottom:10px">Mark Anatomy</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:28px;height:6px;border-radius:3px;background:linear-gradient(90deg,#F59E0B,#D97706);flex-shrink:0"></div>
+            <div>
+              <div style="font-size:12px;font-weight:700">Primary Arc</div>
+              <div style="font-size:12px;color:var(--muted)">Warm Honey gradient · r=26 · sw=17</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:28px;height:6px;border-radius:3px;background:rgba(255,255,255,.22);flex-shrink:0;border:1px solid rgba(255,255,255,.20)"></div>
+            <div>
+              <div style="font-size:12px;font-weight:700">Echo Arc</div>
+              <div style="font-size:12px;color:var(--muted)">White · 22% opacity · r=20 · sw=17</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:28px;height:28px;border-radius:50%;border:2px solid rgba(245,158,11,.4);flex-shrink:0;display:flex;align-items:center;justify-content:center">
+              <div style="font-size:9px;font-weight:700;color:#F59E0B">20°</div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700">Rotation</div>
+              <div style="font-size:12px;color:var(--muted)">20° clockwise · pivot at centre</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--dim);border-radius:12px;padding:20px">
+        <div class="section-label" style="margin-bottom:10px">Minimum Clear Space</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65">Maintain clear space equal to the width of the "A" in the wordmark on all four sides of the mark. Never crowd the logo.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     02 — PRIMARY LOCKUP (DARK)
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">02 — Primary Lockup</div>
+  <div class="section-title">Horizontal · On Dark</div>
+  <div class="section-note">The primary lockup. Dark background is the preferred context. Use this version first wherever possible.</div>
+
+  <!-- Without tagline -->
+  <div style="margin-bottom:2px">
+    <div class="canvas canvas-card" style="border-radius:16px 16px 0 0;min-height:160px">
+      <div class="lockup-h">
+        <svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(20, 50, 50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div class="wm wm-xl"><span class="wh">AKB</span><span class="w-honey">ai</span></div>
+      </div>
+    </div>
+    <div style="background:#0a1626;border-radius:0 0 16px 16px;padding:16px 24px;border-top:1px solid var(--dim)">
+      <div class="spec-row" style="margin-top:0">
+        <span class="spec">Logo + Wordmark</span>
+        <span class="spec">Without tagline</span>
+        <span class="spec">On Dark — Primary</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- With tagline -->
+  <div style="margin-top:24px;margin-bottom:2px">
+    <div class="canvas canvas-card" style="border-radius:16px 16px 0 0;min-height:160px">
+      <div class="lockup-h">
+        <svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(20, 50, 50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div>
+          <div class="wm wm-xl"><span class="wh">AKB</span><span class="w-honey">ai</span></div>
+          <div class="tagline" style="font-size:15px;margin-top:6px">Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#0a1626;border-radius:0 0 16px 16px;padding:16px 24px;border-top:1px solid var(--dim)">
+      <div class="spec-row" style="margin-top:0">
+        <span class="spec">Logo + Wordmark + Tagline</span>
+        <span class="spec">Full lockup</span>
+        <span class="spec">On Dark — Primary</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     03 — ON LIGHT
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">03 — On Light</div>
+  <div class="section-title">Horizontal · On White &amp; Off-White</div>
+  <div class="section-note">For light backgrounds. The echo arc switches to dark ink at low opacity. Wordmark "AKB" becomes dark ink; "ai" retains Warm Honey.</div>
+
+  <div class="col2" style="border-radius:16px;overflow:hidden;border:1px solid rgba(0,0,0,.08)">
+
+    <!-- On White -->
+    <div style="background:#FFFFFF;padding:52px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px">
+      <div class="lockup-h">
+        <svg width="68" height="68" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(20, 50, 50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#07101e" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div>
+          <div class="wm wm-lg"><span class="wd">AKB</span><span class="w-honey">ai</span></div>
+          <div class="tagline tagline-dark" style="font-size:13px;margin-top:5px">Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:#8a9bb5">On White</div>
+    </div>
+
+    <!-- On Off-White / warm paper -->
+    <div style="background:#F5F0E8;padding:52px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px">
+      <div class="lockup-h">
+        <svg width="68" height="68" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(20, 50, 50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#3a2a00" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div>
+          <div class="wm wm-lg" style="color:#1a1200"><span style="color:#1a1200">AKB</span><span class="w-honey">ai</span></div>
+          <div class="tagline" style="color:rgba(26,18,0,.40);font-size:13px;margin-top:5px">Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:#8a6a30">On Off-White</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     04 — STACKED LOCKUP
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">04 — Stacked Variant</div>
+  <div class="section-title">Icon Above · Wordmark Below</div>
+  <div class="section-note">Use when vertical space is available — app loading screens, social profile avatars, pitch deck title slides.</div>
+
+  <div class="col2" style="border-radius:16px;overflow:hidden;border:1px solid var(--dim)">
+
+    <!-- Dark stacked -->
+    <div class="canvas canvas-card" style="min-height:300px;padding:52px">
+      <div class="lockup-stack">
+        <svg width="88" height="88" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(20, 50, 50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div style="text-align:center">
+          <div class="wm wm-xl"><span class="wh">AKB</span><span class="w-honey">ai</span></div>
+          <div class="tagline" style="font-size:14px;margin-top:8px">Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Light stacked -->
+    <div style="background:#FFFFFF;display:flex;align-items:center;justify-content:center;min-height:300px;padding:52px">
+      <div class="lockup-stack">
+        <svg width="88" height="88" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(20, 50, 50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#07101e" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div style="text-align:center">
+          <div class="wm wm-xl"><span class="wd">AKB</span><span class="w-honey">ai</span></div>
+          <div class="tagline tagline-dark" style="font-size:14px;margin-top:8px">Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     05 — REVERSED ON GRADIENT
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">05 — Reversed</div>
+  <div class="section-title">White on Warm Honey Gradient</div>
+  <div class="section-note">For gradient hero sections, social media headers, and onboarding screens. The entire mark and wordmark render in white.</div>
+
+  <div class="col2" style="border-radius:16px;overflow:hidden">
+
+    <!-- Horizontal reversed -->
+    <div class="canvas canvas-gradient" style="min-height:200px">
+      <div class="lockup-h">
+        <svg width="68" height="68" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(20, 50, 50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="white" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.35"/>
+          </g>
+        </svg>
+        <div>
+          <div class="wm wm-lg" style="color:#fff">AKBai</div>
+          <div style="font-size:13px;font-weight:500;font-style:italic;color:rgba(255,255,255,.65);margin-top:5px">Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stacked reversed -->
+    <div style="background:linear-gradient(160deg,#F59E0B,#B45309);display:flex;align-items:center;justify-content:center;min-height:200px;padding:40px">
+      <div class="lockup-stack">
+        <svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(20, 50, 50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="white" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.35"/>
+          </g>
+        </svg>
+        <div style="text-align:center">
+          <div class="wm wm-lg" style="color:#fff">AKBai</div>
+          <div style="font-size:12px;font-style:italic;color:rgba(255,255,255,.65);margin-top:5px">Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     06 — MONOCHROME
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">06 — Monochrome</div>
+  <div class="section-title">Single Colour Variants</div>
+  <div class="section-note">For single-colour print, embossing, screen printing, or contexts where gradient rendering is unavailable.</div>
+
+  <div class="col3" style="border-radius:16px;overflow:hidden;border:1px solid var(--dim)">
+
+    <!-- Mono gold -->
+    <div class="canvas canvas-card" style="min-height:180px;flex-direction:column;gap:16px">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(20, 50, 50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="#F59E0B" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#F59E0B" stroke-width="17" stroke-linecap="round" opacity="0.32"/>
+        </g>
+      </svg>
+      <div class="wm wm-md" style="color:#F59E0B">AKBai</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted)">Mono Gold</div>
+    </div>
+
+    <!-- Mono white -->
+    <div class="canvas canvas-ink" style="background:#07101e;min-height:180px;flex-direction:column;gap:16px">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(20, 50, 50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="round" opacity="0.32"/>
+        </g>
+      </svg>
+      <div class="wm wm-md" style="color:#fff">AKBai</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted)">Mono White</div>
+    </div>
+
+    <!-- Mono black -->
+    <div style="background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:180px;gap:16px;padding:32px">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(20, 50, 50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="#07101e" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#07101e" stroke-width="17" stroke-linecap="round" opacity="0.32"/>
+        </g>
+      </svg>
+      <div class="wm wm-md" style="color:#07101e">AKBai</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:#8a9bb5">Mono Black</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     07 — ICON AT SCALE
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">07 — Icon at Scale</div>
+  <div class="section-title">Size Behaviour</div>
+  <div class="section-note">The mark holds well down to 24px. Below 24px use the simplified version — primary arc only, no echo — or a plain wordmark. Never use the full lockup below 140px wide.</div>
+
+  <div class="canvas canvas-card canvas-rounded" style="min-height:160px;flex-wrap:wrap;gap:0">
+    <div class="scale-row" style="gap:36px;flex-wrap:wrap">
+
+      <div class="scale-item">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+          <g transform="rotate(20,50,50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div class="scale-label">80px</div>
+      </div>
+
+      <div class="scale-item">
+        <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+          <g transform="rotate(20,50,50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div class="scale-label">56px</div>
+      </div>
+
+      <div class="scale-item">
+        <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+          <g transform="rotate(20,50,50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div class="scale-label">40px</div>
+      </div>
+
+      <div class="scale-item">
+        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+          <g transform="rotate(20,50,50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div class="scale-label">28px</div>
+      </div>
+
+      <div class="scale-item">
+        <svg width="20" height="20" viewBox="0 0 100 100" fill="none">
+          <g transform="rotate(20,50,50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <div class="scale-label" style="color:#FF8E53">20px ↓</div>
+      </div>
+
+      <div class="scale-item">
+        <svg width="16" height="16" viewBox="0 0 100 100" fill="none">
+          <g transform="rotate(20,50,50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <div class="scale-label" style="color:#FF8E53">16px ↓</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="margin-top:12px;font-size:12px;color:var(--muted);padding:0 4px">↓ Below 20px — primary arc only, echo arc removed for clarity.</div>
+</div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     08 — COLOUR SYSTEM
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">08 — Colour System</div>
+  <div class="section-title">Brand Colour Tokens</div>
+  <div class="section-note">Warm Honey is the primary identity colour. Teal is the supporting trust colour — used for financial data, confirmations, and success states inside the product.</div>
+
+  <div class="swatch-grid">
+
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#F59E0B,#D97706)"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Warm Honey</div>
+        <div class="swatch-hex">#F59E0B → #D97706</div>
+        <div class="swatch-role">Primary · Brand</div>
+      </div>
+    </div>
+
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#F59E0B"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Honey Light</div>
+        <div class="swatch-hex">#F59E0B</div>
+        <div class="swatch-role">Gradient Start</div>
+      </div>
+    </div>
+
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#D97706"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Honey Deep</div>
+        <div class="swatch-hex">#D97706</div>
+        <div class="swatch-role">Gradient End</div>
+      </div>
+    </div>
+
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#20C9A0,#0FB8D9)"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Teal</div>
+        <div class="swatch-hex">#20C9A0 → #0FB8D9</div>
+        <div class="swatch-role">Supporting · Trust</div>
+      </div>
+    </div>
+
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#07101e"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Ink</div>
+        <div class="swatch-hex">#07101e</div>
+        <div class="swatch-role">Background · Dark</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     09 — USAGE RULES
+═══════════════════════════════════════════ -->
+<div class="page-wrap">
+<div class="section">
+  <div class="section-label">09 — Usage Rules</div>
+  <div class="section-title">Do &amp; Don't</div>
+  <div class="section-note" style="margin-bottom:0"></div>
+
+  <div class="usage-grid" style="border-radius:16px;overflow:hidden;border:1px solid var(--dim);margin-top:28px">
+
+    <div class="usage-cell usage-do">
+      <div class="usage-tag">✓ Do</div>
+      <div class="usage-rule">Use the primary lockup on dark backgrounds as the default.</div>
+      <div class="usage-rule">Maintain clear space equal to the "A" glyph width on all sides.</div>
+      <div class="usage-rule">Use the reversed (all-white) version on gradient or photographic backgrounds.</div>
+      <div class="usage-rule">Use mono versions for single-colour print, emboss, or engraving.</div>
+      <div class="usage-rule">Scale the icon alone for app icons, favicons, and small placements.</div>
+    </div>
+
+    <div class="usage-cell usage-dont">
+      <div class="usage-tag">✗ Don't</div>
+      <div class="usage-rule">Don't place the Warm Honey version on coloured backgrounds — use reversed or mono.</div>
+      <div class="usage-rule">Don't rotate the mark beyond its built-in 20° lean.</div>
+      <div class="usage-rule">Don't stretch, skew, or change the proportion of the mark to wordmark.</div>
+      <div class="usage-rule">Don't use the full lockup below 140px wide — use icon only.</div>
+      <div class="usage-rule">Don't add drop shadows, outlines, or effects to the mark.</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+</body>
+</html>

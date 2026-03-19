@@ -1,0 +1,12 @@
+{
+  "eval_id": 0,
+  "eval_name": "morning-check",
+  "prompt": "What do I need to check today? I'm about to leave for work at Globe and have 5 minutes.",
+  "assertions": [
+    {"text": "Uses traffic light indicators (🟢🟡🔴) for status", "type": "qualitative"},
+    {"text": "Covers all 4 check areas: systems, support, revenue, flags", "type": "structural"},
+    {"text": "Includes a 'tonight's priority' or next action line", "type": "structural"},
+    {"text": "Response is phone-scannable (short lines, no dense paragraphs)", "type": "qualitative"},
+    {"text": "Respects the 5-minute constraint (not an overwhelming wall of text)", "type": "qualitative"}
+  ]
+}

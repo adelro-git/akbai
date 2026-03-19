@@ -1,0 +1,23 @@
+{
+  "skill_name": "qa-engineer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just finished implementing the BIR deadline calculation logic in lib/bir/deadlines.ts. It handles quarterly 1701Q filings. Can you write the tests for it? The function takes a registration date, business type, and a holiday calendar, and returns an array of deadline objects with dates and form numbers. I'm worried about the weekend rollover edge cases especially around Holy Week.",
+      "expected_output": "Should produce a comprehensive Vitest test file targeting bir-deadlines.test.ts with 15+ scenarios covering weekend rollover, holiday rollover (including Holy Week multi-day spans), mid-year registration, VAT threshold, and timezone assertions. All dates should assert Asia/Manila timezone. Test data should use real Philippine holidays and BIR form numbers (1701Q, 2550M). Should NOT test simple happy paths or basic function calling.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We just deployed the Xendit webhook handler as a Supabase Edge Function. I need to make sure the idempotency logic works — Xendit sometimes fires the same webhook twice. Also need to test the grace period flow when payment fails. Can you write integration tests?",
+      "expected_output": "Should produce integration tests for xendit-webhooks.test.ts covering: duplicate webhook dedup (same payment_id processed only once), signature verification (invalid sig returns 200 but doesn't process), payment failure grace period (3 days, no reset on repeated failures), and subscription state transitions. Should use mock Xendit payloads with realistic Philippine payment data. Should test against local Supabase instance with real RLS policies.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I made changes to the KA system prompt — updated the BIR disclaimer wording and tweaked the Taglish tone for the morning briefing. I also added a new [MARKETING_SCOPE] section for Phase 4 prep. What tests should I run to make sure I didn't break anything? Do we have a regression suite?",
+      "expected_output": "Should reference the Taglish regression test library (20-30 cases), explain which specific checks to run (BIR disclaimer presence, KA voice consistency, prompt injection defense, no corporate filler phrases, first name usage, ₱ formatting). Should recommend running the full regression library since both disclaimer and tone changed. Should flag that the new [MARKETING_SCOPE] needs new test cases added. Should reference the prompt version changelog requirement.",
+      "files": []
+    }
+  ]
+}

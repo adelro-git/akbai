@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AKBai — Operations Playbook</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FEFAF3; color: #1a2a3f; }
+
+    header {
+      background: #07101e;
+      color: white;
+      padding: 28px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 { font-size: 22px; font-weight: 700; }
+    header p { font-size: 13px; opacity: 0.75; margin-top: 4px; }
+    .review-badge {
+      background: #F59E0B;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+
+    .nav {
+      background: #1a2a3f;
+      display: flex;
+      gap: 4px;
+      padding: 0 40px;
+      overflow-x: auto;
+    }
+    .nav a {
+      color: #BDC3C7;
+      text-decoration: none;
+      padding: 12px 16px;
+      font-size: 13px;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .nav a:hover, .nav a.active { color: white; border-bottom-color: #F59E0B; }
+
+    .content { max-width: 1400px; margin: 0 auto; padding: 40px; }
+
+    .section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 48px;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid #ECF0F1;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .section-num {
+      background: #07101e;
+      color: white;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .section-num.ops { background: #7D3C98; }
+    .section-num.gate { background: #F59E0B; }
+    .section-title { font-size: 18px; font-weight: 700; color: #07101e; }
+    .section-sub { font-size: 13px; color: #7F8C8D; margin-top: 3px; }
+
+    .diagram-wrap {
+      padding: 32px 28px;
+      overflow-x: auto;
+      background: #FAFBFC;
+    }
+    .diagram-wrap .mermaid {
+      min-width: 600px;
+    }
+
+    .legend {
+      padding: 16px 28px;
+      background: #F8F9FA;
+      border-top: 1px solid #ECF0F1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #555;
+    }
+    .legend-dot {
+      width: 12px; height: 12px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .gaps-panel {
+      background: #FEF9E7;
+      border: 1px solid #F9CA24;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 48px;
+    }
+    .gaps-panel h2 { font-size: 15px; font-weight: 700; color: #D35400; margin-bottom: 12px; }
+    .gap-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .gap-tag {
+      background: #E74C3C;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+      white-space: nowrap;
+      height: fit-content;
+      margin-top: 2px;
+    }
+    .gap-tag.warn { background: #F59E0B; }
+    .gap-tag.info { background: #F59E0B; }
+
+    .review-note {
+      background: #EBF5FB;
+      border-left: 4px solid #F59E0B;
+      padding: 14px 18px;
+      margin: 0 28px 24px;
+      border-radius: 0 6px 6px 0;
+      font-size: 13px;
+      color: #1A5276;
+      line-height: 1.6;
+    }
+
+    h2.divider {
+      font-size: 13px;
+      font-weight: 700;
+      color: #95A5A6;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin: 48px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    h2.divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ECF0F1;
+    }
+
+    .tier-matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 20px 0;
+    }
+    .tier-matrix th {
+      background: #07101e;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 700;
+      border: 1px solid #ECF0F1;
+    }
+    .tier-matrix td {
+      padding: 12px;
+      border: 1px solid #ECF0F1;
+      background: #fff;
+    }
+    .tier-matrix tr:nth-child(even) td {
+      background: #FAFBFC;
+    }
+    .tier-matrix .feature {
+      font-weight: 600;
+      color: #07101e;
+    }
+
+  /* ===== PRINT STYLES ===== */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 18mm 14mm 18mm 14mm;
+    }
+    @page :first { margin-top: 0; }
+
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    html, body {
+      background: white !important;
+      font-size: 12px;
+    }
+
+    /* Hide browser chrome elements */
+    .nav, .review-badge { display: none !important; }
+
+    /* Cover header — keep, but tighten */
+    header {
+      position: static !important;
+      padding: 20px 28px;
+      break-after: page;
+    }
+    header h1 { font-size: 18px; }
+
+    /* Print cover block */
+    .print-cover {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: center;
+      break-after: page;
+    }
+
+    .content {
+      padding: 0;
+      max-width: 100%;
+    }
+
+    /* Each flow section starts on a fresh page */
+    .section {
+      break-before: page;
+      break-inside: auto;
+      box-shadow: none !important;
+      border: 1px solid #E0E0E0;
+      border-radius: 6px;
+      margin-bottom: 0;
+      overflow: visible;
+    }
+
+    /* Grouped elements that must not be orphaned */
+    .section-header { break-inside: avoid; }
+    .review-note    { break-inside: avoid; break-after: avoid; }
+    .legend         { break-inside: avoid; }
+    .gap-item       { break-inside: avoid; }
+    .gaps-panel     { break-inside: auto; }
+
+    /* Gaps panel & dividers */
+    h2.divider { display: none; }
+
+    /* Diagrams — constrain width and let SVG scale */
+    .diagram-wrap {
+      padding: 12px 10px;
+      overflow: visible;
+      background: #FAFBFC;
+    }
+    .diagram-wrap .mermaid {
+      min-width: 0 !important;
+      width: 100% !important;
+    }
+    .diagram-wrap .mermaid svg {
+      max-width: 100% !important;
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    /* Review checklist footer */
+    footer {
+      break-before: page;
+      margin-top: 0;
+    }
+  }
+  </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>AKBai — Operations Playbook</h1>
+    <p>UX Lifecycle · Business Operations · Process Flows · v6.0</p>
+  </div>
+  <div class="review-badge">⚠ DRAFT — FOR REVIEW</div>
+</header>
+
+<div class="nav">
+  <a href="#ux-onboarding" class="active">UX 1: Onboarding</a>
+  <a href="#ux-daily">UX 2: Daily Loop</a>
+  <a href="#ux-monetization">UX 3: Monetization &amp; Churn</a>
+  <a href="#ux-daily-checkin">UX 4: Daily Check-In</a>
+  <a href="#ux-weekly-recon">UX 5: Weekly Reconciliation</a>
+  <a href="#ux-excel-upload">UX 6: Excel Upload (Pro)</a>
+  <a href="#ux-gsheets-sync">UX 7: GSheets Sync (Business)</a>
+  <a href="#ux-monthly-recap">UX 8: Monthly Reconciliation</a>
+  <a href="#tier-matrix">Feature Tier Matrix</a>
+  <a href="#ops-daily">OPS 1: Daily Rhythm</a>
+  <a href="#ops-support">OPS 2: Support &amp; Incidents</a>
+  <a href="#ops-gate">OPS 3: Sense Check Gate</a>
+</div>
+
+<div class="content">
+
+  <!-- GAPS CALLOUT -->
+  <div class="gaps-panel">
+    <h2>⚠ 11 Additional Operational Gaps Identified in This Review</h2>
+    <div class="gap-item"><span class="gap-tag">CRITICAL</span><span><strong>OTP deliverability to Yahoo Mail PH</strong> — common among target users. Needs custom SMTP with warmed-up domain (not Supabase default SendGrid).</span></div>
+    <div class="gap-item"><span class="gap-tag">CRITICAL</span><span><strong>Webhook idempotency for Xendit</strong> — same payment webhook can fire twice on retry. Handler must deduplicate by payment_id before processing.</span></div>
+    <div class="gap-item"><span class="gap-tag">CRITICAL</span><span><strong>OR number generation legality</strong> — BIR requires sequentially numbered Official Receipts from a registered OR series. Auto-generating receipt numbers needs legal sign-off before Automated Self-Invoicing ships.</span></div>
+    <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Dependency monitoring</strong> — Anthropic API, Supabase, Xendit each need health checks + graceful in-app fallback messages. Note: Claude Haiku Vision replaces Claude Haiku Vision — single dependency instead of two.</span></div>
+    <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Data backup strategy</strong> — Supabase point-in-time recovery needs explicit enablement on the paid plan + a tested restore procedure.</span></div>
+    <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Session expiry UX</strong> — graceful Taglish re-auth prompt when session expires mid-use, not a raw error state.</span></div>
+    <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Incident response runbook</strong> — what happens at 2AM on a BIR deadline day when the app goes down? Solo founder needs a written protocol even if it's just: detect → post status → rollback → fix.</span></div>
+    <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Beta-to-paid transition</strong> — Phase 0C pilot users paying ₱99–₱199 need a defined migration path when Phase 1 launches at ₱399. Loyalty rate? Auto-upgrade? No mention in roadmap.</span></div>
+    <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>PWA installation UX</strong> — no App Store listing means "Add to Home Screen" is non-obvious. Landing page and onboarding need an explicit install guide step.</span></div>
+    <div class="gap-item"><span class="gap-tag info">PLAN</span><span><strong>Admin observability</strong> — Anton needs a way to see: active users, MRR, feature usage breakdown, Flag-as-Wrong queue. Even a Supabase dashboard + simple Retool view would suffice for MVP.</span></div>
+    <div class="gap-item"><span class="gap-tag info">PLAN</span><span><strong>Data retention policy</strong> — NPC requires a defined retention period for churned users. Must be stated in Privacy Policy and enforced in the system (e.g., delete transactions after 1 year of inactivity).</span></div>
+  </div>
+
+  <!-- ===== UX SECTION ===== -->
+  
+<div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
+<h3 style="color: #856404; margin-top: 0;">⚠️ AI Scope Boundaries &amp; Financial Disclaimer</h3>
+<p><strong>IN SCOPE:</strong> BIR compliance guidance, receipt/expense tracking, cash flow summaries, Taglish business communications, payment reminders, business onboarding, data bootstrap.</p>
+<p><strong>OUT OF SCOPE (redirect gracefully):</strong> Investment advice, legal disputes, audit services, medical queries, HR disputes, personal finance unrelated to MSME operations.</p>
+<p><strong>Financial Disclaimer (embedded in system prompt):</strong> "Paalala: Ang guidance na ito ay informational lang. I-verify mo sa iyong accountant o CPA bago mag-file." This disclaimer auto-appends to all tax-sensitive responses.</p>
+<p><strong>In-App Disclaimer:</strong> A persistent disclaimer banner must be visible in the chat UI at all times: "AKBai provides informational guidance only — hindi ito professional financial or tax advice."</p>
+<p><strong>Terms of Service:</strong> Users must explicitly agree that AKBai is not liable for any financial implications, BIR penalties, or business decisions made based on its outputs.</p>
+</div>
+<h2 class="divider">USER EXPERIENCE FLOWS</h2>
+
+  <!-- UX 1: Onboarding -->
+  <div class="section" id="ux-onboarding">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div>
+        <div class="section-title">UX Flow 1 — Registration &amp; Kilala Kita Onboarding</div>
+        <div class="section-sub">From first landing to Dashboard. Covers Auth (email OTP), Privacy &amp; Terms, and all 5 Kilala Kita steps including BIR opt-in branches and 3-path data bootstrap.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Review focus:</strong> Does the BIR opt-in branch logic feel right? Are the 3 data bootstrap paths (Upload / GCash / Quick Start) in the right order? Should Terms acceptance happen before or after email verification?
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    A([User visits projectka.ph]) --> B[Enter email address]
+    B --> C[/Email OTP sent via Supabase Auth/]
+    C --> D{OTP correct?}
+    D -->|No / Expired| C
+    D -->|Yes — New User| E[Accept Privacy Policy + Terms of Service\nCheckbox required — data collection cannot begin without this]
+    D -->|Yes — Returning User| Z([Dashboard — Home Tab])
+
+    E --> KK1
+
+    subgraph KK ["🟢  KILALA KITA — 5-Step Onboarding"]
+        KK1[Step 1 · Quick Form 90s\nBusiness type · Revenue range\nPlatforms used · What you sell]
+        KK1 --> KK2[Step 2 · BIR Opt-In]
+        KK2 --> BIR{Registered sa BIR?}
+        BIR -->|Yes — Registered| BIR_A[bir_opt_in = true\nCapture BIR type: 8% flat / Graduated\nEnable Deadline Watcher + Tanong Kay BIR]
+        BIR -->|Not Sure| BIR_B[One soft educational message\nP250K threshold explained\nOptional: alert me when I approach threshold]
+        BIR -->|Not Registered / Informal| BIR_C[bir_opt_in = false\nZero BIR features ever\nOne soft note only if approaching P250K/yr]
+
+        BIR_A --> KK3
+        BIR_B --> KK3
+        BIR_C --> KK3
+
+        KK3[Step 3 · Data Bootstrap]
+        KK3 --> DB{Existing records?}
+        DB -->|Upload CSV / XLSX| DB_A[File parsed · Column mapping\nPreview shown for confirmation\nKA becomes source of truth]
+        DB -->|GCash / Maya screenshots| DB_B[OCR extracts: amount · date · ref\nEditable confirmation UI\nSame flow as Saan Napunta?]
+        DB -->|No data — Quick Start| DB_C[Guided first transaction in Taglish chat\nWarm acknowledgment after first entry\nDashboard shows first data point immediately]
+
+        DB_A --> KK4
+        DB_B --> KK4
+        DB_C --> KK4
+
+        KK4[Step 4 · AI Deepdive 3–5 min\n3 open Taglish questions · 1 follow-up each\nAnswers captured verbatim for tone-matching]
+        KK4 --> KK5[Step 5 · Silent AI Synthesis user never sees\nClaude API call → structured JSON profile\nStored in Supabase scoped to auth.uid\nbir_opt_in · data_source · tone profile · baseline snapshot]
+    end
+
+    KK5 --> Z
+
+    style KK fill:#D5F5E3,stroke:#1E8449
+    style BIR_C fill:#FDEBD0,stroke:#F59E0B
+    style BIR_B fill:#FEF9E7,stroke:#F9CA24
+    style BIR_A fill:#D5F5E3,stroke:#1E8449
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1E8449"></div>Green path — registered BIR user</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Orange path — informal seller, zero BIR features</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Yellow path — unsure, soft education only</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>All paths merge at Data Bootstrap → AI Deepdive</div>
+    </div>
+  </div>
+
+  <!-- UX 2: Daily Loop -->
+  <div class="section" id="ux-daily">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div>
+        <div class="section-title">UX Flow 2 — Daily Use Loop</div>
+        <div class="section-sub">Returning user from Dashboard through core feature interactions: receipt scanning, expense tracking, BIR deadlines (opt-in), and morning briefing. Includes AI loading states and error handling.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Review focus:</strong> Is the "Flag as Wrong" flow visible enough without being intrusive? Should the duplicate receipt warning be a hard block or a soft confirm? Does the AI downtime fallback feel right?
+      <br><br>
+      <strong>Receipt Scanning — Tier Breakdown:</strong> Free tier has 0 receipt scans/month (no scanning capability). Pro tier unlocks 50 scans/month (covers receipts AND notebook photos). Business tier allows 80 scans/month (covers receipts AND notebook photos). Free-to-Pro upgrade is a key upsell trigger when receipt scanning is needed. This is a core monetization signal.
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    OPEN([User opens app]) --> SESSION{Session valid?}
+    SESSION -->|Expired| REAUTH[Taglish re-auth prompt\nI-verify lang ulit ang email mo]
+    REAUTH --> SESSION
+    SESSION -->|Valid| DASH
+
+    DASH[Dashboard — Home Tab\nBottom nav: Dashboard · Chat · History · Settings]
+
+    DASH --> MB[Morning Briefing Card]
+    MB --> MB_T{Tier?}
+    MB_T -->|Pro/Business| MB_PRO[Full AI briefing:\ntasks · deadlines · cash status · top priority\nPush notification at 7AM]
+    MB_T -->|Free| MB_FREE[One-liner teaser + upgrade nudge\n2 tasks · 1 deadline this week\nNo receipt scanning available]
+
+    DASH --> CF[Cash Flow Card\nIncome minus expenses · Color coded]
+    CF --> CF_TAP[Tap → opens Saan Napunta? thread\nContext pre-loaded]
+
+    DASH --> BIR_D{bir_opt_in = true?}
+    BIR_D -->|Yes| BIR_CARD[BIR Deadline Countdown\nNext filing + days remaining\nTap → Deadline Watcher thread]
+    BIR_D -->|No| BIR_HIDDEN[Card hidden entirely\nNo mention of BIR anywhere]
+
+    DASH --> QA[Quick Action: Scan Receipt\nFree: 0 scans — Pro: 50/mo — Business: 80/mo\nPool covers receipts AND notebook photos]
+    QA --> FREE_CHECK{Free tier?}
+    FREE_CHECK -->|Yes| FREE_PROMPT[Receipt scanning for Pro users only\nI-upgrade para gamitin ang feature na ito]
+    FREE_CHECK -->|No| OCR_API[Single-pass OCR\nClaude Haiku Vision]
+    FREE_PROMPT --> UPGRADE_NUDGE[Upgrade prompt triggered\nKey upsell moment]
+    OCR_API --> OCR_DOWN{API available?}
+    OCR_DOWN -->|Down| OCR_FB[Graceful fallback:\nManual entry form\nNag-iisip pa ako — subukan ulit]
+    OCR_DOWN -->|OK| OCR_CARD[Editable Confirmation Card\nLow-confidence fields in yellow]
+    OCR_CARD --> DEDUP{Possible duplicate?\nSame vendor + amount + 24h}
+    DEDUP -->|Yes| DEDUP_WARN[Mukhang na-scan na ito\nI-save pa rin?]
+    DEDUP -->|No| SAVE[Confirmed → Saved to Saan Napunta?\nDashboard Cash Flow card updates]
+    DEDUP_WARN --> SAVE
+
+    DASH --> CHAT[Quick Action: Ask AKBai — Chat]
+    CHAT --> AI_CALL[Claude API call\nSystem prompt: AKBai persona + user profile + history]
+    AI_CALL --> AI_WAIT{Response time}
+    AI_WAIT -->|3–10s normal| TYPING[Typing indicator shown\nNag-iisip pa ako…]
+    AI_WAIT -->|Timeout / error| AI_FB[Graceful fallback message\nSubukan ulit in a moment]
+    TYPING --> AI_RESP[AI Response displayed in Taglish\nBIR responses always include disclaimer]
+    AI_RESP --> FLAG{User flags wrong?}
+    FLAG -->|Yes| FLAG_Q[Logged to review queue in Supabase\nAnton reviews weekly]
+    FLAG -->|No| CONT[Continue conversation]
+
+    style BIR_HIDDEN fill:#F8F9FA,stroke:#BDC3C7,color:#95A5A6
+    style OCR_FB fill:#FDEBD0,stroke:#F59E0B
+    style AI_FB fill:#FDEBD0,stroke:#F59E0B
+    style DEDUP_WARN fill:#FEF9E7,stroke:#F9CA24
+    style FREE_PROMPT fill:#FDEBD0,stroke:#F59E0B
+    style UPGRADE_NUDGE fill:#F59E0B,color:#fff,stroke:#D35400
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Fallback / error state — always shows graceful Taglish message</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Warning / confirmation prompt</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#BDC3C7"></div>Hidden from informal sellers (bir_opt_in = false)</div>
+    </div>
+  </div>
+
+  <!-- UX 3: Monetization & Churn -->
+  <div class="section" id="ux-monetization">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div>
+        <div class="section-title">UX Flow 3 — Free → Pro Upgrade &amp; Churn/Win-Back</div>
+        <div class="section-sub">Free tier limit hit, upgrade checkout, payment failure grace period, downgrade flow, and win-back email trigger. Includes the beta-to-paid transition path for Phase 0C pilot users.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Review focus:</strong> Is 3 days the right grace period before downgrading a Pro user who hasn't paid? Should pilot users (₱99–₱199) auto-upgrade to Pro or be asked first? Does the win-back trigger (BIR deadline approach) feel right or too pushy?
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    FREE[Free User in App]
+    FREE --> LIMIT{Free limit hit?}
+    LIMIT -->|Needs receipt scanning\nFree tier: 0 scans| BUMP_R[Upgrade prompt — Taglish\nReceipt scanning unlocked sa Pro\n50 scans/mo: receipts + notebook photos + unlimited messages\nI-upgrade para sa full features]
+    LIMIT -->|Daily query limit reached 10/day| BUMP_M[Upgrade prompt — Taglish\nNaubos na ang iyong free messages ngayon\nI-upgrade sa Pro para walang limitasyon]
+    LIMIT -->|Not yet hit| FREE
+
+    BUMP_R --> UPGRADE{Upgrade?}
+    BUMP_M --> UPGRADE
+    UPGRADE -->|No| STAY_FREE[Return to app\nFree limits remain]
+    UPGRADE -->|Yes| CHECKOUT[Xendit checkout\nPro: ₱399 · ₱449 · ₱499 per mo Y1-Y3\nBusiness: ₱899 · ₱999 · ₱1099 per mo Y1-Y3\nGCash/Maya 1.5% · Card 2.9%]
+    CHECKOUT --> PAY_OK{Payment success?}
+    PAY_OK -->|Yes| PRO[Pro features unlocked\nWelcome message in Taglish\nReferral prompt triggered — first win moment]
+    PAY_OK -->|No| RETRY[Retry prompt + manual GCash option\nConcierge fallback if payment rails unavailable]
+    RETRY --> PAY_OK
+
+    subgraph PILOT ["🟠  Beta-to-Paid Transition — Phase 0C Users"]
+        P1[Pilot user paying P99–P199] --> P2{Phase 1 launch}
+        P2 --> P3[Personalised message:\nSalamat sa pagiging unang AKBai user\nSpecial rate: P249/month for 3 months]
+        P3 --> P4{Accepts?}
+        P4 -->|Yes| PRO
+        P4 -->|No| STAY_FREE
+    end
+
+    PRO --> RENEWAL[Monthly auto-renewal via Xendit]
+    RENEWAL --> RENEW_OK{Payment succeeds?}
+    RENEW_OK -->|Yes| PRO
+    RENEW_OK -->|No| GRACE[3-day grace period\nIn-app alert + push notification\nI-update ang iyong payment details]
+    GRACE --> RETRY2{Retried Day 3?}
+    RETRY2 -->|Resolved| PRO
+    RETRY2 -->|Still failed Day 7| DOWNGRADE[Downgrade to Free\nData fully preserved — never deleted\nAccess to paid features suspended]
+    DOWNGRADE --> SURVEY[One-question cancellation survey\nBakit ka aalis?\nToo expensive · Not using it · Missing feature · Other]
+    SURVEY --> WINBACK[30-day win-back email\nTriggered by approaching BIR deadline\nKamusta Name — your 1701Q is due in 10 days\nYour data is here — come back anytime]
+    WINBACK --> UPGRADE
+
+    style PILOT fill:#FDEBD0,stroke:#F59E0B
+    style GRACE fill:#FEF9E7,stroke:#F9CA24
+    style DOWNGRADE fill:#FADBD8,stroke:#E74C3C
+    style PRO fill:#D5F5E3,stroke:#1E8449
+      </div>
+    </div>
+    <div class="review-note">
+      <strong>UAT Pre-Launch Phase:</strong> Before public launch, 15–20 trusted testers receive access for 2–4 weeks. UAT uses a stripped stack: Supabase free + Cloudflare Pages free + Claude Haiku API only (no Sonnet, no Xendit, no WhatsApp Business API). Total UAT cost: ₱800. UAT users are not charged — they receive free access in exchange for structured feedback. UAT is a hard gate before Phase 1 public launch.
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1E8449"></div>Pro user — full features active</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Grace period — 3-day window to resolve payment</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#E74C3C"></div>Downgraded — data preserved, access suspended</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Beta pilot transition path</div>
+    </div>
+  </div>
+
+  <!-- UX 4: Daily Check-In -->
+  <div class="section" id="ux-daily-checkin">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div>
+        <div class="section-title">UX Flow 4 — Daily End-of-Day Check-In</div>
+        <div class="section-sub">All tiers, in-app only. Evening prompt to log daily sales and expenses in Taglish. Supports text entry, receipt photos (Pro), and notebook photos (Pro/Business).</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Design notes:</strong> Language: Taglish throughout. Minimal fields — just total sales + total expenses (advanced breakdown optional). Completion target: 60 seconds. No push notifications in Phase 2; check-in only surfaces when app is opened.
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    OPEN([User opens app in evening]) --> CHECK{Last check-in today?}
+    CHECK -->|Yes — already logged| SKIP[Skip modal]
+    CHECK -->|No| MODAL[Show check-in modal:\nKumusta ang negosyo mo today?]
+
+    MODAL --> OPTIONS[User selects:]
+    OPTIONS -->|Log Sales| SALES[Magkano total na benta mo ngayon?\nNumeric input field]
+    OPTIONS -->|Log Expenses| EXPENSE[Magkano total na gastos mo ngayon?\nNumeric input field]
+    OPTIONS -->|Both| BOTH[Show both fields:\nBenta + Gastos]
+    OPTIONS -->|Skip for now| SKIP
+
+    SALES --> NOTE{Add note?}
+    EXPENSE --> NOTE
+    BOTH --> NOTE
+
+    NOTE -->|Yes - text| NOTE_INPUT[Text input\nOptional memo]
+    NOTE -->|Pro - receipt| PHOTO_R[Tap to upload receipt\nOCR extracts details]
+    NOTE -->|Pro/Business - notebook| PHOTO_N[Tap to upload notebook photo\nOCR extracts details]
+    NOTE -->|No| SAVE
+
+    NOTE_INPUT --> SAVE
+    PHOTO_R --> SAVE
+    PHOTO_N --> SAVE
+
+    SAVE[Tap I-save]
+    SAVE --> CONFIRM[AKBai confirms:\nNaka-log na! ₱X kita, ₱Y gastos\nNet: ₱Z]
+    CONFIRM --> CONTINUE[Return to dashboard]
+
+    SKIP --> GAP[AKBai notes entry gap\nWill surface in weekly reconciliation]
+    GAP --> CONTINUE
+
+    style MODAL fill:#D5F5E3,stroke:#1E8449
+    style SAVE fill:#1E8449,color:#fff,stroke:#07101e
+    style CONFIRM fill:#FEF9E7,stroke:#F9CA24
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1E8449"></div>Core flow — always shown</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Confirmation message — instant feedback</div>
+    </div>
+  </div>
+
+  <!-- UX 5: Weekly Reconciliation -->
+  <div class="section" id="ux-weekly-recon">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div>
+        <div class="section-title">UX Flow 5 — Weekly Reconciliation Prompt</div>
+        <div class="section-sub">Every Friday evening, in-app. AKBai checks for missing daily entries and prompts user to fill gaps. Includes quick-fill inputs and weekly summary confirmation.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Trigger:</strong> Friday evening (7–10 PM based on user timezone). Only shown if 1+ days missing in past 7 days. Completion target: ~5 minutes for full week.
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    TRIGGER([Friday evening\nUser opens app]) --> CHECK{Missing entries\nin past 7 days?}
+    CHECK -->|0 missing| SKIP[Skip — no prompt shown]
+    CHECK -->|1-2 missing| PROMPT_SOFT[Modal: May 2 araw na walang entry\nGusto mo bang ayusin ngayon?]
+    CHECK -->|3+ missing| PROMPT_HARD[Modal: Hmm, mukhang busy ka ngayon!\nLet's catch up — takes ~5 mins]
+
+    PROMPT_SOFT --> DECIDE{User wants to fill?}
+    PROMPT_HARD --> DECIDE
+
+    DECIDE -->|No| SKIP2[Dismissed\nGap noted for next week]
+    DECIDE -->|Yes| LIST[Show missing days list\nWith quick-fill inputs:\nDate · Sales total · Expenses total]
+
+    LIST --> FILL[User fills each day:\nSales + Expenses\nOptional memo for each]
+    FILL --> COMPLETE[User confirms all entries]
+    COMPLETE --> SUMMARY[AKBai shows weekly summary:\nWeek total: ₱X kita, ₱Y gastos]
+    SUMMARY --> OPTIONS{What next?}
+    OPTIONS -->|Save & Done| SAVE[Entries saved]
+    OPTIONS -->|Export PDF| EXPORT[Generate + download PDF\nWeekly summary card]
+    OPTIONS -->|Share WhatsApp| SHARE[Prepare WhatsApp message\nWith summary snapshot]
+
+    SAVE --> CONTINUE[Return to dashboard]
+    EXPORT --> CONTINUE
+    SHARE --> CONTINUE
+    SKIP2 --> CONTINUE
+    SKIP --> CONTINUE
+
+    style PROMPT_SOFT fill:#FEF9E7,stroke:#F9CA24
+    style PROMPT_HARD fill:#D5F5E3,stroke:#1E8449
+    style SUMMARY fill:#D5F5E3,stroke:#1E8449
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Soft prompt — 1–2 days missing</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#1E8449"></div>Hard prompt — 3+ days missing</div>
+    </div>
+  </div>
+
+  <!-- UX 6: Excel Upload (Pro) -->
+  <div class="section" id="ux-excel-upload">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div>
+        <div class="section-title">UX Flow 6 — Excel / CSV File Upload (Pro Tier)</div>
+        <div class="section-sub">Pro and Business users can import transaction data from Excel or CSV files. Includes column mapping, preview, deduplication, and fallback template link.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Scope:</strong> Accepts .xlsx and .csv files. Max file size: 5 MB. Deduplicates against existing entries using date + amount + vendor combo. Links to AKBai template (Google Sheets).
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    MENU([User in Pro settings\nTaps Import Data]) --> SELECT[Phone file picker:\nSelect .xlsx or .csv]
+    SELECT --> FILE{File selected?}
+    FILE -->|No| MENU
+    FILE -->|Yes| PARSE[AKBai parses file]
+    PARSE --> DETECT[Detects columns:\nDate · Amount · Vendor · Category]
+    DETECT --> MAP[Column mapping UI:\nWhich column is Date?\nWhich is Amount?\nWhich is Vendor?]
+    MAP --> PREVIEW[Shows first 5 rows preview\nConfirmation: Nakita ko ang X transactions]
+    PREVIEW --> CONFIRM{Import?}
+    CONFIRM -->|No| MENU
+    CONFIRM -->|Yes| IMPORT[AKBai imports + deduplicates\nSkips any duplicates found]
+    IMPORT --> SUCCESS{Import success?}
+    SUCCESS -->|Yes| DONE[Success message:\nNa-import na ang X entries!\nGusto mo bang i-review?]
+    DONE --> OPTIONS{Action?}
+    OPTIONS -->|Review| REVIEW[Show imported entries\nUser can edit/delete as needed]
+    OPTIONS -->|Continue| CONTINUE[Return to dashboard]
+    SUCCESS -->|Error| ERROR[Error message:\nHindi ko mabasa ang file\nSubukan ang AKBai template]
+    ERROR --> TEMPLATE[Link: I-download ang AKBai template\nGoogle Sheets link provided]
+    TEMPLATE --> MENU
+
+    style PREVIEW fill:#FEF9E7,stroke:#F9CA24
+    style DONE fill:#D5F5E3,stroke:#1E8449
+    style ERROR fill:#FDEBD0,stroke:#F59E0B
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Preview step — user confirms before import</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#D5F5E3"></div>Success — entries imported</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Error with template fallback link</div>
+    </div>
+  </div>
+
+  <!-- UX 7: Google Sheets Sync (Business) -->
+  <div class="section" id="ux-gsheets-sync">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <div>
+        <div class="section-title">UX Flow 7 — Google Sheets Live Sync (Business Tier, Phase 3)</div>
+        <div class="section-sub">Business tier users (M7+) can authorize AKBai to read their Google Sheets and auto-sync transactions. Includes OAuth flow, template validation, and recurring sync status.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Scope:</strong> Phase 3 feature (Month 7+). OAuth read-only scope. Auto-sync on each daily briefing generation. Requires Date + Amount + Category columns. Template link provided if columns missing.
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    SETTINGS([User in Business settings\nTaps Connect Google Sheets]) --> OAUTH[AKBai opens Google OAuth\nConsent screen: read-only scope]
+    OAUTH --> AUTHORIZE{User authorizes?}
+    AUTHORIZE -->|No| CANCEL[Cancelled — return to settings]
+    AUTHORIZE -->|Yes| PICKER[Google Drive picker or paste URL\nSelect/paste GSheets URL]
+    PICKER --> VALIDATE[AKBai validates sheet:\nChecks for required columns\nDate · Amount · Category]
+    VALIDATE --> VALID{Columns valid?}
+    VALID -->|No| MISSING[Missing required columns\nSuggest AKBai template\nLink: Gamitin ang AKBai template]
+    MISSING --> PICKER
+    VALID -->|Yes| PREVIEW[Shows detected X rows\nConfirm: Nakita ko ang X rows\nI-sync na?]
+    PREVIEW --> CONFIRM{User confirms?}
+    CONFIRM -->|No| SETTINGS
+    CONFIRM -->|Yes| SYNC[AKBai syncs & maps\nTo internal ledger]
+    SYNC --> SETUP[Sets up auto-sync:\nRe-reads sheet on each\ndaily briefing generation]
+    SETUP --> CONNECTED[Connected state shown in dashboard:\nLast synced: X hours ago]
+    CONNECTED --> MONITOR[Ongoing auto-sync\nSync status always visible]
+
+    style PICKER fill:#FEF9E7,stroke:#F9CA24
+    style PREVIEW fill:#D5F5E3,stroke:#1E8449
+    style CONNECTED fill:#D5F5E3,stroke:#1E8449
+    style MISSING fill:#FDEBD0,stroke:#F59E0B
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1E8449"></div>Connected — auto-sync active</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Setup phase — preview before sync</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Template validation — fallback link provided</div>
+    </div>
+  </div>
+
+  <!-- UX 8: Monthly Reconciliation -->
+  <div class="section" id="ux-monthly-recap">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <div>
+        <div class="section-title">UX Flow 8 — Monthly Reconciliation &amp; Summary</div>
+        <div class="section-sub">Last day of month. AKBai shows month-end summary, asks for corrections, and provides export/share options. All tiers, in-app.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Timing:</strong> Triggered on app open on the last calendar day of the month. Shows: total sales, total expenses, net profit, top 3 expense categories. Share to WhatsApp available M7+ only.
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    TRIGGER([Last day of month\nUser opens app]) --> MODAL[AKBai modal:\nMonth-end na!\nLet us review your monthly summary]
+    MODAL --> SHOW[Display summary card:\nTotal Sales · Total Expenses\nNet Profit · Top 3 categories]
+    SHOW --> ASK[AKBai asks:\nTama ba ito?\nMay gusto ka bang baguhin?]
+    ASK --> CHECK{User response?}
+    CHECK -->|All correct| CONFIRM[Confirms summary]
+    CHECK -->|Need changes| EDIT[Guided correction flow:\nSelect entry to edit\nAdjust value / delete]
+    EDIT --> CONFIRM
+    CONFIRM --> SUMMARY[Generates month-end card\nBeautiful summary design]
+    SUMMARY --> OPTIONS{What next?}
+    OPTIONS -->|Save to phone| SAVE[Generate PNG card\nSaved to phone storage]
+    OPTIONS -->|Share WhatsApp| SHARE[Prepare WhatsApp message\nWith summary snapshot\nM7+ only]
+    OPTIONS -->|Export PDF| EXPORT[Generate PDF report\nMonth-end detailed breakdown]
+    SAVE --> MOTIVATE
+    SHARE --> MOTIVATE
+    EXPORT --> MOTIVATE
+    MOTIVATE[AKBai: Magandang trabaho!\nReady ka na para sa\nsusunod na buwan.]
+    MOTIVATE --> DONE[Return to dashboard]
+
+    style SHOW fill:#D5F5E3,stroke:#1E8449
+    style ASK fill:#FEF9E7,stroke:#F9CA24
+    style MOTIVATE fill:#D5F5E3,stroke:#1E8449
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1E8449"></div>Summary display — core data shown</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Correction flow — user can adjust</div>
+    </div>
+  </div>
+
+  <!-- ===== TIER MATRIX ===== -->
+  <div class="section" id="tier-matrix">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <div>
+        <div class="section-title">Feature Tier Matrix</div>
+        <div class="section-sub">Comprehensive feature breakdown across Free, Pro, and Business tiers. Updated with new UX flows and capability additions.</div>
+      </div>
+    </div>
+    <div style="padding: 28px;">
+      <table class="tier-matrix">
+        <thead>
+          <tr>
+            <th>Feature / Capability</th>
+            <th>Free</th>
+            <th>Pro (₱399–₱399/mo)</th>
+            <th>Business (₱899–₱999/mo, M7+)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature">Daily Check-In (Taglish)</td>
+            <td>Yes (text only)</td>
+            <td>Yes (text + photo upload)</td>
+            <td>Yes (text + photo + auto-note from GSheets)</td>
+          </tr>
+          <tr>
+            <td class="feature">Morning Briefing</td>
+            <td>Teaser only</td>
+            <td>Full AI briefing</td>
+            <td>Full AI briefing + prioritization</td>
+          </tr>
+          <tr>
+            <td class="feature">Receipt Scanning (OCR)</td>
+            <td>No (0 scans/month)</td>
+            <td>Yes (50 scans/month, covers receipts + notebook photos)</td>
+            <td>Yes (80 scans/month, covers receipts + notebook photos)</td>
+          </tr>
+          <tr>
+            <td class="feature">Notebook Photo OCR</td>
+            <td>No</td>
+            <td>Yes (from 50-scan pool)</td>
+            <td>Yes (from 80-scan pool)</td>
+          </tr>
+          <tr>
+            <td class="feature">Chat with AKBai</td>
+            <td>10 messages/day (rate limited)</td>
+            <td>Unlimited</td>
+            <td>Unlimited</td>
+          </tr>
+          <tr>
+            <td class="feature">BIR Integration (if bir_opt_in=true)</td>
+            <td>Soft alerts only</td>
+            <td>Full: Deadline Watcher + Tanong Kay BIR</td>
+            <td>Full: Deadline Watcher + Tanong Kay BIR</td>
+          </tr>
+          <tr>
+            <td class="feature">Saan Napunta? (Expense Breakdown)</td>
+            <td>Basic view</td>
+            <td>Full with categories + trends</td>
+            <td>Full with categories + trends</td>
+          </tr>
+          <tr>
+            <td class="feature">Weekly Reconciliation Prompt</td>
+            <td>Yes (all tiers)</td>
+            <td>Yes (all tiers)</td>
+            <td>Yes (all tiers)</td>
+          </tr>
+          <tr>
+            <td class="feature">Monthly Summary Card</td>
+            <td>Yes (basic)</td>
+            <td>Yes (full with categories)</td>
+            <td>Yes (full with categories)</td>
+          </tr>
+          <tr>
+            <td class="feature">Excel / CSV Import</td>
+            <td>No</td>
+            <td>Yes (with column mapping)</td>
+            <td>Yes (with column mapping)</td>
+          </tr>
+          <tr>
+            <td class="feature">Google Sheets Template</td>
+            <td>Download only</td>
+            <td>Download + re-upload back</td>
+            <td>Live sync (auto-read on briefing generation)</td>
+          </tr>
+          <tr>
+            <td class="feature">GSheets Live Sync</td>
+            <td>No</td>
+            <td>No</td>
+            <td>Yes (M7+, read-only, auto-sync)</td>
+          </tr>
+          <tr>
+            <td class="feature">PDF Export (Monthly / Weekly)</td>
+            <td>No</td>
+            <td>Yes</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td class="feature">Share to WhatsApp</td>
+            <td>No</td>
+            <td>No</td>
+            <td>Yes (M7+ only, share summary snapshots)</td>
+          </tr>
+          <tr>
+            <td class="feature">Data Retention</td>
+            <td>Full access while active</td>
+            <td>Full access while active</td>
+            <td>Full access while active</td>
+          </tr>
+          <tr>
+            <td class="feature">Support</td>
+            <td>Community FAQ</td>
+            <td>Email + WhatsApp support</td>
+            <td>Priority WhatsApp + dedicated support</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="review-note" style="margin-top: 24px;">
+        <strong>Notes:</strong>
+        <ul style="margin: 8px 0 0 20px; font-size: 13px; line-height: 1.6;">
+          <li><strong>Scan Pool Coverage:</strong> Pro and Business scan pools cover both receipt photos AND notebook/handwritten note photos. The pool is shared across all scan types.</li>
+          <li><strong>M7+ (Month 7+):</strong> Business tier features marked "M7+" launch in Phase 3 (Month 7) and include Google Sheets live sync and WhatsApp sharing.</li>
+          <li><strong>GSheets Sync:</strong> Business tier only. Requires read-only OAuth authorization. Auto-syncs on daily briefing generation. Validates required columns (Date, Amount, Category).</li>
+          <li><strong>BIR Features:</strong> Only shown to users with bir_opt_in=true. Informal sellers (bir_opt_in=false) see zero BIR-related features.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== OPS SECTION ===== -->
+  <h2 class="divider">BUSINESS OPERATIONS FLOWS — SOLO FOUNDER (ANTON)</h2>
+
+  <!-- OPS 1: Daily / Weekly Rhythm -->
+  <div class="section" id="ops-daily">
+    <div class="section-header">
+      <div class="section-num ops">10</div>
+      <div>
+        <div class="section-title">OPS Flow 1 — Anton's Daily &amp; Weekly Operating Rhythm</div>
+        <div class="section-sub">What Anton checks, when, and what decisions get made. Designed as a sustainable solo rhythm — total active time per week is estimated for each loop.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Review focus:</strong> Does this weekly rhythm feel manageable as a solo founder alongside a day job? Are there tasks here you'd want to delegate to a VA? Should the BIR calendar review be weekly or can it be monthly?
+      <br><br>
+      <strong>Compliance Note:</strong> NPC (Non-Profit Cooperative) registration is required pre-launch before Phase 1 public launch. This is a hard gate and must be completed during Phase 0C pilot. Budget: ₱10,000 for registration and compliance setup.
+      <br><br>
+      <strong>Unit Economics:</strong> Pro LTV: ₱9,975 · Blended CAC: ₱110 · LTV/CAC ratio: 91x · Payback period: 0.4 months (12 days)
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    subgraph DAILY ["☀️  Daily Check — 5 minutes"]
+        D1[Open PostHog or Mixpanel dashboard] --> D2{Anomalies?}
+        D2 -->|New signups spike| D3[Check onboarding completion rate\nAny stuck at Step 3 bootstrap?]
+        D2 -->|MRR drop| D4[Check Xendit for failed payments\nTriggered dunning flow?]
+        D2 -->|Error spike in Sentry| D5[Incident Response Flow →]
+        D2 -->|All clear| D6[Done — 5 min]
+    end
+
+    subgraph WEEKLY_SUPPORT ["📩  Weekly — Support Queue — 30 minutes"]
+        W1[Check personal WhatsApp with AKBai business name\nM1-M6: personal account · M7+: WhatsApp Business API] --> W2{Issue type?}
+        W2 -->|Bug report| W3[Log GitHub Issue\nPriority: P0 breaking / P1 degraded / P2 minor]
+        W2 -->|Feature request| W4[Log to product backlog\nTag: Phase 2 candidate / Sense Check input]
+        W2 -->|Billing issue| W5[Check Xendit dashboard\nResolve manually if needed]
+        W2 -->|Trust incident — wrong info| W6[Apply Trust Recovery Protocol\nPersonal Taglish response within 24h\nLog to incident register]
+    end
+
+    subgraph WEEKLY_FLAGS ["🚩  Weekly — Flag-as-Wrong Queue — 30 minutes"]
+        F1[Open Supabase flag review table] --> F2{Flags this week?}
+        F2 -->|None| F3[Done]
+        F2 -->|Present| F4{Pattern or one-off?}
+        F4 -->|Systematic pattern| F5[Update system prompt\nRun 20-30 Taglish regression tests\nDeploy fix — GitHub push to main]
+        F4 -->|One-off| F6[Log and monitor for 2 more occurrences\nBefore acting on single cases]
+    end
+
+    subgraph WEEKLY_BIR ["📅  Weekly — BIR Calendar Check — 15 minutes"]
+        B1[Check BIR website + social for announcements] --> B2{Holiday affecting deadline?}
+        B2 -->|Yes| B3[Update bir_calendar table in Supabase\nNo code deploy needed\nDeadline Watcher auto-updates for all users]
+        B2 -->|No| B4[Done]
+    end
+
+    subgraph WEEKLY_REV ["💰  Weekly — Revenue Review — 15 minutes"]
+        R1[Check: MRR · New Pro subs · Churn count] --> R2{Churn spike vs last week?}
+        R2 -->|Yes| R3[Review cancellation survey responses\nIdentify top reason — price / features / bugs]
+        R2 -->|No| R4[Track trend · Note in running log]
+    end
+
+    style DAILY fill:#D6EAF8,stroke:#F59E0B
+    style WEEKLY_SUPPORT fill:#D5F5E3,stroke:#1E8449
+    style WEEKLY_FLAGS fill:#FADBD8,stroke:#E74C3C
+    style WEEKLY_BIR fill:#FEF9E7,stroke:#F9CA24
+    style WEEKLY_REV fill:#F4ECF7,stroke:#7D3C98
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Daily — ~5 min/day</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#1E8449"></div>Weekly Support — ~30 min</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#E74C3C"></div>Weekly Flags — ~30 min</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Weekly BIR Calendar — ~15 min</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7D3C98"></div>Weekly Revenue — ~15 min</div>
+      <div class="legend-item">Total weekly active ops time: ~1.5–2 hours</div>
+    </div>
+    <div class="review-note" style="margin-top: 20px;">
+      <strong>Infrastructure Upgrades — Cost-Triggered Milestones:</strong>
+      <ul style="margin: 8px 0 0 20px; font-size: 13px; line-height: 1.6;">
+        <li>Hosting: Cloudflare Pages free (M1–6) → Cloudflare Pages ₱286/month (M7+)</li>
+        <li>Database: Supabase free (M1–9) → Supabase Pro ₱1,430/month (M10+)</li>
+        <li>WhatsApp: M1–M6 support uses personal WhatsApp with AKBai business name · M7+ switches to WhatsApp Business API ₱572/month</li>
+        <li>Monitoring: Free tiers (PostHog, Sentry) maintained through Y3</li>
+        <li>Pro Pricing Roadmap: Y1 ₱399/mo → Y2 ₱449/mo → Y3 ₱399/mo</li>
+        <li>Business Tier Launch: Phase 2 / Month 13 (Y1 ₱899/mo → Y2 ₱899/mo → Y3 ₱999/mo, with 80 receipt scans/month)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- OPS 2: Support & Incidents -->
+  <div class="section" id="ops-support">
+    <div class="section-header">
+      <div class="section-num ops">11</div>
+      <div>
+        <div class="section-title">OPS Flow 2 — Support Escalation &amp; Incident Response</div>
+        <div class="section-sub">From user contact (WhatsApp/Viber) through triage, resolution, and postmortem. Includes the incident runbook for production outages — designed for a solo founder with no on-call team.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Review focus:</strong> For a P0 outage — are you comfortable with "post a status update to users then fix"? Should there be a simple status page (statuspage.io has a free tier)? Is the 24-hour trust incident response SLA achievable solo?
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    CONTACT([User contacts support\nWhatsApp or Viber]) --> TRIAGE{Issue severity?}
+
+    TRIAGE -->|App not loading / data gone| P0[P0 — CRITICAL\nTreat as production incident]
+    TRIAGE -->|Feature broken / wrong output| P1[P1 — DEGRADED\nLog GitHub Issue · Fix within 48h]
+    TRIAGE -->|Confusion / how-to question| P2[P2 — SUPPORT\nAnswer manually · Consider adding to FAQ]
+    TRIAGE -->|Trust incident — wrong financial info| TRUST[TRUST INCIDENT\nSpecial protocol]
+
+    subgraph INCIDENT ["🔴  P0 Incident Response Runbook"]
+        P0 --> INC1[1. Verify — reproduce the issue yourself]
+        INC1 --> INC2[2. Identify — check Sentry · Supabase logs · Cloudflare Pages logs]
+        INC2 --> INC3{Root cause?}
+        INC3 -->|Supabase down| INC_SUP[Post in-app banner:\nMay technical issue kami ngayon\nNandito pa rin ang iyong data]
+        INC3 -->|Anthropic API down| INC_ANT[Disable AI features gracefully\nShow manual entry fallback only]
+        INC3 -->|Cloudflare Pages / code deploy| INC_VER[Rollback to previous Cloudflare Pages deployment\nOne click in Cloudflare Pages dashboard]
+        INC3 -->|Database / data corruption| INC_DB[Restore from Supabase PITR backup\nNotify affected users personally]
+        INC_SUP --> INC4[3. Fix · Push to GitHub · Auto-deploys to Cloudflare Pages]
+        INC_ANT --> INC4
+        INC_VER --> INC4
+        INC_DB --> INC4
+        INC4 --> INC5[4. Verify fix in production]
+        INC5 --> INC6[5. Notify users: resolved\n6. Write 1-paragraph incident note for personal log]
+    end
+
+    subgraph TRUST_PROTO ["🟠  Trust Incident Protocol"]
+        TRUST --> T1[Respond personally in Taglish within 24h\nAcknowledge · No defensiveness]
+        T1 --> T2[Provide corrected information if applicable]
+        T2 --> T3{Material impact?\ne.g. filed wrong tax figure}
+        T3 -->|Yes| T4[Offer goodwill credit: 1 month free Pro\nConsider CPA referral for user]
+        T3 -->|No| T5[Acknowledge + improve]
+        T4 --> T6[Log to trust incident register\nReview system prompt to prevent recurrence]
+        T5 --> T6
+    end
+
+    style INCIDENT fill:#FADBD8,stroke:#E74C3C
+    style TRUST_PROTO fill:#FDEBD0,stroke:#F59E0B
+    style P0 fill:#E74C3C,color:#fff,stroke:#C0392B
+    style P1 fill:#F59E0B,color:#fff,stroke:#D35400
+    style P2 fill:#F59E0B,color:#fff,stroke:#07101e
+    style TRUST fill:#F59E0B,color:#fff,stroke:#D35400
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#E74C3C"></div>P0 Critical — immediate response, rollback available</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Trust incident — 24h personal response SLA</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>P2 Support — answer + consider FAQ entry</div>
+    </div>
+  </div>
+
+  <!-- OPS 3: Sense Check Gate -->
+  <div class="section" id="ops-gate">
+    <div class="section-header">
+      <div class="section-num gate">12</div>
+      <div>
+        <div class="section-title">OPS Flow 3 — MVP Sense Check Gate (Day 30–60)</div>
+        <div class="section-sub">The formal go/no-go decision process between Phase 1 and Phase 2. Three possible outcomes: proceed, iterate MVP, or return to discovery. Includes the Sense Check Memo deliverable.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      📌 <strong>Review focus:</strong> Are the gate thresholds realistic? Day 7 retention ≥40% is ambitious for a new app — do you want to adjust? Should you share the Sense Check Memo with anyone beyond the co-founder?
+    </div>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    TRIGGER([Day 30–60 post-MVP launch\nSense Check triggered]) --> PULL[Pull data from PostHog / Mixpanel]
+
+    PULL --> METRICS[Measure 8 signals]
+
+    subgraph SIGNALS ["📊  8 Sense Check Signals"]
+        M1[Day 7 retention\nTarget: 40%+]
+        M2[Day 30 retention\nTarget: 20%+]
+        M3[Receipt scanning adoption\nTarget: 60%+ of Pro users within first month]
+        M4[Free-to-Pro conversion\nTarget: 8-12% within 60 days]
+        M5[Daily active query rate\nTarget: 3+ queries/day for active users]
+        M6[MRR at gate\nTarget: P6,000+]
+        M7[Flag-as-Wrong rate\nTarget: less than 5 per 1000 responses]
+        M8[NPS proxy score\nTarget: average 7+]
+    end
+
+    METRICS --> SIGNALS
+    SIGNALS --> REVIEW[3-hour solo review session\nAnton reads all signal data\nReads cancellation survey verbatims\nReads feature request backlog]
+
+    REVIEW --> MEMO[Write Sense Check Memo — 1 page\nWhat worked · What did not · What Phase 2 prioritises]
+    MEMO --> SHARE[Share memo with co-founder\nAlign on decision before proceeding]
+
+    SHARE --> GATE{Gate decision}
+    GATE -->|All or most signals GREEN| GREEN_PATH[Proceed to Phase 2\nPrioritise features by request signal rank\nTop 3 requested features go first]
+    GATE -->|Mixed — some YELLOW signals| YELLOW_PATH[2–4 weeks targeted MVP iteration\nFix weakest signal only\nRe-measure before Phase 2]
+    GATE -->|RED — core loop not validated| RED_PATH[Do not proceed to Phase 2\nReturn to user interviews\nRun Phase 0C pilot protocol again with current MVP]
+
+    YELLOW_PATH --> GATE
+    RED_PATH --> DISCOVERY[User discovery sprint\nNew hypothesis → new pilot → re-gate]
+
+    GREEN_PATH --> P2_START([Phase 2 build begins\nFirst feature: Sense Check top request])
+
+    style SIGNALS fill:#D6EAF8,stroke:#F59E0B
+    style GREEN_PATH fill:#D5F5E3,stroke:#1E8449
+    style YELLOW_PATH fill:#FEF9E7,stroke:#F9CA24
+    style RED_PATH fill:#FADBD8,stroke:#E74C3C
+    style DISCOVERY fill:#F4ECF7,stroke:#7D3C98
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1E8449"></div>GREEN — proceed to Phase 2</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>YELLOW — iterate MVP 2–4 weeks, then re-gate</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#E74C3C"></div>RED — do not proceed, return to discovery</div>
+    </div>
+  </div>
+
+
+  <!-- OPS 4: BIR Knowledge Base Update Protocol -->
+  <div class="section" id="ops-bir-kb">
+    <div class="section-header">
+      <div class="section-num ops">13</div>
+      <div>
+        <div class="section-title">OPS Flow 4 — BIR Knowledge Base Update Protocol</div>
+        <div class="section-sub">How to keep AKBai's BIR knowledge current. This is the real moat — a living knowledge base that compounds over time. Treat this as a production process, not an afterthought.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      &#x1F4CC; <strong>Review focus:</strong> The system prompt contains BIR regulations that change multiple times per year (RR 7-2024, RR 16-2023, etc.). If the knowledge base is stale, AKBai gives wrong advice — the single worst trust failure mode. This protocol ensures updates happen before users encounter outdated information.
+    </div>
+
+    <div style="background:#fff;border-radius:10px;padding:24px;border:1px solid #ECF0F1;margin-bottom:20px;">
+      <h3 style="font-size:14px;font-weight:700;color:#0f3460;margin-bottom:16px;">Weekly Monday BIR Check — 15 minutes</h3>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:12px 16px;font-size:13px;line-height:1.6;">
+        <div style="font-weight:700;color:#e94560;">Step 1</div>
+        <div>Check <strong>BIR website</strong> (bir.gov.ph/revenue-regulations) for new Revenue Regulations, Revenue Memorandum Circulars, or Revenue Memorandum Orders published in the past 7 days.</div>
+        <div style="font-weight:700;color:#e94560;">Step 2</div>
+        <div>Check <strong>Taxumo blog</strong>, <strong>JuanTax blog</strong>, and <strong>AccountaholicsPH</strong> Facebook page for any BIR interpretation updates or community alerts about enforcement changes.</div>
+        <div style="font-weight:700;color:#e94560;">Step 3</div>
+        <div>If a new regulation is found: read the full text, summarize the impact on MSMEs, and draft the Taglish explanation that AKBai should give when asked.</div>
+        <div style="font-weight:700;color:#e94560;">Step 4</div>
+        <div>Update the <strong>BIR knowledge base document</strong> in the system prompt context. Run 5-10 Taglish test queries in the Anthropic Console to verify the updated response is accurate and natural-sounding.</div>
+        <div style="font-weight:700;color:#e94560;">Step 5</div>
+        <div>Update the <strong>bir_calendar</strong> table in Supabase if any deadlines have changed (holidays, extensions, new filing requirements).</div>
+        <div style="font-weight:700;color:#e94560;">Step 6</div>
+        <div>If the regulation is significant (affects &gt;10% of users): draft an <strong>in-app notification</strong> in Taglish. Push to all affected users within 48 hours of BIR publication.</div>
+      </div>
+    </div>
+
+    <div style="background:#FDEBD0;border-radius:10px;padding:18px;border-left:4px solid #F59E0B;margin-bottom:20px;font-size:13px;line-height:1.6;">
+      <strong style="color:#D35400;">&#x26A0;&#xFE0F; Escalation Path:</strong> If a new regulation is ambiguous or could cause AKBai to give incorrect advice, <strong>disable the relevant response path immediately</strong> and replace with: "May bagong BIR regulation na lumalabas. Kinukumpirma pa namin ang detalye. Para sa ngayon, i-consult mo ang iyong accountant o pumunta sa pinakamalapit na BIR office." Never serve uncertain BIR information — silence is safer than a wrong answer.
+    </div>
+
+    <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #ECF0F1;font-size:13px;line-height:1.6;">
+      <strong style="color:#0f3460;">Scaling Note (500+ Users):</strong> At scale, this weekly manual check becomes a bottleneck. Phase 2+ consideration: build an automated BIR RSS/scraper that flags new publications and drafts update recommendations for human review. For now (0-500 users), the manual Monday check is sufficient and keeps Anton as the quality gate for all BIR content.
+    </div>
+  </div>
+
+  <!-- OPS 5: Offline/Low-Connectivity Design Note -->
+  <div class="section" id="ops-offline">
+    <div class="section-header">
+      <div class="section-num ops">14</div>
+      <div>
+        <div class="section-title">OPS Flow 5 — Offline &amp; Low-Connectivity UX Design</div>
+        <div class="section-sub">How AKBai behaves when the target user — a sari-sari owner or palengke seller — has spotty mobile data. Every AI feature requires an API call; the offline strategy determines whether AKBai feels broken or graceful when connectivity drops.</div>
+      </div>
+    </div>
+    <div class="review-note">
+      &#x1F4CC; <strong>Build 1 Design Decision:</strong> This is not a Phase 2+ feature — the offline behavior must be designed into the PWA architecture from Build 1. The service worker caching strategy and the queue system for offline actions are foundational decisions that cannot be retrofitted easily.
+    </div>
+
+    <div style="background:#fff;border-radius:10px;padding:24px;border:1px solid #ECF0F1;margin-bottom:20px;">
+      <h3 style="font-size:14px;font-weight:700;color:#0f3460;margin-bottom:16px;">Offline-Capable Features (Phase 1)</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:13px;">
+        <div style="background:#D5F5E3;border-radius:8px;padding:14px;">
+          <div style="font-weight:700;color:#1E8449;margin-bottom:6px;">&#x2705; Can Work Offline</div>
+          <ul style="margin:0;padding-left:16px;color:#1B5E20;line-height:1.8;">
+            <li>View cached Dashboard (last-known data)</li>
+            <li>View cached Morning Briefing (pre-fetched)</li>
+            <li>Browse transaction history (cached in IndexedDB)</li>
+            <li>Take receipt photos (queued for OCR when online)</li>
+            <li>Manual expense entry (syncs when reconnected)</li>
+            <li>View BIR deadline calendar (cached weekly)</li>
+          </ul>
+        </div>
+        <div style="background:#FADBD8;border-radius:8px;padding:14px;">
+          <div style="font-weight:700;color:#E74C3C;margin-bottom:6px;">&#x274C; Requires Connectivity</div>
+          <ul style="margin:0;padding-left:16px;color:#922B21;line-height:1.8;">
+            <li>AI Chat (Claude API call required)</li>
+            <li>Receipt OCR processing (Haiku Vision API)</li>
+            <li>Real-time cash flow calculations</li>
+            <li>Payment processing (Xendit)</li>
+            <li>Push notifications</li>
+            <li>Account creation / authentication</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border-radius:10px;padding:24px;border:1px solid #ECF0F1;margin-bottom:20px;">
+      <h3 style="font-size:14px;font-weight:700;color:#0f3460;margin-bottom:16px;">Implementation Decisions for Build 1</h3>
+      <div style="font-size:13px;line-height:1.6;">
+        <p style="margin-bottom:12px;"><strong>1. Pre-fetch Morning Briefing:</strong> When the user opens the app with connectivity, immediately fetch and cache the daily briefing in the service worker. If the user opens AKBai later on a jeepney with no signal, the briefing is already there. This one decision alone makes the app feel alive even offline.</p>
+        <p style="margin-bottom:12px;"><strong>2. Receipt Photo Queue:</strong> Allow users to take receipt photos offline. Store them in IndexedDB with a "pending OCR" flag. When connectivity returns, process the queue automatically and notify: "Na-scan na ang 3 resibo mo — check mo ang results." This prevents the worst offline moment: wanting to scan a receipt at a store with no WiFi.</p>
+        <p style="margin-bottom:12px;"><strong>3. Offline Chat Indicator:</strong> When the user taps "Ask AKBai" with no connection, show: "Walang internet ngayon — pero pwede kang mag-scan ng resibo o mag-record ng gastos. I-try ulit ang chat kapag may signal ka na." Never show a blank error screen or a generic browser offline page.</p>
+        <p style="margin-bottom:0;"><strong>4. Cache BIR Deadlines Weekly:</strong> The bir_calendar table is small and changes rarely. Cache the full table every Monday during the BIR knowledge base check. This means deadline alerts work even offline — critical for users in areas with intermittent connectivity.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <div style="background:white;border-radius:8px;padding:24px 28px;border:1px solid #ECF0F1;margin-bottom:40px;">
+    <div style="font-size:13px;font-weight:700;color:#07101e;margin-bottom:8px;">Review Checklist — Before Incorporating into v6 Roadmap</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;color:#555;">
+      <div>☐ UX Flow 1: BIR opt-in branch logic confirmed</div>
+      <div>☐ UX Flow 1: Data bootstrap path order confirmed</div>
+      <div>☐ UX Flow 1: Terms acceptance timing confirmed</div>
+      <div>☐ UX Flow 2: Updated scan counts (50 Pro / 80 Business) confirmed</div>
+      <div>☐ UX Flow 2: Flag-as-Wrong visibility confirmed</div>
+      <div>☐ UX Flow 3: Grace period (3 days) confirmed</div>
+      <div>☐ UX Flow 3: Beta-to-paid transition rate/approach confirmed</div>
+      <div>☐ UX Flow 4: Daily check-in Taglish language confirmed</div>
+      <div>☐ UX Flow 5: Weekly reconciliation prompt timing confirmed</div>
+      <div>☐ UX Flow 6: Excel import column mapping logic confirmed</div>
+      <div>☐ UX Flow 7: GSheets OAuth scope and template requirements confirmed</div>
+      <div>☐ UX Flow 8: Month-end summary design and export options confirmed</div>
+      <div>☐ Tier Matrix: All feature allocations across tiers confirmed</div>
+      <div>☐ OPS Flow 1: Weekly rhythm is sustainable confirmed</div>
+      <div>☐ OPS Flow 2: 24h trust incident SLA confirmed</div>
+      <div>☐ OPS Flow 2: Status page decision (yes/no)</div>
+      <div>☐ OPS Flow 3: Sense Check thresholds confirmed</div>
+      <div>☐ All 11 additional gaps reviewed and addressed</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    flowchart: {
+      useMaxWidth: true,
+      htmlLabels: true,
+      curve: 'basis'
+    },
+    themeVariables: {
+        primaryColor: '#FEFAF3',
+        primaryBorderColor: '#F59E0B',
+        primaryTextColor: '#07101e',
+        primaryBorderWidth: '2px',
+        lineColor: '#8A9BB5',
+        secondaryColor: '#FFF8ED',
+        tertiaryColor: '#20C9A0',
+        noteBkgColor: '#FFF8ED',
+        noteBorderColor: '#F59E0B',
+        fontSize: '14px'
+      }
+  });
+
+  // Nav active state on scroll
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+  <footer style="background: #07101e; color: #FEFAF3; padding: 40px; text-align: center; margin-top: 60px;">
+    <p style="font-size: 18px; font-weight: 500; margin-bottom: 12px; font-family: 'Plus Jakarta Sans', sans-serif;">Kaakbay mo sa negosyo.</p>
+    <p style="font-size: 13px; opacity: 0.75; font-family: 'Plus Jakarta Sans', sans-serif;">© 2026 AKBai · Confidential</p>
+  </footer>
+</body>
+</html>

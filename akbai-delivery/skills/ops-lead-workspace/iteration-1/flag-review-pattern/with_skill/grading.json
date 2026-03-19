@@ -1,0 +1,11 @@
+{
+  "eval_id": 1,
+  "run_type": "with_skill",
+  "expectations": [
+    {"text": "Identifies 3+ flags as a pattern requiring escalation to ai-engineer", "passed": true, "evidence": "Explicit section 'If Pattern Found (3+ flags, same root cause): Escalate to ai-engineer skill immediately'"},
+    {"text": "Walks through the flag review workflow (context, root cause, fix, regression test)", "passed": true, "evidence": "Steps 1-3 cover context pulling, root cause decision tree, and fix application. Mentions Taglish test library for regression."},
+    {"text": "Classifies possible root causes (prompt vs data vs model vs user misunderstanding)", "passed": true, "evidence": "Decision tree with 3 branches: prompt issue, model limitation (OCR), user misunderstanding"},
+    {"text": "Provides a time estimate for the review work", "passed": true, "evidence": "'Time estimate: 20–30 minutes' clearly stated at bottom"},
+    {"text": "Mentions closing the loop with affected users (Taglish notification)", "passed": true, "evidence": "Full Taglish user communication template provided in 'User Communication' section"}
+  ]
+}

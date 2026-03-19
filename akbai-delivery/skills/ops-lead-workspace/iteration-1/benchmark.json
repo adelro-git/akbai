@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "skill_name": "ops-lead",
+    "skill_path": "/sessions/sleepy-loving-cori/mnt/AKBai/akbai-delivery/skills/ops-lead",
+    "executor_model": "claude-opus-4-6",
+    "analyzer_model": "claude-opus-4-6",
+    "timestamp": "2026-03-18T13:23:00Z",
+    "evals_run": ["morning-check", "flag-review-pattern", "sunday-metrics"],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_name": "morning-check",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "total_tokens": 47548,
+      "duration_seconds": 27.1
+    },
+    {
+      "eval_name": "morning-check",
+      "configuration": "without_skill",
+      "pass_rate": 0.4,
+      "assertions_passed": 2,
+      "assertions_total": 5,
+      "total_tokens": 24566,
+      "duration_seconds": 8.1
+    },
+    {
+      "eval_name": "flag-review-pattern",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "total_tokens": 42813,
+      "duration_seconds": 48.6
+    },
+    {
+      "eval_name": "flag-review-pattern",
+      "configuration": "without_skill",
+      "pass_rate": 0.4,
+      "assertions_passed": 2,
+      "assertions_total": 5,
+      "total_tokens": 25537,
+      "duration_seconds": 22.2
+    },
+    {
+      "eval_name": "sunday-metrics",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "total_tokens": 46716,
+      "duration_seconds": 44.1
+    },
+    {
+      "eval_name": "sunday-metrics",
+      "configuration": "without_skill",
+      "pass_rate": 0.4,
+      "assertions_passed": 2,
+      "assertions_total": 5,
+      "total_tokens": 26193,
+      "duration_seconds": 26.0
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "mean_pass_rate": 1.0,
+      "mean_tokens": 45692,
+      "mean_duration_seconds": 39.9
+    },
+    "without_skill": {
+      "mean_pass_rate": 0.4,
+      "mean_tokens": 25432,
+      "mean_duration_seconds": 18.8
+    },
+    "delta": {
+      "pass_rate": "+0.60",
+      "time_seconds": "+21.1",
+      "tokens": "+20260"
+    }
+  },
+  "notes": [
+    "With-skill runs pass 100% of assertions across all 3 evals. Without-skill runs pass only 40% — mostly failing on AKBai-specific formatting (traffic lights, template structure, escalation paths).",
+    "Without-skill runs are faster and use fewer tokens (expected — they don't read reference files), but the quality gap is significant.",
+    "The Sunday metrics with-skill run correctly identified churn rate against the 5% threshold. Without-skill missed this entirely.",
+    "Flag review with-skill output included Taglish trust recovery templates and explicit ai-engineer escalation path — both absent from without-skill."
+  ]
+}

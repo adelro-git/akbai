@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "page.tsx is a Server Component (no 'use client' directive)",
+      "passed": true,
+      "evidence": "page.tsx (lines 1-56) has no 'use client' directive. It contains async server-side auth check and database query."
+    },
+    {
+      "text": "Supabase query includes .is('deleted_at', null) filter",
+      "passed": true,
+      "evidence": "page.tsx line 53: .is('deleted_at', null) is present in the receipts query"
+    },
+    {
+      "text": "ScanButton has 'use client' directive",
+      "passed": true,
+      "evidence": "scan-button.tsx line 19: 'use client' directive is present"
+    },
+    {
+      "text": "Money is displayed using centavos-to-peso conversion, not raw centavos",
+      "passed": true,
+      "evidence": "receipt-card.tsx lines 44-49: centavosToPeso function converts centavos to pesos with locale formatting. Line 70 uses this function to display money."
+    },
+    {
+      "text": "User-facing text contains Taglish (mix of Filipino and English)",
+      "passed": true,
+      "evidence": "page.tsx line 69: 'I-scan ang resibo, makikita mo agad ang gastos'. scan-button.tsx lines 61, 141, 151, 181. receipt-card.tsx line 138: 'Tap para makita ang buong details'"
+    },
+    {
+      "text": "Uses brand color tokens (honey, teal, ink, card) not raw hex or default Tailwind colors",
+      "passed": true,
+      "evidence": "scan-button.tsx line 253: 'from-honey-light to-honey-deep' and 'text-ink'. receipt-card.tsx lines 94, 125: 'bg-card', 'text-teal-light'. error.tsx line 48: 'from-honey-light to-honey-deep'"
+    },
+    {
+      "text": "Includes loading.tsx and error.tsx files",
+      "passed": true,
+      "evidence": "loading.tsx exists (lines 1-60). error.tsx exists (lines 1-62). Both present in outputs directory."
+    },
+    {
+      "text": "Touch targets have min-h-[44px] or min-h-touch",
+      "passed": true,
+      "evidence": "scan-button.tsx line 253: 'min-h-touch'. error.tsx line 48: 'min-h-touch'. loading.tsx line 26: 'min-h-touch'"
+    },
+    {
+      "text": "Every file has a file-level JSDoc/block comment header explaining purpose, feature, and role",
+      "passed": true,
+      "evidence": "page.tsx lines 1-13 has header. scan-button.tsx lines 1-17 has header. receipt-card.tsx lines 1-15 has header. loading.tsx lines 1-14 has header. error.tsx lines 1-16 has header."
+    },
+    {
+      "text": "Major code sections have section headers (e.g. 'Auth Check', 'Camera Capture', 'Upload')",
+      "passed": true,
+      "evidence": "page.tsx lines 39, 48, 62, 83. scan-button.tsx lines 46, 67, 82, 109, 120, 156, 187, 230. receipt-card.tsx lines 73, 81, 98, 114, 135."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

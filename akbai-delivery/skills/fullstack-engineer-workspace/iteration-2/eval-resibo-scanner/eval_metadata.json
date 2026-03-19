@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "eval_name": "resibo-scanner",
+  "prompt": "Build the Resibo Scanner page. I need the page route at /app/(app)/(features)/resibo/page.tsx that fetches the user's recent receipts from Supabase, a ScanButton client component that opens the camera and uploads to Supabase Storage then calls POST /api/resibo/scan, and a ReceiptCard component that displays the OCR results with vendor name, date, total in pesos, and a confidence badge. Include loading.tsx and error.tsx. All user-facing text should be Taglish.",
+  "assertions": [
+    { "id": "a1", "text": "page.tsx is a Server Component (no 'use client' directive)", "type": "code_check" },
+    { "id": "a2", "text": "Supabase query includes .is('deleted_at', null) filter", "type": "code_check" },
+    { "id": "a3", "text": "ScanButton has 'use client' directive", "type": "code_check" },
+    { "id": "a4", "text": "Money is displayed using centavos-to-peso conversion, not raw centavos", "type": "code_check" },
+    { "id": "a5", "text": "User-facing text contains Taglish (mix of Filipino and English)", "type": "content_check" },
+    { "id": "a6", "text": "Uses brand color tokens (honey, teal, ink, card) not raw hex or default Tailwind colors", "type": "code_check" },
+    { "id": "a7", "text": "Includes loading.tsx and error.tsx files", "type": "file_check" },
+    { "id": "a8", "text": "Touch targets have min-h-[44px] or min-h-touch", "type": "code_check" }
+  ]
+}

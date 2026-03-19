@@ -1,0 +1,11 @@
+{
+  "name": "akbai-delivery",
+  "version": "0.1.0",
+  "description": "AKBai product delivery plugin — 12 role-based AI skills and 15 slash commands for building, launching, and operating AKBai (Filipino MSME AI business partner).",
+  "author": "Anton del Rosario",
+  "skills_count": 12,
+  "commands_count": 0,
+  "commands_planned": 15,
+  "phase": "scaffold",
+  "notes": "12 skills complete. 15 commands planned but not yet built (Sessions 9-10). Built incrementally per the 10-session build plan."
+}

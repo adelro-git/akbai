@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — One-Pager</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── SCREEN CHROME ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --warm:#FEFAF3;
+  --warm2:#FFF8ED;
+  --text:#07101e;
+  --muted:#5a6a80;
+  --hs:#F59E0B;
+  --he:#D97706;
+  --ts:#20C9A0;
+  --te:#0FB8D9;
+  --dim:rgba(7,16,30,.08);
+}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  background:#E8EAED;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  padding:32px 16px;
+  color:var(--text);
+}
+.screen-bar{
+  width:100%;
+  max-width:800px;
+  background:var(--ink);
+  border-radius:12px 12px 0 0;
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.screen-bar-title{font-size:12px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase}
+.print-btn{
+  background:linear-gradient(135deg,#F59E0B,#D97706);
+  color:#fff;
+  border:none;
+  padding:7px 18px;
+  border-radius:100px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+}
+.print-note{font-size:11px;color:rgba(255,255,255,.35);margin-top:3px}
+
+/* ── A4 PAGE ── */
+.page{
+  width:794px;
+  min-height:1123px;
+  background:#fff;
+  position:relative;
+  overflow:hidden;
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  box-shadow:0 8px 40px rgba(0,0,0,.18);
+}
+
+/* ── HEADER BAND ── */
+.header{
+  background:var(--ink);
+  padding:36px 48px 32px;
+  position:relative;
+  overflow:hidden;
+}
+.header::before{
+  content:'';
+  position:absolute;
+  top:-120px;right:-120px;
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(245,158,11,.12) 0%,transparent 60%);
+  pointer-events:none;
+}
+.header::after{
+  content:'';
+  position:absolute;
+  bottom:-60px;left:200px;
+  width:300px;height:300px;
+  background:radial-gradient(circle,rgba(32,201,160,.06) 0%,transparent 60%);
+  pointer-events:none;
+}
+.header-inner{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1}
+.header-left{}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.wordmark{font-size:22px;font-weight:800;color:#fff}
+.wordmark .ai{
+  background:linear-gradient(135deg,#F59E0B,#D97706);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.header-tagline{
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(245,158,11,.7);margin-bottom:10px;
+}
+.header-headline{
+  font-size:28px;font-weight:800;color:#fff;line-height:1.2;
+  max-width:400px;
+}
+.header-headline span{
+  background:linear-gradient(135deg,#F59E0B,#D97706);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.header-sub{
+  font-size:13px;color:rgba(255,255,255,.55);margin-top:10px;
+  max-width:380px;line-height:1.6;
+}
+.header-right{
+  text-align:right;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:12px;
+}
+.header-badge{
+  background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);
+  border-radius:100px;padding:6px 16px;
+  font-size:11px;font-weight:700;color:#F59E0B;
+  white-space:nowrap;
+}
+.header-stat-row{display:flex;gap:24px;margin-top:8px}
+.hstat{text-align:center}
+.hstat .num{font-size:26px;font-weight:800;background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.hstat .desc{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px;line-height:1.3}
+
+/* ── BODY ── */
+.body{padding:36px 48px 0;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+
+/* ── LEFT COLUMN ── */
+.col-left{}
+
+/* Problem */
+.section-label{
+  font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--hs);margin-bottom:8px;
+}
+.section-title{font-size:17px;font-weight:800;color:var(--ink);line-height:1.25;margin-bottom:14px}
+.section-sub{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:20px}
+
+/* Pain list */
+.pain-list{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.pain-item{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--warm2);border:1px solid rgba(245,158,11,.10);
+  border-radius:10px;padding:10px 14px;
+}
+.pain-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.pain-text{}
+.pain-text strong{font-size:12px;font-weight:700;color:var(--ink);display:block;margin-bottom:1px}
+.pain-text span{font-size:11px;color:var(--muted)}
+
+/* Features */
+.feature-list{display:flex;flex-direction:column;gap:8px}
+.feature-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:10px 14px;
+  background:#fff;border:1px solid var(--dim);
+  border-radius:10px;
+}
+.feat-icon{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(217,119,6,.06));
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.feat-text{}
+.feat-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.feat-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* ── RIGHT COLUMN ── */
+.col-right{}
+
+/* Chat mockup */
+.mockup-box{
+  background:var(--warm2);border:1px solid rgba(245,158,11,.15);
+  border-radius:14px;padding:16px;margin-bottom:20px;
+}
+.mockup-header{
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+  padding-bottom:10px;border-bottom:1px solid var(--dim);
+}
+.mockup-dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706)}
+.mockup-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.chat-row{display:flex;flex-direction:column;gap:6px}
+.chat-msg{padding:8px 12px;border-radius:10px;font-size:11px;line-height:1.5;max-width:88%}
+.chat-user{
+  background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.15);
+  margin-left:auto;text-align:right;color:var(--ink);font-weight:500;
+}
+.chat-ai{
+  background:#fff;border:1px solid var(--dim);color:var(--text);
+}
+.chat-ai .ai-label{
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:#D97706;margin-bottom:3px;
+}
+.highlight{color:#D97706;font-weight:700}
+.teal-hl{color:#20C9A0;font-weight:700}
+
+/* Personas */
+.personas-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.persona-tile{
+  background:#fff;border:1px solid var(--dim);border-radius:10px;
+  padding:10px 12px;
+}
+.persona-emoji{font-size:18px;margin-bottom:6px;display:block}
+.persona-name{font-size:11px;font-weight:700;color:var(--ink)}
+.persona-type{font-size:10px;color:var(--muted)}
+
+/* Pricing teaser */
+.pricing-row{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+  margin-bottom:20px;
+}
+.price-tile{
+  background:var(--warm2);border:1px solid rgba(245,158,11,.12);
+  border-radius:10px;padding:10px 12px;text-align:center;
+}
+.price-tile.featured{
+  background:var(--ink);border-color:rgba(245,158,11,.3);
+}
+.price-plan{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.price-tile.featured .price-plan{color:rgba(245,158,11,.6)}
+.price-amt{font-size:16px;font-weight:800;color:var(--ink);line-height:1}
+.price-tile.featured .price-amt{color:#fff}
+.price-note{font-size:9px;color:var(--muted);margin-top:2px}
+.price-tile.featured .price-note{color:rgba(255,255,255,.35)}
+.price-badge{
+  display:inline-block;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:rgba(245,158,11,.15);color:#D97706;padding:2px 7px;border-radius:100px;margin-bottom:4px;
+}
+
+/* ── FOOTER BAND ── */
+.footer{
+  margin:28px 48px 0;
+  border-top:1px solid var(--dim);
+  padding:20px 0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.footer-left{}
+.footer-cta-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.footer-cta-row{display:flex;align-items:center;gap:12px}
+.footer-pill{
+  background:linear-gradient(135deg,#F59E0B,#D97706);
+  color:#fff;font-size:12px;font-weight:800;
+  padding:8px 20px;border-radius:100px;
+  display:inline-block;text-decoration:none;
+}
+.footer-url{font-size:12px;color:var(--muted)}
+.footer-right{text-align:right}
+.footer-brand{font-size:15px;font-weight:800;color:var(--ink)}
+.footer-brand span{
+  background:linear-gradient(135deg,#F59E0B,#D97706);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.footer-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── SECTION DIVIDER ── */
+.divider{
+  height:2px;
+  background:linear-gradient(90deg,rgba(245,158,11,.15),rgba(32,201,160,.10),transparent);
+  margin:20px 0;
+  border-radius:2px;
+}
+
+/* ── PRINT STYLES ── */
+@media print{
+  body{background:white;padding:0;display:block}
+  .screen-bar{display:none}
+  .page{
+    width:100%;min-height:auto;
+    box-shadow:none;
+    border-radius:0;
+  }
+  @page{size:A4;margin:0}
+}
+</style>
+</head>
+<body>
+
+<!-- SCREEN CHROME -->
+<div class="screen-bar">
+  <div>
+    <div class="screen-bar-title">AKBai One-Pager · A4 · Print-ready</div>
+    <div class="print-note">File → Print → Save as PDF · Set margins to None</div>
+  </div>
+  <button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+</div>
+
+<!-- A4 PAGE -->
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="logo-row">
+          <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
+            <defs><linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs>
+            <g transform="rotate(20, 50, 50)">
+              <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#hg)" stroke-width="17" stroke-linecap="round"/>
+              <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.20"/>
+            </g>
+          </svg>
+          <div class="wordmark">AKB<span class="ai">ai</span></div>
+        </div>
+        <div class="header-tagline">AI Operations Partner · Filipino MSMEs</div>
+        <div class="header-headline">Ang AI na <span>kaakbay</span> ng iyong negosyo.</div>
+        <div class="header-sub">Isang tanong lang — at alam mo na ang lahat ng kailangan mo para pamahalaan ang negosyo mo. Sales, customers, inventory, reports — bahala na si AKBai.</div>
+      </div>
+      <div class="header-right">
+        <div class="header-badge">🇵🇭 Launching Soon · Beta Open</div>
+        <div class="header-stat-row">
+          <div class="hstat">
+            <div class="num">2,400+</div>
+            <div class="desc">Waitlist<br/>signups</div>
+          </div>
+          <div class="hstat">
+            <div class="num">3h</div>
+            <div class="desc">Avg. time<br/>saved/day</div>
+          </div>
+          <div class="hstat">
+            <div class="num">4.9★</div>
+            <div class="desc">Beta<br/>rating</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- LEFT COLUMN -->
+    <div class="col-left">
+      <div class="section-label">Ang problema</div>
+      <div class="section-title">Maraming negosyante ang abala — pero walang malinaw na picture ng negosyo.</div>
+
+      <div class="pain-list">
+        <div class="pain-item">
+          <div class="pain-icon">📋</div>
+          <div class="pain-text">
+            <strong>Bookkeeping sa papel o Excel</strong>
+            <span>Mano-mano, nakaka-oras, at madalas mali</span>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">📱</div>
+          <div class="pain-text">
+            <strong>Follow-ups na hindi nasasagot</strong>
+            <span>Mga customer na hindi nakabayad — nakalimutan na lang</span>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">📊</div>
+          <div class="pain-text">
+            <strong>Walang real-time na business insight</strong>
+            <span>Hindi alam kung kumikita o lugi hanggang masyado nang late</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label">Ang solusyon</div>
+      <div class="section-title">6 na pangunahing features na aayos ng negosyo mo.</div>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feat-icon">💰</div>
+          <div class="feat-text">
+            <div class="feat-title">Smart Bookkeeping</div>
+            <div class="feat-desc">I-type lang ang sales at gastos — aayusin ni AKBai agad</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feat-icon">📨</div>
+          <div class="feat-text">
+            <div class="feat-title">Auto Customer Follow-ups</div>
+            <div class="feat-desc">Sinusundan ang mga hindi pa nakabayad — awtomatiko</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feat-icon">📈</div>
+          <div class="feat-text">
+            <div class="feat-title">Real-time Business Reports</div>
+            <div class="feat-desc">Pinakamabentang produkto, profit margins, at trends agad</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feat-icon">📦</div>
+          <div class="feat-text">
+            <div class="feat-title">Inventory & Stock Alerts</div>
+            <div class="feat-desc">Abisuhan bago maubos — may auto-reorder suggestions</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feat-icon">🧾</div>
+          <div class="feat-text">
+            <div class="feat-title">BIR-Ready Tax Reports</div>
+            <div class="feat-desc">Automatic na nagge-generate ng summaries para sa BIR</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feat-icon">🤝</div>
+          <div class="feat-text">
+            <div class="feat-title">Taglish AI Conversations</div>
+            <div class="feat-desc">Kausapin sa natural na wika — walang kailangan pang aralin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-right">
+
+      <!-- Chat mockup -->
+      <div class="section-label">Paano ito gumagana</div>
+      <div class="section-title" style="font-size:15px;margin-bottom:12px">Tanungin lang si AKBai.</div>
+      <div class="mockup-box">
+        <div class="mockup-header">
+          <div class="mockup-dot"></div>
+          <span class="mockup-label">AKBai · Live demo</span>
+        </div>
+        <div class="chat-row">
+          <div class="chat-msg chat-user">"Magkano ang kita ko ngayong buwan?"</div>
+          <div class="chat-msg chat-ai">
+            <div class="ai-label">AKBai</div>
+            Nitong Marso, ang iyong total revenue ay <span class="highlight">₱284,500</span> — <span class="teal-hl">+18%</span> vs Pebrero. Pinaka-mabenta: Buko Pandan Series.
+          </div>
+          <div class="chat-msg chat-user">"Sino ang hindi pa nakabayad?"</div>
+          <div class="chat-msg chat-ai">
+            <div class="ai-label">AKBai</div>
+            May <span class="highlight">3 customers</span> na overdue — kabuuang <span class="highlight">₱12,400</span>. Mag-send ba ako ng reminder sa kanila?
+          </div>
+          <div class="chat-msg chat-user">"Oo, send na."</div>
+          <div class="chat-msg chat-ai">
+            <div class="ai-label">AKBai</div>
+            <span class="teal-hl">Done.</span> Naipadala na ang friendly reminder sa 3 customers. Aabisuhan kita pag nagreply sila.
+          </div>
+        </div>
+      </div>
+
+      <!-- Para kanino -->
+      <div class="section-label">Para kanino</div>
+      <div class="section-title" style="font-size:15px;margin-bottom:12px">Para sa bawat uri ng negosyante.</div>
+      <div class="personas-grid">
+        <div class="persona-tile">
+          <span class="persona-emoji">🏪</span>
+          <div class="persona-name">Sari-sari & Online Seller</div>
+          <div class="persona-type">Tindahan, Shopee, Lazada</div>
+        </div>
+        <div class="persona-tile">
+          <span class="persona-emoji">🍲</span>
+          <div class="persona-name">Food Business</div>
+          <div class="persona-type">Catering, karinderya, ulam delivery</div>
+        </div>
+        <div class="persona-tile">
+          <span class="persona-emoji">🛍️</span>
+          <div class="persona-name">Boutique & Retail</div>
+          <div class="persona-type">Fashion, beauty, accessories</div>
+        </div>
+        <div class="persona-tile">
+          <span class="persona-emoji">🔧</span>
+          <div class="persona-name">Services & Repair</div>
+          <div class="persona-type">Auto, construction, freelance</div>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="section-label">Presyo</div>
+      <div class="pricing-row">
+        <div class="price-tile">
+          <div class="price-plan">Simula</div>
+          <div class="price-amt">Libre</div>
+          <div class="price-note">Habang beta</div>
+        </div>
+        <div class="price-tile featured">
+          <div class="price-badge">Pinakasikat</div>
+          <div class="price-plan">Negosyo</div>
+          <div class="price-amt">₱799</div>
+          <div class="price-note">/buwan</div>
+        </div>
+        <div class="price-tile">
+          <div class="price-plan">Plus</div>
+          <div class="price-amt">₱1,999</div>
+          <div class="price-note">/buwan · multi-branch</div>
+        </div>
+      </div>
+
+      <!-- Testimonial pull quote -->
+      <div style="background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(245,158,11,.02));border:1px solid rgba(245,158,11,.15);border-left:3px solid #F59E0B;border-radius:10px;padding:14px 16px">
+        <div style="font-size:12px;font-style:italic;color:var(--ink);line-height:1.6;margin-bottom:8px">"Parang may personal na assistant na ang negosyo namin. Hindi kami techie pero naintindihan namin agad ang AKBai."</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0">L</div>
+          <div style="font-size:10px;color:var(--muted)"><strong style="color:var(--ink)">Leni R.</strong> · Catering Business, Davao · Beta user</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      <div class="footer-cta-label">Subukan nang libre — walang credit card na kailangan.</div>
+      <div class="footer-cta-row">
+        <a href="#" class="footer-pill">akbai.com/waitlist →</a>
+        <span class="footer-url">hello@akbai.ph</span>
+      </div>
+    </div>
+    <div class="footer-right">
+      <div class="footer-brand">AKB<span>ai</span></div>
+      <div class="footer-sub">Kaakbay mo sa negosyo. 🇵🇭</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+</body>
+</html>

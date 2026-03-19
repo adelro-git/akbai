@@ -1,0 +1,23 @@
+{
+  "skill_name": "fullstack-engineer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build the Resibo Scanner page. I need the page route at /app/(app)/(features)/resibo/page.tsx that fetches the user's recent receipts from Supabase, a ScanButton client component that opens the camera and uploads to Supabase Storage then calls POST /api/resibo/scan, and a ReceiptCard component that displays the OCR results with vendor name, date, total in pesos, and a confidence badge. Include loading.tsx and error.tsx. All user-facing text should be Taglish.",
+      "expected_output": "Multiple TypeScript files: page.tsx (Server Component fetching receipts), scan-button.tsx (Client Component with camera), receipt-card.tsx (display component), loading.tsx, error.tsx. Should follow AKBai conventions: typed Supabase client, RLS-aware queries, deleted_at IS NULL, centavos for money, Taglish text, mobile-first Tailwind, brand colors.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Create the API route for POST /api/ka/chat. It should accept a message from the user, load their business profile from Supabase, build the KA persona system prompt, call Claude Sonnet (or Haiku for free tier), validate the response, and return it. Include the circuit breaker check, retry logic, tier-based model routing, and proper error handling with the {success, data, error} envelope. Make sure the conversation history is stored in ka_conversations table.",
+      "expected_output": "A route.ts file at app/api/ka/chat/ with auth check, tier lookup, conversation history loading, model selection (Haiku for free, Sonnet for Pro/Business), circuit breaker integration, retry with backoff, Zod validation, conversation storage, and standard API response envelope.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I need to add the BIR Deadline Watcher feature. Scaffold the whole thing: Supabase migration for the bir_deadlines table with RLS, the API route at /api/deadlines that returns upcoming deadlines for the user, and the page at /app/(app)/(features)/deadlines/ with a DeadlineCard component that shows the form type, due date, days remaining, and a filed/unfiled status badge. The card should turn amber when 7 days away and red when 3 days or less. Everything mobile-first.",
+      "expected_output": "Migration SQL with RLS policies, API route with auth + user scoping + soft delete filter, Server Component page, Client Component DeadlineCard with conditional color styling using brand tokens (honey for warning, red for urgent). All text Taglish.",
+      "files": []
+    }
+  ]
+}

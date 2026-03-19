@@ -1,0 +1,31 @@
+{
+  "eval_id": 1,
+  "eval_name": "xendit-webhook-incident",
+  "prompt": "I'm getting Slack alerts that the Xendit webhook endpoint is returning 500 errors. I'm at Globe right now in a meeting. What do I do?",
+  "assertions": [
+    {
+      "text": "Classifies as P0 severity (payment failure)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Provides phone-accessible response actions (Vercel dashboard, Slack)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends immediate rollback as first action",
+      "type": "qualitative"
+    },
+    {
+      "text": "Explains impact: users pay but subscriptions don't activate",
+      "type": "qualitative"
+    },
+    {
+      "text": "Mentions replaying missed webhook events after recovery",
+      "type": "qualitative"
+    },
+    {
+      "text": "Acknowledges solo-founder constraint (at day job, limited availability)",
+      "type": "qualitative"
+    }
+  ]
+}

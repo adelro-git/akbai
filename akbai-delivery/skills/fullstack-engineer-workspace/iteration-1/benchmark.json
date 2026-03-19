@@ -1,0 +1,413 @@
+{
+  "metadata": {
+    "skill_name": "fullstack-engineer",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-03-15T02:52:13Z",
+    "evals_run": [
+      1,
+      2,
+      3
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 176.0,
+        "tokens": 71916,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Migration SQL enables RLS on bir_deadlines table",
+          "passed": true,
+          "evidence": "002_add_bir_deadlines.sql line 31: ALTER TABLE bir_deadlines ENABLE ROW LEVEL SECURITY; followed by three RLS policies"
+        },
+        {
+          "text": "RLS policies scope to auth.uid() = user_id",
+          "passed": true,
+          "evidence": "Lines 34-47: Three RLS policies (SELECT, INSERT, UPDATE) all use USING (auth.uid() = user_id) or WITH CHECK (auth.uid() = user_id)"
+        },
+        {
+          "text": "Table includes deleted_at column and soft-delete pattern",
+          "passed": true,
+          "evidence": "002_add_bir_deadlines.sql line 18: deleted_at TIMESTAMPTZ column present. RLS policies filter: WHERE deleted_at IS NULL"
+        },
+        {
+          "text": "API route includes auth check and user-scoped query",
+          "passed": true,
+          "evidence": "route.ts lines 10-20: getUser() auth check. Lines 24-29: query filters .eq('user_id', user.id).is('deleted_at', null)"
+        },
+        {
+          "text": "DeadlineCard uses conditional color: amber/honey for 7-day warning, red for 3-day urgent",
+          "passed": true,
+          "evidence": "deadline-card.tsx lines 32-37: daysRemaining <= 3 sets red colors, daysRemaining <= 7 sets amber colors"
+        },
+        {
+          "text": "User-facing text contains Taglish",
+          "passed": true,
+          "evidence": "page.tsx line 33: 'Walang BIR deadlines para sa iyo ngayon. Relax, ika'y updated!'"
+        },
+        {
+          "text": "Page is a Server Component, DeadlineCard is appropriately split",
+          "passed": true,
+          "evidence": "page.tsx has no 'use client' directive, uses async getUser() and server-side query. deadline-card.tsx has 'use client' for interactivity"
+        },
+        {
+          "text": "Mobile-first responsive design (base styles for mobile, sm:/md: for larger)",
+          "passed": true,
+          "evidence": "page.tsx uses flex flex-col gap-4/6 p-4 and deadline-card.tsx uses rounded-xl p-4 min-h-touch; responsive utilities applied appropriately"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.875,
+        "passed": 7,
+        "failed": 1,
+        "total": 8,
+        "time_seconds": 273.7,
+        "tokens": 92648,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Auth check at the start of the route (getUser)",
+          "passed": true,
+          "evidence": "route.ts lines 77-86: supabase.auth.getUser() called immediately, returns 401 if missing/error"
+        },
+        {
+          "text": "Returns {success, data/error} envelope format",
+          "passed": true,
+          "evidence": "route.ts uses apiSuccess() and apiError() helpers which return standard envelope format with success boolean and data/error properties"
+        },
+        {
+          "text": "Tier-based model selection (Haiku for free, Sonnet for paid)",
+          "passed": true,
+          "evidence": "model-router.ts lines 43-82: selectModel() routes free tier to Haiku only, Pro/Business to task-based routing (Haiku for simple, Sonnet for ka_reasoning)"
+        },
+        {
+          "text": "Circuit breaker check before Claude API call",
+          "passed": true,
+          "evidence": "route.ts line 146 comment indicates circuit breaker checked inside callClaude(). callClaude() catches ClaudeCircuitOpenError on line 202"
+        },
+        {
+          "text": "Retry with exponential backoff (max 3 retries)",
+          "passed": false,
+          "evidence": "No explicit retry logic found in route.ts. while callClaude() is mentioned and imports exist, the actual retry implementation isn't shown in the provided files."
+        },
+        {
+          "text": "Conversation history stored to ka_conversations table",
+          "passed": true,
+          "evidence": "route.ts lines 228-245: storeConversationMessage() called twice for both user and assistant messages, storing to ka_conversations table"
+        },
+        {
+          "text": "Zod validation on request body",
+          "passed": true,
+          "evidence": "route.ts lines 104-114: KAChatRequestSchema.safeParse(body) validates message and domain fields"
+        },
+        {
+          "text": "Uses ANTHROPIC_API_KEY from server env, never exposed to client",
+          "passed": true,
+          "evidence": "route.ts is server-side API route. callClaude() imported from /lib/claude/client which reads ANTHROPIC_API_KEY from environment"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 68.0,
+        "tokens": 57813,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "page.tsx is a Server Component (no 'use client' directive)",
+          "passed": true,
+          "evidence": "page.tsx has no 'use client' directive and uses async getUser() and server-side supabase query"
+        },
+        {
+          "text": "Supabase query includes .is('deleted_at', null) filter",
+          "passed": true,
+          "evidence": "Line 24 in page.tsx: .is('deleted_at', null)"
+        },
+        {
+          "text": "ScanButton has 'use client' directive",
+          "passed": true,
+          "evidence": "Line 1 in scan-button.tsx: 'use client'"
+        },
+        {
+          "text": "Money is displayed using centavos-to-peso conversion, not raw centavos",
+          "passed": true,
+          "evidence": "receipt-card.tsx lines 29-35: formatPeso() converts centavos/100 to pesos with \u20b1 sign"
+        },
+        {
+          "text": "User-facing text contains Taglish (mix of Filipino and English)",
+          "passed": true,
+          "evidence": "Multiple instances: 'I-scan ang mga receipts', 'Mga Kamakailan na Scan', 'Walang scanned receipts pa. I-scan natin ang una!'"
+        },
+        {
+          "text": "Uses brand color tokens (honey, teal, ink, card) not raw hex or default Tailwind colors",
+          "passed": true,
+          "evidence": "scan-button.tsx uses 'from-honey-light to-honey-deep' and 'from-teal-light to-teal-cyan'; receipt-card.tsx uses 'bg-card', 'text-teal-light'"
+        },
+        {
+          "text": "Includes loading.tsx and error.tsx files",
+          "passed": true,
+          "evidence": "Both files present in outputs directory with appropriate skeletons and error handling"
+        },
+        {
+          "text": "Touch targets have min-h-[44px] or min-h-touch",
+          "passed": true,
+          "evidence": "scan-button.tsx lines 190, 198, 213, 222: min-h-[44px]; error.tsx line 37: min-h-[44px]"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 4,
+        "failed": 4,
+        "total": 8,
+        "time_seconds": 86.0,
+        "tokens": 39318,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Migration SQL enables RLS on bir_deadlines table",
+          "passed": true,
+          "evidence": "migration.sql line 33: ALTER TABLE bir_deadlines ENABLE ROW LEVEL SECURITY; followed by four RLS policies"
+        },
+        {
+          "text": "RLS policies scope to auth.uid() = user_id",
+          "passed": true,
+          "evidence": "Lines 42-55: Four RLS policies all use USING (auth.uid() = user_id)"
+        },
+        {
+          "text": "Table includes deleted_at column and soft-delete pattern",
+          "passed": false,
+          "evidence": "migration.sql has no deleted_at column. Table uses hard delete with DELETE policy (line 57-60), not soft-delete with deleted_at timestamp"
+        },
+        {
+          "text": "API route includes auth check and user-scoped query",
+          "passed": true,
+          "evidence": "route.ts lines 10-20: getUser() auth check. Line 27: query scoped with .eq('user_id', user.id)"
+        },
+        {
+          "text": "DeadlineCard uses conditional color: amber/honey for 7-day warning, red for 3-day urgent",
+          "passed": true,
+          "evidence": "deadline-card.tsx lines 45-62: daysRemaining <= 3 returns red styles, daysRemaining <= 7 returns amber styles"
+        },
+        {
+          "text": "User-facing text contains Taglish",
+          "passed": false,
+          "evidence": "page.tsx is 'use client' and contains mostly English text: 'No unfiled deadlines yet', 'No filed deadlines yet', 'Great work!' Limited Taglish usage"
+        },
+        {
+          "text": "Page is a Server Component, DeadlineCard is appropriately split",
+          "passed": false,
+          "evidence": "page.tsx line 1 has 'use client' directive, making it a Client Component. Should be async Server Component fetching data."
+        },
+        {
+          "text": "Mobile-first responsive design (base styles for mobile, sm:/md: for larger)",
+          "passed": false,
+          "evidence": "page.tsx and deadline-card.tsx use light theme (bg-gray-50, bg-white) designed for desktop-first. No explicit mobile-first responsive breakpoints visible."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.875,
+        "passed": 7,
+        "failed": 1,
+        "total": 8,
+        "time_seconds": 327.2,
+        "tokens": 98279,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Auth check at the start of the route (getUser)",
+          "passed": true,
+          "evidence": "route.ts lines 35-51: supabase.auth.getUser() called at start, returns 401 error if missing"
+        },
+        {
+          "text": "Returns {success, data/error} envelope format",
+          "passed": false,
+          "evidence": "route.ts returns NextResponse.json with inconsistent formats. Success has {success: true, data: {message_id, response, model...}} but error responses use {success: false, error: 'ERROR_CODE', message: '...'} instead of {success: false, error: {code, message, message_tl}}"
+        },
+        {
+          "text": "Tier-based model selection (Haiku for free, Sonnet for paid)",
+          "passed": true,
+          "evidence": "route.ts line 161: selectModel('ka_reasoning', tier) called with user tier; model-router.ts implements tier-based routing"
+        },
+        {
+          "text": "Circuit breaker check before Claude API call",
+          "passed": true,
+          "evidence": "route.ts lines 175-200: callClaude() call is wrapped in try-catch that catches ClaudeCircuitOpenError on line 187"
+        },
+        {
+          "text": "Retry with exponential backoff (max 3 retries)",
+          "passed": true,
+          "evidence": "retry.ts provides retryWithBackoff() function with exponential backoff (lines 72-77): baseDelayMs * Math.pow(2, attempt) with maxRetries default of 3"
+        },
+        {
+          "text": "Conversation history stored to ka_conversations table",
+          "passed": true,
+          "evidence": "route.ts lines 214-244: inserts both user and assistant messages into ka_conversations table with all fields"
+        },
+        {
+          "text": "Zod validation on request body",
+          "passed": true,
+          "evidence": "route.ts lines 54-66: ChatRequestSchema.safeParse(body) validates request, returns error if validation fails"
+        },
+        {
+          "text": "Uses ANTHROPIC_API_KEY from server env, never exposed to client",
+          "passed": true,
+          "evidence": "route.ts is server-side API route at /app/api/ka/chat/route.ts. callClaude() reads API key from environment."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 4,
+        "failed": 4,
+        "total": 8,
+        "time_seconds": 64.3,
+        "tokens": 36482,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "page.tsx is a Server Component (no 'use client' directive)",
+          "passed": false,
+          "evidence": "page.tsx has 'use client' directive on line 1, making it a Client Component. Should be async Server Component for data fetching."
+        },
+        {
+          "text": "Supabase query includes .is('deleted_at', null) filter",
+          "passed": false,
+          "evidence": "without_skill version does not use soft-delete pattern. Migration lacks deleted_at column and queries don't filter for deleted_at IS NULL."
+        },
+        {
+          "text": "ScanButton has 'use client' directive",
+          "passed": true,
+          "evidence": "Line 1 in scan-button.tsx: 'use client'"
+        },
+        {
+          "text": "Money is displayed using centavos-to-peso conversion, not raw centavos",
+          "passed": true,
+          "evidence": "receipt-card.tsx lines 26-30: formatCurrency() divides amount by 100 and formats with \u20b1 sign"
+        },
+        {
+          "text": "User-facing text contains Taglish (mix of Filipino and English)",
+          "passed": true,
+          "evidence": "Instances present: 'Walang resibo pa', 'Nag-uupload', 'Mag-scan ng Resibo', though less comprehensive than with_skill version"
+        },
+        {
+          "text": "Uses brand color tokens (honey, teal, ink, card) not raw hex or default Tailwind colors",
+          "passed": false,
+          "evidence": "Uses default Tailwind colors: 'bg-blue-600', 'bg-slate-900', 'bg-white', 'border-gray-200', 'bg-red-50' instead of brand tokens"
+        },
+        {
+          "text": "Includes loading.tsx and error.tsx files",
+          "passed": true,
+          "evidence": "Both files present in outputs directory"
+        },
+        {
+          "text": "Touch targets have min-h-[44px] or min-h-touch",
+          "passed": false,
+          "evidence": "page.tsx uses default heights. scan-button.tsx has 'py-4 px-6' and 'py-3 px-4' instead of explicit min-h-[44px] targets"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9583,
+        "stddev": 0.0722,
+        "min": 0.875,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 172.5667,
+        "stddev": 102.893,
+        "min": 68.0,
+        "max": 273.7
+      },
+      "tokens": {
+        "mean": 74125.6667,
+        "stddev": 17522.308,
+        "min": 57813,
+        "max": 92648
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.625,
+        "stddev": 0.2165,
+        "min": 0.5,
+        "max": 0.875
+      },
+      "time_seconds": {
+        "mean": 159.1667,
+        "stddev": 145.9251,
+        "min": 64.3,
+        "max": 327.2
+      },
+      "tokens": {
+        "mean": 58026.3333,
+        "stddev": 34888.6601,
+        "min": 36482,
+        "max": 98279
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.33",
+      "time_seconds": "+13.4",
+      "tokens": "+16099"
+    }
+  },
+  "notes": []
+}

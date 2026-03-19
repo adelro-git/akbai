@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "eval_name": "sentry-setup",
+  "prompt": "Help me set up Sentry for AKBai from scratch. We're about to ship to our first beta users and this is a critical gap.",
+  "assertions": [
+    {
+      "text": "References Gap A4 from the gap registry as context",
+      "type": "qualitative"
+    },
+    {
+      "text": "Provides concrete install commands (npm install @sentry/nextjs)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Includes config code with DSN, release tagging, and sample rates",
+      "type": "qualitative"
+    },
+    {
+      "text": "Configures alert rules appropriate for AKBai (payment errors, auth spikes)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Mentions Slack integration for alert routing",
+      "type": "qualitative"
+    },
+    {
+      "text": "Notes free tier limits (5K events/mo) and cost implications",
+      "type": "qualitative"
+    }
+  ]
+}

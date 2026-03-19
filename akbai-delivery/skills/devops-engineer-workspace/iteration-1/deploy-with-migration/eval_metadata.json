@@ -1,0 +1,31 @@
+{
+  "eval_id": 0,
+  "eval_name": "deploy-with-migration",
+  "prompt": "I just merged a PR that adds the Resibo Scanner feature. Walk me through deploying this to production — there's a new Supabase migration for the receipts table.",
+  "assertions": [
+    {
+      "text": "Mentions verifying Supabase migration on staging/branch before production",
+      "type": "qualitative"
+    },
+    {
+      "text": "Includes RLS policy verification step after migration",
+      "type": "qualitative"
+    },
+    {
+      "text": "Specifies migration-first then app-deploy order",
+      "type": "qualitative"
+    },
+    {
+      "text": "Mentions Sentry release tagging as part of post-deploy",
+      "type": "qualitative"
+    },
+    {
+      "text": "Includes post-deploy verification steps (smoke test, UptimeRobot, test receipt scan)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Mentions rollback plan if issues detected",
+      "type": "qualitative"
+    }
+  ]
+}

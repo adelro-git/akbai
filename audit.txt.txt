@@ -1,0 +1,108 @@
+BRAND
+- brand/AKBai Brand Book.pdf
+- brand/Logo Files/AKBai_Icon_512.png
+- brand/Logo Files/AKBai_Icon_512_Honey.png
+- brand/Logo Files/AKBai_Logo_Primary_OnDark.png
+- brand/Logo Files/AKBai_Logo_Primary_OnGradient.png
+- brand/Logo Files/AKBai_Logo_Primary_OnLight.png
+- brand/Logo Files/AKBai_Logo_Stacked_OnDark.png
+- brand/Logo Files/AKBai_Logo_Stacked_OnGradient.png
+- brand/Logo Files/AKBai_Logo_Stacked_OnLight.png
+- brand/Logo Files/AKBai_Logo_White.png
+- brand/Logo Files/AKBai_Mark_Dark.png
+- brand/Logo Files/AKBai_Mark_Honey.png
+- brand/Logo Files/AKBai_Mark_OnDark.png
+- brand/Logo Files/AKBai_Mark_OnGradient.png
+- brand/Logo Files/AKBai_Mark_OnLight.png
+- brand/Logo Files/AKBai_Mark_White.png
+
+PROJECT FILES
+- project/AKBai_Competitive_Brief_v2.pdf
+- project/AKBai_Complete_Roadmap_v14.pdf
+- project/AKBai_Financial_Model_v5.xlsx
+- project/AKBai_Market_Research_v1.pdf
+- project/AKBai_Operations_Playbook_v7.pdf
+- project/AKBai_Operations_Roadmap_v6.pdf
+- project/AKBai_Plugin_Strategy_v1.html
+- project/AKBai_Post_Implementation_Vision_v1.pdf
+- project/AKBai_Skills_Utilization_Guide_v1.html
+
+SKILL FILES
+- akbai-delivery/skills/ai-engineer/SKILL.md
+- akbai-delivery/skills/data-architect/SKILL.md
+- akbai-delivery/skills/devops-engineer/SKILL.md
+- akbai-delivery/skills/fullstack-engineer/SKILL.md
+- akbai-delivery/skills/marketing-lead/SKILL.md
+- akbai-delivery/skills/ops-lead/ (references only — no SKILL.md yet)
+- akbai-delivery/skills/product-owner/ (references only — no SKILL.md yet)
+- akbai-delivery/skills/project-manager/SKILL.md
+- akbai-delivery/skills/qa-engineer/SKILL.md
+- akbai-delivery/skills/security-compliance/SKILL.md
+- akbai-delivery/skills/solutions-architect/SKILL.md
+- akbai-delivery/skills/ux-designer/SKILL.md
+
+REFERENCE FILES
+
+[Shared — loaded at every session]
+- akbai-delivery/shared/brand-context.md
+- akbai-delivery/shared/gap-registry.md
+- akbai-delivery/shared/glossary.md
+- akbai-delivery/shared/project-context.md
+- akbai-delivery/shared/tech-stack.md
+- akbai-delivery/README.md
+
+[ai-engineer]
+- akbai-delivery/skills/ai-engineer/references/ai-guardrails.md
+- akbai-delivery/skills/ai-engineer/references/ocr-pipeline.md
+- akbai-delivery/skills/ai-engineer/references/prompt-library.md
+
+[data-architect]
+- akbai-delivery/skills/data-architect/references/data-flows.md
+- akbai-delivery/skills/data-architect/references/npc-compliance.md
+- akbai-delivery/skills/data-architect/references/supabase-schema.md
+
+[devops-engineer]
+- akbai-delivery/skills/devops-engineer/references/deployment-guide.md
+- akbai-delivery/skills/devops-engineer/references/incident-runbook.md
+- akbai-delivery/skills/devops-engineer/references/monitoring-setup.md
+
+[fullstack-engineer]
+- akbai-delivery/skills/fullstack-engineer/references/claude-integration.md
+- akbai-delivery/skills/fullstack-engineer/references/nextjs-conventions.md
+- akbai-delivery/skills/fullstack-engineer/references/supabase-patterns.md
+
+[marketing-lead]
+- akbai-delivery/skills/marketing-lead/references/brand-voice.md
+- akbai-delivery/skills/marketing-lead/references/competitive-brief.md
+- akbai-delivery/skills/marketing-lead/references/content-calendar.md
+
+[ops-lead]
+- (no reference files yet)
+
+[product-owner]
+- (no reference files yet)
+
+[project-manager]
+- akbai-delivery/skills/project-manager/references/phase-gates.md
+- akbai-delivery/skills/project-manager/references/roadmap-context.md
+- akbai-delivery/skills/project-manager/references/sprint-templates.md
+
+[qa-engineer]
+- akbai-delivery/skills/qa-engineer/references/test-checklist.md
+- akbai-delivery/skills/qa-engineer/references/test-strategy.md
+
+[security-compliance]
+- akbai-delivery/skills/security-compliance/references/bir-compliance.md
+- akbai-delivery/skills/security-compliance/references/npc-checklist.md
+- akbai-delivery/skills/security-compliance/references/security-architecture.md
+
+[solutions-architect]
+- akbai-delivery/skills/solutions-architect/references/api-design.md
+- akbai-delivery/skills/solutions-architect/references/architecture-decisions.md
+- akbai-delivery/skills/solutions-architect/references/tech-stack.md
+
+[ux-designer]
+- akbai-delivery/skills/ux-designer/references/mobile-first.md
+- akbai-delivery/skills/ux-designer/references/taglish-copy-guide.md
+- akbai-delivery/skills/ux-designer/references/taglish-manual.md
+- akbai-delivery/skills/ux-designer/references/ux-flows.md

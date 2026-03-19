@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Project KA — Brand Name Exploration: The "Ka-" Series</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.08);
+  --cs:#FF6B6B;--ce:#FF8E53;
+  --ts:#20C9A0;--te:#0FB8D9;
+  --gold:#FFD93D;--violet:#A78BFA;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);line-height:1.7;font-size:15px;padding:48px 24px}
+.container{max-width:960px;margin:0 auto}
+h1{font-size:42px;font-weight:800;line-height:1.1;margin-bottom:8px}
+.grad{background:linear-gradient(135deg,var(--cs),var(--ce));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.teal{background:linear-gradient(135deg,var(--ts),var(--te));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:16px;color:var(--muted);margin-bottom:48px;max-width:640px}
+.label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+
+/* Concept card */
+.concept{background:var(--card);border:1px solid var(--dim);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.concept-header{padding:28px 28px 0 28px}
+.concept-body{padding:0 28px 28px 28px}
+.concept-name{font-size:36px;font-weight:800;margin-bottom:2px}
+.concept-pronunciation{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:4px}
+.concept-tagline{font-size:16px;color:var(--muted);margin-bottom:16px;font-style:italic}
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.concept-detail h4{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.concept-detail p{font-size:13px;color:var(--muted);line-height:1.5}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:12px}
+.tag-top{background:rgba(255,107,107,.15);color:#FF8E53}
+.tag-strong{background:rgba(32,201,160,.12);color:var(--ts)}
+.tag-creative{background:rgba(167,139,250,.12);color:var(--violet)}
+.tag-bold{background:rgba(255,217,61,.12);color:var(--gold)}
+
+/* Scores */
+.scores{display:flex;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--dim)}
+.score-item{flex:1}
+.score-item .score-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.score-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.06)}
+.score-fill{height:100%;border-radius:3px}
+.score-fill-5{width:100%;background:linear-gradient(90deg,var(--cs),var(--ce))}
+.score-fill-4{width:80%;background:linear-gradient(90deg,var(--ts),var(--te))}
+.score-fill-3{width:60%;background:var(--gold)}
+
+/* Domain */
+.domains{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.domain{font-size:11px;font-weight:600;padding:4px 10px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid var(--dim);color:var(--muted);font-family:monospace}
+.domain-hot{background:rgba(32,201,160,.08);border-color:rgba(32,201,160,.2);color:var(--ts)}
+
+/* Use cases */
+.use-case{font-size:13px;color:var(--text);padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:6px;border-left:3px solid}
+
+/* Section divider */
+.divider{border:none;border-top:1px solid var(--dim);margin:48px 0}
+
+/* Comparison table */
+.comp-table{width:100%;border-collapse:collapse;font-size:13px}
+.comp-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--dim)}
+.comp-table td{padding:12px;border-bottom:1px solid var(--dim)}
+.comp-table tr:last-child td{border-bottom:none}
+.star{color:var(--cs)}
+
+/* Ka explainer */
+.ka-box{background:linear-gradient(135deg,rgba(255,107,107,.06),rgba(255,142,83,.04));border:1px solid rgba(255,107,107,.15);border-radius:16px;padding:32px;margin-bottom:48px}
+.ka-box h3{font-size:20px;font-weight:800;margin-bottom:8px}
+.ka-examples{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.ka-ex{padding:8px 16px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--dim);font-size:13px}
+.ka-ex strong{color:var(--cs)}
+
+@media(max-width:768px){
+  .concept-grid{grid-template-columns:1fr}
+  h1{font-size:32px}
+  .concept-name{font-size:28px}
+  .scores{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="label">Brand Name Exploration — Deep Dive</div>
+<h1>The <span class="grad">"Ka-"</span> Series</h1>
+<p class="sub">Exploring the power of the Filipino "Ka-" prefix for Project KA's brand name. Every name rooted in partnership, community, and shared journey.</p>
+
+<!-- Ka- explainer -->
+<div class="ka-box">
+  <h3>Why <span class="grad">"Ka-"</span> is perfect for this brand</h3>
+  <p style="color:var(--muted);font-size:14px;line-height:1.7">In Filipino, the prefix <strong>"ka-"</strong> transforms any root word into a relational concept — it means "co-," "fellow," or "one who shares in." It's embedded in the most important Filipino relationship words. Using "Ka-" immediately signals: <em>this is not a tool, this is a partner.</em></p>
+  <div class="ka-examples">
+    <div class="ka-ex"><strong>Ka</strong>sama — companion</div>
+    <div class="ka-ex"><strong>Ka</strong>tulong — helper</div>
+    <div class="ka-ex"><strong>Ka</strong>ibigan — friend</div>
+    <div class="ka-ex"><strong>Ka</strong>patid — sibling</div>
+    <div class="ka-ex"><strong>Ka</strong>tunggali — rival/match</div>
+    <div class="ka-ex"><strong>Ka</strong>negosyo — business partner</div>
+    <div class="ka-ex"><strong>Ka</strong>pamilya — family</div>
+    <div class="ka-ex"><strong>Ka</strong>lakbay — travel companion</div>
+  </div>
+</div>
+
+<!-- ============ NAME 1: KASAMA ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-top">★ Top Recommendation</span>
+    <div class="concept-name grad">Kasama</div>
+    <div class="concept-pronunciation">kah-SAH-mah</div>
+    <div class="concept-tagline">"Kasama mo sa negosyo." — Your companion in business.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Why It Works</h4>
+        <p><strong>Kasama</strong> = companion, one who is together with you. It's deeply relational — not a tool, not a service, but someone who walks beside you. Every Filipino knows this word. It evokes bayanihan (community spirit), solidarity, and shared effort. It directly maps to the "Katuwang" brand personality from your brief.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--ts)">Pain Points Addressed</h4>
+        <p>The core emotional promise: "Hindi ka nag-iisa" (you're not alone). Addresses ALL pain points through companionship — the DM flood isn't scary when someone's helping you reply, BIR isn't terrifying when someone's tracking your deadlines, costing isn't confusing when someone calculates for you.</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain domain-hot">kasama.ai</span>
+      <span class="domain">kasama.app</span>
+      <span class="domain">getkasama.com</span>
+      <span class="domain">withkasama.com</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--cs)">"Meet Kasama — your AI business partner."</div>
+      <div class="use-case" style="border-color:var(--ts)">"Kasama ko na si Kasama sa business ko." (natural double-meaning)</div>
+      <div class="use-case" style="border-color:var(--gold)">"From solo hustle to may kasama ka na."</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 2: KANEGOSYO ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-strong">Strong Contender</span>
+    <div class="concept-name teal">KaNegosyo</div>
+    <div class="concept-pronunciation">kah-neh-GOS-yo</div>
+    <div class="concept-tagline">"Ang KaNegosyo mo sa digital age." — Your business partner in the digital age.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--ts)">Why It Works</h4>
+        <p><strong>KaNegosyo</strong> = business partner/fellow business person. Directly says what it is — no ambiguity. The "negosyo" root immediately frames this as a business tool, not a general chatbot. CamelCase gives it a modern tech feel while preserving Filipino roots. The "Ka-" prefix adds partnership warmth.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Considerations</h4>
+        <p>Longer name (4 syllables) — may need a short form for UI ("KN" mark or just "Ka"). Very descriptive, which is great for search and understanding, but slightly less brandable than abstract names. Works brilliantly in marketing copy: "May KaNegosyo ka na ba?"</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain domain-hot">kanegosyo.ai</span>
+      <span class="domain">kanegosyo.app</span>
+      <span class="domain">kanegosyo.ph</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--ts)">"KaNegosyo — ang AI business partner mo."</div>
+      <div class="use-case" style="border-color:var(--cs)">"May KaNegosyo ka na ba?" (marketing hook)</div>
+      <div class="use-case" style="border-color:var(--gold)">"Hindi lang tool — KaNegosyo mo talaga."</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 3: KATUWANG ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-strong">Strong Contender</span>
+    <div class="concept-name teal">Katuwang</div>
+    <div class="concept-pronunciation">kah-TOO-wahng</div>
+    <div class="concept-tagline">"Katuwang mo sa hustle." — Your partner in the hustle.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--ts)">Why It Works</h4>
+        <p><strong>Katuwang</strong> = partner, collaborator, one who works alongside. This is the exact word you used in your brief to describe the AI's role. It implies active collaboration — not just helping, but working WITH you. Slightly more formal than "kasama" which gives it a professional edge.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Considerations</h4>
+        <p>Strong and distinctive — most Filipinos know this word but it's not overused in branding. The "tuwang" root relates to "cooperation." May feel slightly more formal/serious than some alternatives, which could be a plus for financial trust but a minus for warmth.</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain domain-hot">katuwang.ai</span>
+      <span class="domain">katuwang.app</span>
+      <span class="domain">katuwang.ph</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--ts)">"Katuwang — AI partner for Filipino entrepreneurs."</div>
+      <div class="use-case" style="border-color:var(--cs)">"Sino ang katuwang mo sa negosyo?"</div>
+      <div class="use-case" style="border-color:var(--gold)">"From solo to may katuwang — in one chat."</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 4: KAYA ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-top">★ Top Recommendation</span>
+    <div class="concept-name grad">Kaya</div>
+    <div class="concept-pronunciation">KAH-yah</div>
+    <div class="concept-tagline">"Kaya mo 'to." — You can do this.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Why It Works</h4>
+        <p><strong>Kaya</strong> = ability, "you can do it." The most empowering word in Filipino. Every entrepreneur tells themselves "kaya ko 'to" when things get tough. It's the "KA" from Project KA. Only 4 letters — incredibly clean. Double meaning: ability (kaya mo) AND because/reason (kaya naman). Universal, positive, unforgettable.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--ts)">Considerations</h4>
+        <p>Short names are premium — harder to get exact domain match. "Kaya" is a common word, so SEO will need branded terms ("Kaya app" or "Kaya AI"). But the emotional resonance is unmatched. When your morning briefing says "Kaya mo 'to today, [Name]" — that's powerful.</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain">kaya.ai</span>
+      <span class="domain domain-hot">getkaya.app</span>
+      <span class="domain">kaya.ph</span>
+      <span class="domain">usekaya.com</span>
+      <span class="domain">heykaya.com</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--cs)">"Kaya — your AI business partner."</div>
+      <div class="use-case" style="border-color:var(--ts)">"BIR deadlines? Kaya. DM floods? Kaya. Costing? Kaya."</div>
+      <div class="use-case" style="border-color:var(--gold)">"Kaya mo 'to — with a little help from AI."</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 5: KAAGAPAY ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-creative">Creative Pick</span>
+    <div class="concept-name" style="color:var(--violet)">Kaagapay</div>
+    <div class="concept-pronunciation">kah-ah-GAH-pie</div>
+    <div class="concept-tagline">"Kaagapay mo sa bawat step." — Your ally in every step.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--violet)">Why It Works</h4>
+        <p><strong>Kaagapay</strong> = ally, one who supports alongside. Deeper than "kasama" — it implies active support, not just presence. "Agapay" means to walk alongside someone, to provide support in their journey. Beautiful word with a musical quality. Less commonly used in branding = more distinctive.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Considerations</h4>
+        <p>4 syllables — longer, but flows naturally in Filipino. May be less instantly recognized by younger Gen Z users compared to "kasama" or "kaya." However, it carries more emotional weight and specificity. Could shorten to "Agapay" or use "Ka" as the app icon shortform.</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain domain-hot">kaagapay.ai</span>
+      <span class="domain">kaagapay.app</span>
+      <span class="domain">kaagapay.ph</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--violet)">"Kaagapay — AI that walks beside your business."</div>
+      <div class="use-case" style="border-color:var(--cs)">"Ang kaagapay mo sa BIR, sa DMs, sa lahat."</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 6: KATULONG ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-strong">Strong Contender</span>
+    <div class="concept-name teal">Katulong</div>
+    <div class="concept-pronunciation">kah-TOO-long</div>
+    <div class="concept-tagline">"Ang AI katulong mo." — Your AI helper.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--ts)">Why It Works</h4>
+        <p><strong>Katulong</strong> = helper, assistant. The most direct, unambiguous word for "helper" in Filipino. Zero confusion about what this product does. The "tulong" root (help) is universally understood. Straightforward, honest, no pretension — which matches the brand's transparency principle.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Important Consideration</h4>
+        <p>In everyday usage, "katulong" can also colloquially refer to a household helper/maid. This association could feel diminishing rather than empowering for the AI partner concept. Some users might read it as "servant" rather than "partner." This is the main risk — test with your target audience.</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain domain-hot">katulong.ai</span>
+      <span class="domain">katulong.app</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--ts)">"Katulong.ai — your AI helper for business."</div>
+      <div class="use-case" style="border-color:var(--cs)">⚠️ Risk: "Parang katulong lang" — may feel subservient, not partner-level</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-3"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 7: KALAKBAY ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-creative">Creative Pick</span>
+    <div class="concept-name" style="color:var(--violet)">Kalakbay</div>
+    <div class="concept-pronunciation">kah-LAHK-bye</div>
+    <div class="concept-tagline">"Kalakbay mo sa growth." — Your companion on the journey.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--violet)">Why It Works</h4>
+        <p><strong>Kalakbay</strong> = travel companion, fellow journeyer. Beautiful metaphor — building a business IS a journey. Implies forward motion, shared direction, and long-term companionship. Less transactional than "katulong" — more about the relationship over time. Poetic without being pretentious.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Considerations</h4>
+        <p>Travel metaphor might not immediately signal "business tool" to new users. Would need strong supporting copy to bridge the gap. However, once explained, it's deeply resonant. Works beautifully in Phase 3's agent-builder vision: "Your business journey, your AI kalakbay."</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain domain-hot">kalakbay.ai</span>
+      <span class="domain">kalakbay.app</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--violet)">"Kalakbay — AI for the Filipino business journey."</div>
+      <div class="use-case" style="border-color:var(--ts)">"Sa bawat step ng negosyo, may kalakbay ka."</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 8: KABALIKAT ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-bold">Bold Choice</span>
+    <div class="concept-name" style="color:var(--gold)">Kabalikat</div>
+    <div class="concept-pronunciation">kah-bah-LEE-kaht</div>
+    <div class="concept-tagline">"Kabalikat mo sa negosyo." — Shoulder-to-shoulder with your business.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--gold)">Why It Works</h4>
+        <p><strong>Kabalikat</strong> = literally "one who shares the shoulder," meaning ally, supporter, one who bears the burden with you. Incredibly physical and vivid — you can feel the weight being shared. Perfect for the "admin overload" pain point. Often used in community development and government programs, giving it gravitas.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Considerations</h4>
+        <p>4 syllables, slightly longer. Has some association with government programs ("Kabalikat sa Pag-unlad") which could feel institutional. However, reclaiming it for a modern tech brand could be powerful — subverting the expectation. Could shorten to "Balikat" for a punchier alternative.</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain domain-hot">kabalikat.ai</span>
+      <span class="domain">kabalikat.app</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--gold)">"Kabalikat — shoulder the load with AI."</div>
+      <div class="use-case" style="border-color:var(--cs)">"Hindi mo kailangang buhat-buhat lahat. May kabalikat ka na."</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 9: KATUNGGALI ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-bold">Bold Choice</span>
+    <div class="concept-name" style="color:var(--gold)">Katunggali</div>
+    <div class="concept-pronunciation">kah-toong-GAH-lee</div>
+    <div class="concept-tagline">"Katunggali mo sa laban ng negosyo." — Your match in the business battle.</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--gold)">Why It Works</h4>
+        <p><strong>Katunggali</strong> = rival, match, counterpart, someone at your level. Interesting twist — instead of a "helper below you," this positions the AI as your equal, your match. It says: "This AI is as sharp as you are." Competitive energy that resonates with hustlers who see business as a fight to win.</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Important Consideration</h4>
+        <p>"Katunggali" primarily means "rival" or "opponent" in most contexts. While it CAN mean "counterpart/match," the adversarial connotation is strong. For a product that needs to feel like a PARTNER, this could send mixed signals. Users might wonder: "Is this AI competing with me or helping me?"</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain">katunggali.ai</span>
+      <span class="domain">katunggali.app</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--gold)">"Katunggali — an AI that matches your hustle."</div>
+      <div class="use-case" style="border-color:var(--cs)">⚠️ Risk: "Katunggali" = rival. May confuse — partner or competitor?</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-3"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-3"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAME 10: JUST "KA" ============ -->
+<div class="concept">
+  <div class="concept-header">
+    <span class="tag tag-top">★ Wildcard — Minimalist</span>
+    <div class="concept-name grad" style="font-size:48px">Ka</div>
+    <div class="concept-pronunciation">kah</div>
+    <div class="concept-tagline">"Ka." — Partner. (That's it. That's the brand.)</div>
+  </div>
+  <div class="concept-body">
+    <div class="concept-grid">
+      <div class="concept-detail">
+        <h4 style="color:var(--cs)">Why It Works</h4>
+        <p><strong>Ka</strong> = the prefix itself, standing alone. In Filipino, "ka" as a standalone is an informal second-person pronoun ("you") and the partnership prefix. Two letters. Impossibly short. Bold. Modern. It IS Project KA — the name was there all along. "Ka" feels like the AI addressing you directly: "Hey, Ka."</p>
+      </div>
+      <div class="concept-detail">
+        <h4 style="color:var(--ts)">Considerations</h4>
+        <p>Two-letter names are almost impossible to get as exact-match domains. Would need creative domain: getka.app, hey-ka.com, ka.ph. SEO for a two-letter word is extremely challenging. However, as a BRAND (not a search term), it's iconic. Think "X" — short names work when the brand is strong enough.</p>
+      </div>
+    </div>
+    <div class="domains">
+      <span class="domain">ka.ph</span>
+      <span class="domain domain-hot">getka.app</span>
+      <span class="domain">hey-ka.com</span>
+      <span class="domain">ka.ai</span>
+      <span class="domain">withka.app</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="use-case" style="border-color:var(--cs)">"Ka — your AI business partner."</div>
+      <div class="use-case" style="border-color:var(--ts)">"Just say 'Ka, scan this receipt' or 'Ka, reply to Maria.'"</div>
+      <div class="use-case" style="border-color:var(--gold)">"Ka gets it. Ka handles it. Ka has your back."</div>
+    </div>
+    <div class="scores">
+      <div class="score-item"><div class="score-label">Cultural Resonance</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Sayability</div><div class="score-bar"><div class="score-fill score-fill-5"></div></div></div>
+      <div class="score-item"><div class="score-label">Brandability</div><div class="score-bar"><div class="score-fill score-fill-4"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ============ COMPARISON TABLE ============ -->
+<div class="label">Final Comparison</div>
+<h2 style="font-size:28px;font-weight:800;margin-bottom:24px">Head-to-Head <span class="grad">Comparison</span></h2>
+
+<div style="background:var(--card);border:1px solid var(--dim);border-radius:16px;overflow:hidden;margin-bottom:32px">
+<table class="comp-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Meaning</th>
+      <th>Syllables</th>
+      <th>Vibe</th>
+      <th>Risk</th>
+      <th>Rec.</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:rgba(255,107,107,.04)">
+      <td><strong style="color:var(--cs)">Kasama</strong></td>
+      <td>Companion</td>
+      <td>3</td>
+      <td>Warm, relational, universal</td>
+      <td>Common word — needs brand differentiation</td>
+      <td><span class="star">★★★★★</span></td>
+    </tr>
+    <tr style="background:rgba(255,107,107,.04)">
+      <td><strong style="color:var(--cs)">Kaya</strong></td>
+      <td>You can / Ability</td>
+      <td>2</td>
+      <td>Empowering, short, modern</td>
+      <td>Very common word — SEO challenge</td>
+      <td><span class="star">★★★★★</span></td>
+    </tr>
+    <tr>
+      <td><strong style="color:var(--ts)">KaNegosyo</strong></td>
+      <td>Business partner</td>
+      <td>4</td>
+      <td>Direct, professional, clear</td>
+      <td>Longer — needs short form for UI</td>
+      <td><span class="star">★★★★</span>☆</td>
+    </tr>
+    <tr>
+      <td><strong style="color:var(--ts)">Katuwang</strong></td>
+      <td>Partner/collaborator</td>
+      <td>3</td>
+      <td>Professional, trustworthy</td>
+      <td>Slightly formal</td>
+      <td><span class="star">★★★★</span>☆</td>
+    </tr>
+    <tr>
+      <td><strong style="color:var(--violet)">Kaagapay</strong></td>
+      <td>Ally/supporter</td>
+      <td>4</td>
+      <td>Deep, poetic, supportive</td>
+      <td>Less common word for younger users</td>
+      <td><span class="star">★★★★</span>☆</td>
+    </tr>
+    <tr>
+      <td><strong style="color:var(--violet)">Kalakbay</strong></td>
+      <td>Journey companion</td>
+      <td>3</td>
+      <td>Aspirational, forward-moving</td>
+      <td>Travel metaphor ≠ business tool</td>
+      <td><span class="star">★★★</span>☆☆</td>
+    </tr>
+    <tr>
+      <td><strong style="color:var(--gold)">Kabalikat</strong></td>
+      <td>Shoulder-to-shoulder</td>
+      <td>4</td>
+      <td>Solid, physical, communal</td>
+      <td>Government program associations</td>
+      <td><span class="star">★★★</span>☆☆</td>
+    </tr>
+    <tr>
+      <td><strong style="color:var(--ts)">Katulong</strong></td>
+      <td>Helper</td>
+      <td>3</td>
+      <td>Clear, direct, humble</td>
+      <td>⚠️ "Household helper" connotation</td>
+      <td><span class="star">★★★</span>☆☆</td>
+    </tr>
+    <tr>
+      <td><strong style="color:var(--gold)">Katunggali</strong></td>
+      <td>Rival/match</td>
+      <td>4</td>
+      <td>Edgy, competitive</td>
+      <td>⚠️ "Rival" is adversarial</td>
+      <td><span class="star">★★</span>☆☆☆</td>
+    </tr>
+    <tr>
+      <td><strong style="color:var(--cs)">Ka</strong></td>
+      <td>You / Partner prefix</td>
+      <td>1</td>
+      <td>Bold, minimal, iconic</td>
+      <td>SEO nightmare, domain scarcity</td>
+      <td><span class="star">★★★★</span>☆</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- My recommendation -->
+<div style="background:linear-gradient(135deg,rgba(255,107,107,.06),rgba(255,142,83,.04));border:1px solid rgba(255,107,107,.15);border-radius:16px;padding:32px">
+  <div class="label" style="color:var(--cs)">Strategist's Recommendation</div>
+  <h3 style="font-size:22px;font-weight:800;margin-bottom:12px">My top 3 shortlist for your consideration:</h3>
+  <div style="margin-bottom:16px">
+    <p style="font-size:16px;margin-bottom:8px"><strong class="grad">1. Kasama</strong> — Best overall. Universal, warm, relational. "Hindi ka nag-iisa" IS this brand. Works beautifully in every context: "Kasama mo sa negosyo," "Meet your AI kasama," "May kasama ka na."</p>
+    <p style="font-size:16px;margin-bottom:8px"><strong class="grad">2. Kaya</strong> — Best for empowerment. Shortest, punchiest, most motivational. "Kaya mo 'to" is already every entrepreneur's mantra. Carries the Project KA legacy. But needs creative domain strategy.</p>
+    <p style="font-size:16px"><strong style="color:var(--ts)">3. KaNegosyo</strong> — Best for clarity. Zero ambiguity about what this product is. "May KaNegosyo ka na ba?" is a killer marketing hook. Longer but descriptive — and can use "Ka" as the short form in-app.</p>
+  </div>
+  <p style="font-size:14px;color:var(--muted)">On <strong>Katunggali</strong> specifically: while I appreciate the "match your level" energy, the primary meaning of "rival/opponent" creates a partnership contradiction. I'd recommend steering toward names that unambiguously signal collaboration.</p>
+</div>
+
+</div><!-- container -->
+</body>
+</html>

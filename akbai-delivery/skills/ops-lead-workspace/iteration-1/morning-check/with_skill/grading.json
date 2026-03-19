@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "run_type": "with_skill",
+  "expectations": [
+    {"text": "Uses traffic light indicators (🟢🟡🔴) for status", "passed": true, "evidence": "Uses 🟢 for all 4 categories and 🔴 for phase status"},
+    {"text": "Covers all 4 check areas: systems, support, revenue, flags", "passed": true, "evidence": "Has dedicated sections for Systems, Support Queue, Revenue, and Flags"},
+    {"text": "Includes a 'tonight's priority' or next action line", "passed": true, "evidence": "'📋 Today's Focus' section with evening build session reference"},
+    {"text": "Response is phone-scannable (short lines, no dense paragraphs)", "passed": true, "evidence": "Short lines, traffic lights, clear sections. Very scannable."},
+    {"text": "Respects the 5-minute constraint (not an overwhelming wall of text)", "passed": true, "evidence": "41 lines, mostly whitespace and short status lines. Quick read."}
+  ]
+}

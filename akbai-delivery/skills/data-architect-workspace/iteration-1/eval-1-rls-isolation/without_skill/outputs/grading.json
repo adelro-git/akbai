@@ -1,0 +1,31 @@
+{
+  "eval_id": 1,
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "covers_all_user_tables",
+      "passed": true,
+      "evidence": "Response covers all 10 tables in Table 1: users, businesses, transactions, receipts, invoices, bir_deadlines, ka_conversations, subscriptions, daily_api_spend, webhook_events, audit_log with RLS policy descriptions for each"
+    },
+    {
+      "text": "includes_test_script",
+      "passed": true,
+      "evidence": "Includes two test script versions: SQL test script (test-rls-isolation.sql) with 10 distinct tests and TypeScript version (test-rls-isolation.ts) with role-based assertions"
+    },
+    {
+      "text": "identifies_system_tables",
+      "passed": true,
+      "evidence": "Identifies webhook_events, daily_api_spend, audit_log as system tables in Table 1 with note 'service-role only' and explains they should have no user-facing policies"
+    },
+    {
+      "text": "covers_storage_rls",
+      "passed": false,
+      "evidence": "Response does not mention Supabase Storage bucket RLS or Storage-level access control for receipt/invoice files"
+    },
+    {
+      "text": "explains_auth_uid_mechanism",
+      "passed": true,
+      "evidence": "Explains auth.uid() mechanism in Table 2 with specific examples showing how RLS USING clause filters rows and WITH CHECK prevents unauthorized inserts"
+    }
+  ]
+}

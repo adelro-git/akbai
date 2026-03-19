@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "Multi-Seat",
+  "prompt": "I need to enable Business tier users (₱899/mo) to add team members (max 5) with different roles (Owner, Accountant, Viewer). Each role should have different RLS permissions. How do I design this without breaking existing single-user Free/Pro access?",
+  "assertions": [
+    "new_business_members_table",
+    "role_based_rls",
+    "backward_compatible",
+    "has_migration_sql",
+    "member_limit_enforcement"
+  ]
+}

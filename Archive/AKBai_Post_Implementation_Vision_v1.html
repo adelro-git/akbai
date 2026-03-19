@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKBai Post-Implementation Vision v1 — Phase 4+ Domain Expansion</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.7; color: #1a1a2e; background: #f8f9fa; padding: 40px 20px; }
+  .container { max-width: 900px; margin: 0 auto; }
+
+  .hero { background: linear-gradient(135deg, #1F3864 0%, #2E75B6 100%); color: white; padding: 50px 40px; border-radius: 12px; margin-bottom: 40px; }
+  .hero h1 { font-size: 28px; margin-bottom: 8px; }
+  .hero .subtitle { font-size: 16px; opacity: 0.85; margin-bottom: 20px; }
+  .hero .meta { font-size: 13px; opacity: 0.7; }
+
+  .section { background: white; border-radius: 10px; padding: 35px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .section h2 { color: #1F3864; font-size: 20px; margin-bottom: 15px; border-bottom: 2px solid #e8edf3; padding-bottom: 8px; }
+  .section h3 { color: #2E75B6; font-size: 16px; margin-top: 20px; margin-bottom: 8px; }
+  .section p { margin-bottom: 12px; font-size: 14px; }
+
+  .principle { background: #f0f4ff; border-left: 4px solid #2E75B6; padding: 15px 20px; margin: 15px 0; border-radius: 0 6px 6px 0; }
+  .principle strong { color: #1F3864; }
+
+  .domain-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin: 15px 0; }
+  .domain-card h3 { margin-top: 0; color: #1F3864; font-size: 17px; }
+  .domain-card .tag { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 2px 10px; border-radius: 12px; font-size: 12px; margin-right: 6px; }
+  .domain-card .tag.yellow { background: #fff3cd; color: #856404; }
+  .domain-card .tag.blue { background: #e3f2fd; color: #1565c0; }
+
+  .timeline { border-left: 3px solid #2E75B6; padding-left: 25px; margin: 20px 0; }
+  .timeline .phase { position: relative; margin-bottom: 25px; }
+  .timeline .phase::before { content: ''; position: absolute; left: -31px; top: 6px; width: 12px; height: 12px; background: #2E75B6; border-radius: 50%; }
+  .timeline .phase h3 { margin-top: 0; }
+  .timeline .phase .time { color: #666; font-size: 13px; font-style: italic; }
+
+  .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px 20px; margin: 15px 0; border-radius: 0 6px 6px 0; }
+  .warning strong { color: #856404; }
+
+  .gate { background: #fce4ec; border-left: 4px solid #c62828; padding: 15px 20px; margin: 15px 0; border-radius: 0 6px 6px 0; }
+  .gate strong { color: #c62828; }
+
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 13px; }
+  th { background: #1F3864; color: white; padding: 10px 12px; text-align: left; }
+  td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+  tr:nth-child(even) td { background: #f8f9fa; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+  <h1>AKBai Post-Implementation Vision</h1>
+  <div class="subtitle">Phase 4+ Domain Expansion Strategy — Beyond Financial Compliance</div>
+  <div class="meta">Prepared by: Anton del Rosario | v1.0 | March 2026<br>
+  Prerequisite: Phases 1-3 operational roadmap must be completed before any Phase 4+ work begins.<br>
+  Reference: AKBai Complete Roadmap v13 (Phase 0-3), Financial Model v5, Operations Playbook v6</div>
+</div>
+
+<div class="section">
+  <h2>Purpose of This Document</h2>
+  <p>This document outlines AKBai's long-term vision for expanding beyond its core financial compliance and tax guidance domain into adjacent business advisory areas. It is deliberately separated from the operational roadmap (v13) to maintain focus during Phases 1-3 while preserving a strategic north star for the product's evolution.</p>
+  <p>The current 3-year roadmap (Phases 0-3) is already dense and focused on building a defensible position in BIR compliance, financial tracking, and Taglish business communications. Adding speculative Phase 4+ features to that document would dilute operational focus and confuse any planning agent processing the roadmap.</p>
+
+  <div class="principle">
+    <strong>Core Principle:</strong> Expand the domain, not the architecture. Phase 4+ domains should be extensions of the existing system prompt architecture, conversation model, and UI framework — not rewrites. This is why Build 0 (AI Scope Definition) in the Roadmap v13 requires domain-expandable design from Day 1.
+  </div>
+</div>
+
+<div class="section">
+  <h2>Expansion Prerequisites — What Must Be True Before Phase 4</h2>
+
+  <div class="gate">
+    <strong>HARD GATE:</strong> Phase 4 expansion does NOT begin until ALL of the following are true:
+  </div>
+
+  <p><strong>1. Financial domain is mature and validated.</strong> Phase 3 Sense Check Gate has been passed. 500+ active users. Pro + Business tiers are generating stable MRR. Flag-as-Wrong rate is below 5% for financial guidance responses.</p>
+
+  <p><strong>2. System prompt architecture supports domain modules.</strong> The Build 0 system prompt must already have modular scope sections (implemented in Phase 1) that can be extended with new domain definitions without rewriting existing prompts.</p>
+
+  <p><strong>3. Conversation history is domain-tagged.</strong> The Supabase conversation model must already tag conversations by domain (e.g., "tax", "compliance", "communication") so that new domains can be added and analytics can track usage per domain.</p>
+
+  <p><strong>4. Unit economics support the expansion.</strong> Adding a new domain means new system prompt complexity, potentially longer responses (higher API costs), and new knowledge base content. The financial model must show that current margins can absorb the incremental API cost.</p>
+
+  <p><strong>5. User demand signals exist.</strong> Phase 1-3 feature request data, Flag-as-Wrong patterns, and out-of-scope redirect logs should provide clear evidence of which domains users are asking for most.</p>
+</div>
+
+<div class="section">
+  <h2>Candidate Expansion Domains</h2>
+  <p>The following domains are ranked by estimated user demand (based on MSME community research), implementation complexity, and strategic fit with AKBai's existing positioning.</p>
+
+  <div class="domain-card">
+    <h3>Domain 1: Marketing & Social Media Advisory</h3>
+    <span class="tag">High Demand</span>
+    <span class="tag blue">Medium Complexity</span>
+    <p><strong>What it covers:</strong> Social media content calendar suggestions, Facebook/Instagram post drafting in Taglish, basic SEO guidance for online sellers, product photography tips, pricing strategy for new product launches, promo/sale planning tied to Philippine shopping events (11.11, Payday Sale, Christmas rush).</p>
+    <p><strong>Why it fits:</strong> AKBai already knows the user's business profile, revenue data, and product categories from Phases 1-3. Marketing advice can be contextual — "Your milk tea sales spike on Fridays. Consider a Friday promo series." This is a natural extension of the AI business partner positioning.</p>
+    <p><strong>System prompt addition:</strong> New scope section defining marketing advisory boundaries. AKBai can suggest strategies but does not execute them (no auto-posting to social media). Disclaimer: "Ang marketing suggestions na ito ay based sa iyong business data. Results may vary."</p>
+    <p><strong>Estimated effort:</strong> 2-3 weeks (system prompt expansion + knowledge base + UI for marketing insights card on dashboard).</p>
+  </div>
+
+  <div class="domain-card">
+    <h3>Domain 2: Business Strategy & Growth Planning</h3>
+    <span class="tag">High Demand</span>
+    <span class="tag yellow">High Complexity</span>
+    <p><strong>What it covers:</strong> Business expansion planning, product line analysis (which items to keep/drop based on margin data), competitor pricing research prompts, cash flow forecasting for major purchases (equipment, inventory bulk buy), simple break-even analysis for new product ideas.</p>
+    <p><strong>Why it fits:</strong> AKBai already has the user's financial data. Strategy advice becomes dramatically more useful when it's grounded in actual numbers. "Based on your last 3 months, your top margin product is ube pandesal at 65%. Consider expanding that line."</p>
+    <p><strong>System prompt addition:</strong> Strategy advisory scope with clear boundaries — AKBai provides data-driven suggestions, not investment advice. Redirect to business consultants for major decisions (loans, franchising, partnerships).</p>
+    <p><strong>Estimated effort:</strong> 4-6 weeks (requires analytics pipeline on historical transaction data + new dashboard cards + expanded prompt engineering).</p>
+  </div>
+
+  <div class="domain-card">
+    <h3>Domain 3: HR & Team Communications</h3>
+    <span class="tag blue">Medium Demand</span>
+    <span class="tag blue">Medium Complexity</span>
+    <p><strong>What it covers:</strong> Employee communication drafting (memo, announcement, policy update), basic Philippine labor law guidance (13th month pay, SSS/PhilHealth/Pag-IBIG), team schedule management, hiring post drafting, simple performance review templates.</p>
+    <p><strong>Why it fits:</strong> Business tier users (2-5 person teams) are the natural audience. As MSMEs grow from solo to small team, HR becomes a pain point. AKBai already handles Taglish communication drafting — extending to internal communications is architecturally similar.</p>
+    <p><strong>System prompt addition:</strong> HR advisory scope. Clear out-of-scope: employment disputes, termination advice (redirect to DOLE or labor lawyer), wage computation for complex arrangements.</p>
+    <p><strong>Estimated effort:</strong> 3-4 weeks (system prompt expansion + Philippine labor law knowledge base + team management UI).</p>
+  </div>
+
+  <div class="domain-card">
+    <h3>Domain 4: Supplier & Inventory Management</h3>
+    <span class="tag yellow">Medium Demand</span>
+    <span class="tag yellow">High Complexity</span>
+    <p><strong>What it covers:</strong> Reorder point suggestions based on sales velocity, supplier payment tracking, cost comparison when switching suppliers, inventory valuation, seasonal demand forecasting.</p>
+    <p><strong>Why it fits:</strong> Food sellers and resellers — AKBai's primary personas — deal with inventory daily. The data bootstrap (Phase 2-3) already captures transaction data that implies inventory movement.</p>
+    <p><strong>System prompt addition:</strong> Inventory advisory scope. AKBai can flag when to reorder but does not automate purchasing. Redirect for complex supply chain optimization.</p>
+    <p><strong>Estimated effort:</strong> 5-8 weeks (requires new data model for inventory tracking, supplier database, and forecasting logic).</p>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Recommended Expansion Sequence</h2>
+
+  <div class="timeline">
+    <div class="phase">
+      <h3>Phase 4A: Marketing Advisory</h3>
+      <div class="time">Month 19-21 (earliest) — After Phase 3 Sense Check</div>
+      <p>Start with marketing because it has the highest demand signal, lowest implementation complexity, and the most natural connection to existing financial data. It also drives user engagement (daily social media activity) rather than periodic engagement (quarterly tax filing).</p>
+    </div>
+
+    <div class="phase">
+      <h3>Phase 4B: Business Strategy</h3>
+      <div class="time">Month 22-25 — After Marketing domain stabilizes</div>
+      <p>Layer strategy on top of financial + marketing data. This is the domain that transforms AKBai from a "tool" into a "partner" — the original product vision. Requires the analytics pipeline built for marketing insights to be mature.</p>
+    </div>
+
+    <div class="phase">
+      <h3>Phase 4C: HR & Team Communications</h3>
+      <div class="time">Month 26-28 — Business tier focused</div>
+      <p>Gate this behind Business tier to drive upgrades. Only makes sense when Business tier user base is large enough to justify the investment. Philippine labor law knowledge base is a meaningful build effort.</p>
+    </div>
+
+    <div class="phase">
+      <h3>Phase 5: Inventory & Supplier Management</h3>
+      <div class="time">Month 30+ — Major platform extension</div>
+      <p>This is the most complex expansion and requires a new data model. Defer until the platform foundation is extremely stable and the user base clearly demands it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Architecture Preparation (Do NOW in Phase 1)</h2>
+  <p>These design decisions must be made during Build 0 (AI Scope Definition) to ensure Phase 4+ expansion is possible without a rewrite:</p>
+
+  <table>
+    <tr><th>Decision</th><th>Phase 1 Action</th><th>Phase 4+ Benefit</th></tr>
+    <tr>
+      <td><strong>Modular system prompt</strong></td>
+      <td>Structure the system prompt with labeled scope sections (e.g., [TAX_SCOPE], [COMMUNICATION_SCOPE]) rather than a monolithic prompt</td>
+      <td>New domains are added by appending a new scope section — no rewrite needed</td>
+    </tr>
+    <tr>
+      <td><strong>Domain-tagged conversations</strong></td>
+      <td>Add a <code>domain</code> column to the conversations table (default: "financial")</td>
+      <td>Analytics can track which domains users engage with most; informs expansion priority</td>
+    </tr>
+    <tr>
+      <td><strong>Out-of-scope redirect logging</strong></td>
+      <td>Log every time AKBai redirects a user for an out-of-scope query, capturing the query category</td>
+      <td>This is the demand signal for Phase 4 — if 40% of redirects are marketing questions, that's your expansion priority</td>
+    </tr>
+    <tr>
+      <td><strong>Knowledge base architecture</strong></td>
+      <td>Design the BIR knowledge base (Phase 1) as a tagged collection, not a flat file</td>
+      <td>New domain knowledge bases (marketing best practices, labor law) plug into the same retrieval architecture</td>
+    </tr>
+    <tr>
+      <td><strong>Dashboard card framework</strong></td>
+      <td>Build dashboard cards as modular components with a standard data interface</td>
+      <td>New domain insights (marketing performance, inventory alerts) render as new cards without UI refactoring</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Financial Impact Considerations</h2>
+  <p>Each new domain increases API costs because:</p>
+  <p><strong>Longer system prompts:</strong> Each domain scope section adds ~500-1000 tokens to the system prompt. With prompt caching (40-60% by Phase 3), the incremental cost is manageable — approximately ₱0.50-1.00 per user per month per additional domain.</p>
+  <p><strong>New knowledge base retrieval:</strong> Domain-specific knowledge (marketing templates, labor law) increases input token count per query. Estimate ~30% increase in API cost per query when a new domain is active.</p>
+  <p><strong>Pricing implication:</strong> Domain expansions should be tied to tier upgrades. Marketing advisory could be a Pro feature; Strategy and HR could be Business-exclusive. This creates natural upsell moments: "Gusto mo ng marketing advice? Upgrade to Pro."</p>
+
+  <div class="warning">
+    <strong>Financial Model Note:</strong> The current Financial Model v5 does not include Phase 4+ revenue or cost projections. When Phase 4 planning begins, create a Financial Model v6 that extends the 3-year model to 5 years with domain expansion scenarios.
+  </div>
+</div>
+
+<div class="section">
+  <h2>Competitive Positioning Through Expansion</h2>
+  <p>The domain expansion strategy addresses one of the key competitive risks identified in the Competitive Brief: general-purpose AI tools (ChatGPT, Gemini) offering "good enough" business advice for free. AKBai's response is not to compete on breadth but to offer contextual, data-grounded advice that no general-purpose tool can match — because AKBai knows your actual revenue, your actual expenses, your actual customers.</p>
+  <p>Each new domain deepens the data moat. A user who has their financial data, marketing calendar, team info, and inventory in AKBai has an extremely high switching cost. This is the long-term defensibility strategy beyond the BIR knowledge base.</p>
+</div>
+
+<div class="section">
+  <h2>Summary</h2>
+  <p>Phase 4+ is the long-term vision. It is not the current priority. The operational roadmap (Phases 0-3) must execute flawlessly first. But by making four small architecture decisions during Build 0 — modular prompts, domain tags, redirect logging, and modular knowledge bases — we ensure that the expansion path exists when the time comes.</p>
+  <p>The recommended sequence (Marketing → Strategy → HR → Inventory) follows the demand signal from community research and optimizes for implementation complexity. Each domain should only be built when validated by out-of-scope redirect data from actual users.</p>
+
+  <div class="principle">
+    <strong>North Star:</strong> AKBai starts as your tax assistant. It grows into your business partner. The architecture must support that journey from Day 1, even if the features don't ship until Year 2+.
+  </div>
+</div>
+
+</div>
+</body>
+</html>

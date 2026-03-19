@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — Social Media Templates</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --warm:#FEFAF3;
+  --warm2:#FFF8ED;
+  --text:#07101e;
+  --muted:#5a6a80;
+  --hs:#F59E0B;
+  --he:#D97706;
+  --ts:#20C9A0;
+  --te:#0FB8D9;
+  --dim:rgba(7,16,30,.08);
+}
+html{font-size:15px}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F2F4F7;color:var(--text);line-height:1.6;min-height:100vh}
+
+/* ── SHELL ── */
+.shell-top{background:var(--ink);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.shell-logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800}
+.shell-logo .akb{color:#fff}
+.shell-logo .ai{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.shell-title{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+
+/* ── PLATFORM TABS ── */
+.platform-nav{background:#fff;border-bottom:1px solid var(--dim);padding:0 32px;display:flex;gap:0}
+.platform-tab{padding:16px 24px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:.2s;display:flex;align-items:center;gap:8px;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.platform-tab:hover{color:var(--text)}
+.platform-tab.active{color:var(--text);border-bottom-color:#F59E0B}
+.platform-icon{font-size:16px}
+
+/* ── CONTENT TYPE FILTER ── */
+.type-bar{background:#fff;border-bottom:1px solid var(--dim);padding:12px 32px;display:flex;gap:8px;align-items:center;overflow-x:auto}
+.type-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px;white-space:nowrap}
+.type-btn{padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--dim);background:#fff;color:var(--muted);font-family:inherit;transition:.2s;white-space:nowrap}
+.type-btn.active,.type-btn:hover{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);color:#D97706}
+
+/* ── LAYOUT ── */
+.main{padding:32px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.templates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:28px}
+
+/* ── TEMPLATE CARD WRAPPER ── */
+.tpl-wrapper{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(7,16,30,.07)}
+.tpl-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--dim)}
+.tpl-meta{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tpl-type{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:100px}
+.type-tip{background:rgba(32,201,160,.10);color:#0FB8D9}
+.type-quote{background:rgba(245,158,11,.10);color:#D97706}
+.type-feature{background:rgba(96,165,250,.10);color:#3B82F6}
+.type-testi{background:rgba(167,139,250,.10);color:#8B5CF6}
+.type-promo{background:rgba(249,115,22,.10);color:#EA580C}
+.type-story{background:rgba(236,72,153,.10);color:#DB2777}
+.tpl-canvas{padding:20px;background:#F8FAFC}
+.tpl-copy-section{padding:14px 18px;border-top:1px solid var(--dim)}
+.copy-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.copy-text{font-size:12px;color:var(--text);line-height:1.6;background:var(--warm);border-radius:8px;padding:10px 14px;border:1px solid var(--dim)}
+
+/* ══════════════════════════════════════
+   TEMPLATE DESIGNS
+══════════════════════════════════════ */
+
+/* === SQUARE 1:1 (1080×1080) base === */
+.sq{width:300px;height:300px;border-radius:12px;overflow:hidden;position:relative;margin:0 auto;font-family:'Plus Jakarta Sans',sans-serif}
+
+/* --- Template A: Tip Card --- */
+.tpl-tip{background:var(--warm2);display:flex;flex-direction:column;padding:28px}
+.tip-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2);border-radius:100px;padding:4px 12px 4px 8px;margin-bottom:16px;align-self:flex-start}
+.tip-dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706)}
+.tip-badge-text{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#D97706}
+.tip-num{font-size:52px;font-weight:800;line-height:1;background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.tip-title{font-size:18px;font-weight:800;line-height:1.2;color:var(--ink);margin-bottom:8px}
+.tip-body{font-size:11px;color:var(--muted);line-height:1.5;flex:1}
+.tip-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.tip-logo{font-size:11px;font-weight:800;color:var(--ink)}
+.tip-logo span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tip-mark{opacity:.6}
+
+/* --- Template B: Quote Card --- */
+.tpl-quote{background:linear-gradient(145deg,var(--ink),#0d1a2e);display:flex;flex-direction:column;justify-content:space-between;padding:28px}
+.quote-mark{font-size:64px;font-weight:800;line-height:.8;background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.quote-text{font-size:15px;font-weight:600;line-height:1.5;color:#fff;flex:1}
+.quote-author{font-size:10px;color:rgba(255,255,255,.4);margin-top:12px;font-weight:500}
+.quote-footer{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+.quote-logo-light{font-size:11px;font-weight:800;color:#fff}
+.quote-logo-light span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.quote-tag{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,158,11,.6)}
+
+/* --- Template C: Feature Highlight --- */
+.tpl-feature{background:#fff;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.feature-top{background:linear-gradient(135deg,#F59E0B,#D97706);padding:22px 24px;flex:1;display:flex;flex-direction:column;justify-content:flex-end}
+.feature-icon-lg{font-size:36px;margin-bottom:10px}
+.feature-title-lg{font-size:20px;font-weight:800;color:#fff;line-height:1.2}
+.feature-sub{font-size:11px;color:rgba(255,255,255,.75);margin-top:4px}
+.feature-bottom{padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.feature-desc{font-size:11px;color:var(--muted);line-height:1.5;max-width:200px}
+.feature-logo-sm{font-size:11px;font-weight:800;color:var(--ink);white-space:nowrap}
+.feature-logo-sm span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* --- Template D: Testimonial --- */
+.tpl-testi{background:var(--warm);display:flex;flex-direction:column;padding:24px}
+.testi-stars-sm{color:#F59E0B;font-size:13px;margin-bottom:14px;letter-spacing:2px}
+.testi-q{font-size:13px;font-weight:600;color:var(--ink);line-height:1.6;flex:1;font-style:italic}
+.testi-div{height:1px;background:rgba(245,158,11,.15);margin:14px 0}
+.testi-person{display:flex;align-items:center;gap:10px}
+.testi-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
+.testi-info{}
+.testi-nm{font-size:12px;font-weight:700;color:var(--ink)}
+.testi-bz{font-size:10px;color:var(--muted)}
+.testi-logo-right{font-size:10px;font-weight:800;color:var(--ink);margin-left:auto;white-space:nowrap}
+.testi-logo-right span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* --- Template E: Promo / CTA --- */
+.tpl-promo{background:linear-gradient(145deg,#F59E0B,#D97706);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:28px;text-align:center}
+.promo-eyebrow{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:14px}
+.promo-headline{font-size:22px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:10px}
+.promo-sub{font-size:11px;color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:20px}
+.promo-pill{background:#fff;color:#D97706;font-size:11px;font-weight:800;padding:8px 20px;border-radius:100px;display:inline-block}
+.promo-logo{font-size:11px;font-weight:800;color:rgba(255,255,255,.5);margin-top:16px}
+
+/* --- Template F: Stat / Data --- */
+.tpl-stat{background:var(--ink);display:flex;flex-direction:column;padding:28px}
+.stat-label-top{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:20px}
+.stat-num-lg{font-size:64px;font-weight:800;line-height:1;background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-unit{font-size:18px;font-weight:700;color:rgba(255,255,255,.4);margin-left:4px}
+.stat-desc{font-size:14px;font-weight:600;color:#fff;margin-top:8px;line-height:1.4;flex:1}
+.stat-source{font-size:10px;color:rgba(255,255,255,.25);margin-top:16px}
+.stat-logo-bot{font-size:11px;font-weight:800;color:rgba(255,255,255,.4);margin-top:12px}
+.stat-logo-bot span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* --- Template G: Story (9:16) --- */
+.story-card{width:168px;height:300px;border-radius:12px;overflow:hidden;position:relative;margin:0 auto;font-family:'Plus Jakarta Sans',sans-serif}
+.story-bg{position:absolute;inset:0}
+.story-content{position:relative;z-index:2;padding:20px 16px;height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.story-tag-top{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center}
+.story-brand-sm{font-size:11px;font-weight:800;color:#fff}
+.story-brand-sm span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.story-type-tag{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8)}
+
+/* Story A - Gradient */
+.story-a .story-bg{background:linear-gradient(160deg,var(--ink) 0%,#1a2a45 60%,rgba(245,158,11,.15) 100%)}
+.story-a-headline{font-size:22px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px}
+.story-a-sub{font-size:11px;color:rgba(255,255,255,.6);line-height:1.5;margin-bottom:16px}
+.story-a-cta{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-size:11px;font-weight:700;padding:9px 16px;border-radius:100px;display:inline-block;align-self:flex-start}
+
+/* Story B - Honey bg */
+.story-b .story-bg{background:linear-gradient(160deg,#F59E0B 0%,#D97706 100%)}
+.story-b-num{font-size:56px;font-weight:800;color:#fff;line-height:1}
+.story-b-text{font-size:15px;font-weight:700;color:rgba(255,255,255,.9);line-height:1.3;margin-bottom:6px}
+.story-b-sub{font-size:10px;color:rgba(255,255,255,.7);line-height:1.4}
+
+/* === LINKEDIN (4:5 ratio) ===  */
+.li-card{width:280px;height:350px;border-radius:12px;overflow:hidden;position:relative;margin:0 auto;font-family:'Plus Jakarta Sans',sans-serif}
+
+/* LinkedIn A - Thought leadership */
+.li-thought{background:#fff;display:flex;flex-direction:column;padding:28px}
+.li-th-eyebrow{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#D97706;margin-bottom:10px}
+.li-th-headline{font-size:18px;font-weight:800;color:var(--ink);line-height:1.25;margin-bottom:12px;flex:1}
+.li-th-divider{height:2px;background:linear-gradient(90deg,#F59E0B,#D97706);border-radius:2px;margin-bottom:14px;width:40px}
+.li-th-copy{font-size:11px;color:var(--muted);line-height:1.6}
+.li-th-footer{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--dim)}
+.li-author{display:flex;align-items:center;gap:8px}
+.li-ava{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:11px;flex-shrink:0}
+.li-author-info{}
+.li-author-name{font-size:10px;font-weight:700;color:var(--ink)}
+.li-author-role{font-size:9px;color:var(--muted)}
+.li-logo-mark{font-size:10px;font-weight:800;color:var(--ink)}
+.li-logo-mark span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* LinkedIn B - Stat card */
+.li-stat-card{background:linear-gradient(145deg,var(--ink),#0f1e38);display:flex;flex-direction:column;padding:28px}
+.li-stat-eyebrow{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:16px}
+.li-stat-big{font-size:58px;font-weight:800;line-height:1;background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.li-stat-desc{font-size:15px;font-weight:600;color:#fff;margin-top:8px;line-height:1.4;flex:1}
+.li-stat-note{font-size:10px;color:rgba(255,255,255,.3);margin-top:12px;font-style:italic}
+.li-stat-footer{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+.li-stat-logo{font-size:10px;font-weight:800;color:rgba(255,255,255,.5)}
+.li-stat-logo span{background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.li-stat-tag{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,158,11,.4);padding:3px 8px;border:1px solid rgba(245,158,11,.15);border-radius:100px}
+
+/* ── PAGE PANELS ── */
+.platform-panel{display:none}
+.platform-panel.active{display:block}
+
+/* ── CAPTION BOX ── */
+.caption-block{background:var(--warm2);border:1px solid rgba(245,158,11,.15);border-radius:12px;padding:16px 18px;margin-top:12px}
+.caption-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,158,11,.7);margin-bottom:8px}
+.caption-text{font-size:12px;color:var(--text);line-height:1.7;white-space:pre-line}
+.caption-tags{margin-top:10px;font-size:11px;color:var(--ts)}
+
+/* ── USAGE NOTES ── */
+.usage-row{display:flex;gap:16px;margin-top:32px;flex-wrap:wrap}
+.usage-card{flex:1;min-width:200px;background:#fff;border-radius:12px;padding:18px;border:1px solid var(--dim)}
+.usage-card h4{font-size:12px;font-weight:700;margin-bottom:8px;color:var(--ink)}
+.usage-card p{font-size:12px;color:var(--muted);line-height:1.6}
+.usage-card ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.usage-card li{font-size:12px;color:var(--muted);display:flex;gap:6px}
+.usage-card li::before{content:'→';color:#F59E0B;flex-shrink:0}
+
+/* ── AKBai SVG MARK ── */
+.mark-svg{display:inline-block}
+</style>
+</head>
+<body>
+
+<!-- SHELL -->
+<div class="shell-top">
+  <div class="shell-logo">
+    <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
+      <defs><linearGradient id="mg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs>
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#mg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.20"/>
+      </g>
+    </svg>
+    <span><span class="akb">AKB</span><span class="ai">ai</span></span>
+  </div>
+  <div class="shell-title">Social Media Templates</div>
+</div>
+
+<!-- PLATFORM TABS -->
+<div class="platform-nav">
+  <button class="platform-tab active" onclick="showPlatform('ig',this)"><span class="platform-icon">📸</span> Instagram</button>
+  <button class="platform-tab" onclick="showPlatform('fb',this)"><span class="platform-icon">💬</span> Facebook</button>
+  <button class="platform-tab" onclick="showPlatform('li',this)"><span class="platform-icon">💼</span> LinkedIn</button>
+</div>
+
+<!-- TYPE FILTER BAR -->
+<div class="type-bar">
+  <span class="type-label">Type:</span>
+  <button class="type-btn active">All</button>
+  <button class="type-btn">Tip</button>
+  <button class="type-btn">Quote</button>
+  <button class="type-btn">Feature</button>
+  <button class="type-btn">Testimonial</button>
+  <button class="type-btn">Promo</button>
+  <button class="type-btn">Story</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════
+     INSTAGRAM
+══════════════════════════════════════ -->
+<div id="panel-ig" class="platform-panel active">
+  <p class="section-label">Instagram — Feed Posts (1080×1080) + Stories (1080×1920)</p>
+  <div class="templates-grid">
+
+    <!-- IG 1: Tip Card -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Feed · Square</span>
+        <span class="tpl-type type-tip">Tip</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq tpl-tip">
+          <div class="tip-badge"><div class="tip-dot"></div><span class="tip-badge-text">Tip ng araw</span></div>
+          <div class="tip-num">01</div>
+          <div class="tip-title">I-track ang cash flow — araw-araw.</div>
+          <div class="tip-body">Hindi kailangan ng malaking software. Tanungin mo lang si AKBai: "Magkano ang naiuwi ko ngayon?" — tapos alam mo na agad.</div>
+          <div class="tip-footer">
+            <div class="tip-logo">AKB<span>ai</span></div>
+            <svg class="tip-mark" width="18" height="18" viewBox="0 0 100 100" fill="none">
+              <defs><linearGradient id="tg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs>
+              <g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#tg1)" stroke-width="16" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#07101e" stroke-width="16" stroke-linecap="round" opacity="0.12"/></g>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">Tip #1: I-track ang cash flow mo — kahit araw-araw. 📊
+
+Hindi kailangan ng Excel o accountant para malaman kung kumikita ka. Tanungin mo lang si AKBai — sagot agad.
+
+Subukan mo ngayon → [link in bio]</div>
+        <div class="caption-tags">#AKBai #NegosyoTips #FilipinoBusiness #MSME #NegosyantePilipino</div>
+      </div>
+    </div>
+
+    <!-- IG 2: Quote Card -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Feed · Square</span>
+        <span class="tpl-type type-quote">Quote</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq tpl-quote" style="display:flex;flex-direction:column;padding:28px">
+          <div class="quote-mark">"</div>
+          <div class="quote-text" style="font-size:14px">"Dati, aabutin ng isang oras para malaman kung kumikita ko. Ngayon, tanong ko lang — alam ko na agad."</div>
+          <div class="quote-author">— Maria S., Online Seller, Laguna</div>
+          <div class="quote-footer">
+            <div class="quote-logo-light">AKB<span>ai</span></div>
+            <div class="quote-tag">Customer story</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">Ito ang palaging sinasabi ng aming mga users. 🙌
+
+Ang oras mo ay mahalaga. Huwag nang gumastos ng isang oras para malaman kung kumikita ka — dapat alam mo agad.
+
+Sumali sa aming waitlist → [link in bio]</div>
+        <div class="caption-tags">#AKBai #CustomerStory #NegosyantePilipino #SmallBusiness</div>
+      </div>
+    </div>
+
+    <!-- IG 3: Feature Highlight -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Feed · Square</span>
+        <span class="tpl-type type-feature">Feature</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq tpl-feature">
+          <div class="feature-top">
+            <div class="feature-icon-lg">📨</div>
+            <div class="feature-title-lg">Auto Follow-up</div>
+            <div class="feature-sub">Hindi ka na magre-remind ng mano-mano</div>
+          </div>
+          <div class="feature-bottom">
+            <div class="feature-desc" style="font-size:10px">Si AKBai ang mag-follow up sa mga customer na hindi pa nakabayad — sa tamang oras, sa tamang tono.</div>
+            <div class="feature-logo-sm">AKB<span>ai</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">Handa ka na bang tumigil sa mano-manong follow-up? ✋
+
+Isa sa mga pinaka-gusto ng aming users: ang auto follow-up feature ni AKBai.
+
+I-set mo lang — bahala na si AKBai sa mga customer na hindi pa nakabayad o nakapag-reorder. 🤝
+
+Alamin pa → [link in bio]</div>
+        <div class="caption-tags">#AKBai #AutomationPH #NegosyoTips #OnlineSeller</div>
+      </div>
+    </div>
+
+    <!-- IG 4: Testimonial -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Feed · Square</span>
+        <span class="tpl-type type-testi">Testimonial</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq tpl-testi">
+          <div class="testi-stars-sm">★★★★★</div>
+          <div class="testi-q">"Sa loob ng isang linggo, nakatipid na ako ng 3 oras araw-araw na dati ay ginagastos ko sa bookkeeping."</div>
+          <div class="testi-div"></div>
+          <div class="testi-person">
+            <div class="testi-ava">R</div>
+            <div class="testi-info">
+              <div class="testi-nm">Ramon C.</div>
+              <div class="testi-bz">Hardware Store · Cebu City</div>
+            </div>
+            <div class="testi-logo-right">AKB<span>ai</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">3 oras na naiipon sa bawat araw. 💛
+
+Ito ang kwento ni Ramon — hardware store owner sa Cebu na nagsimula sa AKBai nitong nakaraang buwan.
+
+Gusto mo ring makatipid ng oras? Sumali sa waitlist → [link in bio]</div>
+        <div class="caption-tags">#AKBai #NegosyantePilipino #MayNegosyo #BusinessPH</div>
+      </div>
+    </div>
+
+    <!-- IG 5: Promo / Waitlist -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Feed · Square</span>
+        <span class="tpl-type type-promo">Promo</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq tpl-promo">
+          <div class="promo-eyebrow">Launching soon · Pilipinas</div>
+          <div class="promo-headline">Sumali sa waitlist — libre.</div>
+          <div class="promo-sub">Maging isa sa mga unang makakaranas ng AKBai. Ang AI na kaakbay ng iyong negosyo.</div>
+          <div class="promo-pill">akbai.com/waitlist →</div>
+          <div class="promo-logo">AKBai · Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">🌟 Malalapit na kaming mag-launch — at libre ang pagsali sa waitlist.
+
+Si AKBai ang AI partner na naiintindihan ang iyong negosyo — sa Taglish, sa kontekstong Pilipino.
+
+Sumali na bago mawala ang slot → [link in bio]
+
+Tag mo ang isang kakilala mo na may maliit na negosyo! 👇</div>
+        <div class="caption-tags">#AKBai #LaunchingSoon #NegosyantePilipino #PinoyBusiness #AIForMSME</div>
+      </div>
+    </div>
+
+    <!-- IG 6: Stat Card -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Feed · Square</span>
+        <span class="tpl-type type-feature">Stat</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq tpl-stat">
+          <div class="stat-label-top">Did you know?</div>
+          <div style="display:flex;align-items:flex-end;gap:4px">
+            <div class="stat-num-lg">78</div>
+            <div class="stat-unit">%</div>
+          </div>
+          <div class="stat-desc">ng Filipino MSMEs ang nagsasabing kulang ang oras para pamahalaan ang admin ng negosyo.</div>
+          <div class="stat-source">Source: DTI MSME Report 2024</div>
+          <div class="stat-logo-bot">AKB<span>ai</span> · Dito nagsisimula ang solusyon.</div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">78% — malaking numero ito. 😔
+
+Kung isa ka sa 78% na ito — alam namin ang pakiramdam. Kaya ginawa namin si AKBai.
+
+Para may katuwang ka na sa araw-araw na operasyon ng negosyo. 🤝
+
+[link in bio] para malaman ang higit pa.</div>
+        <div class="caption-tags">#AKBai #MSMEPhilippines #NegosyantePilipino #SmallBiz</div>
+      </div>
+    </div>
+
+    <!-- IG Story A -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Story · 9:16</span>
+        <span class="tpl-type type-story">Story</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="story-card story-a">
+          <div class="story-bg"></div>
+          <div class="story-tag-top">
+            <div class="story-brand-sm">AKB<span>ai</span></div>
+            <div class="story-type-tag">New Feature</div>
+          </div>
+          <div class="story-content">
+            <div class="story-a-headline">Tanungin ang negosyo mo — kahit 3AM.</div>
+            <div class="story-a-sub">Si AKBai ay laging available. Walang pahinga, walang sakit, hindi nagpapaalam.</div>
+            <div class="story-a-cta">Sumali sa waitlist →</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Story Copy (add as text sticker or caption)</div>
+        <div class="caption-text">Swipe up para sumali sa waitlist 🔗
+#AKBai #NegosyoPH</div>
+      </div>
+    </div>
+
+    <!-- IG Story B -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Story · 9:16</span>
+        <span class="tpl-type type-story">Story</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="story-card story-b">
+          <div class="story-bg"></div>
+          <div class="story-tag-top">
+            <div class="story-brand-sm" style="color:#fff;opacity:.8">AKB<span>ai</span></div>
+            <div class="story-type-tag">Stat</div>
+          </div>
+          <div class="story-content">
+            <div class="story-b-num">3h</div>
+            <div class="story-b-text">naiipon sa bawat araw</div>
+            <div class="story-b-sub">Ganito karami ang oras na naibabalik ng AKBai sa bawat negosyante.</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Story Copy</div>
+        <div class="caption-text">3 oras = mas maraming oras para lumago ang negosyo mo 💛
+Sumali → [link in bio]
+#AKBai</div>
+      </div>
+    </div>
+
+  </div><!-- /templates-grid -->
+
+  <!-- USAGE NOTES -->
+  <div class="usage-row">
+    <div class="usage-card">
+      <h4>📐 Instagram Sizes</h4>
+      <ul>
+        <li>Feed Square: 1080 × 1080 px</li>
+        <li>Feed Portrait: 1080 × 1350 px</li>
+        <li>Stories/Reels cover: 1080 × 1920 px</li>
+        <li>Profile photo: 320 × 320 px (use mark only)</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>📅 Posting Frequency</h4>
+      <ul>
+        <li>Feed: 4–5x per week</li>
+        <li>Stories: Daily (1–3 frames)</li>
+        <li>Reels: 2–3x per week (priority)</li>
+        <li>Best times: 7–9AM, 12PM, 7–9PM PHT</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>✍️ Caption Voice</h4>
+      <ul>
+        <li>Start with a hook — question or stat</li>
+        <li>Mix Taglish naturally</li>
+        <li>Max 3–5 lines before "more"</li>
+        <li>End with a clear CTA + link in bio</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FACEBOOK
+══════════════════════════════════════ -->
+<div id="panel-fb" class="platform-panel">
+  <p class="section-label">Facebook — Page Posts (1200×630 link card, 1080×1080 photo)</p>
+  <div class="templates-grid">
+
+    <!-- FB 1: Community Question -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Page Post · Square</span>
+        <span class="tpl-type type-tip">Engagement</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq" style="background:var(--warm2);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:28px;text-align:center;border-radius:12px">
+          <div style="font-size:40px;margin-bottom:16px">🤔</div>
+          <div style="font-size:20px;font-weight:800;color:var(--ink);line-height:1.3;margin-bottom:12px">"Ilan oras ang ginagastos mo sa admin ng negosyo mo bawat araw?"</div>
+          <div style="font-size:11px;color:var(--muted)">Icomment ang iyong sagot! 👇</div>
+          <div style="margin-top:20px;font-size:11px;font-weight:800;color:var(--ink)">AKB<span style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Post Copy</div>
+        <div class="caption-text">Tanong para sa mga negosyante dito! 👋
+
+Ilan oras ang ginagastos mo sa admin ng negosyo mo bawat araw?
+
+A) Wala pang 1 oras
+B) 1–2 oras
+C) 3–4 oras
+D) Higit sa 4 oras — nakaka-stress na! 😅
+
+Icomment ang iyong sagot. Gusto naming malaman ang totoo.
+
+(At kung higit ka sa 2 oras — may solusyon kami. 👀)</div>
+        <div class="caption-tags">#NegosyantePilipino #MSMEPhilippines #AKBai</div>
+      </div>
+    </div>
+
+    <!-- FB 2: Tip Post -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Page Post · Square</span>
+        <span class="tpl-type type-tip">Tip</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq tpl-tip" style="background:#fff;border:1.5px solid rgba(245,158,11,.15)">
+          <div class="tip-badge"><div class="tip-dot"></div><span class="tip-badge-text">Negosyo tip</span></div>
+          <div class="tip-num" style="font-size:44px">3</div>
+          <div class="tip-title" style="font-size:16px">Bagay na dapat mong i-automate sa negosyo mo</div>
+          <div class="tip-body">1. Invoice follow-ups<br/>2. Sales tracking<br/>3. Inventory alerts<br/><br/>Lahat ito — kayang gawin ni AKBai para sa iyo.</div>
+          <div class="tip-footer">
+            <div class="tip-logo">AKB<span>ai</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Post Copy</div>
+        <div class="caption-text">3 bagay na dapat mong i-automate sa negosyo mo NGAYON 👇
+
+1️⃣ Invoice follow-ups — hindi mo na kailangang personal na mag-remind ng mano-mano
+
+2️⃣ Sales tracking — hindi sa papel o Excel, but real-time
+
+3️⃣ Inventory alerts — maalaman mo bago pa maubusan ng stock
+
+Lahat ito — ginagawa ni AKBai para sa iyo. Araw-araw.
+
+Gusto mong malaman kung paano? Icomment ang "AKBAI" para mapadala ko sa iyo ang link. 👇</div>
+        <div class="caption-tags">#NegosyoTips #FilipinoBusiness #AKBai #SmallBusinessPH</div>
+      </div>
+    </div>
+
+    <!-- FB 3: Before/After -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Page Post · Square</span>
+        <span class="tpl-type type-feature">Before/After</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq" style="border-radius:12px;overflow:hidden;display:grid;grid-template-rows:1fr 1fr">
+          <div style="background:#F2F4F7;padding:16px 20px;display:flex;flex-direction:column;justify-content:center">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">DATI</div>
+            <div style="font-size:13px;font-weight:600;color:var(--muted);line-height:1.4">Isang oras ang ginagastos para i-compute ang sales. Hindi pa sigurado sa result.</div>
+          </div>
+          <div style="background:var(--warm2);padding:16px 20px;display:flex;flex-direction:column;justify-content:center;border-top:2px solid linear-gradient(#F59E0B,#D97706)">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#D97706;margin-bottom:6px">NGAYON, KASAMA SI AKBAI</div>
+            <div style="font-size:14px;font-weight:700;color:var(--ink);line-height:1.4">"Magkano ang kita ko ngayon?" — sagot sa loob ng 3 segundo. ✨</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Post Copy</div>
+        <div class="caption-text">DATI vs. NGAYON — ang pinagkaiba kapag may AKBai ka 👇
+
+❌ Dati: 1 oras ang ginagastos para malaman kung kumikita ka. Hindi pa sigurado sa result.
+
+✅ Ngayon: "Magkano ang kita ko ngayon?" — sagot agad ni AKBai sa loob ng ilang segundo.
+
+Ito ang pagbabago na gusto naming maranasan ng bawat negosyanteng Pilipino.
+
+Sumali sa aming waitlist — libre pa. Link sa bio o icomment ang "INFO". 👇</div>
+        <div class="caption-tags">#AKBai #NegosyantePilipino #BeforeAfter #MayNegosyo</div>
+      </div>
+    </div>
+
+    <!-- FB 4: Testimonial -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Page Post · Square</span>
+        <span class="tpl-type type-testi">Testimonial</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="sq tpl-testi" style="background:#fff">
+          <div class="testi-stars-sm">★★★★★</div>
+          <div class="testi-q">"Parang may personal na assistant na ang negosyo namin. Hindi kami techie pero naintindihan namin agad ang AKBai."</div>
+          <div class="testi-div"></div>
+          <div class="testi-person">
+            <div class="testi-ava">L</div>
+            <div class="testi-info">
+              <div class="testi-nm">Leni R.</div>
+              <div class="testi-bz">Catering Business · Davao</div>
+            </div>
+            <div class="testi-logo-right">AKB<span>ai</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Post Copy</div>
+        <div class="caption-text">Hindi kailangan maging techie para gamitin si AKBai. 💛
+
+Ito ang kwento ni Leni — may-ari ng catering business sa Davao na nagsimula nang gamitin ang AKBai nitong nakaraang buwan.
+
+"Parang may personal na assistant na ang negosyo namin."
+
+Gusto mo ring maranasan ito? Libre ang pag-sign up habang beta period.
+
+👉 Sumali na sa [link sa bio]</div>
+        <div class="caption-tags">#AKBai #CustomerReview #CateringBusiness #NegosyoPilipinas</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="usage-row">
+    <div class="usage-card">
+      <h4>📐 Facebook Sizes</h4>
+      <ul>
+        <li>Square post: 1080 × 1080 px</li>
+        <li>Link preview: 1200 × 630 px</li>
+        <li>Cover photo: 820 × 312 px</li>
+        <li>Profile photo: 170 × 170 px (use mark)</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>📅 Posting Strategy</h4>
+      <ul>
+        <li>3–5 posts per week</li>
+        <li>Mix: 40% tips, 30% stories, 30% promos</li>
+        <li>Best times: 8–10AM, 1–3PM PHT</li>
+        <li>Boost engagement posts with PHP 100–200</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>💬 FB-Specific Tips</h4>
+      <ul>
+        <li>Ask for comments — "Icomment ang AKBAI"</li>
+        <li>Use "See More" cliff-hanger in captions</li>
+        <li>Tag relevant FB groups for MSMEs</li>
+        <li>Share to Stories right after posting</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     LINKEDIN
+══════════════════════════════════════ -->
+<div id="panel-li" class="platform-panel">
+  <p class="section-label">LinkedIn — Company Page Posts (1200×627) + Thought Leadership</p>
+  <div class="templates-grid">
+
+    <!-- LI 1: Thought Leadership -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Company Post · 4:5</span>
+        <span class="tpl-type type-quote">Thought Leadership</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="li-card li-thought">
+          <div class="li-th-eyebrow">Insight · Filipino MSMEs</div>
+          <div class="li-th-headline">The real reason Filipino small businesses struggle to grow isn't capital — it's visibility.</div>
+          <div class="li-th-divider"></div>
+          <div class="li-th-copy">Most owners don't know their profit margins, top-selling products, or which customers are about to churn. They're running blind. AKBai fixes this.</div>
+          <div class="li-th-footer">
+            <div class="li-author">
+              <div class="li-ava">A</div>
+              <div class="li-author-info">
+                <div class="li-author-name">AKBai Team</div>
+                <div class="li-author-role">AI for Filipino entrepreneurs</div>
+              </div>
+            </div>
+            <div class="li-logo-mark">AKB<span>ai</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Post Copy (LinkedIn — English-forward)</div>
+        <div class="caption-text">The real reason Filipino small businesses struggle to grow isn't capital — it's visibility.
+
+Most MSME owners I talk to can't answer these three questions without spending an hour computing:
+→ What's my net profit this month?
+→ Which products are actually making money?
+→ Which customers are about to stop buying?
+
+They're running their businesses blind.
+
+This is the problem we built AKBai to solve — an AI operations partner that gives Filipino entrepreneurs instant, clear answers in the language they actually use.
+
+Launching soon. Join the waitlist (link in comments). 🇵🇭</div>
+        <div class="caption-tags">#MSME #Philippines #StartupPH #AIForBusiness #FilipinoEntrepreneurs</div>
+      </div>
+    </div>
+
+    <!-- LI 2: Stat Card -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Company Post · 4:5</span>
+        <span class="tpl-type type-feature">Stat</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="li-card li-stat-card">
+          <div class="li-stat-eyebrow">Philippine MSME Landscape</div>
+          <div class="li-stat-big">99.5%</div>
+          <div class="li-stat-desc">of all businesses in the Philippines are MSMEs — yet most still manage operations manually.</div>
+          <div class="li-stat-note">Source: Philippine Statistics Authority, 2024</div>
+          <div class="li-stat-footer">
+            <div class="li-stat-logo">AKB<span>ai</span></div>
+            <div class="li-stat-tag">Market Insight</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Post Copy</div>
+        <div class="caption-text">99.5% of Philippine businesses are MSMEs.
+
+Yet most of them are still tracking sales on paper, following up customers manually, and spending hours on bookkeeping that could be automated.
+
+This is a ₱5 trillion segment that's been underserved by technology — until now.
+
+AKBai is building the AI operations layer for Filipino entrepreneurs: conversational, context-aware, and built for the way Filipinos actually run businesses.
+
+We're launching soon. If you work with or support Philippine MSMEs, let's connect. 🤝
+
+[Waitlist link in comments]</div>
+        <div class="caption-tags">#Philippines #MSME #StartupPH #AIStartup #FintechPH</div>
+      </div>
+    </div>
+
+    <!-- LI 3: Product Update -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Company Post · 4:5</span>
+        <span class="tpl-type type-feature">Feature</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="li-card" style="background:var(--warm);display:flex;flex-direction:column;padding:0;overflow:hidden">
+          <div style="background:linear-gradient(135deg,#F59E0B,#D97706);padding:24px 24px 20px;flex:1;display:flex;flex-direction:column;justify-content:flex-end">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:10px">Now available in beta</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;line-height:1.2">BIR-Ready Report Generation</div>
+          </div>
+          <div style="padding:16px 22px">
+            <div style="font-size:11px;color:var(--muted);line-height:1.6">AKBai now automatically generates BIR-compliant income summaries — so tax season is no longer a nightmare.</div>
+            <div style="font-size:10px;font-weight:800;color:var(--ink);margin-top:12px">AKB<span style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Post Copy</div>
+        <div class="caption-text">Tax season shouldn't be a nightmare for small businesses. 📋
+
+We just shipped BIR-ready report generation in AKBai beta.
+
+What it does:
+→ Automatically tracks income and expenses throughout the year
+→ Generates summaries formatted for BIR filing
+→ Flags missing receipts and unusual entries before your accountant does
+
+Philippine MSMEs lose an estimated 2–3 weeks per year to tax preparation. We're giving that back.
+
+Beta access is open — join the waitlist (link in comments). 🇵🇭</div>
+        <div class="caption-tags">#Philippines #TaxPH #BIR #MSME #AKBai #StartupPH</div>
+      </div>
+    </div>
+
+    <!-- LI 4: Founder/Mission post -->
+    <div class="tpl-wrapper">
+      <div class="tpl-header">
+        <span class="tpl-meta">Company Post · Square</span>
+        <span class="tpl-type type-quote">Mission</span>
+      </div>
+      <div class="tpl-canvas">
+        <div class="li-card" style="width:300px;height:300px;background:linear-gradient(145deg,var(--ink),#0f1e38);display:flex;flex-direction:column;padding:28px;justify-content:space-between">
+          <div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,158,11,.5);margin-bottom:14px">Our mission</div>
+            <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.4">"Be the most trusted AI partner for Filipino entrepreneurs."</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.6;margin-bottom:16px">Not for Silicon Valley. Not for enterprise. For the sari-sari store owner, the food business, the online seller — the backbone of the Philippine economy.</div>
+            <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.5)">AKB<span style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span> · Kaakbay mo sa negosyo.</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-block">
+        <div class="caption-label">Post Copy</div>
+        <div class="caption-text">Why we're building AKBai.
+
+The Philippines has 1.1 million registered MSMEs. They employ 63% of the workforce. They are the backbone of the economy.
+
+And most of them are running their businesses on gut feel, paper, and WhatsApp.
+
+Not because they don't want better tools — but because the tools that exist weren't built for them. Too complicated, too expensive, too English.
+
+AKBai is different. We're building an AI operations partner that speaks Taglish, understands Philippine business context, and costs less than a bag of rice per day.
+
+Our mission: Be the most trusted AI partner for Filipino entrepreneurs.
+
+We're just getting started. 🇵🇭</div>
+        <div class="caption-tags">#Philippines #StartupPH #MSME #AKBai #FounderStory</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="usage-row">
+    <div class="usage-card">
+      <h4>📐 LinkedIn Sizes</h4>
+      <ul>
+        <li>Image post: 1200 × 627 px (landscape)</li>
+        <li>Square post: 1080 × 1080 px</li>
+        <li>Company logo: 300 × 300 px (mark only)</li>
+        <li>Cover image: 1128 × 191 px</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>📅 LinkedIn Cadence</h4>
+      <ul>
+        <li>2–4 posts per week</li>
+        <li>Mix: 50% insights, 30% product, 20% culture</li>
+        <li>Best time: Tue–Thu, 8–10AM PHT</li>
+        <li>Text-only posts often outperform image posts</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>✍️ LinkedIn Voice</h4>
+      <ul>
+        <li>More English than Taglish (professional audience)</li>
+        <li>Lead with a bold statement or question</li>
+        <li>Use → bullets for readability</li>
+        <li>End with a clear question or CTA</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function showPlatform(id, btn) {
+  document.querySelectorAll('.platform-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

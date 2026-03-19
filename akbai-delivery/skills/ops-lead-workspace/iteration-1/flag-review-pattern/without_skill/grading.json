@@ -1,0 +1,11 @@
+{
+  "eval_id": 1,
+  "run_type": "without_skill",
+  "expectations": [
+    {"text": "Identifies 3+ flags as a pattern requiring escalation to ai-engineer", "passed": false, "evidence": "Mentions 'pattern clustering' but doesn't reference escalation to ai-engineer or any specific escalation path"},
+    {"text": "Walks through the flag review workflow (context, root cause, fix, regression test)", "passed": false, "evidence": "Has investigation steps but no structured workflow. Missing regression test step entirely."},
+    {"text": "Classifies possible root causes (prompt vs data vs model vs user misunderstanding)", "passed": true, "evidence": "Lists Vision API issues, logic/parsing issues, and user input issues — similar classification"},
+    {"text": "Provides a time estimate for the review work", "passed": true, "evidence": "Time estimates per step: 30 min + 30 min + 20 min"},
+    {"text": "Mentions closing the loop with affected users (Taglish notification)", "passed": false, "evidence": "Says to 'contact those 3 users' and 'collect receipt images' but no Taglish template or trust recovery pattern"}
+  ]
+}

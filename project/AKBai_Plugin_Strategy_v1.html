@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKBai Delivery Plugin — Strategy & Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --card-alt:#111f36;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+  --hs:#F59E0B;
+  --he:#D97706;
+  --ts:#20C9A0;
+  --te:#0FB8D9;
+  --violet:#A78BFA;
+  --blue:#60A5FA;
+  --red:#F87171;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);line-height:1.7;font-size:15px}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:100;background:rgba(7,16,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--dim);padding:14px 32px;display:flex;align-items:center;gap:18px;overflow-x:auto}
+nav a{color:var(--muted);text-decoration:none;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;transition:color .2s}
+nav a:hover{color:#fff}
+.nav-brand{font-weight:800;font-size:13px;background:linear-gradient(135deg,var(--hs),var(--he));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-right:8px;flex-shrink:0}
+
+/* Layout */
+.container{max-width:1000px;margin:0 auto;padding:0 32px}
+section{padding:64px 0;border-bottom:1px solid var(--dim);scroll-margin-top:60px}
+section:last-child{border-bottom:none;padding-bottom:100px}
+
+/* Type */
+.section-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.section-title{font-size:32px;font-weight:800;line-height:1.2;margin-bottom:12px}
+.section-sub{font-size:15px;color:var(--muted);max-width:700px;margin-bottom:36px;line-height:1.65}
+h3{font-size:20px;font-weight:700;margin:28px 0 12px;line-height:1.3}
+h4{font-size:16px;font-weight:700;margin:20px 0 8px}
+p{margin-bottom:14px;line-height:1.7;color:var(--text)}
+.honey{background:linear-gradient(135deg,var(--hs),var(--he));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.teal{background:linear-gradient(135deg,var(--ts),var(--te));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--dim);border-radius:14px;padding:24px;margin-bottom:16px}
+.card h4{margin-top:0}
+.card p:last-child{margin-bottom:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:10px;margin-right:6px}
+.tag-h{background:rgba(245,158,11,.12);color:#F59E0B}
+.tag-t{background:rgba(32,201,160,.12);color:#20C9A0}
+.tag-v{background:rgba(167,139,250,.12);color:#A78BFA}
+.tag-b{background:rgba(96,165,250,.12);color:#60A5FA}
+.tag-r{background:rgba(248,113,113,.12);color:#F87171}
+.tag-g{background:rgba(74,222,128,.12);color:#4ADE80}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0 24px}
+table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--dim);background:rgba(255,255,255,.02)}
+table td{padding:12px 14px;border-bottom:1px solid var(--dim);color:var(--text);vertical-align:top}
+table tr:last-child td{border-bottom:none}
+tr.highlight td{font-weight:600}
+tr.highlight td:first-child{color:var(--hs)}
+
+/* Cover */
+.cover{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:80px 32px;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;top:-150px;right:-150px;width:700px;height:700px;background:radial-gradient(circle,rgba(245,158,11,.07) 0%,transparent 60%);pointer-events:none}
+
+/* Callout */
+.callout{background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(32,201,160,.04));border:1px solid rgba(245,158,11,.18);border-radius:14px;padding:24px;margin:20px 0}
+.callout-warn{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.18)}
+.callout-info{background:rgba(96,165,250,.06);border-color:rgba(96,165,250,.18)}
+.callout-success{background:rgba(74,222,128,.06);border-color:rgba(74,222,128,.18)}
+.callout-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+
+/* Phase pills */
+.phase{display:inline-block;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;margin-right:8px}
+.phase-0{background:rgba(248,113,113,.12);color:#F87171}
+.phase-1{background:rgba(245,158,11,.12);color:#F59E0B}
+.phase-2{background:rgba(32,201,160,.12);color:#20C9A0}
+.phase-3{background:rgba(167,139,250,.12);color:#A78BFA}
+
+/* Architecture diagram */
+.arch-box{border:2px solid var(--dim);border-radius:14px;padding:20px;text-align:center;background:var(--card)}
+.arch-box h4{margin:0 0 6px;font-size:14px}
+.arch-box p{font-size:12px;color:var(--muted);margin:0}
+.arch-connector{display:flex;align-items:center;justify-content:center;padding:8px 0;color:var(--muted);font-size:20px}
+
+/* List */
+ul,ol{margin:0 0 16px 24px;color:var(--text)}
+li{margin-bottom:6px;line-height:1.6}
+li strong{color:#fff}
+
+/* Code */
+code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px;font-size:13px;font-family:'SF Mono',monospace}
+pre{background:var(--card);border:1px solid var(--dim);border-radius:10px;padding:16px;margin:12px 0 20px;overflow-x:auto;font-size:13px;line-height:1.5}
+
+/* Decision matrix */
+.decision{display:grid;grid-template-columns:auto 1fr;gap:0;margin:16px 0}
+.decision-q{background:rgba(245,158,11,.06);padding:12px 16px;border:1px solid var(--dim);font-weight:600;font-size:13px}
+.decision-a{background:var(--card);padding:12px 16px;border:1px solid var(--dim);font-size:13px;color:var(--muted)}
+
+@media(max-width:768px){
+  .g2,.g3{grid-template-columns:1fr}
+  .section-title{font-size:26px}
+  .cover{padding:52px 20px;min-height:auto}
+  .container{padding:0 20px}
+  nav{padding:12px 16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">AKBai</span>
+  <a href="#exec">Executive Summary</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#roles">Roles & Skills</a>
+  <a href="#commands">Commands</a>
+  <a href="#tokens">Token Strategy</a>
+  <a href="#phases">Build Phases</a>
+  <a href="#decisions">Open Questions</a>
+</nav>
+
+<!-- ═══ COVER ═══ -->
+<div class="cover">
+  <div style="max-width:1000px;margin:0 auto;width:100%">
+    <div class="section-label">AKBai · Plugin Strategy · v1.0</div>
+    <div class="section-title" style="font-size:42px;margin-bottom:16px">
+      <span class="honey">AKBai Delivery Plugin</span><br>
+      Strategy & Architecture Guide
+    </div>
+    <p style="font-size:17px;color:var(--muted);max-width:680px;margin-bottom:40px">
+      A comprehensive plugin that acts as your full engineering team — from project management through architecture, development, testing, deployment, and operations — optimized for a solo founder on Claude Pro.
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:800px">
+      <div style="border-left:2px solid rgba(245,158,11,.3);padding-left:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Version</div>
+        <div style="font-size:14px;font-weight:600">v1.0 Draft</div>
+      </div>
+      <div style="border-left:2px solid rgba(32,201,160,.3);padding-left:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Date</div>
+        <div style="font-size:14px;font-weight:600">March 9, 2026</div>
+      </div>
+      <div style="border-left:2px solid rgba(167,139,250,.3);padding-left:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Skills Proposed</div>
+        <div style="font-size:14px;font-weight:600">12 core + 6 support</div>
+      </div>
+      <div style="border-left:2px solid rgba(96,165,250,.3);padding-left:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Commands</div>
+        <div style="font-size:14px;font-weight:600">15 slash commands</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ 1. EXECUTIVE SUMMARY ═══ -->
+<section id="exec">
+<div class="container">
+  <div class="section-label">01</div>
+  <div class="section-title">Executive Summary</div>
+  <div class="section-sub">Why one plugin, what it replaces, and how it's designed for your constraints.</div>
+
+  <h3>The Problem</h3>
+  <p>You're a solo founder building a full-stack AI product (Next.js PWA + Supabase + Claude API + Xendit) while working a day job at Globe. Your roadmap spans legal clearance, demand validation, MVP development across 5 pillars, payment integration, NPC compliance, and post-launch operations. That's the work of a 6–8 person team compressed into one person's spare time.</p>
+
+  <p>You already have Claude as your AI partner, but each session starts from scratch. There's no persistent memory of your architecture decisions, no consistent quality gates, no "team" that remembers your codebase patterns. Every conversation burns tokens re-establishing context.</p>
+
+  <h3>The Solution: One Plugin, Many Roles</h3>
+  <p>A single <strong>"akbai-delivery"</strong> plugin that bundles every function you need for end-to-end project delivery. Instead of installing separate plugins for engineering, design, marketing, and project management, this plugin encodes <em>your specific</em> project context — your tech stack, your architecture decisions, your Supabase schema, your brand voice, your BIR compliance requirements — into specialized skills and commands.</p>
+
+  <div class="callout">
+    <div class="callout-label" style="color:var(--hs)">Key Design Decision</div>
+    <p style="margin:0"><strong>One plugin, not many.</strong> Token limits on Pro mean every skill description loaded into context costs you. A single plugin with 12–18 focused skills is more token-efficient than 4 separate plugins with overlapping descriptions. The tiyak-engineering plugin you already built proves this pattern works — we're extending it to cover the full delivery lifecycle.</p>
+  </div>
+
+  <h3>What This Replaces</h3>
+  <div class="g3">
+    <div class="card">
+      <span class="tag tag-r">Before</span>
+      <h4>Generic engineering plugin</h4>
+      <p>Code review, standups, and architecture skills that don't know your stack or project.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-r">Before</span>
+      <h4>Separate marketing plugin</h4>
+      <p>Brand voice and content skills that don't know AKBai's Taglish personality or target personas.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-r">Before</span>
+      <h4>No PM tooling at all</h4>
+      <p>No sprint planning, no backlog grooming, no dependency tracking, no progress reporting.</p>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-top:0">
+    <div class="card" style="border-color:rgba(74,222,128,.2)">
+      <span class="tag tag-g">After</span>
+      <h4>AKBai-aware engineering</h4>
+      <p>Every skill knows Next.js + Supabase + Claude API + your exact schema and conventions.</p>
+    </div>
+    <div class="card" style="border-color:rgba(74,222,128,.2)">
+      <span class="tag tag-g">After</span>
+      <h4>Brand-native content</h4>
+      <p>Marketing skills pre-loaded with your brand voice, personas (Maria, Jose, Ana, Andoy), and positioning.</p>
+    </div>
+    <div class="card" style="border-color:rgba(74,222,128,.2)">
+      <span class="tag tag-g">After</span>
+      <h4>Sprint-aware PM agent</h4>
+      <p>Tracks your roadmap phases, generates sprint plans, flags blockers, and runs sense checks.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- ═══ 2. PLUGIN ARCHITECTURE ═══ -->
+<section id="architecture">
+<div class="container">
+  <div class="section-label">02</div>
+  <div class="section-title">Plugin Architecture</div>
+  <div class="section-sub">How the plugin is structured, what lives where, and the progressive disclosure pattern that keeps token costs low.</div>
+
+  <h3>Directory Structure</h3>
+  <pre>
+akbai-delivery/
+├── .claude-plugin/
+│   └── plugin.json              # Plugin metadata
+├── README.md                    # Plugin overview & command reference
+│
+├── skills/                      # 🧠 Role-based AI skills
+│   ├── project-manager/         # Sprint planning, backlog, status
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── roadmap-context.md    # Condensed from v8.0 roadmap
+│   │       ├── phase-gates.md        # Go/No-Go criteria per phase
+│   │       └── sprint-templates.md   # Sprint planning templates
+│   │
+│   ├── solutions-architect/     # System design, tech decisions
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── tech-stack.md         # Next.js + Supabase + Claude patterns
+│   │       ├── architecture-decisions.md  # ADR log
+│   │       └── api-design.md         # API conventions & patterns
+│   │
+│   ├── data-architect/          # Supabase schema, data flows, privacy
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── supabase-schema.md    # Full schema + RLS policies
+│   │       ├── data-flows.md         # How data moves through pillars
+│   │       └── npc-compliance.md     # Privacy-by-design checklist
+│   │
+│   ├── fullstack-engineer/      # Frontend + backend implementation
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── nextjs-conventions.md # App router, components, Tailwind
+│   │       ├── supabase-patterns.md  # Edge functions, realtime, auth
+│   │       └── claude-integration.md # API calls, prompt patterns, fallbacks
+│   │
+│   ├── ai-engineer/             # Claude prompts, OCR, AI features
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── prompt-library.md     # All system prompts (KA persona)
+│   │       ├── ocr-pipeline.md       # Haiku Vision receipt scanning
+│   │       └── ai-guardrails.md      # Hallucination prevention, disclaimers
+│   │
+│   ├── qa-engineer/             # Testing strategy, test writing
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── test-strategy.md      # Unit, integration, e2e approach
+│   │       └── test-checklist.md     # Per-feature test requirements
+│   │
+│   ├── security-compliance/     # NPC, data privacy, security hardening
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── npc-checklist.md      # Full NPC compliance tracker
+│   │       ├── security-architecture.md  # Encryption, auth, RLS
+│   │       └── bir-compliance.md     # Tax feature legal boundaries
+│   │
+│   ├── devops-engineer/         # CI/CD, deployment, monitoring
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── deployment-guide.md   # Vercel + Cloudflare setup
+│   │       ├── monitoring-setup.md   # Sentry, PostHog, health checks
+│   │       └── incident-runbook.md   # Solo founder incident protocol
+│   │
+│   ├── ux-designer/             # UX flows, Taglish copy, accessibility
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── ux-flows.md           # All 8 UX flows condensed
+│   │       ├── taglish-copy-guide.md # Voice, tone, copy patterns
+│   │       └── mobile-first.md       # PWA design constraints
+│   │
+│   ├── marketing-lead/          # GTM, content, competitive positioning
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── brand-voice.md        # AKBai brand personality
+│   │       ├── competitive-brief.md  # Condensed competitive landscape
+│   │       └── content-calendar.md   # Channel strategy templates
+│   │
+│   ├── product-owner/           # Feature prioritization, user stories
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── feature-matrix.md     # MVP scope + tier allocations
+│   │       ├── user-personas.md      # Maria, Jose, Ana, Andoy profiles
+│   │       └── sense-check.md        # 8 signal framework
+│   │
+│   └── ops-lead/                # Daily rhythm, support, business ops
+│       ├── SKILL.md
+│       └── references/
+│           ├── daily-rhythm.md       # Anton's daily/weekly ops cadence
+│           ├── support-playbook.md   # Triage, escalation, trust recovery
+│           └── revenue-tracking.md   # MRR, churn, unit economics
+│
+├── commands/                    # ⚡ Slash commands (quick actions)
+│   ├── sprint.md                # /sprint — Plan or review current sprint
+│   ├── build.md                 # /build — Scaffold a feature with full context
+│   ├── review.md                # /review — Code review with AKBai conventions
+│   ├── test.md                  # /test — Generate or run test suite
+│   ├── deploy.md                # /deploy — Pre-deployment checklist
+│   ├── incident.md              # /incident — Incident response protocol
+│   ├── standup.md               # /standup — Generate daily standup update
+│   ├── gap-check.md             # /gap-check — Audit gap registry status
+│   ├── sense-check.md           # /sense-check — Run the 8-signal gate
+│   ├── schema.md                # /schema — View or modify Supabase schema
+│   ├── prompt.md                # /prompt — Create/edit AI prompts for KA
+│   ├── copy.md                  # /copy — Write Taglish copy for a feature
+│   ├── compliance.md            # /compliance — NPC/BIR compliance check
+│   ├── metrics.md               # /metrics — Review business metrics
+│   └── retro.md                 # /retro — Sprint retrospective
+│
+└── shared/                      # 📚 Shared references (loaded by any skill)
+    ├── project-context.md       # The "briefing doc" — who, what, why, constraints
+    ├── tech-stack.md            # Canonical tech stack reference
+    ├── gap-registry.md          # Living gap tracker (from roadmap)
+    └── glossary.md              # AKBai-specific terms & Filipino business glossary
+  </pre>
+
+  <h3>Progressive Disclosure — The Token Budget Pattern</h3>
+  <p>This is the most critical design choice for Pro plan efficiency. The plugin uses a three-tier loading system:</p>
+
+  <div class="g3">
+    <div class="card" style="border-color:rgba(245,158,11,.2)">
+      <span class="tag tag-h">Tier 1 — Always in Context</span>
+      <h4>~100 words per skill</h4>
+      <p>Only the <code>name</code> and <code>description</code> from each SKILL.md frontmatter. This is what Claude sees in every conversation to decide which skill to activate. Total cost: ~1,200 words for 12 skills.</p>
+    </div>
+    <div class="card" style="border-color:rgba(32,201,160,.2)">
+      <span class="tag tag-t">Tier 2 — On Trigger</span>
+      <h4>~300–500 lines per skill</h4>
+      <p>The SKILL.md body loads when Claude activates the skill. Contains role instructions, decision trees, and pointers to reference files. Only one skill loads at a time.</p>
+    </div>
+    <div class="card" style="border-color:rgba(167,139,250,.2)">
+      <span class="tag tag-v">Tier 3 — On Demand</span>
+      <h4>Unlimited reference files</h4>
+      <p>Reference docs are only loaded when the skill explicitly reads them. The Supabase schema, for example, is only loaded when the data architect skill actually needs it.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-label" style="color:var(--red)">Token Budget Reality Check</div>
+    <p style="margin:0">On Pro, you get roughly 25K–30K tokens of usable context per conversation after system prompts. Each skill description costs ~100 tokens. Loading a skill body costs ~2K–4K tokens. Loading a reference file costs ~1K–3K tokens. This architecture ensures you never load more than one skill + 1–2 reference files at a time. <strong>Maximum active context from the plugin: ~8K tokens</strong>, leaving 17K+ for your actual conversation and code.</p>
+  </div>
+
+  <h3>Shared Context — The "Briefing Doc" Pattern</h3>
+  <p>Instead of duplicating project context across 12 skills, a single <code>shared/project-context.md</code> file (~200 lines) contains the core information every skill might need: who AKBai is, the tech stack, current phase, and key constraints. Each skill's SKILL.md says "Read <code>shared/project-context.md</code> first if you haven't already" — but Claude only loads it once per conversation, not per skill activation.</p>
+</div>
+</section>
+
+
+<!-- ═══ 3. ROLES & SKILLS ═══ -->
+<section id="roles">
+<div class="container">
+  <div class="section-label">03</div>
+  <div class="section-title">Roles, Skills & Agent Design</div>
+  <div class="section-sub">Each skill acts as a specialized team member. Here's what each one does, when it activates, and how they collaborate.</div>
+
+  <h3>Core Role Skills (12)</h3>
+  <table>
+    <tr>
+      <th>Role / Skill</th>
+      <th>Primary Responsibility</th>
+      <th>Triggers On</th>
+      <th>Key References</th>
+    </tr>
+    <tr class="highlight">
+      <td>project-manager</td>
+      <td>Sprint planning, backlog grooming, dependency tracking, progress reporting, blocker escalation</td>
+      <td>"sprint", "plan", "backlog", "what should I work on", "status", "blockers", "timeline"</td>
+      <td>roadmap-context, phase-gates, sprint-templates</td>
+    </tr>
+    <tr>
+      <td>product-owner</td>
+      <td>Feature prioritization, user story writing, acceptance criteria, tier allocation, sense check gate management</td>
+      <td>"user story", "acceptance criteria", "prioritize", "which feature", "sense check", "MVP scope"</td>
+      <td>feature-matrix, user-personas, sense-check</td>
+    </tr>
+    <tr class="highlight">
+      <td>solutions-architect</td>
+      <td>System design decisions, API design, integration patterns, architecture decision records (ADRs)</td>
+      <td>"how should we build", "architecture", "system design", "API design", "should we use"</td>
+      <td>tech-stack, architecture-decisions, api-design</td>
+    </tr>
+    <tr>
+      <td>data-architect</td>
+      <td>Supabase schema design, RLS policies, data migration, privacy-by-design, NPC data flow compliance</td>
+      <td>"schema", "database", "Supabase", "migration", "RLS", "data model", "table"</td>
+      <td>supabase-schema, data-flows, npc-compliance</td>
+    </tr>
+    <tr class="highlight">
+      <td>fullstack-engineer</td>
+      <td>Next.js frontend, Supabase backend, component implementation, API routes, edge functions</td>
+      <td>"implement", "build this component", "create page", "edge function", "fix this bug"</td>
+      <td>nextjs-conventions, supabase-patterns, claude-integration</td>
+    </tr>
+    <tr>
+      <td>ai-engineer</td>
+      <td>Claude API integration, prompt engineering for KA persona, OCR pipeline, AI guardrails, Taglish AI responses</td>
+      <td>"prompt", "Claude API", "OCR", "AI response", "hallucination", "KA persona", "Taglish AI"</td>
+      <td>prompt-library, ocr-pipeline, ai-guardrails</td>
+    </tr>
+    <tr class="highlight">
+      <td>qa-engineer</td>
+      <td>Test strategy, test writing (unit/integration/e2e), regression prevention, UAT coordination</td>
+      <td>"test", "write tests", "QA", "regression", "UAT", "test plan", "coverage"</td>
+      <td>test-strategy, test-checklist</td>
+    </tr>
+    <tr>
+      <td>security-compliance</td>
+      <td>NPC compliance, data privacy implementation, security hardening, BIR feature legal boundaries</td>
+      <td>"security", "NPC", "privacy", "compliance", "data protection", "BIR legal", "breach"</td>
+      <td>npc-checklist, security-architecture, bir-compliance</td>
+    </tr>
+    <tr class="highlight">
+      <td>devops-engineer</td>
+      <td>CI/CD pipeline, Vercel/Cloudflare deployment, monitoring (Sentry/PostHog), incident response</td>
+      <td>"deploy", "CI/CD", "monitoring", "Sentry", "Vercel", "incident", "downtime"</td>
+      <td>deployment-guide, monitoring-setup, incident-runbook</td>
+    </tr>
+    <tr>
+      <td>ux-designer</td>
+      <td>UX flow design, Taglish copy writing, mobile-first design, accessibility, empty states, error messages</td>
+      <td>"UX", "wireframe", "copy", "Taglish copy", "user flow", "empty state", "error message"</td>
+      <td>ux-flows, taglish-copy-guide, mobile-first</td>
+    </tr>
+    <tr class="highlight">
+      <td>marketing-lead</td>
+      <td>GTM strategy, content creation, competitive positioning, social media, Facebook group outreach</td>
+      <td>"marketing", "content", "social media", "Facebook post", "competitive", "GTM", "launch"</td>
+      <td>brand-voice, competitive-brief, content-calendar</td>
+    </tr>
+    <tr>
+      <td>ops-lead</td>
+      <td>Daily/weekly operating rhythm, support queue management, revenue tracking, flag-as-wrong review</td>
+      <td>"operations", "daily check", "support", "revenue", "MRR", "churn", "flag review"</td>
+      <td>daily-rhythm, support-playbook, revenue-tracking</td>
+    </tr>
+  </table>
+
+  <h3>Sub-Agent Strategy</h3>
+  <p>On Pro, sub-agents (parallel task execution) have limits, but we can design for them strategically. Here's the approach:</p>
+
+  <div class="g2">
+    <div class="card">
+      <span class="tag tag-t">Implemented via Skills</span>
+      <h4>Single-focus roles</h4>
+      <p>Most roles work as skills — they activate when triggered, load their context, do their job, and release. No persistent state needed. This is how all 12 core roles work.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-v">Implemented via Sub-agents</span>
+      <h4>Parallel review tasks</h4>
+      <p>When you need multiple perspectives at once (e.g., code review + security review + test coverage check), sub-agents can run in parallel. Design commands like <code>/review</code> to optionally spawn parallel sub-agents for deeper analysis.</p>
+    </div>
+  </div>
+
+  <h3>Role Collaboration Patterns</h3>
+  <p>These are the most common multi-role workflows and how they chain together:</p>
+
+  <table>
+    <tr>
+      <th>Workflow</th>
+      <th>Skills Chain</th>
+      <th>Trigger</th>
+    </tr>
+    <tr>
+      <td><strong>New Feature Build</strong></td>
+      <td>product-owner → solutions-architect → data-architect → fullstack-engineer → qa-engineer</td>
+      <td><code>/build [feature-name]</code></td>
+    </tr>
+    <tr>
+      <td><strong>Pre-Deploy Check</strong></td>
+      <td>qa-engineer → security-compliance → devops-engineer</td>
+      <td><code>/deploy</code></td>
+    </tr>
+    <tr>
+      <td><strong>Sprint Planning</strong></td>
+      <td>project-manager → product-owner (gap registry review)</td>
+      <td><code>/sprint plan</code></td>
+    </tr>
+    <tr>
+      <td><strong>Incident Response</strong></td>
+      <td>devops-engineer → ops-lead (trust recovery protocol)</td>
+      <td><code>/incident</code></td>
+    </tr>
+    <tr>
+      <td><strong>Launch Readiness</strong></td>
+      <td>security-compliance → devops-engineer → marketing-lead → ops-lead</td>
+      <td><code>/sense-check</code></td>
+    </tr>
+    <tr>
+      <td><strong>Content Creation</strong></td>
+      <td>marketing-lead → ux-designer (for Taglish copy review)</td>
+      <td><code>/copy</code> or marketing skill trigger</td>
+    </tr>
+  </table>
+</div>
+</section>
+
+
+<!-- ═══ 4. COMMANDS ═══ -->
+<section id="commands">
+<div class="container">
+  <div class="section-label">04</div>
+  <div class="section-title">Slash Commands</div>
+  <div class="section-sub">Quick-action commands that invoke specific workflows. Each command activates the right skill(s) and follows a defined protocol.</div>
+
+  <table>
+    <tr>
+      <th>Command</th>
+      <th>What It Does</th>
+      <th>Primary Skill</th>
+      <th>Phase Relevance</th>
+    </tr>
+    <tr>
+      <td><code>/sprint</code></td>
+      <td>Plan next sprint, review current sprint status, generate sprint report</td>
+      <td>project-manager</td>
+      <td><span class="phase phase-0">All</span></td>
+    </tr>
+    <tr>
+      <td><code>/build [feature]</code></td>
+      <td>Full feature scaffold: user story → schema → implementation → tests</td>
+      <td>solutions-architect → fullstack-engineer</td>
+      <td><span class="phase phase-1">Phase 1+</span></td>
+    </tr>
+    <tr>
+      <td><code>/review</code></td>
+      <td>Code review with AKBai conventions, security check, performance check</td>
+      <td>fullstack-engineer + security-compliance</td>
+      <td><span class="phase phase-1">Phase 1+</span></td>
+    </tr>
+    <tr>
+      <td><code>/test [scope]</code></td>
+      <td>Generate test suite for a feature or run existing tests</td>
+      <td>qa-engineer</td>
+      <td><span class="phase phase-1">Phase 1+</span></td>
+    </tr>
+    <tr>
+      <td><code>/deploy</code></td>
+      <td>Pre-deployment checklist: tests pass, security check, monitoring ready</td>
+      <td>devops-engineer</td>
+      <td><span class="phase phase-1">Phase 1+</span></td>
+    </tr>
+    <tr>
+      <td><code>/incident</code></td>
+      <td>Solo founder incident protocol: detect → diagnose → fix → communicate</td>
+      <td>devops-engineer + ops-lead</td>
+      <td><span class="phase phase-1">Phase 1+</span></td>
+    </tr>
+    <tr>
+      <td><code>/standup</code></td>
+      <td>Generate daily standup from recent git activity and backlog changes</td>
+      <td>project-manager</td>
+      <td><span class="phase phase-0">All</span></td>
+    </tr>
+    <tr>
+      <td><code>/gap-check</code></td>
+      <td>Audit the 26-item gap registry, flag overdue items, suggest priorities</td>
+      <td>project-manager + product-owner</td>
+      <td><span class="phase phase-0">All</span></td>
+    </tr>
+    <tr>
+      <td><code>/sense-check</code></td>
+      <td>Run the 8-signal Sense Check Gate framework for Phase 1→2 decision</td>
+      <td>product-owner + ops-lead</td>
+      <td><span class="phase phase-1">Post-MVP</span></td>
+    </tr>
+    <tr>
+      <td><code>/schema [action]</code></td>
+      <td>View, modify, or validate Supabase schema + generate migration SQL</td>
+      <td>data-architect</td>
+      <td><span class="phase phase-1">Phase 1+</span></td>
+    </tr>
+    <tr>
+      <td><code>/prompt [feature]</code></td>
+      <td>Create or iterate on AI prompts for KA persona features</td>
+      <td>ai-engineer</td>
+      <td><span class="phase phase-1">Phase 1+</span></td>
+    </tr>
+    <tr>
+      <td><code>/copy [context]</code></td>
+      <td>Write Taglish UI copy: empty states, error messages, onboarding text</td>
+      <td>ux-designer</td>
+      <td><span class="phase phase-1">Phase 1+</span></td>
+    </tr>
+    <tr>
+      <td><code>/compliance [type]</code></td>
+      <td>NPC compliance check, BIR feature legal review, privacy audit</td>
+      <td>security-compliance</td>
+      <td><span class="phase phase-0">All</span></td>
+    </tr>
+    <tr>
+      <td><code>/metrics</code></td>
+      <td>Review business metrics dashboard: MRR, churn, conversion, usage</td>
+      <td>ops-lead</td>
+      <td><span class="phase phase-1">Post-launch</span></td>
+    </tr>
+    <tr>
+      <td><code>/retro</code></td>
+      <td>Sprint retrospective: what worked, what didn't, action items</td>
+      <td>project-manager</td>
+      <td><span class="phase phase-0">All</span></td>
+    </tr>
+  </table>
+</div>
+</section>
+
+
+<!-- ═══ 5. TOKEN STRATEGY ═══ -->
+<section id="tokens">
+<div class="container">
+  <div class="section-label">05</div>
+  <div class="section-title">Token Efficiency Strategy</div>
+  <div class="section-sub">Pro plan means every token counts. Here's how we keep the plugin lean without sacrificing capability.</div>
+
+  <h3>The Token Budget</h3>
+  <div class="g2">
+    <div class="card">
+      <h4>What Costs Tokens</h4>
+      <ul>
+        <li><strong>Skill descriptions</strong> — ~100 tokens each × 12 skills = ~1,200 tokens always in context</li>
+        <li><strong>Skill body</strong> — ~2K–4K tokens when activated (one at a time)</li>
+        <li><strong>Reference files</strong> — ~1K–3K tokens each (loaded on demand)</li>
+        <li><strong>Shared context</strong> — ~1.5K tokens (loaded once per conversation)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>What Doesn't Cost Tokens</h4>
+      <ul>
+        <li><strong>Unactivated skills</strong> — Only their ~100-word description is in context</li>
+        <li><strong>Unread reference files</strong> — Zero cost until explicitly loaded</li>
+        <li><strong>Command files</strong> — Only loaded when the command is invoked</li>
+        <li><strong>Scripts</strong> — Execute without loading into context</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Seven Token-Saving Principles</h3>
+
+  <div class="card">
+    <h4>1. One Role Per Conversation</h4>
+    <p>Design skills so that most conversations only need one active role. The <code>/build</code> command chains multiple roles, but each role's body unloads before the next loads. In practice, a single conversation typically exercises 1–2 skills.</p>
+  </div>
+
+  <div class="card">
+    <h4>2. Condensed Reference Files</h4>
+    <p>Your v8.0 roadmap is 20 pages. The <code>roadmap-context.md</code> reference file will be a ~200-line condensed version with only the information skills need: current phase, feature list, timeline, dependencies, and gap registry. Save the full document for human reading.</p>
+  </div>
+
+  <div class="card">
+    <h4>3. Deduplication via Shared References</h4>
+    <p>Information that multiple skills need (tech stack, project context, glossary) lives in <code>shared/</code> and is loaded once per conversation, not per skill activation. This eliminates the biggest source of duplication.</p>
+  </div>
+
+  <div class="card">
+    <h4>4. Smart Description Triggers</h4>
+    <p>Skill descriptions are the most expensive always-on cost. Each description will be optimized using the skill-creator's description optimization loop to ensure high trigger accuracy with minimal words. Target: &lt;80 words per description.</p>
+  </div>
+
+  <div class="card">
+    <h4>5. Command-First for Quick Tasks</h4>
+    <p>Slash commands are cheaper than skill activations because they're single-purpose scripts. For routine tasks like standups, gap checks, and schema lookups, prefer commands over open-ended skill conversations.</p>
+  </div>
+
+  <div class="card">
+    <h4>6. Session Patterns — Start Fresh, Dive Deep</h4>
+    <p>Design for short, focused sessions rather than long multi-topic conversations. A 20-minute "build the receipt scanner" session is more token-efficient than a 2-hour session that drifts across architecture, implementation, and marketing.</p>
+  </div>
+
+  <div class="card">
+    <h4>7. Reference Files as the "Brain" — SKILL.md as the "Guide"</h4>
+    <p>Keep SKILL.md files under 300 lines. They should tell Claude <em>how to think</em> and <em>when to load what</em>. The actual knowledge (schemas, API specs, compliance checklists) lives in reference files that are only loaded when needed.</p>
+  </div>
+
+  <div class="callout callout-success">
+    <div class="callout-label" style="color:#4ADE80">Estimated Token Budget Per Conversation</div>
+    <table style="margin:12px 0 0">
+      <tr><th>Component</th><th>Tokens</th><th>When</th></tr>
+      <tr><td>12 skill descriptions (always loaded)</td><td>~1,200</td><td>Every conversation</td></tr>
+      <tr><td>System prompt + plugin metadata</td><td>~500</td><td>Every conversation</td></tr>
+      <tr><td>Active skill body (1 at a time)</td><td>~2,500</td><td>When skill triggers</td></tr>
+      <tr><td>Shared project context (1 load)</td><td>~1,500</td><td>First skill activation</td></tr>
+      <tr><td>Reference file (1–2 at a time)</td><td>~2,000</td><td>On demand</td></tr>
+      <tr style="font-weight:700"><td>Maximum plugin overhead</td><td>~7,700</td><td></td></tr>
+      <tr style="color:var(--hs)"><td>Remaining for conversation + code</td><td>~17,000–22,000</td><td></td></tr>
+    </table>
+  </div>
+</div>
+</section>
+
+
+<!-- ═══ 6. BUILD PHASES ═══ -->
+<section id="phases">
+<div class="container">
+  <div class="section-label">06</div>
+  <div class="section-title">Plugin Build Phases</div>
+  <div class="section-sub">We build the plugin itself in phases, aligned with your product roadmap. You don't need all 12 skills on Day 1.</div>
+
+  <h3>Phase A — Foundation (Build First)</h3>
+  <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Aligns with your Phase 0 (pre-launch) and early Phase 1. The minimum viable plugin.</p>
+
+  <div class="g2">
+    <div class="card" style="border-color:rgba(248,113,113,.2)">
+      <span class="tag tag-r">Priority 1 — Build These First</span>
+      <h4>4 Core Skills</h4>
+      <ul>
+        <li><strong>project-manager</strong> — You need this immediately for sprint planning and roadmap tracking</li>
+        <li><strong>solutions-architect</strong> — Every technical decision needs to be recorded and consistent</li>
+        <li><strong>fullstack-engineer</strong> — The bulk of your Phase 1 work is building features</li>
+        <li><strong>data-architect</strong> — Supabase schema decisions happen early and are hard to change</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(248,113,113,.2)">
+      <span class="tag tag-r">Priority 1 — Key Commands</span>
+      <h4>5 Essential Commands</h4>
+      <ul>
+        <li><code>/sprint</code> — Sprint planning from Day 1</li>
+        <li><code>/build</code> — Feature scaffolding</li>
+        <li><code>/schema</code> — Supabase schema management</li>
+        <li><code>/compliance</code> — NPC checklist (needed for Phase 0B)</li>
+        <li><code>/gap-check</code> — Track the 26-item gap registry</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Phase B — Engineering Depth (Phase 1 Build)</h3>
+  <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Add these as you start building features and need quality assurance.</p>
+
+  <div class="g2">
+    <div class="card" style="border-color:rgba(245,158,11,.2)">
+      <span class="tag tag-h">Priority 2 — Add During Phase 1</span>
+      <h4>4 Engineering Skills</h4>
+      <ul>
+        <li><strong>ai-engineer</strong> — Essential when building Claude API integration, OCR pipeline, KA persona prompts</li>
+        <li><strong>qa-engineer</strong> — Before your first beta user touches the app</li>
+        <li><strong>security-compliance</strong> — NPC registration is a hard gate before launch</li>
+        <li><strong>devops-engineer</strong> — CI/CD and monitoring setup before any user-facing deployment</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(245,158,11,.2)">
+      <span class="tag tag-h">Priority 2 — Additional Commands</span>
+      <h4>5 More Commands</h4>
+      <ul>
+        <li><code>/review</code> — Code review before merging features</li>
+        <li><code>/test</code> — Test generation per feature</li>
+        <li><code>/deploy</code> — Pre-deployment checklist</li>
+        <li><code>/prompt</code> — AI prompt engineering for KA</li>
+        <li><code>/incident</code> — Incident protocol (before beta launch)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Phase C — Full Delivery (Phase 1 Launch + Beyond)</h3>
+  <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Complete the team for launch readiness and ongoing operations.</p>
+
+  <div class="g2">
+    <div class="card" style="border-color:rgba(32,201,160,.2)">
+      <span class="tag tag-t">Priority 3 — Add for Launch</span>
+      <h4>4 Launch Skills</h4>
+      <ul>
+        <li><strong>ux-designer</strong> — Taglish copy, empty states, error messages, onboarding flow polish</li>
+        <li><strong>marketing-lead</strong> — Facebook group posts, landing page copy, launch content</li>
+        <li><strong>product-owner</strong> — Sense check gate, feature prioritization for Phase 2</li>
+        <li><strong>ops-lead</strong> — Daily rhythm, support queue, revenue tracking once you have users</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(32,201,160,.2)">
+      <span class="tag tag-t">Priority 3 — Remaining Commands</span>
+      <h4>5 Operations Commands</h4>
+      <ul>
+        <li><code>/sense-check</code> — 8-signal gate for Phase 1→2</li>
+        <li><code>/copy</code> — Taglish copy generation</li>
+        <li><code>/metrics</code> — Business (up to 5 team members with role-based permissions) metrics review</li>
+        <li><code>/standup</code> — Daily updates from git activity</li>
+        <li><code>/retro</code> — Sprint retrospectives</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Estimated Build Effort</h3>
+  <table>
+    <tr><th>Phase</th><th>Skills</th><th>Commands</th><th>Reference Files</th><th>Est. Sessions</th></tr>
+    <tr><td>Phase A (Foundation)</td><td>4 skills</td><td>5 commands</td><td>~10 ref files</td><td>3–4 sessions</td></tr>
+    <tr><td>Phase B (Engineering)</td><td>4 skills</td><td>5 commands</td><td>~8 ref files</td><td>3–4 sessions</td></tr>
+    <tr><td>Phase C (Full Delivery)</td><td>4 skills</td><td>5 commands</td><td>~8 ref files</td><td>2–3 sessions</td></tr>
+    <tr style="font-weight:700"><td>Total</td><td>12 skills</td><td>15 commands</td><td>~26 ref files</td><td>8–11 sessions</td></tr>
+  </table>
+</div>
+</section>
+
+
+<!-- ═══ 7. OPEN QUESTIONS ═══ -->
+<section id="decisions">
+<div class="container">
+  <div class="section-label">07</div>
+  <div class="section-title">Open Questions & Decisions Needed</div>
+  <div class="section-sub">Before we start building, these questions need your input to finalize the approach.</div>
+
+  <div class="card">
+    <span class="tag tag-h">Architecture</span>
+    <h4>Q1: Single plugin vs. plugin + standalone skills?</h4>
+    <p>The strategy above puts everything in one <code>akbai-delivery</code> plugin. An alternative is to keep your existing <code>tiyak-engineer</code> skill as a standalone and make the plugin cover everything <em>except</em> TIYAK-specific work. Since AKBai is a different project, the plugin should be self-contained. But if you ever want TIYAK skills to share context with AKBai skills (e.g., data quality patterns for AKBai's own data), we'd need to think about cross-plugin references.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-t">Token Efficiency</span>
+    <h4>Q2: How many skills descriptions can you tolerate in every conversation?</h4>
+    <p>12 skills × ~100 tokens = ~1,200 tokens always loaded. If that feels too heavy, we can merge related roles (e.g., merge qa-engineer into fullstack-engineer, merge ops-lead into project-manager) to get down to 8–9 skills. The trade-off is less specialized behavior per role.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-v">Project Context</span>
+    <h4>Q3: Where does the codebase live?</h4>
+    <p>The plugin's <code>fullstack-engineer</code> and <code>data-architect</code> skills need to know your project structure. Will the AKBai codebase be in a GitHub repo that Claude Code can access? Or will you primarily work in Cowork mode? This affects whether skills reference a <code>/path/to/akbai/</code> root or use generic instructions.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-b">Build Strategy</span>
+    <h4>Q4: Build skills incrementally or scaffold all at once?</h4>
+    <p>Option A: Build Phase A skills first, battle-test them during your actual Phase 0/1 work, then add Phase B/C skills based on what you actually need. Option B: Scaffold all 12 skills with basic SKILL.md files in one session, then iteratively improve each one. Option A is safer but slower. Option B gives you the full team faster but with less polish.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-r">Existing Assets</span>
+    <h4>Q5: Should we retire/replace the generic engineering and marketing plugins?</h4>
+    <p>You currently have the generic <code>engineering</code>, <code>design</code>, and <code>marketing</code> plugins installed. Once the AKBai delivery plugin exists, those generic skills will overlap and compete for triggers. We should either uninstall them or design the AKBai plugin descriptions to win trigger priority over generic alternatives.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-g">Persistence</span>
+    <h4>Q6: Do you want the plugin to maintain state across sessions?</h4>
+    <p>Skills can read/write to files in your workspace. This enables features like: a living sprint board (JSON file the PM skill updates), an architecture decision log (ADR Markdown files), or a gap registry tracker that persists progress. The trade-off is file management complexity. We could keep it simple with no persistent state and rely on GitHub issues/project boards instead.</p>
+  </div>
+
+  <h3 style="margin-top:40px">Recommended Next Steps</h3>
+  <div class="callout callout-success">
+    <div class="callout-label" style="color:#4ADE80">Action Plan</div>
+    <ol style="margin-bottom:0">
+      <li><strong>Resolve the 6 open questions above</strong> — this shapes the final architecture</li>
+      <li><strong>Build Phase A plugin skeleton</strong> — using the skill-creator skill, scaffold the plugin structure and the first 4 core skills</li>
+      <li><strong>Create the shared/project-context.md</strong> — condense your v8.0 roadmap, operations playbook, Post-Implementation Vision v1, and brand guide into a ~200-line briefing doc</li>
+      <li><strong>Write and test the project-manager skill first</strong> — this is the skill you'll use to plan everything else, so it should be battle-tested first</li>
+      <li><strong>Iterate using the skill-creator workflow</strong> — test prompts, eval viewer, refinement loop for each skill before moving to the next</li>
+    </ol>
+  </div>
+
+  <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--dim)">
+    <p style="font-size:13px;color:var(--muted);text-align:center">AKBai Delivery Plugin Strategy v1.0 · March 9, 2026 · Prepared for Anton del Rosario<br>Confidential — For Internal Planning Only</p>
+  </div>
+</div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — Logo Explorations v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);font-size:15px;padding:48px 28px 80px}
+.container{max-width:1040px;margin:0 auto}
+
+/* Global gradient defs live in hidden SVG */
+
+/* Header */
+.page-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+h1{font-size:38px;font-weight:800;line-height:1.1;margin-bottom:8px}
+.grad{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.teal{background:linear-gradient(135deg,#20C9A0,#0FB8D9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:15px;color:var(--muted);max-width:600px;margin-bottom:52px;line-height:1.6}
+
+/* Section label */
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+h2{font-size:22px;font-weight:800;margin-bottom:28px}
+.divider{border:none;border-top:1px solid var(--dim);margin:56px 0}
+
+/* Direction card */
+.dir-card{background:var(--card);border:1px solid var(--dim);border-radius:16px;overflow:hidden;margin-bottom:24px}
+.dir-top{display:grid;grid-template-columns:200px 1fr;gap:0}
+.dir-icon-panel{background:var(--ink);display:flex;align-items:center;justify-content:center;padding:36px;border-right:1px solid var(--dim);min-height:200px}
+.dir-lockup-panel{display:flex;align-items:center;justify-content:center;padding:36px;background:var(--ink);min-height:200px}
+.dir-info{padding:24px 28px;border-top:1px solid var(--dim)}
+.dir-number{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.dir-name{font-size:17px;font-weight:800;margin-bottom:6px}
+.dir-meta{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px;letter-spacing:.03em}
+.dir-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.dir-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:100px;margin-right:6px;margin-bottom:4px}
+.tag-gesture{background:rgba(255,107,107,.12);color:#FF8E53}
+.tag-abstract{background:rgba(32,201,160,.12);color:#20C9A0}
+.tag-type{background:rgba(167,139,250,.12);color:#A78BFA}
+
+/* Wordmark helper */
+.wm{font-weight:800;letter-spacing:-.01em;line-height:1}
+.wm-white{color:#fff}
+.wm-dark{color:#0d1a2e}
+.wm-ai-grad{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.wm-ai-teal{background:linear-gradient(135deg,#20C9A0,#0FB8D9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.wm-ai-violet{background:linear-gradient(135deg,#A78BFA,#818CF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Lockup layouts */
+.lockup-h{display:flex;align-items:center;gap:14px}
+.lockup-v{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+
+/* Light panel */
+.dir-light{background:#f0f2f5;display:flex;align-items:center;justify-content:center;padding:28px;min-height:100px}
+
+/* Color section */
+.color-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.color-card{background:var(--card);border:1px solid var(--dim);border-radius:14px;overflow:hidden}
+.color-display{display:flex;align-items:center;justify-content:center;padding:32px;background:var(--ink);min-height:160px}
+.color-info{padding:16px 20px;border-top:1px solid var(--dim)}
+.color-info h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.color-info p{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* Size test */
+.size-row{display:flex;align-items:center;gap:28px;background:var(--ink);padding:32px 36px;border-radius:14px;border:1px solid var(--dim)}
+.size-item{display:flex;flex-direction:column;align-items:center;gap:8px}
+.size-item span{font-size:10px;color:var(--muted);font-weight:600}
+
+/* Light bg test */
+.light-row{display:flex;align-items:center;gap:28px;background:#f0f2f5;padding:32px 36px;border-radius:14px;margin-top:12px}
+
+/* Highlight card */
+.highlight{background:linear-gradient(135deg,rgba(255,107,107,.05),rgba(255,142,83,.03));border-color:rgba(255,107,107,.15)}
+
+@media(max-width:760px){
+  .dir-top{grid-template-columns:1fr}
+  .dir-icon-panel,.dir-lockup-panel{min-height:160px}
+  .dir-lockup-panel{border-top:1px solid var(--dim)}
+  .color-grid{grid-template-columns:1fr}
+  h1{font-size:28px}
+  .size-row{flex-wrap:wrap;gap:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Hidden gradient defs — referenced by all SVGs on page -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+  <defs>
+    <!-- Coral-Mango (primary exploration) -->
+    <linearGradient id="cg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
+      <stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#FF8E53"/>
+    </linearGradient>
+    <!-- Teal-Blue (alt) -->
+    <linearGradient id="tg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
+      <stop offset="0%" stop-color="#20C9A0"/><stop offset="100%" stop-color="#0FB8D9"/>
+    </linearGradient>
+    <!-- Violet (alt) -->
+    <linearGradient id="vg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
+      <stop offset="0%" stop-color="#A78BFA"/><stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+    <!-- Coral for light bg (slightly darker) -->
+    <linearGradient id="cgd" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
+      <stop offset="0%" stop-color="#E05555"/><stop offset="100%" stop-color="#D97040"/>
+    </linearGradient>
+    <!-- Dual arc: coral left, teal right -->
+    <linearGradient id="dual-left" gradientUnits="userSpaceOnUse" x1="20" y1="75" x2="50" y2="14">
+      <stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#FF8E53"/>
+    </linearGradient>
+    <linearGradient id="dual-right" gradientUnits="userSpaceOnUse" x1="80" y1="75" x2="50" y2="14">
+      <stop offset="0%" stop-color="#20C9A0"/><stop offset="100%" stop-color="#0FB8D9"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="container">
+
+<!-- PAGE HEADER -->
+<div class="page-label">AKBai · Logo Explorations · v1</div>
+<h1><span class="grad">AKBai</span> — 6 Directions</h1>
+<p class="sub">
+  Six interpretations of the <em>akbay</em> gesture — semi-abstract and fully abstract — each paired with the "AKBai" wordmark in camelCase. Color is still open; three moods are explored at the bottom. Pick a direction (or parts of several) to take forward.
+</p>
+
+
+<!-- ═══════════════════════════════════════════════
+     DIRECTION 1 — THE ARC + DOT
+     Semi-abstract: arm (arc) hovering over the shoulder contact point (dot)
+     ═══════════════════════════════════════════════ -->
+
+<div class="page-label">01 of 06</div>
+<h2>The Arc + Dot <span style="font-weight:400;color:var(--muted)">— Semi-abstract gesture</span></h2>
+
+<div class="dir-card highlight">
+  <div class="dir-top">
+    <!-- App icon -->
+    <div class="dir-icon-panel">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!-- The arm arc -->
+        <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66"
+              fill="none" stroke="url(#cg)" stroke-width="7.5" stroke-linecap="round"/>
+        <!-- The shoulder contact point -->
+        <circle cx="50" cy="73" r="6.5" fill="url(#cg)"/>
+      </svg>
+    </div>
+    <!-- Horizontal lockup -->
+    <div class="dir-lockup-panel">
+      <div class="lockup-h">
+        <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66"
+                fill="none" stroke="url(#cg)" stroke-width="7.5" stroke-linecap="round"/>
+          <circle cx="50" cy="73" r="6.5" fill="url(#cg)"/>
+        </svg>
+        <div>
+          <div class="wm" style="font-size:30px">
+            <span class="wm-white">AKB</span><span class="wm-ai-grad">ai</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.05em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dir-info">
+    <div class="dir-number">Direction 01</div>
+    <div class="dir-name">The Arc + Dot</div>
+    <div><span class="dir-tag tag-gesture">Semi-abstract</span><span class="dir-tag tag-gesture">Gesture</span></div>
+    <p class="dir-desc">The arm of the <em>akbay</em> gesture distilled to its two essential elements: the arc (the arm itself) and the dot (the contact point where the arm meets the shoulder). The arc frames the mark from above — protective, warm, enclosing. The dot grounds it. Extremely readable at small sizes. The strongest icon candidate of the six.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     DIRECTION 2 — SIDE BY SIDE
+     Semi-abstract: two vertical bars, taller one's top curves over to the shorter
+     ═══════════════════════════════════════════════ -->
+
+<div class="page-label">02 of 06</div>
+<h2>Side by Side <span style="font-weight:400;color:var(--muted)">— Semi-abstract gesture</span></h2>
+
+<div class="dir-card">
+  <div class="dir-top">
+    <div class="dir-icon-panel">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!-- Left bar — taller (AI/partner) -->
+        <line x1="33" y1="76" x2="33" y2="28"
+              stroke="url(#cg)" stroke-width="8" stroke-linecap="round"/>
+        <!-- The arm: curves from top of left bar over to top of right bar -->
+        <path d="M 33,28 Q 50,12 67,33"
+              fill="none" stroke="url(#cg)" stroke-width="6.5" stroke-linecap="round"/>
+        <!-- Right bar — slightly shorter (the one being supported) -->
+        <line x1="67" y1="76" x2="67" y2="33"
+              stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+      </svg>
+    </div>
+    <div class="dir-lockup-panel">
+      <div class="lockup-h">
+        <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <line x1="33" y1="76" x2="33" y2="28" stroke="url(#cg)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M 33,28 Q 50,12 67,33" fill="none" stroke="url(#cg)" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="67" y1="76" x2="67" y2="33" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+        </svg>
+        <div>
+          <div class="wm" style="font-size:30px">
+            <span class="wm-white">AKB</span><span class="wm-ai-grad">ai</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.05em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dir-info">
+    <div class="dir-number">Direction 02</div>
+    <div class="dir-name">Side by Side</div>
+    <div><span class="dir-tag tag-gesture">Semi-abstract</span><span class="dir-tag tag-gesture">Gesture</span></div>
+    <p class="dir-desc">Two vertical bars standing together — the coral one (taller, the AI) has its top curve reaching over to rest on the white one (the user). The height difference shows the AI's proactive support without implying hierarchy — it's still shoulder-to-shoulder. The two-entity relationship is unmistakable. The white bar's slight transparency reinforces: the user is the focus, the AI supports from alongside.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     DIRECTION 3 — THE EMBRACE
+     Semi-abstract into abstract: open arc wrapping a circle
+     ═══════════════════════════════════════════════ -->
+
+<div class="page-label">03 of 06</div>
+<h2>The Embrace <span style="font-weight:400;color:var(--muted)">— Semi-abstract</span></h2>
+
+<div class="dir-card">
+  <div class="dir-top">
+    <div class="dir-icon-panel">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!-- Open embrace arc — wraps around 270° of the inner circle -->
+        <!-- Center of inner circle: 52,52 radius: 22 -->
+        <!-- Arc goes from bottom-right opening (gap), counterclockwise around -->
+        <path d="M 74,72 Q 82,52 72,33 Q 60,14 38,16 Q 16,18 14,42 Q 12,62 28,74 Q 40,84 58,82"
+              fill="none" stroke="url(#cg)" stroke-width="6.5" stroke-linecap="round"/>
+        <!-- Inner circle — the one being embraced -->
+        <circle cx="48" cy="50" r="14" fill="none" stroke="white" stroke-width="4.5" opacity="0.75"/>
+        <!-- Warmth dot at center -->
+        <circle cx="48" cy="50" r="4" fill="url(#cg)" opacity="0.9"/>
+      </svg>
+    </div>
+    <div class="dir-lockup-panel">
+      <div class="lockup-h">
+        <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 74,72 Q 82,52 72,33 Q 60,14 38,16 Q 16,18 14,42 Q 12,62 28,74 Q 40,84 58,82"
+                fill="none" stroke="url(#cg)" stroke-width="6.5" stroke-linecap="round"/>
+          <circle cx="48" cy="50" r="14" fill="none" stroke="white" stroke-width="4.5" opacity="0.75"/>
+          <circle cx="48" cy="50" r="4" fill="url(#cg)" opacity="0.9"/>
+        </svg>
+        <div>
+          <div class="wm" style="font-size:30px">
+            <span class="wm-white">AKB</span><span class="wm-ai-grad">ai</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.05em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dir-info">
+    <div class="dir-number">Direction 03</div>
+    <div class="dir-name">The Embrace</div>
+    <div><span class="dir-tag tag-gesture">Semi-abstract</span><span class="dir-tag tag-abstract">Abstract</span></div>
+    <p class="dir-desc">A large open arc — almost a full circle but with a deliberate gap — wraps protectively around a smaller inner circle. The outer arc is the AI partner's presence, enveloping but never fully enclosing (the gap signals openness, not control). The inner circle is the user's business. The dot at the center represents clarity — the Maria Moment. Three layers of meaning in a simple mark. More complex than Dir 01, which could limit scalability below 32px.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     DIRECTION 4 — THE REACH
+     Fully abstract: one single fluid curve, the motion of the gesture
+     ═══════════════════════════════════════════════ -->
+
+<div class="page-label">04 of 06</div>
+<h2>The Reach <span style="font-weight:400;color:var(--muted)">— Fully abstract</span></h2>
+
+<div class="dir-card">
+  <div class="dir-top">
+    <div class="dir-icon-panel">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!-- Single expressive swoosh: starts lower-left, arcs up high, lands mid-right -->
+        <path d="M 16,78 Q 8,32 44,16 Q 68,6 84,32 Q 94,52 78,70"
+              fill="none" stroke="url(#cg)" stroke-width="7.5" stroke-linecap="round"/>
+        <!-- Landing dot — where the arm rests -->
+        <circle cx="78" cy="70" r="6" fill="url(#cg)"/>
+      </svg>
+    </div>
+    <div class="dir-lockup-panel">
+      <div class="lockup-h">
+        <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 16,78 Q 8,32 44,16 Q 68,6 84,32 Q 94,52 78,70"
+                fill="none" stroke="url(#cg)" stroke-width="7.5" stroke-linecap="round"/>
+          <circle cx="78" cy="70" r="6" fill="url(#cg)"/>
+        </svg>
+        <div>
+          <div class="wm" style="font-size:30px">
+            <span class="wm-white">AKB</span><span class="wm-ai-grad">ai</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.05em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dir-info">
+    <div class="dir-number">Direction 04</div>
+    <div class="dir-name">The Reach</div>
+    <div><span class="dir-tag tag-abstract">Fully abstract</span><span class="dir-tag tag-abstract">Motion</span></div>
+    <p class="dir-desc">One single confident curve — the <em>motion</em> of the <em>akbay</em> gesture, not the form. It starts from lower-left (origin, the AI reaching out), arcs upward and over (the reach), and lands at a dot on the right (the moment of contact). Most dynamic of the six. The asymmetry gives it energy and direction — always moving forward. Fully abstract means it doesn't read as "a person" — it reads as movement, warmth, and intent.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     DIRECTION 5 — DUAL ARCS
+     Fully abstract: two mirrored arcs meeting at a shared peak — coral + teal
+     ═══════════════════════════════════════════════ -->
+
+<div class="page-label">05 of 06</div>
+<h2>Dual Arcs <span style="font-weight:400;color:var(--muted)">— Fully abstract</span></h2>
+
+<div class="dir-card">
+  <div class="dir-top">
+    <div class="dir-icon-panel">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!-- Left arc — coral (the AI reaching from left) -->
+        <path d="M 20,76 Q 20,16 50,13"
+              fill="none" stroke="url(#dual-left)" stroke-width="7" stroke-linecap="round"/>
+        <!-- Right arc — teal (the user reaching from right) -->
+        <path d="M 80,76 Q 80,16 50,13"
+              fill="none" stroke="url(#dual-right)" stroke-width="7" stroke-linecap="round"/>
+        <!-- Meeting point at the top — white dot where both arcs converge -->
+        <circle cx="50" cy="13" r="5.5" fill="white" opacity="0.9"/>
+        <!-- Base connectors — subtle line showing shared ground -->
+        <line x1="20" y1="76" x2="80" y2="76"
+              stroke="rgba(255,255,255,0.12)" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="dir-lockup-panel">
+      <div class="lockup-h">
+        <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 20,76 Q 20,16 50,13" fill="none" stroke="url(#dual-left)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M 80,76 Q 80,16 50,13" fill="none" stroke="url(#dual-right)" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="50" cy="13" r="5.5" fill="white" opacity="0.9"/>
+          <line x1="20" y1="76" x2="80" y2="76" stroke="rgba(255,255,255,0.12)" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <div class="wm" style="font-size:30px">
+            <span class="wm-white">AKB</span><span class="wm-ai-grad">ai</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.05em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dir-info">
+    <div class="dir-number">Direction 05</div>
+    <div class="dir-name">Dual Arcs</div>
+    <div><span class="dir-tag tag-abstract">Fully abstract</span><span class="dir-tag tag-abstract">Partnership</span></div>
+    <p class="dir-desc">Two mirrored arcs rising from a shared baseline and meeting at a single point at the top. Coral from the left (the AI), teal from the right (the user) — converging at the peak. The meeting point (white dot) represents the moment of true partnership. No hierarchy — both arcs are identical in weight. The shared baseline grounds them. The only direction that uses two colors in the mark itself, which requires care in single-color contexts but creates the richest narrative.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     DIRECTION 6 — WORDMARK ARC
+     Typographic: the wordmark IS the mark, with an accent arc above "AK"
+     ═══════════════════════════════════════════════ -->
+
+<div class="page-label">06 of 06</div>
+<h2>Wordmark Arc <span style="font-weight:400;color:var(--muted)">— Typographic</span></h2>
+
+<div class="dir-card">
+  <div class="dir-top">
+    <!-- App icon version — just the accent mark in a rounded square -->
+    <div class="dir-icon-panel">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!-- Stylised "AK" as two strokes with an arc over — icon-only version -->
+        <!-- A stroke: two diagonals -->
+        <path d="M 22,72 L 36,26 L 50,72" fill="none" stroke="white" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+        <!-- A crossbar -->
+        <line x1="27" y1="52" x2="45" y2="52" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+        <!-- K stroke: vertical + two diagonals -->
+        <line x1="58" y1="26" x2="58" y2="72" stroke="white" stroke-width="6.5" stroke-linecap="round" opacity="0.85"/>
+        <path d="M 60,50 L 78,26" fill="none" stroke="white" stroke-width="5.5" stroke-linecap="round" opacity="0.85"/>
+        <path d="M 60,50 L 78,72" fill="none" stroke="url(#cg)" stroke-width="5.5" stroke-linecap="round"/>
+        <!-- Arc accent ABOVE both letters — the akbay arm gesture -->
+        <path d="M 18,32 Q 50,10 82,32"
+              fill="none" stroke="url(#cg)" stroke-width="4.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <!-- Full wordmark lockup -->
+    <div class="dir-lockup-panel" style="flex-direction:column;gap:0;align-items:center;justify-content:center">
+      <div style="position:relative;display:inline-block">
+        <!-- The arc accent over AKB in the wordmark -->
+        <svg style="position:absolute;top:-14px;left:0;width:100%;overflow:visible" height="16" viewBox="0 0 180 16">
+          <path d="M 4,14 Q 75,0 148,14"
+                fill="none" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div class="wm" style="font-size:34px">
+          <span class="wm-white">AKB</span><span class="wm-ai-grad">ai</span>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.05em;margin-top:10px">Your AI business partner</div>
+    </div>
+  </div>
+  <div class="dir-info">
+    <div class="dir-number">Direction 06</div>
+    <div class="dir-name">Wordmark Arc</div>
+    <div><span class="dir-tag tag-type">Typographic</span><span class="dir-tag tag-gesture">Gesture</span></div>
+    <p class="dir-desc">No separate mark — the wordmark IS the logo. "AKB" in white weight-800, "ai" in the coral gradient (visually flagging the AI component). A thin arc accent floats above the full wordmark, as if the word itself is making the <em>akbay</em> gesture. The icon version distills this into hand-drawn "AK" letterforms with the arc. Works beautifully large (landing page, signage) but requires the arc to be legible, which limits minimum size. The "ai" gradient is a subtle but meaningful differentiator.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     SIZE TEST — DIRECTION 1 (recommended)
+     ═══════════════════════════════════════════════ -->
+
+<div class="divider"></div>
+<div class="section-label">Size Test — Direction 01 (Arc + Dot)</div>
+<h2>Readability at <span class="grad">Every Scale</span></h2>
+
+<div class="size-row">
+  <!-- 80px -->
+  <div class="size-item">
+    <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+      <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+      <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#cg)" stroke-width="7.5" stroke-linecap="round"/>
+      <circle cx="50" cy="73" r="6.5" fill="url(#cg)"/>
+    </svg>
+    <span>80px</span>
+  </div>
+  <!-- 64px -->
+  <div class="size-item">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+      <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+      <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#cg)" stroke-width="7.5" stroke-linecap="round"/>
+      <circle cx="50" cy="73" r="6.5" fill="url(#cg)"/>
+    </svg>
+    <span>64px</span>
+  </div>
+  <!-- 48px -->
+  <div class="size-item">
+    <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+      <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+      <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#cg)" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="50" cy="73" r="7" fill="url(#cg)"/>
+    </svg>
+    <span>48px</span>
+  </div>
+  <!-- 32px -->
+  <div class="size-item">
+    <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
+      <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+      <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#cg)" stroke-width="9.5" stroke-linecap="round"/>
+      <circle cx="50" cy="73" r="8" fill="url(#cg)"/>
+    </svg>
+    <span>32px</span>
+  </div>
+  <!-- 24px -->
+  <div class="size-item">
+    <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
+      <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+      <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#cg)" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="50" cy="73" r="9" fill="url(#cg)"/>
+    </svg>
+    <span>24px</span>
+  </div>
+  <!-- 16px -->
+  <div class="size-item">
+    <svg width="16" height="16" viewBox="0 0 100 100" fill="none">
+      <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+      <!-- At 16px, drop the dot, just keep the arc -->
+      <path d="M 15,65 Q 15,18 50,13 Q 85,18 85,65" fill="none" stroke="url(#cg)" stroke-width="13" stroke-linecap="round"/>
+    </svg>
+    <span>16px</span>
+  </div>
+  <div style="flex:1;padding-left:16px;border-left:1px solid var(--dim)">
+    <p style="font-size:13px;color:var(--muted);line-height:1.6">Arc remains clear down to 24px. At 16px (favicon), the dot is dropped — the arc alone carries the mark. Stroke width is compensated at each size step. The rounded square container helps at very small sizes by giving the icon a defined boundary.</p>
+  </div>
+</div>
+
+<!-- Light bg -->
+<div class="light-row">
+  <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+    <rect x="0" y="0" width="100" height="100" rx="24" fill="#e8ecf2"/>
+    <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#cgd)" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="50" cy="73" r="7" fill="url(#cgd)"/>
+  </svg>
+  <div class="lockup-h">
+    <div>
+      <div class="wm" style="font-size:26px;color:#07101e">AKB<span style="background:linear-gradient(135deg,#E05555,#D97040);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+      <div style="font-size:11px;color:#8a9bb5;font-weight:500;letter-spacing:.04em;margin-top:2px">Your AI business partner</div>
+    </div>
+  </div>
+  <p style="font-size:12px;color:#8a9bb5;flex:1;padding-left:16px;border-left:1px solid #dde2e8">Light background variant — for print, email signatures, and co-branded contexts. Coral darkened slightly for contrast on white.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     COLOR EXPLORATION — 3 MOODS
+     Applied to Direction 01 mark
+     ═══════════════════════════════════════════════ -->
+
+<div class="divider"></div>
+<div class="section-label">Color Exploration — Direction 01 applied to 3 moods</div>
+<h2>Feeling the <span class="grad">Right Temperature</span></h2>
+
+<div class="color-grid">
+
+  <!-- Mood 1: Coral-Mango -->
+  <div class="color-card">
+    <div class="color-display">
+      <div class="lockup-v">
+        <svg width="72" height="72" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#cg)" stroke-width="7.5" stroke-linecap="round"/>
+          <circle cx="50" cy="73" r="6.5" fill="url(#cg)"/>
+        </svg>
+        <div style="text-align:center">
+          <div class="wm" style="font-size:26px">
+            <span class="wm-white">AKB</span><span class="wm-ai-grad">ai</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="color-info">
+      <h4>Coral → Mango</h4>
+      <p>Warm, energetic, Filipino. Breaks from the blue-green of PH fintech. Sunset palette — inviting, human. Best for Maria the baker. Established direction from research.</p>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div style="width:20px;height:20px;border-radius:50%;background:#FF6B6B"></div>
+        <div style="width:20px;height:20px;border-radius:50%;background:#FF8E53"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mood 2: Teal-Blue -->
+  <div class="color-card">
+    <div class="color-display">
+      <div class="lockup-v">
+        <svg width="72" height="72" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#tg)" stroke-width="7.5" stroke-linecap="round"/>
+          <circle cx="50" cy="73" r="6.5" fill="url(#tg)"/>
+        </svg>
+        <div style="text-align:center">
+          <div class="wm" style="font-size:26px">
+            <span class="wm-white">AKB</span><span class="wm-ai-teal">ai</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="color-info">
+      <h4>Teal → Blue</h4>
+      <p>Trust, clarity, financial confidence. Closer to fintech norms — could feel safer to some users when handling money data. Cooler, more "tech." Best for agency owner persona.</p>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div style="width:20px;height:20px;border-radius:50%;background:#20C9A0"></div>
+        <div style="width:20px;height:20px;border-radius:50%;background:#0FB8D9"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mood 3: Violet -->
+  <div class="color-card">
+    <div class="color-display">
+      <div class="lockup-v">
+        <svg width="72" height="72" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 18,66 Q 18,20 50,15 Q 82,20 82,66" fill="none" stroke="url(#vg)" stroke-width="7.5" stroke-linecap="round"/>
+          <circle cx="50" cy="73" r="6.5" fill="url(#vg)"/>
+        </svg>
+        <div style="text-align:center">
+          <div class="wm" style="font-size:26px">
+            <span class="wm-white">AKB</span><span class="wm-ai-violet">ai</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="color-info">
+      <h4>Violet → Indigo</h4>
+      <p>Premium, AI-forward, slightly mysterious. Strong differentiation from all PH MSME competitors. Signals the AI component most explicitly. Could feel less warm for the baker persona — but very strong for premium positioning.</p>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div style="width:20px;height:20px;border-radius:50%;background:#A78BFA"></div>
+        <div style="width:20px;height:20px;border-radius:50%;background:#818CF8"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom note -->
+<div style="background:rgba(255,255,255,.03);border:1px solid var(--dim);border-radius:12px;padding:20px 24px">
+  <p style="font-size:13px;color:var(--muted);line-height:1.7">
+    <strong style="color:var(--text)">Next step:</strong> Pick a primary direction (01–06) and a color mood, and I'll go deep on that combination — refining the mark, locking the wordmark weight and spacing, producing all lockup variants (dark/light/mono), and building out the brand guide on top of it.
+  </p>
+</div>
+
+</div><!-- container -->
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Output includes a structured JSON schema with store_name, date, items[], total_centavos, payment_method fields",
+      "passed": false,
+      "evidence": "Schema includes store_name, receipt_date, line_items[], total_amount, and payment_method. However, there is NO total_centavos field. Amounts are specified in ₱ (pesos), not centavos. The schema uses total_amount (in pesos) rather than total_centavos."
+    },
+    {
+      "text": "Monetary amounts specified in centavos (not pesos with decimals)",
+      "passed": false,
+      "evidence": "All monetary fields use peso amounts: total_amount (₱), unit_price (₱), total_price (₱). No centavos specification. Lines 58-59 show unit_price and total_price described as '(₱)' without centavo conversion. Line 157-158 shows total_amount described as 'Grand total in ₱'."
+    },
+    {
+      "text": "Includes per-field confidence scoring (0.0–1.0)",
+      "passed": false,
+      "evidence": "The schema includes confidence_flags array (lines 191-203) which contains categorical flags ('crumpled_or_faded', 'angled_photo', etc.), NOT per-field numerical confidence scores (0.0-1.0). This is a binary flag array approach, not a scoring approach."
+    },
+    {
+      "text": "Mentions handling of crumpled receipts, thermal fade, and handwritten amounts",
+      "passed": true,
+      "evidence": "Line 11 mentions 'crumpled, faded, angled, low-light, or poorly scanned receipts'. Line 95 includes confidence flag 'crumpled_or_faded'. Lines 112-116 discuss 'Crumpled / Low-Quality Receipts'. Line 122-124 covers 'Handwritten Receipts'. Lines 318 and 318 test thermal receipts. Handwritten amounts covered in line 124."
+    },
+    {
+      "text": "Mentions GCash/Maya screenshot handling",
+      "passed": true,
+      "evidence": "Lines 12 mention 'payment screenshots (GCash, bank transfers, e-wallet confirmations)'. Lines 19-20 explicitly list 'GCash receipts' and 'Bank/e-wallet receipts' including Maya. Lines 106-110 detail GCash extraction rules. Line 311-312 include QA test cases for GCash screenshots with/without merchant name. Line 313 includes Maya in the test checklist."
+    },
+    {
+      "text": "Specifies claude-haiku-4-5 as the model (not Sonnet)",
+      "passed": true,
+      "evidence": "Line 1 title mentions 'Claude Haiku Vision System Prompt'. Line 241 in the implementation section specifies: 'model: 'claude-haiku-4-5-20250101''. This confirms Haiku, not Sonnet."
+    },
+    {
+      "text": "Includes warnings array for edge case reporting",
+      "passed": true,
+      "evidence": "Lines 191-203 define 'confidence_flags' as an array of enum values that serve as warnings for edge cases: crumpled_or_faded, angled_photo, partial_ocr, illegible_amount, gcash_no_merchant, low_light, requires_manual_verification, handwritten, multiple_pages_partial. Line 202 states: 'Array of confidence warnings. Empty [] if high confidence.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 3,
+    "total": 7,
+    "pass_rate": 0.57
+  }
+}

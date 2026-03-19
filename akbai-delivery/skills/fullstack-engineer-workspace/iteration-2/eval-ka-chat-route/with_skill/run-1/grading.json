@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "Auth check at the start of the route (getUser)",
+      "passed": true,
+      "evidence": "route.ts lines 97-109: Auth check with getUser() at the very start of POST handler. Logs error and returns 401 if auth fails."
+    },
+    {
+      "text": "Returns {success, data/error} envelope format",
+      "passed": true,
+      "evidence": "route.ts lines 56-58: apiSuccess function wraps data in {success: true, data}. Lines 64-75: apiError wraps in {success: false, error: {code, message, message_tl, details}}"
+    },
+    {
+      "text": "Tier-based model selection (Haiku for free, Sonnet for paid)",
+      "passed": true,
+      "evidence": "model-router.ts lines 76-96: selectModel function implements tier business rule: free=Haiku always, pro/business=smart routing. route.ts line 258: uses selectModel('ka_reasoning', tier)"
+    },
+    {
+      "text": "Circuit breaker check before Claude API call",
+      "passed": true,
+      "evidence": "route.ts lines 239-252: Circuit breaker check happens before Claude API call. Line 275 starts the Claude API call after circuit check passes."
+    },
+    {
+      "text": "Retry with exponential backoff (max 3 retries) — must be a separate utility file",
+      "passed": true,
+      "evidence": "retry.ts is a separate file (lines 1-93). route.ts line 275 uses retryWithBackoff() wrapper. retry.ts implements exponential backoff with baseDelay * 2^attempt + jitter, max 3 retries (4 total attempts)."
+    },
+    {
+      "text": "Conversation history stored to ka_conversations table",
+      "passed": true,
+      "evidence": "route.ts lines 388-430: Stores both user message (lines 389-398) and KA response (lines 408-421) to ka_conversations table with admin client."
+    },
+    {
+      "text": "Zod validation on request body",
+      "passed": true,
+      "evidence": "route.ts lines 115-144: Validates body with ChatRequestSchema.safeParse(). Returns validation error if parsing fails. chat-schemas.ts lines 23-32 defines ChatRequestSchema."
+    },
+    {
+      "text": "Uses ANTHROPIC_API_KEY from server env, never exposed to client",
+      "passed": true,
+      "evidence": "route.ts line 271: process.env.ANTHROPIC_API_KEY! is used only in server-side POST handler. No env key is sent to client in response."
+    },
+    {
+      "text": "Every file has a file-level JSDoc/block comment header explaining purpose, feature, and role",
+      "passed": true,
+      "evidence": "route.ts lines 1-31 has header. retry.ts lines 1-12 has header. circuit-breaker.ts lines 1-15 has header. model-router.ts lines 1-16 has header. chat-schemas.ts lines 1-12 has header."
+    },
+    {
+      "text": "Major code sections have section headers (e.g. 'Auth Check', 'Tier Validation', 'Claude API Call')",
+      "passed": true,
+      "evidence": "route.ts: 'Auth Check' (line 97), 'Request Validation' (line 115), 'Load User Profile' (line 151), 'Tier Validation' (line 197), 'Build KA Persona Prompt' (line 227), 'Circuit Breaker Check' (line 239), 'Model Selection' (line 255), 'Claude API Call' (line 264), 'Validate Claude Response' (line 351), 'Store Conversation' (line 385), 'Return Success Response' (line 433)"
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}
