@@ -1,0 +1,9 @@
+module.exports=[12232,a=>{a.v({className:"plus_jakarta_sans_386ee8ef-module__t3EBla__className",variable:"plus_jakarta_sans_386ee8ef-module__t3EBla__variable"})},27572,a=>{"use strict";var b=a.i(7997),c=a.i(12232);let d={className:c.default.className,style:{fontFamily:"'Plus Jakarta Sans', 'Plus Jakarta Sans Fallback'",fontStyle:"normal"}};null!=c.default.variable&&(d.variable=c.default.variable),a.s(["default",0,function({children:a}){return(0,b.jsxs)("html",{lang:"tl",className:d.variable,children:[(0,b.jsxs)("head",{children:[(0,b.jsx)("link",{rel:"manifest",href:"/manifest.json"}),(0,b.jsx)("meta",{name:"apple-mobile-web-app-capable",content:"yes"}),(0,b.jsx)("meta",{name:"apple-mobile-web-app-status-bar-style",content:"black-translucent"}),(0,b.jsx)("link",{rel:"apple-touch-icon",href:"/icons/icon-192.png"})]}),(0,b.jsxs)("body",{className:"bg-ink text-white min-h-dvh antialiased",children:[a,(0,b.jsx)("script",{dangerouslySetInnerHTML:{__html:`
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `}})]})]})},"metadata",0,{title:"AKBai — Katuwang ng Negosyo Mo",description:"Your AI business partner for Filipino MSMEs",manifest:"/manifest.json",appleWebApp:{capable:!0,statusBarStyle:"black-translucent",title:"AKBai"}},"viewport",0,{themeColor:"#F59E0B",width:"device-width",initialScale:1,maximumScale:1,userScalable:!1}],27572)},50645,a=>{a.n(a.i(27572))}];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__0iv~srz._.js.map
