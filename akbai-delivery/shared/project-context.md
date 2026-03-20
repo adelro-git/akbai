@@ -1,6 +1,6 @@
 # AKBai — Project Context
 > Shared reference for all akbai-delivery skills. Read this first. ~200 lines.
-> Last updated: March 2026 | Source: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
+> Last updated: 2026-03-20 | Source: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
 
 ---
 
@@ -137,9 +137,20 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Scaffold Complete, Build 0 Next
-> Emergent scaffold merged (auth, chat, PWA). FastAPI removed, consolidated to Next.js 16 API routes only.
-> Last updated: 2026-03-20
+> Current: Phase 0A — Build 0 Complete (2026-03-20)
+> Build 0 (AI Scope Definition) shipped: `/lib/claude/` module with 6-layer prompt assembler, model routing, guardrails, circuit breaker. 31 regression tests passing. Design Gate 1 resolved.
+
+### What's Built
+- **Build 0 — AI Scope Definition** (2026-03-20): `/frontend/src/lib/claude/` module
+  - 6-layer system prompt assembler (`assemble.ts`)
+  - Model routing: Haiku for free/extraction, Sonnet for pro/reasoning (`model-router.ts`)
+  - Guardrails: BIR disclaimer (17 triggers), input sanitizer (7 injection patterns), output filter (`guardrails.ts`)
+  - Circuit breaker: daily spend caps ($5 global, $0.50/user), free tier 10-query limit (`circuit-breaker.ts`)
+  - Cost estimator for pre-call budget checks (`cost-estimator.ts`)
+  - Taglish error messages with trust recovery pattern (`errors.ts`)
+  - Supabase migration: `daily_api_spend` table + `increment_daily_spend` RPC
+  - Refactored `/api/chat/route.ts` with Zod validation + full guardrails pipeline
+  - Vitest setup with 31 regression tests (all passing)
 
 ---
 

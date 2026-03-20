@@ -1,37 +1,45 @@
-import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
-import { createClient } from '@/lib/supabase/server'
+import { NextRequest, NextResponse } from 'next/server';
+import Anthropic from '@anthropic-ai/sdk';
+import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
+import {
+  assembleSystemPrompt,
+  selectModel,
+  getMaxTokens,
+  sanitizeInput,
+  applyBIRDisclaimer,
+  filterOutput,
+  checkCircuitBreaker,
+  recordSpend,
+  estimateCost,
+  calculateActualCost,
+  KA_ERROR_MESSAGES,
+} from '@/lib/claude';
+import type { KAFeature, UserTier, UserContext } from '@/lib/claude';
 
-const KA_SYSTEM_PROMPT = `You are Kai, the AI business partner inside AKBai — katuwang ng negosyo ng mga Filipino MSME.
-
-VOICE: You speak in natural Taglish (Filipino-English mix). Warm, competent, proactive. Use "po" naturally — not every sentence, but when appropriate. Always on BIR/tax topics.
-
-STYLE:
-- Keep responses short: max 2–3 sentences
-- Use digits for numbers (₱18,400 not "eighteen thousand")
-- Call the user by first name when known
-- Never say "Certainly!", "As an AI...", or robotic filler
-- You are a brilliant kababayan colleague, not a corporate chatbot
-- Start conversations proactively — give insight before being asked when you have data
-
-DISCLAIMER (add naturally when giving financial/tax guidance):
-"Paalala lang po: I-verify mo ito sa iyong accountant o CPA bago mag-file."
-
-SCOPE (Phase 1 only):
-- Income/expense tracking
-- BIR deadlines and compliance basics
-- Cash flow questions
-- Business profitability questions
-For questions outside scope (legal advice, specific OR numbers, VAT registration), redirect warmly: "Para sa specific na tax computation, mas magaling jan ang iyong CPA po."
-`
+const ChatRequestSchema = z.object({
+  message: z.string().min(1).max(2000),
+  feature: z
+    .enum([
+      'general_chat',
+      'resibo_scanner',
+      'morning_briefing',
+      'reply_drafter',
+      'classify_expense',
+      'classify_intent',
+    ])
+    .default('general_chat'),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient()
+    // --- Auth Check ---
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser()
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json(
@@ -44,99 +52,185 @@ export async function POST(req: NextRequest) {
           },
         },
         { status: 401 }
-      )
+      );
     }
 
-    const body = await req.json()
-    const { message } = body
+    // --- Zod Validation ---
+    const body = await req.json();
+    const parsed = ChatRequestSchema.safeParse(body);
 
-    if (!message || typeof message !== 'string' || message.trim().length === 0) {
+    if (!parsed.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'INVALID_INPUT',
-            message: 'Message is required',
-            message_tl: 'Walang mensahe.',
+            message: 'Invalid request body',
+            message_tl: 'Walang mensahe o mali ang format.',
           },
         },
         { status: 400 }
-      )
+      );
     }
 
+    const { message, feature } = parsed.data;
+
+    // --- Input Sanitization ---
+    const { sanitizedInput, injectionDetected } = sanitizeInput(message);
+    if (injectionDetected) {
+      console.warn(`[Chat] Injection attempt from user ${user.id}`);
+    }
+
+    // --- Load User Context ---
+    const { data: profile } = await supabase
+      .from('business_profiles')
+      .select('business_type, bir_registered')
+      .eq('user_id', user.id)
+      .is('deleted_at', null)
+      .single();
+
+    const { data: userData } = await supabase
+      .from('users')
+      .select('display_name, feature_flags')
+      .eq('id', user.id)
+      .single();
+
+    const tier: UserTier =
+      (userData?.feature_flags as Record<string, unknown> | null)?.tier as UserTier ?? 'free';
+
+    const userContext: UserContext = {
+      firstName: userData?.display_name ?? null,
+      businessType: profile?.business_type ?? null,
+      tier,
+      birRegistered: profile?.bir_registered ?? false,
+    };
+
+    // --- Model Selection ---
+    const selectedModel = selectModel(tier, feature as KAFeature);
+    const maxTokens = getMaxTokens(feature as KAFeature);
+
+    // --- Circuit Breaker (pre-call) ---
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey || apiKey === 'your-anthropic-api-key-here') {
+      return NextResponse.json({
+        success: true,
+        data: { message: KA_ERROR_MESSAGES.api_key_missing },
+      });
+    }
+
+    let serviceSupabase: ReturnType<typeof createServiceClient> | null = null;
+    try {
+      serviceSupabase = createServiceClient();
+    } catch {
+      console.warn('[Chat] Service role client unavailable — skipping circuit breaker');
+    }
+
+    if (serviceSupabase) {
+      const estimatedInputTokens = 2000;
+      const estCost = estimateCost(selectedModel, estimatedInputTokens, maxTokens);
+
+      const cbResult = await checkCircuitBreaker(serviceSupabase, user.id, estCost, tier);
+      if (!cbResult.allowed) {
+        const errorKey = cbResult.reason === 'global_cap' ? 'global_cap' : 'user_cap';
+        const errorMessage = tier === 'free' && cbResult.reason === 'user_cap'
+          ? KA_ERROR_MESSAGES.free_tier_limit
+          : KA_ERROR_MESSAGES[errorKey];
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'RATE_LIMITED',
+              message: errorMessage,
+              message_tl: errorMessage,
+            },
+          },
+          { status: 429 }
+        );
+      }
+    }
+
+    // --- Prompt Assembly ---
+    const systemPrompt = assembleSystemPrompt({
+      feature: feature as KAFeature,
+      userContext,
+    });
+
+    // --- Conversation History ---
     const { data: history } = await supabase
       .from('ka_conversations')
       .select('role, content')
       .eq('user_id', user.id)
       .is('deleted_at', null)
       .order('created_at', { ascending: true })
-      .limit(20)
+      .limit(20);
 
+    // Save user message
     await supabase.from('ka_conversations').insert({
       user_id: user.id,
       role: 'user',
-      content: message.trim(),
+      content: sanitizedInput.trim(),
       domain: 'general',
-    })
+    });
 
-    // NOTE: Replace this with your own Anthropic API key for production use.
-    // Currently using Emergent Universal Key via the FastAPI backend.
-    // This Next.js route is a fallback — the primary endpoint is handled by FastAPI.
-    const apiKey = process.env.ANTHROPIC_API_KEY
-    if (!apiKey || apiKey === 'your-anthropic-api-key-here') {
-      const fallback =
-        'Sandali lang po — ang ANTHROPIC_API_KEY ay hindi pa na-configure. I-add mo sa .env.local file para ma-activate si Kai!'
-      await supabase.from('ka_conversations').insert({
-        user_id: user.id,
-        role: 'assistant',
-        content: fallback,
-        domain: 'general',
-      })
-      return NextResponse.json({ success: true, data: { message: fallback } })
-    }
-
-    const anthropic = new Anthropic({ apiKey })
+    // --- Claude API Call ---
+    const anthropic = new Anthropic({ apiKey });
 
     const contextMessages: Anthropic.MessageParam[] = [
-      ...(history || []).map((m: { role: string; content: string }) => ({
+      ...(history ?? []).map((m: { role: string; content: string }) => ({
         role: m.role as 'user' | 'assistant',
         content: m.content,
       })),
-      { role: 'user' as const, content: message.trim() },
-    ]
+      { role: 'user' as const, content: sanitizedInput.trim() },
+    ];
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 512,
-      system: KA_SYSTEM_PROMPT,
+      model: selectedModel,
+      max_tokens: maxTokens,
+      system: systemPrompt,
       messages: contextMessages,
-    })
+    });
 
-    const kaiResponse =
+    // --- Extract Response ---
+    const rawResponse =
       response.content[0].type === 'text'
         ? response.content[0].text
-        : 'Pasensya na po, may problema. Subukan muli.'
+        : KA_ERROR_MESSAGES.api_error;
 
+    // --- Output Guardrails ---
+    const filteredResponse = filterOutput(rawResponse);
+    const finalResponse = applyBIRDisclaimer(filteredResponse, 'chat');
+
+    // --- Record Spend ---
+    if (serviceSupabase) {
+      const actualCost = calculateActualCost(
+        selectedModel,
+        response.usage.input_tokens,
+        response.usage.output_tokens
+      );
+      await recordSpend(serviceSupabase, user.id, actualCost, feature as KAFeature);
+    }
+
+    // --- Save Assistant Response ---
     await supabase.from('ka_conversations').insert({
       user_id: user.id,
       role: 'assistant',
-      content: kaiResponse,
+      content: finalResponse,
       domain: 'general',
-    })
+    });
 
-    return NextResponse.json({ success: true, data: { message: kaiResponse } })
+    return NextResponse.json({ success: true, data: { message: finalResponse } });
   } catch (error: unknown) {
-    console.error('Chat API error:', error)
+    console.error('Chat API error:', error);
     return NextResponse.json(
       {
         success: false,
         error: {
           code: 'SERVER_ERROR',
-          message: 'Something went wrong',
-          message_tl: 'May nangyaring mali. Pakiulit ulit.',
+          message: KA_ERROR_MESSAGES.api_error,
+          message_tl: KA_ERROR_MESSAGES.api_error,
         },
       },
       { status: 500 }
-    )
+    );
   }
 }
