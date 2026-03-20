@@ -8,13 +8,20 @@
 
 | Item | Choice | Why |
 |------|--------|-----|
-| Framework | Next.js 14 App Router | Server components reduce client bundle; App Router enables layouts and streaming |
+| Framework | Next.js 16 App Router | Server components reduce client bundle; App Router enables layouts and streaming |
 | Language | TypeScript (strict mode) | Type safety critical for financial data |
 | Styling | Tailwind CSS only | No CSS modules, no styled-components |
 | UI Components | Shadcn/UI | Composable, accessible, ships zero unused CSS. No MUI or Bootstrap. |
 | PWA | next-pwa | Offline support for Morning Briefing cache |
 | Data Fetching | TanStack Query + Persister | Offline-first caching; queued mutations sync when connectivity returns. Critical for intermittent 4G users. |
 | State | React state + Supabase Realtime | No Redux; keep it simple |
+
+**Architecture:** All API routes in Next.js (`/app/api/`). No separate backend. No Python. No FastAPI.
+
+**Next.js 16 gotchas:**
+- Middleware uses `proxy.ts` with `export async function proxy()` (NOT `middleware.ts`)
+- React 19 controlled inputs bug: use `useRef` + `onClick` for forms, not `onChange`/`onSubmit`
+- App code lives in `/frontend/src/`
 
 **File/folder conventions:**
 ```

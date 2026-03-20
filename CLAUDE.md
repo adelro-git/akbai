@@ -2,7 +2,7 @@
 
 ## What Is AKBai
 Mobile-first PWA AI business partner for Filipino MSMEs. Solo founder (Anton), 10–15 hrs/sprint.
-Current phase: 0A (Legal Foundation). No application code yet.
+Current phase: 0A — Scaffold complete, Build 0 next.
 
 ## Master Brief
 For full product context, read: `AKBAI_MASTER_BRIEF.md` (root)
@@ -10,7 +10,7 @@ For full product context, read: `AKBAI_MASTER_BRIEF.md` (root)
 ## Shared Context (read when relevant to the task)
 These files ground every skill and command:
 - `akbai-delivery/shared/project-context.md` — Product overview, phases, personas, constraints
-- `akbai-delivery/shared/tech-stack.md` — Canonical stack (Next.js 14, Supabase, Claude API, Xendit)
+- `akbai-delivery/shared/tech-stack.md` — Canonical stack (Next.js 16, Supabase, Claude API, Xendit)
 - `akbai-delivery/shared/gap-registry.md` — 29 gaps, 10 CRITICAL hard gates
 - `akbai-delivery/shared/glossary.md` — Product, business, technical, Taglish terms
 - `akbai-delivery/shared/brand-context.md` — Brand identity, voice pillars, colors, typography
@@ -77,10 +77,21 @@ decision, or discovering something that changes how we work), UPDATE the relevan
 - For architecture-decisions.md: append new ADR entries, don't modify existing ones
 - When uncertain whether to update, ask Anton: "Should I update [file] with [learning]?"
 
+## Architecture
+- **App code:** `/frontend/src/` — Next.js 16 App Router, TypeScript strict, React 19
+- **API routes:** `/frontend/src/app/api/` — All Claude API calls server-side via `@anthropic-ai/sdk`
+- **No separate backend.** No Python. No FastAPI. Everything runs in Next.js.
+- **Middleware:** `proxy.ts` with `export async function proxy()` (Next.js 16 convention, NOT `middleware.ts`)
+- **Forms:** Use `useRef` + `onClick` (React 19 controlled input bug — `onChange`/`onSubmit` unreliable)
+- **Money:** Integers in centavos (₱34.50 = 3450). Display conversion at UI layer only.
+
 ## Key Paths
 - Project root: `/home/user/akbai/`
+- App code: `/home/user/akbai/frontend/src/`
 - Plugin root: `/home/user/akbai/akbai-delivery/`
 - Shared context: `/home/user/akbai/akbai-delivery/shared/`
 - Skills: `/home/user/akbai/akbai-delivery/skills/`
 - Commands: `/home/user/akbai/.claude/commands/`
+- Migrations: `/home/user/akbai/frontend/supabase/migrations/`
 - Master brief: `/home/user/akbai/AKBAI_MASTER_BRIEF.md`
+- Handover: `/home/user/akbai/HANDOVER.md`
