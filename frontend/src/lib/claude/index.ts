@@ -6,6 +6,8 @@ export { sanitizeInput, applyBIRDisclaimer, filterOutput } from './guardrails';
 export { checkCircuitBreaker, recordSpend } from './circuit-breaker';
 export { estimateCost, calculateActualCost } from './cost-estimator';
 export { KA_ERROR_MESSAGES } from './errors';
+export { ChatRequestSchema } from './schemas';
+export type { ChatRequest } from './schemas';
 export type { KAErrorCode } from './errors';
 export type {
   UserTier,
