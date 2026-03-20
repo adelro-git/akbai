@@ -1,7 +1,7 @@
 # HANDOVER.md — AKBai Comprehensive Build Handover
 
-> Consolidated handover document combining the pre-build scaffold template (main branch) with the completed Emergent build output (akbai-app-dev branch).
-> **Last updated:** 2026-03-19 | **Owner:** Anton del Rosario
+> Consolidated handover document. Emergent platform migration completed 2026-03-20.
+> **Last updated:** 2026-03-20 | **Owner:** Anton del Rosario
 
 ---
 
@@ -11,11 +11,11 @@
 
 | Field | Value |
 |-------|-------|
-| Production URL | Not yet deployed to production (Emergent local dev only) |
+| Production URL | Not yet deployed to production |
 | Supabase Project URL | `https://naxjmwjrhzenjqburejl.supabase.co` |
 | Supabase Project ID | `naxjmwjrhzenjqburejl` |
 | Git repository | `https://github.com/adelro-git/akbai` |
-| Branch strategy | `main` = plugin/brand/project assets; `akbai-app-dev` = Emergent application code |
+| Branch strategy | `main` = plugin/brand/project assets; `akbai-app-dev` = application code |
 | Node.js version | 20.x |
 | Next.js version | 16.2.0 (App Router, Turbopack) |
 
@@ -115,8 +115,8 @@ Already created via `001_initial_schema.sql`. All tables have RLS enabled.
 Browser (Mobile PWA)
   |
   |-- Static assets --> Next.js (port 3000)
-  |-- /api/chat --> FastAPI (port 8001) --> Claude Sonnet via emergentintegrations
-  +-- /api/* (other) --> FastAPI (port 8001) --> proxies to Next.js (port 3000)
+  |-- /api/chat --> Next.js API route --> Claude Sonnet via @anthropic-ai/sdk
+  +-- /api/* (other) --> Next.js API routes
 ```
 
 **Tech Stack:**
@@ -128,14 +128,14 @@ Browser (Mobile PWA)
 | Font | Plus Jakarta Sans (via next/font/google) |
 | Auth | Supabase Auth (Email OTP / Magic Link) |
 | Database | Supabase PostgreSQL with Row-Level Security |
-| AI | Claude `claude-sonnet-4-6` via `emergentintegrations` Python library |
-| Backend | FastAPI (Python) — handles AI chat + proxies other routes to Next.js |
+| AI | Claude `claude-sonnet-4-6` via `@anthropic-ai/sdk` (TypeScript) |
+| Backend | Next.js API routes (no separate backend) |
 | PWA | Custom `manifest.json` + `sw.js` |
 | Deployment Target | Vercel (frontend), or self-hosted |
 
 ### Key Architectural Decisions
 
-1. **AI chat runs on FastAPI (Python), not Next.js** — The Emergent LLM library (`emergentintegrations`) is Python-only. The FastAPI `/api/chat` endpoint handles auth, conversation history, and AI calls. Registered BEFORE the catch-all proxy route.
+1. **AI chat runs on Next.js API routes** — Uses `@anthropic-ai/sdk` (TypeScript). No separate Python backend needed.
 
 2. **Login form uses uncontrolled inputs (refs) instead of React state** — React 19 + Next.js 16 has issues with controlled inputs where `onChange`/`onInput` don't reliably update state. Uses `useRef` and `type="button"` + `onClick` (no `<form onSubmit>`).
 
@@ -143,20 +143,13 @@ Browser (Mobile PWA)
 
 4. **Route groups for page organization** — Pages organized under `(app)/` (authenticated) and `(auth)/` (public) route groups.
 
-### File Structure (akbai-app-dev branch)
+### File Structure
 
 ```
 /
-|-- backend/
-|   |-- .env                          # Backend env vars (Supabase, Emergent key)
-|   |-- server.py                     # FastAPI: /api/chat handler + proxy to Next.js
-|   |-- requirements.txt              # Python dependencies
-|   +-- tests/
-|       +-- test_akbai_api.py         # API tests
-|
 |-- frontend/
-|   |-- .env.local                    # Frontend env vars (Supabase keys)
-|   |-- next.config.js                # Next.js config (Turbopack, origins, images)
+|   |-- .env.local                    # Env vars (Supabase keys, Anthropic key)
+|   |-- next.config.js                # Next.js config (Turbopack, images)
 |   |-- tailwind.config.js            # Tailwind with AKBai brand colors
 |   |-- package.json                  # Node dependencies
 |   |-- tsconfig.json                 # TypeScript config
@@ -277,25 +270,7 @@ The following were explicitly excluded from the Emergent scaffold. Do not treat 
 
 1. **React 19 controlled inputs** — `<input value={state} onChange={...}>` does NOT reliably update state in Next.js 16 / React 19 production builds. Login form rewritten to use uncontrolled refs (`useRef`) + `type="button"` + `onClick`. Apply same pattern for any new forms.
 
-2. **`emergentintegrations` is Emergent-only** — Works only with the Emergent Universal Key inside the Emergent platform. For production, replace with the official `anthropic` Python SDK:
-   ```python
-   # Replace this (Emergent):
-   from emergentintegrations.llm.chat import LlmChat, UserMessage
-   chat = LlmChat(api_key=key, session_id=sid, system_message=prompt)
-   chat.with_model("anthropic", "claude-sonnet-4-6")
-   response = await chat.send_message(UserMessage(text=msg))
-
-   # With this (official Anthropic SDK):
-   import anthropic
-   client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-   response = client.messages.create(
-       model="claude-sonnet-4-6",
-       max_tokens=512,
-       system=system_prompt,
-       messages=[{"role": "user", "content": msg}]
-   )
-   kai_response = response.content[0].text
-   ```
+2. **Emergent migration complete** — `emergentintegrations` has been replaced with `@anthropic-ai/sdk` (TypeScript). All AI calls go through Next.js API routes using `ANTHROPIC_API_KEY` server-side.
 
 3. **Supabase SSR cookies** — Project ref is `naxjmwjrhzenjqburejl`. Cookies named `sb-naxjmwjrhzenjqburejl-auth-token` may be chunked (`.0`, `.1`, etc.) for large sessions. The FastAPI backend handles both formats.
 
@@ -303,7 +278,7 @@ The following were explicitly excluded from the Emergent scaffold. Do not treat 
 
 5. **Turbopack root** — `next.config.js` sets `turbopack.root` to `__dirname` to fix workspace root resolution issues.
 
-6. **`allowedDevOrigins`** — Emergent uses dynamic cluster hostnames. Remove from `next.config.js` for production.
+6. **`allowedDevOrigins`** — Already cleaned from `next.config.js`.
 
 ### Gap Registry Active Risk Items
 
@@ -345,32 +320,21 @@ The following were explicitly excluded from the Emergent scaffold. Do not treat 
 
 ---
 
-## Part 4 — Migration Guide: Emergent to Production
+## Part 4 — Migration Status: Emergent to Production
 
-### Step 1: Replace AI integration
+> **Migration completed 2026-03-20.** All Emergent dependencies removed.
 
-- Remove `emergentintegrations` from `requirements.txt`
-- Install `anthropic` (`pip install anthropic`)
-- Update `server.py` to use official Anthropic SDK (see code snippet in Part 3)
-- Set `ANTHROPIC_API_KEY` env var with your real key
+**What was done:**
+- Removed `emergentintegrations` — replaced with `@anthropic-ai/sdk` (TypeScript)
+- Removed FastAPI backend — all API routes run in Next.js
+- Removed legacy CRA files (`App.js`, `public/index.html`, `craco.config.js`)
+- Removed `@emergentbase/visual-edits` dependency
+- Removed Emergent badge, scripts, and metadata from HTML
+- Cleaned `.env` — removed `REACT_APP_BACKEND_URL`, `WDS_SOCKET_PORT`
+- Removed `allowedDevOrigins` from `next.config.js`
+- Removed `Archive/emergent-test-reports/`
 
-### Step 2: Deploy frontend to Vercel
-
-- Push the `/frontend` directory
-- Set env vars in Vercel dashboard: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`
-- `vercel.json` already included
-
-### Step 3: Deploy backend separately (if needed)
-
-- FastAPI backend handles `/api/chat` with AI + Supabase
-- Can be deployed to Railway, Render, Fly.io, etc.
-- OR move chat logic back into Next.js API route (`/api/chat/route.ts`) using the official Anthropic TypeScript SDK for single deployment
-
-### Step 4: Remove Emergent-specific config
-
-- Remove `allowedDevOrigins` from `next.config.js`
-- Remove `MONGO_URL`, `DB_NAME` from backend `.env`
-- Remove the FastAPI proxy catch-all if consolidating into Next.js
+**Deployment:** Deploy to Vercel with env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`
 
 ---
 
@@ -525,22 +489,12 @@ Logo images loaded from GitHub: `https://raw.githubusercontent.com/adelro-git/ak
 ## Part 10 — Quick Start
 
 ```bash
-# Frontend (from akbai-app-dev branch)
 cd frontend
-yarn install
-yarn dev  # Starts on port 3000
-
-# Backend (from akbai-app-dev branch)
-cd backend
-pip install -r requirements.txt
-uvicorn server:app --host 0.0.0.0 --port 8001 --reload
-
-# Open http://localhost:3000
+npm install
+npm run dev  # Starts on http://localhost:3000
 ```
 
-For the AI chat to work, you MUST either:
-1. Replace `EMERGENT_LLM_KEY` with a real Anthropic key, OR
-2. Swap `emergentintegrations` for the official `anthropic` SDK
+Ensure `.env.local` has: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and `ANTHROPIC_API_KEY`.
 
 ---
 
