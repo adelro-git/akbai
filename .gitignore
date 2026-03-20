@@ -24,5 +24,6 @@ build/
 *.log
 npm-debug.log*
 
-# Claude local config
-.claude/
+# Claude local config (keep commands/ tracked for slash commands)
+.claude/*
+!.claude/commands/
