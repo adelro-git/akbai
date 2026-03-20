@@ -2,11 +2,15 @@
 -- Separates tier/subscription data from user-writable users table.
 -- Users can SELECT their own subscription. Only service role can write.
 -- Run this in your Supabase SQL Editor: https://naxjmwjrhzenjqburejl.supabase.co
+--
+-- NOTE: This migration is safe to run regardless of whether migration 001
+-- has been applied to the live database. It does not reference feature_flags
+-- or deleted_at on the users table.
 
 -- ============================================================
 -- SUBSCRIPTIONS table
 -- ============================================================
-CREATE TABLE public.subscriptions (
+CREATE TABLE IF NOT EXISTS public.subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.users(id) UNIQUE,
   tier TEXT NOT NULL DEFAULT 'free',
@@ -24,13 +28,23 @@ CREATE TABLE public.subscriptions (
 -- ============================================================
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "subscriptions_select_own" ON public.subscriptions;
 CREATE POLICY "subscriptions_select_own"
   ON public.subscriptions FOR SELECT
   USING (auth.uid() = user_id);
 
 -- ============================================================
--- AUTO-UPDATE updated_at (reuse existing function)
+-- AUTO-UPDATE updated_at (reuse existing function if available)
 -- ============================================================
+CREATE OR REPLACE FUNCTION public.handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS on_subscriptions_updated ON public.subscriptions;
 CREATE TRIGGER on_subscriptions_updated
   BEFORE UPDATE ON public.subscriptions
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
@@ -74,42 +88,12 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ============================================================
--- PROTECT feature_flags from user-side manipulation
--- Only created if the feature_flags column exists on the users table.
--- Silently reverts any change to feature_flags on user-initiated updates.
--- Service role bypasses RLS entirely, so admin writes still work.
--- ============================================================
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'feature_flags'
-  ) THEN
-    CREATE OR REPLACE FUNCTION public.protect_feature_flags()
-    RETURNS TRIGGER AS $fn$
-    BEGIN
-      IF NEW.feature_flags IS DISTINCT FROM OLD.feature_flags THEN
-        NEW.feature_flags = OLD.feature_flags;
-      END IF;
-      RETURN NEW;
-    END;
-    $fn$ LANGUAGE plpgsql;
-
-    CREATE TRIGGER protect_feature_flags_trigger
-      BEFORE UPDATE ON public.users
-      FOR EACH ROW EXECUTE FUNCTION public.protect_feature_flags();
-  END IF;
-END;
-$$;
-
--- ============================================================
 -- BACKFILL: Create subscription rows for existing users
 -- All existing users default to 'free' tier (no paid users yet)
 -- ============================================================
 INSERT INTO public.subscriptions (user_id, tier)
 SELECT id, 'free'
 FROM public.users
-WHERE deleted_at IS NULL
 ON CONFLICT (user_id) DO NOTHING;
 
 -- ============================================================
