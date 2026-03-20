@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 215 64% 8%;
+    --foreground: 0 0% 100%;
+    --card: 215 60% 12%;
+    --card-foreground: 0 0% 100%;
+    --popover: 215 64% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 43 91% 50%;
+    --primary-foreground: 215 64% 8%;
+    --secondary: 215 50% 18%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 215 50% 18%;
+    --muted-foreground: 215 16% 59%;
+    --accent: 43 91% 50%;
+    --accent-foreground: 215 64% 8%;
+    --destructive: 0 85% 65%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 50% 20%;
+    --input: 215 50% 15%;
+    --ring: 43 91% 50%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-ink text-white;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input,
+  textarea {
+    @apply outline-none;
+  }
+}
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 12px);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .h-dvh {
+    height: 100dvh;
+  }
+
+  .min-h-dvh {
+    min-height: 100dvh;
+  }
+}

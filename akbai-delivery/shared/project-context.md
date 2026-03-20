@@ -39,7 +39,7 @@ AKBai is NOT a chatbot. It is a proactive AI business partner — "KA" (Katuwang
 
 ## 3. Tech Stack
 
-**Frontend:** Next.js 14 App Router, TypeScript (strict), Tailwind CSS + Shadcn/UI, TanStack Query + Persister (offline-first caching), mobile-first PWA
+**Frontend:** Next.js 16 App Router, TypeScript (strict), Tailwind CSS + Shadcn/UI, TanStack Query + Persister (offline-first caching), mobile-first PWA
 **Database:** Supabase — Postgres, Auth, Storage, Realtime, Edge Functions
 **AI:** Claude API — Haiku (OCR, classification, free tier), Sonnet (KA reasoning, Pro/Business tier)
 **Payments:** Xendit — subscription billing, GCash as primary payment method
@@ -137,8 +137,9 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> **[UPDATE THIS FIELD as you progress]**
-> Current: Phase 0A — Legal Foundation
+> Current: Phase 0A — Scaffold Complete, Build 0 Next
+> Emergent scaffold merged (auth, chat, PWA). FastAPI removed, consolidated to Next.js 16 API routes only.
+> Last updated: 2026-03-20
 
 ---
 
