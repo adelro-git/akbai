@@ -1,6 +1,6 @@
 # AKBai — Pre-Launch Gap Registry
 > Used by: project-manager, solutions-architect, fullstack-engineer, devops-engineer, security-compliance
-> Last updated: March 2026 | Source: Roadmap v14, Operations Playbook v7
+> Last updated: 2026-03-20 | Source: Roadmap v14, Operations Playbook v7
 > 29 total gaps across 5 categories. 10 CRITICAL items are hard gates — must resolve before any user-facing launch.
 
 ---
@@ -95,7 +95,7 @@
 
 These items are called out explicitly as design gates in Roadmap v14:
 
-1. **Build 0: AI Scope Definition & System Prompt Architecture** — HARD GATE before Build 1. Defines in-scope/out-of-scope, financial disclaimer, domain-expandable prompt structure with modular scope sections. Estimated effort: 2–3 days.
+1. **Build 0: AI Scope Definition & System Prompt Architecture** — ✅ RESOLVED 2026-03-20. Implemented `/lib/claude/` module: 6-layer prompt assembler, model routing (Haiku/Sonnet), guardrails (BIR disclaimer, input sanitizer, output filter), circuit breaker, cost estimator. 31 regression tests passing. Chat API refactored to use modular architecture.
 2. **Trust Recovery Pattern + Flag as Wrong** — Must be designed and built before Phase 1 launch. Includes persistent in-app disclaimer visible in chat UI. A product positioning itself as a financial tool must include a persistent in-app disclaimer. A business partner with no graceful error recovery will lose users permanently on first mistake.
 3. **Taglish Style Guide + Prompt Regression Tests** — Write formal Taglish style guide before Phase 1 build begins. Build a 20–30 case test library and run it every time the system prompt or Claude model is updated.
 4. **KA Error Acknowledgement Pattern** — Pre-drafted Taglish response for when KA surfaces incorrect data. Pattern: acknowledge clearly → take responsibility → explain what happened → offer concrete next step.

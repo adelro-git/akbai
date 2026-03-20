@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-003
-> Last updated: March 2026
+> Current highest: ADR-004
+> Last updated: 2026-03-20
 
 ---
 
@@ -12,6 +12,7 @@
 | ADR-001 | Next.js 14 App Router as frontend framework | Accepted | 2026-03-14 |
 | ADR-002 | Supabase as backend platform | Accepted | 2026-03-14 |
 | ADR-003 | Xendit as payment processor | Accepted | 2026-03-14 |
+| ADR-004 | Build 0 system prompt architecture | Accepted | 2026-03-20 |
 
 ---
 
@@ -98,3 +99,39 @@ Use Xendit for all payment processing. GCash as the primary payment method, with
 - Xendit SDK has good Node.js support — integrates cleanly with Next.js API routes
 
 **Review Trigger:** If Stripe launches full GCash support in PH, re-evaluate. Stripe's developer experience is superior.
+
+---
+
+## ADR-004: Build 0 System Prompt Architecture
+
+**Status:** Accepted
+**Date:** 2026-03-20
+
+**Context:**
+AKBai's AI partner (KA/Kai) needs a modular prompt system that supports 6 features (general chat, receipt scanning, morning briefing, reply drafting, expense classification, intent classification), 3 user tiers with different model routing, guardrails (BIR disclaimer, injection defense, output filtering), and a circuit breaker for cost control. The existing `/api/chat/route.ts` had a hardcoded inline system prompt, always used Sonnet, and had no guardrails. Every subsequent build (1–8) depends on this foundation.
+
+**Decision:**
+Create a `/lib/claude/` module with 6-layer prompt assembly, model routing, guardrails pipeline, and circuit breaker. Structure:
+
+- **6-layer prompt assembly** (`assemble.ts`): Core Persona → Domain Scopes → Feature Context → User Context (interpolated at runtime). Conversation history and current message are passed in the `messages` array, not the system prompt.
+- **Model routing** (`model-router.ts`): Haiku (`claude-haiku-4-5-20251001`) for free tier and extraction tasks (resibo_scanner, classify_expense, classify_intent). Sonnet (`claude-sonnet-4-6`) for pro/business reasoning tasks (general_chat, morning_briefing, reply_drafter).
+- **Guardrails pipeline** (`guardrails.ts`): Input sanitization (7 injection patterns, detect-and-log, never reject) → Claude API call → Output filtering (7 leakage patterns) → BIR disclaimer (17 trigger patterns, dedup check).
+- **Circuit breaker** (`circuit-breaker.ts`): Daily spend caps ($5 global, $0.50/user), free tier 10-query/day limit. Uses `daily_api_spend` table with `increment_daily_spend` RPC for atomic upsert. Asia/Manila timezone for date boundaries.
+- **Domain-expandable design**: Modular scope sections (`[TAX_SCOPE]`, `[FINANCIAL_SCOPE]`, `[COMMUNICATION_SCOPE]`) so Phase 4+ domains (Marketing, HR, Inventory) can be added as new scope entries without rewriting the assembler.
+
+**Alternatives Considered:**
+- **Single monolithic system prompt:** Simpler initially but impossible to maintain across 6+ features. No way to route models or apply feature-specific guardrails.
+- **LangChain/LlamaIndex orchestration:** Adds heavy dependencies (~50MB+) for functionality we can implement in ~500 lines. Solo founder can't maintain framework upgrades alongside product development.
+- **Prompt stored in database:** Enables runtime editing but adds latency (DB read per request), complicates versioning, and is premature — prompt changes are infrequent at this stage.
+- **Middleware-based guardrails (separate service):** Better separation of concerns but adds a network hop, a second deployment target, and operational complexity. Inline guardrails in the same module are sufficient for current scale.
+
+**Consequences:**
+- All 6 features share the same core persona and guardrails — consistency enforced architecturally
+- Model routing saves ~80% on API costs for extraction tasks (Haiku vs Sonnet)
+- Circuit breaker prevents runaway costs — hard cap at $5/day global, $0.50/day per user
+- Free tier is sustainably limited to 10 queries/day without complex rate limiting infrastructure
+- 31 regression tests validate prompt assembly, routing, guardrails, and circuit breaker
+- Adding a new feature requires: one entry in `features.ts`, one entry in `DEFAULT_SCOPES`, one entry in `SONNET_FEATURES` (if applicable)
+- Adding a new domain scope requires: one entry in `scopes.ts`, update relevant feature defaults in `DEFAULT_SCOPES`
+
+**Review Trigger:** If prompt complexity exceeds ~20KB assembled or feature count exceeds 12, evaluate moving to a prompt registry with versioning and A/B testing support.
