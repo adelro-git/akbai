@@ -76,6 +76,18 @@
 
 ---
 
+## Category F — Security Audit (March 2026)
+> Source: External security audit mapping Supabase + AI app vulnerabilities to AKBai's architecture
+
+| # | Gap | Severity | Status | Action |
+|---|-----|----------|--------|--------|
+| F1 | Tier stored on user-writable table | **CRITICAL** | ✅ RESOLVED 2026-03-20 | Created `subscriptions` table with SELECT-only RLS. Tier read from subscriptions, not `users.feature_flags`. Added `protect_feature_flags()` trigger to prevent user-side manipulation. |
+| F2 | No IP-based rate limiting | MEDIUM | ✅ RESOLVED 2026-03-20 | In-memory sliding window rate limiter in `proxy.ts` for `/api/*` routes (20 req/min per IP). Cloudflare WAF planned for Month 7+. |
+| F3 | API keys exposed on frontend | INFO | ✅ CONFIRMED 2026-03-20 | Audit confirmed all API keys are server-side only. No action needed — maintain boundary. |
+| F4 | No external hard budget cap on Anthropic | MEDIUM | ✅ RESOLVED 2026-03-20 | Circuit breaker changed to fail-closed (503 if spend tracking unavailable). Anton to set $150/month hard cap in Anthropic Console. |
+
+---
+
 ## Gap Registry Summary
 
 | Category | CRITICAL | IMPORTANT | PLAN | Total |
@@ -85,9 +97,10 @@
 | C — Business Logic | 0 | 2 | 1 | 3 |
 | D — Operational (Playbook) | 3 | 6 | 2 | 11 |
 | E — Pre-Build Checklist (v14) | 2 | 1 | 0 | 3 |
-| **TOTAL** | **10** | **16** | **3** | **29** |
+| F — Security Audit (Mar 2026) | 1 | 2 | 0 | 3 |
+| **TOTAL** | **11** | **18** | **3** | **32** |
 
-**Rule:** All 10 CRITICAL gaps are hard gates. No Phase 1 build proceeds until these are resolved.
+**Rule:** All CRITICAL gaps are hard gates. No Phase 1 build proceeds until these are resolved.
 
 ---
 

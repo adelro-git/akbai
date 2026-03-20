@@ -91,12 +91,19 @@ export async function POST(req: NextRequest) {
 
     const { data: userData } = await supabase
       .from('users')
-      .select('display_name, feature_flags')
+      .select('display_name')
       .eq('id', user.id)
       .single();
 
-    const tier: UserTier =
-      (userData?.feature_flags as Record<string, unknown> | null)?.tier as UserTier ?? 'free';
+    // Read tier from subscriptions table (SELECT-only RLS — users cannot modify)
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('tier')
+      .eq('user_id', user.id)
+      .is('deleted_at', null)
+      .single();
+
+    const tier: UserTier = (subscription?.tier as UserTier) ?? 'free';
 
     const userContext: UserContext = {
       firstName: userData?.display_name ?? null,
@@ -118,35 +125,63 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    let serviceSupabase: ReturnType<typeof createServiceClient> | null = null;
+    // --- Circuit Breaker: Fail-Closed ---
+    // If spend tracking is unavailable, block AI requests rather than allowing unbounded spend.
+    let serviceSupabase: ReturnType<typeof createServiceClient>;
     try {
       serviceSupabase = createServiceClient();
     } catch {
-      console.warn('[Chat] Service role client unavailable — skipping circuit breaker');
+      console.error('[Chat] Service role client unavailable — blocking requests (fail-closed)');
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'SERVICE_UNAVAILABLE',
+            message: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+            message_tl: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+          },
+        },
+        { status: 503 }
+      );
     }
 
-    if (serviceSupabase) {
-      const estimatedInputTokens = 2000;
-      const estCost = estimateCost(selectedModel, estimatedInputTokens, maxTokens);
+    const estimatedInputTokens = 2000;
+    const estCost = estimateCost(selectedModel, estimatedInputTokens, maxTokens);
 
-      const cbResult = await checkCircuitBreaker(serviceSupabase, user.id, estCost, tier);
-      if (!cbResult.allowed) {
-        const errorKey = cbResult.reason === 'global_cap' ? 'global_cap' : 'user_cap';
-        const errorMessage = tier === 'free' && cbResult.reason === 'user_cap'
-          ? KA_ERROR_MESSAGES.free_tier_limit
-          : KA_ERROR_MESSAGES[errorKey];
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'RATE_LIMITED',
-              message: errorMessage,
-              message_tl: errorMessage,
-            },
+    let cbResult;
+    try {
+      cbResult = await checkCircuitBreaker(serviceSupabase, user.id, estCost, tier);
+    } catch (cbError) {
+      console.error('[Chat] Circuit breaker check failed — blocking requests (fail-closed)', cbError);
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'SERVICE_UNAVAILABLE',
+            message: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+            message_tl: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
           },
-          { status: 429 }
-        );
-      }
+        },
+        { status: 503 }
+      );
+    }
+
+    if (!cbResult.allowed) {
+      const errorKey = cbResult.reason === 'global_cap' ? 'global_cap' : 'user_cap';
+      const errorMessage = tier === 'free' && cbResult.reason === 'user_cap'
+        ? KA_ERROR_MESSAGES.free_tier_limit
+        : KA_ERROR_MESSAGES[errorKey];
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'RATE_LIMITED',
+            message: errorMessage,
+            message_tl: errorMessage,
+          },
+        },
+        { status: 429 }
+      );
     }
 
     // --- Prompt Assembly ---
@@ -201,13 +236,16 @@ export async function POST(req: NextRequest) {
     const finalResponse = applyBIRDisclaimer(filteredResponse, 'chat');
 
     // --- Record Spend ---
-    if (serviceSupabase) {
+    // Failure to record spend should log but not block the response (API call already succeeded)
+    try {
       const actualCost = calculateActualCost(
         selectedModel,
         response.usage.input_tokens,
         response.usage.output_tokens
       );
       await recordSpend(serviceSupabase, user.id, actualCost, feature as KAFeature);
+    } catch (spendError) {
+      console.error('[Chat] Failed to record spend — API call succeeded but cost not tracked', spendError);
     }
 
     // --- Save Assistant Response ---

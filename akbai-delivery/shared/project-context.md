@@ -152,6 +152,15 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - Refactored `/api/chat/route.ts` with Zod validation + full guardrails pipeline
   - Vitest setup with 31 regression tests (all passing)
 
+- **Security Hardening** (2026-03-20): Pre-Build 1 security audit response
+  - `subscriptions` table with SELECT-only RLS — tier isolated from user-writable data
+  - `protect_feature_flags()` trigger prevents user-side tier manipulation
+  - `set_user_tier()` RPC for admin/webhook tier management
+  - Fail-closed circuit breaker — 503 if spend tracking unavailable (was fail-open)
+  - IP-based rate limiting in `proxy.ts` (20 req/min per IP for `/api/*`)
+  - Security audit gaps tracked in gap-registry.md Category F (F1-F4, all resolved)
+  - ADR-005 documenting security architecture decisions
+
 ---
 
 ## 7. Unit Economics (Financial Model v5)

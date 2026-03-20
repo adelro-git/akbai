@@ -13,6 +13,8 @@ export const KA_ERROR_MESSAGES = {
     'Sandali lang po — may configuration issue. Inaayos na namin.',
   trust_recovery:
     'Ay, mukhang may mali sa sagot ko. Pasensya na — puwede mo i-flag para ma-review namin. Anong specific na mali?',
+  circuit_breaker_unavailable:
+    'Pasensya na, may maintenance kami ngayon. Subukan mo ulit in a few minutes.',
 } as const;
 
 export type KAErrorCode = keyof typeof KA_ERROR_MESSAGES;
