@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Migration SQL enables RLS on bir_deadlines table",
+      "passed": true,
+      "evidence": "002_add_bir_deadlines.sql line 31: ALTER TABLE bir_deadlines ENABLE ROW LEVEL SECURITY; followed by three RLS policies"
+    },
+    {
+      "text": "RLS policies scope to auth.uid() = user_id",
+      "passed": true,
+      "evidence": "Lines 34-47: Three RLS policies (SELECT, INSERT, UPDATE) all use USING (auth.uid() = user_id) or WITH CHECK (auth.uid() = user_id)"
+    },
+    {
+      "text": "Table includes deleted_at column and soft-delete pattern",
+      "passed": true,
+      "evidence": "002_add_bir_deadlines.sql line 18: deleted_at TIMESTAMPTZ column present. RLS policies filter: WHERE deleted_at IS NULL"
+    },
+    {
+      "text": "API route includes auth check and user-scoped query",
+      "passed": true,
+      "evidence": "route.ts lines 10-20: getUser() auth check. Lines 24-29: query filters .eq('user_id', user.id).is('deleted_at', null)"
+    },
+    {
+      "text": "DeadlineCard uses conditional color: amber/honey for 7-day warning, red for 3-day urgent",
+      "passed": true,
+      "evidence": "deadline-card.tsx lines 32-37: daysRemaining <= 3 sets red colors, daysRemaining <= 7 sets amber colors"
+    },
+    {
+      "text": "User-facing text contains Taglish",
+      "passed": true,
+      "evidence": "page.tsx line 33: 'Walang BIR deadlines para sa iyo ngayon. Relax, ika'y updated!'"
+    },
+    {
+      "text": "Page is a Server Component, DeadlineCard is appropriately split",
+      "passed": true,
+      "evidence": "page.tsx has no 'use client' directive, uses async getUser() and server-side query. deadline-card.tsx has 'use client' for interactivity"
+    },
+    {
+      "text": "Mobile-first responsive design (base styles for mobile, sm:/md: for larger)",
+      "passed": true,
+      "evidence": "page.tsx uses flex flex-col gap-4/6 p-4 and deadline-card.tsx uses rounded-xl p-4 min-h-touch; responsive utilities applied appropriately"
+    }
+  ]
+}

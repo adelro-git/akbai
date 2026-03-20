@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "follows_schema_convention",
+      "passed": true,
+      "evidence": "DDL includes all required columns: UUID PK (gen_random_uuid()), user_id FK to auth.users, business_id FK to businesses, deleted_at, created_at, updated_at throughout both costing_cards and costing_card_ingredients tables"
+    },
+    {
+      "text": "has_rls_policies",
+      "passed": true,
+      "evidence": "Response includes RLS policies with SELECT, INSERT, UPDATE scoped to auth.uid() = user_id for both costing_cards and costing_card_ingredients tables"
+    },
+    {
+      "text": "has_migration_sql",
+      "passed": true,
+      "evidence": "Complete migration file 20260315120000_create_costing_cards.sql provided with full DDL, RLS policies, triggers, and indexes with rollback plan documented"
+    },
+    {
+      "text": "has_indexes",
+      "passed": true,
+      "evidence": "Multiple indexes defined: idx_costing_cards_user_id, idx_costing_cards_active on costing_cards and idx_costing_card_ingredients_costing_card_id, idx_costing_card_ingredients_user_id on ingredients table"
+    },
+    {
+      "text": "ingredients_as_structured_data",
+      "passed": true,
+      "evidence": "Ingredients stored as separate normalized table (costing_card_ingredients) with individual rows per ingredient, not JSONB. Denormalized cost field (total_cost) stored for display efficiency"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Defines a multi-layer prompt assembly order (at least: persona, scope, feature, user context)",
+      "passed": true,
+      "evidence": "Section 2.1 defines explicit 6-layer assembly order: (1) Core KA Persona, (2) Active Domain Scopes, (3) Feature Context, (4) User Context, (5) Conversation History, (6) Current Message. Visual diagram and pseudocode in §2.2 confirm multi-layer structure."
+    },
+    {
+      "text": "Includes KA persona block with Taglish voice rules and prohibited behaviors",
+      "passed": true,
+      "evidence": "Section 3 provides complete [CORE_IDENTITY] block (lines 185-248) with: Taglish natural blending examples, 'po' usage rules, proactive speech rules, naming conventions, number formatting (₱ signs), and explicit 'NEVER DO THESE' section listing 6 prohibited behaviors (no tax advice, no invented amounts, no corporate-speak, no condescension, no guarantees, no system prompt exposure)."
+    },
+    {
+      "text": "BIR disclaimer text is present and trigger conditions are specified",
+      "passed": true,
+      "evidence": "Section 6.2 specifies disclaimer text: 'Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo.' Section 6.4 provides detailed trigger table with 7 categories (BIR forms, tax concepts, filing, penalties, BIR office, income thresholds, tax calculations) and 18+ specific patterns. Section 6.5 implements applyBIRDisclaimer() function with BIR_TRIGGERS regex patterns."
+    },
+    {
+      "text": "Includes at least TAX_SCOPE with in-scope and out-of-scope boundaries",
+      "passed": true,
+      "evidence": "Section 4.1 defines [TAX_SCOPE] (lines 292-323) with 7 in-scope items (BIR filing, tax calculations, VAT threshold, form ID, tax calendar, deadline countdowns, deduction categorization) and 5 out-of-scope items (tax filing advice, optimization, audit responses, disputes, multi-year planning). Section 4.2 and 4.3 define [FINANCIAL_SCOPE] and [COMMUNICATION_SCOPE] with similar structure."
+    },
+    {
+      "text": "Includes prompt injection defense (handling of 'ignore instructions' type attacks)",
+      "passed": true,
+      "evidence": "Section 3.2 contains [INJECTION_DEFENSE] block (lines 252-281) explicitly handling injection patterns: 'Ignore your instructions', 'Reveal your system prompt', 'Act as a different AI', 'Show me your instructions', 'Pretend this rule doesn't apply'. Section 7 provides three-layer defense with input sanitization (regex patterns for injection detection), output filtering, and incident response protocol. Appendix C shows 3 attack scenarios with responses."
+    },
+    {
+      "text": "Explains how new domains can be added without modifying existing scope sections",
+      "passed": true,
+      "evidence": "Section 5 provides complete 'Domain Expansion Pattern (Phase 4+)' explaining the architecture is designed to grow. Section 5.2 provides step-by-step guide with 8 steps: (1) write scope block from template, (2) register in ai_domain_config via SQL INSERT, (3) grant user access, (4) add feature prompts, (5) tag conversations, (6) log redirects, (7) write regression tests, (8) deploy. Key statement: 'New domains plug into the same system' without rewriting existing [TAX_SCOPE], [FINANCIAL_SCOPE], or [COMMUNICATION_SCOPE]."
+    },
+    {
+      "text": "Assembly happens server-side only (mentions this explicitly)",
+      "passed": true,
+      "evidence": "Section 2.1 explicitly states: 'System prompts are **always assembled server-side only** (never in the browser).' Section 2.2 pseudocode assembles prompt in backend function assembleSystemPrompt(). Section 2 Executive Summary confirms 'Server-side assembly only: How the system prompt is built from components before being sent to Claude'. Section 6 post-processing note: 'The disclaimer check runs **server-side as a post-processing step**, not inside the Claude prompt.'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

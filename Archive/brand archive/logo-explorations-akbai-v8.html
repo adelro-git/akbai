@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — Gold-Amber Colorway Variations v8</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);font-size:15px;padding:52px 28px 100px}
+.container{max-width:1040px;margin:0 auto}
+
+.page-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+h1{font-size:36px;font-weight:800;line-height:1.1;margin-bottom:8px}
+.sub{font-size:14px;color:var(--muted);max-width:600px;margin-bottom:52px;line-height:1.6}
+.divider{border:none;border-top:1px solid var(--dim);margin:52px 0}
+
+.dir-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.badge{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:2px 7px}
+.current-badge{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,180,0,.12);color:#FFB400;border:1px solid rgba(255,180,0,.28);border-radius:4px;padding:2px 8px}
+
+.dir-panels{display:grid;grid-template-columns:220px 1fr 300px;gap:1px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim);margin-bottom:14px}
+.panel{display:flex;align-items:center;justify-content:center;background:var(--ink);padding:32px}
+.panel-icon{min-height:180px}
+.panel-lockup{min-height:180px}
+.panel-info{background:var(--card);padding:28px;flex-direction:column;align-items:flex-start;justify-content:center;min-height:180px}
+.panel-info h3{font-size:16px;font-weight:800;margin-bottom:5px}
+.panel-info .meta{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.panel-info p{font-size:13px;color:var(--muted);line-height:1.65}
+
+.swatch-row{display:flex;align-items:center;gap:7px;margin-top:12px}
+.swatch{width:16px;height:16px;border-radius:50%;flex-shrink:0}
+.hex{font-size:10px;color:var(--muted);font-family:monospace;letter-spacing:.02em}
+
+.wm{font-weight:800;letter-spacing:-.01em;line-height:1;font-size:28px}
+.wh{color:#fff}
+.lockup{display:flex;align-items:center;gap:16px}
+
+/* strip */
+.strip{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim)}
+.strip-cell{background:var(--ink);display:flex;flex-direction:column;align-items:center;padding:24px 12px;gap:14px}
+.strip-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.5}
+
+@media(max-width:760px){
+  .dir-panels{grid-template-columns:1fr}
+  .strip{grid-template-columns:repeat(3,1fr)}
+  h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<!-- All gradient defs -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<defs>
+  <!-- 1. Sunlight — bright yellow-gold -->
+  <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FDE047"/>
+    <stop offset="100%" stop-color="#FBBF24"/>
+  </linearGradient>
+  <!-- 2. Classic Gold (current) -->
+  <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FFB400"/>
+    <stop offset="100%" stop-color="#F59E0B"/>
+  </linearGradient>
+  <!-- 3. Warm Honey -->
+  <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#F59E0B"/>
+    <stop offset="100%" stop-color="#D97706"/>
+  </linearGradient>
+  <!-- 4. Deep Amber -->
+  <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#D97706"/>
+    <stop offset="100%" stop-color="#B45309"/>
+  </linearGradient>
+  <!-- 5. Cognac — rich warm amber-orange -->
+  <linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#F97316"/>
+    <stop offset="100%" stop-color="#C2410C"/>
+  </linearGradient>
+  <!-- 6. Solid Gold — flat, no gradient -->
+  <linearGradient id="g6" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FFB400"/>
+    <stop offset="100%" stop-color="#FFB400"/>
+  </linearGradient>
+</defs>
+</svg>
+
+<div class="container">
+
+<div class="page-label">AKBai · Logo Explorations · v8 — Gold-Amber Colorway Study</div>
+<h1>Dialing the <span style="background:linear-gradient(135deg,#FDE047,#FFB400,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Gold</span></h1>
+<p class="sub">Six tones within the gold-amber family — from bright sunlight yellow through classic gold, warm honey, deep amber, cognac, and a flat single-color version. D4-E at 20° throughout.</p>
+
+
+<!-- ── 1. Sunlight ── -->
+<div class="dir-label">
+  <span class="badge" style="background:rgba(253,224,71,.10);color:#FDE047;border:1px solid rgba(253,224,71,.22)">1</span>
+  Sunlight
+</div>
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20,50,50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g1)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g1)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FDE047,#FBBF24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Tone 1 · Bright · Optimistic</div>
+    <h3>Sunlight</h3>
+    <p>The brightest end of the family — lemon-gold that reads joyful and high-energy. Light on dark backgrounds it almost glows. Youthful and expressive, but can feel less premium than deeper golds.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FDE047"></div>
+      <div class="swatch" style="background:#FBBF24"></div>
+      <span class="hex">#FDE047 → #FBBF24</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── 2. Classic Gold (current) ── -->
+<div class="dir-label">
+  <span class="badge" style="background:rgba(255,180,0,.10);color:#FFB400;border:1px solid rgba(255,180,0,.28)">2</span>
+  Classic Gold
+  <span class="current-badge">Current</span>
+</div>
+<div class="dir-panels" style="border-color:rgba(255,180,0,.30)">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20,50,50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g2)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g2)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FFB400,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info" style="background:#0f1f36">
+    <div class="meta">Tone 2 · Balanced · Warm</div>
+    <h3>Classic Gold</h3>
+    <p>The locked-in palette. A true medium gold — not too yellow, not too orange. Confident, warm, and distinct in the AI space. Reads as prosperity without being flashy.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FFB400"></div>
+      <div class="swatch" style="background:#F59E0B"></div>
+      <span class="hex">#FFB400 → #F59E0B</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── 3. Warm Honey ── -->
+<div class="dir-label">
+  <span class="badge" style="background:rgba(245,158,11,.10);color:#F59E0B;border:1px solid rgba(245,158,11,.22)">3</span>
+  Warm Honey
+</div>
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20,50,50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g3)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g3)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Tone 3 · Rich · Organic</div>
+    <h3>Warm Honey</h3>
+    <p>A step deeper — amber-gold that reads warm and grounded. Less "finance" and more "organic craft." Closer to the colour of raw honey. Still bright enough to pop on dark backgrounds.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#F59E0B"></div>
+      <div class="swatch" style="background:#D97706"></div>
+      <span class="hex">#F59E0B → #D97706</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── 4. Deep Amber ── -->
+<div class="dir-label">
+  <span class="badge" style="background:rgba(217,119,6,.10);color:#D97706;border:1px solid rgba(217,119,6,.22)">4</span>
+  Deep Amber
+</div>
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20,50,50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g4)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g4)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#D97706,#B45309);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Tone 4 · Deep · Premium</div>
+    <h3>Deep Amber</h3>
+    <p>The darkest readable gold — rich, weighty, premium. Closer to aged whiskey or kalamay. Very different mood from Sunlight. Strong for upmarket positioning but loses some of the warmth and energy of the lighter tones.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#D97706"></div>
+      <div class="swatch" style="background:#B45309"></div>
+      <span class="hex">#D97706 → #B45309</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── 5. Cognac ── -->
+<div class="dir-label">
+  <span class="badge" style="background:rgba(249,115,22,.10);color:#F97316;border:1px solid rgba(249,115,22,.22)">5</span>
+  Cognac
+</div>
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20,50,50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g5)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g5)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#F97316,#C2410C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Tone 5 · Bold · Energetic</div>
+    <h3>Cognac</h3>
+    <p>Amber pushed into orange-red territory. The most energetic of the family — high contrast, fiery, bold. Edges toward the Coral-Mango palette. Distinctly different personality from classic gold; more aggressive than warm.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#F97316"></div>
+      <div class="swatch" style="background:#C2410C"></div>
+      <span class="hex">#F97316 → #C2410C</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── 6. Solid Gold ── -->
+<div class="dir-label">
+  <span class="badge" style="background:rgba(255,180,0,.10);color:#FFB400;border:1px solid rgba(255,180,0,.22)">6</span>
+  Solid Gold — no gradient
+</div>
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20,50,50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="#FFB400" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="#FFB400" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="color:#FFB400">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Tone 6 · Pure · Iconic</div>
+    <h3>Solid Gold</h3>
+    <p>The Classic Gold colour (#FFB400) applied flat — no gradient. Surprisingly strong and confident. Without the gradient movement the mark reads cleaner and more iconic. Also the most versatile for print and embossing.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FFB400"></div>
+      <span class="hex">#FFB400 — flat</span>
+    </div>
+  </div>
+</div>
+
+
+<hr class="divider"/>
+
+
+<!-- Strip comparison -->
+<div style="font-size:13px;font-weight:700;margin-bottom:16px">All six at a glance</div>
+
+<div class="strip">
+  <div class="strip-cell">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g1)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="strip-label">Sunlight<br/><span style="color:#FDE047">#FDE047</span></div>
+  </div>
+  <div class="strip-cell" style="background:#0a1828">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g2)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="strip-label">Classic Gold ★<br/><span style="color:#FFB400">#FFB400</span></div>
+  </div>
+  <div class="strip-cell">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g3)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="strip-label">Warm Honey<br/><span style="color:#F59E0B">#F59E0B</span></div>
+  </div>
+  <div class="strip-cell">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g4)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="strip-label">Deep Amber<br/><span style="color:#D97706">#D97706</span></div>
+  </div>
+  <div class="strip-cell">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g5)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="strip-label">Cognac<br/><span style="color:#F97316">#F97316</span></div>
+  </div>
+  <div class="strip-cell">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="#FFB400" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="strip-label">Solid Gold<br/><span style="color:#FFB400">#FFB400 flat</span></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

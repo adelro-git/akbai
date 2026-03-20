@@ -1,0 +1,77 @@
+{
+  "name": "akbai-delivery",
+  "version": "0.2.0",
+  "description": "AKBai product delivery plugin — 12 role-based AI skills and 15 slash commands for building, launching, and operating AKBai (Filipino MSME AI business partner).",
+  "author": "Anton del Rosario",
+  "skills_count": 12,
+  "commands_count": 15,
+  "commands_planned": 15,
+  "phase": "commands-complete",
+  "commands": {
+    "sprint": {
+      "skill": "project-manager",
+      "description": "Generate sprint plan with 3-5 tasks sized for 10-15 hrs"
+    },
+    "standup": {
+      "skill": "project-manager",
+      "description": "Generate weekly standup: GitHub comment + build-in-public post"
+    },
+    "gap-check": {
+      "skill": "project-manager",
+      "description": "Review gap registry status, flag overdue items, recommend priorities"
+    },
+    "retro": {
+      "skill": "project-manager",
+      "description": "Sprint retrospective with structured action items"
+    },
+    "build": {
+      "skill": "solutions-architect",
+      "chain": ["data-architect", "fullstack-engineer", "qa-engineer"],
+      "description": "End-to-end feature build: ADR → schema → code → tests"
+    },
+    "review": {
+      "skill": "fullstack-engineer",
+      "chain": ["security-compliance"],
+      "description": "Dual code review: quality + security with severity ratings"
+    },
+    "test": {
+      "skill": "qa-engineer",
+      "description": "Generate test suite (Jest/Playwright) for specified feature"
+    },
+    "deploy": {
+      "skill": "devops-engineer",
+      "description": "Pre-deployment checklist and Go/No-Go verdict"
+    },
+    "incident": {
+      "skill": "devops-engineer",
+      "chain": ["ops-lead"],
+      "description": "Emergency P0/P1/P2 incident response protocol"
+    },
+    "sense-check": {
+      "skill": "product-owner",
+      "chain": ["ops-lead"],
+      "description": "8-signal Sense Check Gate assessment for phase transitions"
+    },
+    "schema": {
+      "skill": "data-architect",
+      "description": "View, add, migrate, or validate Supabase schema"
+    },
+    "prompt": {
+      "skill": "ai-engineer",
+      "description": "Create or iterate Claude API system prompts with versioning"
+    },
+    "copy": {
+      "skill": "ux-designer",
+      "description": "Write Taglish UI copy with tone variants and persona checks"
+    },
+    "compliance": {
+      "skill": "security-compliance",
+      "description": "NPC, BIR, or security compliance audit with action items"
+    },
+    "metrics": {
+      "skill": "ops-lead",
+      "description": "MRR dashboard, trend analysis, highest-leverage recommendation"
+    }
+  },
+  "notes": "12 skills + 15 commands complete. All commands include shared context loading, step-by-step workflows, and cross-skill delegation."
+}

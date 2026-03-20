@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — D4 Iterations v6</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);font-size:15px;padding:52px 28px 100px}
+.container{max-width:1000px;margin:0 auto}
+
+.page-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+h1{font-size:36px;font-weight:800;line-height:1.1;margin-bottom:8px}
+.grad{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:14px;color:var(--muted);max-width:580px;margin-bottom:52px;line-height:1.6}
+.divider{border:none;border-top:1px solid var(--dim);margin:52px 0}
+
+.dir-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.badge{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,107,107,.10);color:#FF6B6B;border:1px solid rgba(255,107,107,.22);border-radius:4px;padding:2px 7px}
+
+.dir-panels{display:grid;grid-template-columns:220px 1fr 300px;gap:1px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim)}
+.panel{display:flex;align-items:center;justify-content:center;background:var(--ink);padding:32px}
+.panel-icon{min-height:180px}
+.panel-lockup{min-height:180px}
+.panel-info{background:var(--card);padding:28px;flex-direction:column;align-items:flex-start;justify-content:center;min-height:180px}
+.panel-info h3{font-size:16px;font-weight:800;margin-bottom:6px}
+.panel-info .meta{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.panel-info p{font-size:13px;color:var(--muted);line-height:1.65}
+
+.wm{font-weight:800;letter-spacing:-.01em;line-height:1;font-size:28px}
+.wh{color:#fff}
+.wg{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lockup{display:flex;align-items:center;gap:16px}
+
+.compare-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;background:var(--card);border:1px solid var(--dim);border-radius:16px;padding:28px}
+.compare-item{display:flex;flex-direction:column;align-items:center;gap:10px}
+.compare-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.compare-orig .compare-label{color:rgba(138,155,181,.50)}
+
+@media(max-width:760px){
+  .dir-panels{grid-template-columns:1fr}
+  h1{font-size:26px}
+  .compare-strip{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- Shared gradient defs -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<defs>
+  <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF6B6B"/>
+    <stop offset="100%" stop-color="#FF8E53"/>
+  </linearGradient>
+</defs>
+</svg>
+
+<div class="container">
+
+<div class="page-label">AKBai · Logo Explorations · v6 — D4 Further Iterations</div>
+<h1>Five More <span class="grad">D4 Directions</span></h1>
+<p class="sub">Pushing D4 Original across five untested dimensions — angle, depth, echo direction, form replacement, and vertical stagger. D4 Original included in the comparison strip for reference.</p>
+
+
+<!-- ══════════════════════════════════════════════
+     D4-E · THE LEAN
+══════════════════════════════════════════════ -->
+
+<div class="dir-label"><span class="badge">D4-E</span> The Lean</div>
+<div class="dir-panels" style="margin-bottom:52px">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(20, 50, 50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">D4-E · Dynamic · Forward</div>
+    <h3>The Lean</h3>
+    <p>D4 Original rotated 20° clockwise. The entire mark tilts forward — same weight, same two-arc relationship, but the energy shifts from a static gateway to something in motion. Tests whether D4 needs to stay vertical.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     D4-F · TRIPLE DEPTH
+══════════════════════════════════════════════ -->
+
+<div class="dir-label"><span class="badge">D4-F</span> Triple Depth</div>
+<div class="dir-panels" style="margin-bottom:52px">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Arc 1: largest, full gradient -->
+      <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <!-- Arc 2: medium, gradient fading -->
+      <path d="M 60,30 A 20,20 0 0 0 60,70" fill="none" stroke="url(#cg)" stroke-width="15" stroke-linecap="round" opacity="0.42"/>
+      <!-- Arc 3: smallest, white ghost -->
+      <path d="M 68,36 A 14,14 0 0 0 68,64" fill="none" stroke="white" stroke-width="13" stroke-linecap="round" opacity="0.15"/>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 0 60,70" fill="none" stroke="url(#cg)" stroke-width="15" stroke-linecap="round" opacity="0.42"/>
+        <path d="M 68,36 A 14,14 0 0 0 68,64" fill="none" stroke="white" stroke-width="13" stroke-linecap="round" opacity="0.15"/>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">D4-F · Layered · Spatial</div>
+    <h3>Triple Depth</h3>
+    <p>Three arcs all opening in the same direction, diminishing in size and opacity. Reads like a signal radiating outward — or depth receding into space. The third arc disappears into the background.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     D4-G · FLIP ECHO
+══════════════════════════════════════════════ -->
+
+<div class="dir-label"><span class="badge">D4-G</span> Flip Echo</div>
+<div class="dir-panels" style="margin-bottom:52px">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Main arc: opens right, curves left -->
+      <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <!-- Echo arc: same direction as main (both opening right, "((") — was ")" now flipped to "(") -->
+      <path d="M 62,30 A 20,20 0 0 0 62,70" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.30"/>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 62,30 A 20,20 0 0 0 62,70" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.30"/>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">D4-G · Momentum · Parallel</div>
+    <h3>Flip Echo</h3>
+    <p>The echo arc is flipped to open in the same direction as the main arc — two "((" moving together. The opposing relationship in D4 Original becomes a parallel one. Reads as momentum, velocity, or a doubled signal.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     D4-I · ARC + DOT
+══════════════════════════════════════════════ -->
+
+<div class="dir-label"><span class="badge">D4-I</span> Arc + Dot</div>
+<div class="dir-panels" style="margin-bottom:52px">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Main arc -->
+      <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <!-- Dot — replacing the echo arc, sits in the open space the arc addresses -->
+      <circle cx="70" cy="50" r="9" fill="url(#cg)"/>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <circle cx="70" cy="50" r="9" fill="url(#cg)"/>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">D4-I · Focused · Intentional</div>
+    <h3>Arc + Dot</h3>
+    <p>The echo arc replaced by a single weighted dot in the space the arc opens toward. The arc reaches; the dot is what it's reaching for. Cleaner hierarchy, stronger intentionality — the arc and its focal point.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     D4-M · THE STAGGER
+══════════════════════════════════════════════ -->
+
+<div class="dir-label"><span class="badge">D4-M</span> The Stagger</div>
+<div class="dir-panels" style="margin-bottom:52px">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Main arc: shifted up — center at (50, 42) -->
+      <path d="M 50,16 A 26,26 0 0 0 50,68" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <!-- Echo arc: shifted down — center at (62, 58) -->
+      <path d="M 62,38 A 20,20 0 0 1 62,78" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 50,16 A 26,26 0 0 0 50,68" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 62,38 A 20,20 0 0 1 62,78" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">D4-M · Diagonal · Rhythmic</div>
+    <h3>The Stagger</h3>
+    <p>Same arcs, different vertical anchors — main arc rides high, echo arc drops low. The mark has a diagonal rhythm reading top-left to bottom-right. The two forms feel like they're passing each other, mid-conversation.</p>
+  </div>
+</div>
+
+
+<hr class="divider"/>
+
+<!-- ══════════════════════════════════════════════
+     COMPARISON STRIP (incl. D4 Original)
+══════════════════════════════════════════════ -->
+
+<div style="font-size:13px;font-weight:700;margin-bottom:16px">All together — with D4 Original for reference</div>
+
+<div class="compare-strip">
+
+  <!-- D4 Original (reference) -->
+  <div class="compare-item compare-orig">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+    </svg>
+    <div class="compare-label" style="color:rgba(138,155,181,.45)">D4 Original<br/>↑ Reference</div>
+  </div>
+
+  <!-- D4-E -->
+  <div class="compare-item">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+    <div class="compare-label">D4-E<br/>The Lean</div>
+  </div>
+
+  <!-- D4-F -->
+  <div class="compare-item">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <path d="M 60,30 A 20,20 0 0 0 60,70" fill="none" stroke="url(#cg)" stroke-width="15" stroke-linecap="round" opacity="0.42"/>
+      <path d="M 68,36 A 14,14 0 0 0 68,64" fill="none" stroke="white" stroke-width="13" stroke-linecap="round" opacity="0.15"/>
+    </svg>
+    <div class="compare-label">D4-F<br/>Triple Depth</div>
+  </div>
+
+  <!-- D4-G -->
+  <div class="compare-item">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <path d="M 62,30 A 20,20 0 0 0 62,70" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.30"/>
+    </svg>
+    <div class="compare-label">D4-G<br/>Flip Echo</div>
+  </div>
+
+  <!-- D4-I -->
+  <div class="compare-item">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <circle cx="70" cy="50" r="9" fill="url(#cg)"/>
+    </svg>
+    <div class="compare-label">D4-I<br/>Arc + Dot</div>
+  </div>
+
+  <!-- D4-M -->
+  <div class="compare-item">
+    <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 50,16 A 26,26 0 0 0 50,68" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+      <path d="M 62,38 A 20,20 0 0 1 62,78" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+    </svg>
+    <div class="compare-label">D4-M<br/>The Stagger</div>
+  </div>
+
+</div>
+
+</div>
+</body>
+</html>

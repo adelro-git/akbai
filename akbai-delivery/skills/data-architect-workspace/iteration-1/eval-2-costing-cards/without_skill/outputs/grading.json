@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "follows_schema_convention",
+      "passed": true,
+      "evidence": "Schema includes UUID PK, user_id and business_id FKs, deleted_at, created_at, updated_at on costing_cards and costing_card_ingredients tables"
+    },
+    {
+      "text": "has_rls_policies",
+      "passed": true,
+      "evidence": "RLS policies defined for costing_cards: SELECT, INSERT, UPDATE scoped to auth.uid() = user_id on lines 236-254"
+    },
+    {
+      "text": "has_migration_sql",
+      "passed": false,
+      "evidence": "Response provides table structure and RLS policies but does not include complete migration SQL file with full DDL ready to copy-paste; no migration filename or integrated schema definition provided"
+    },
+    {
+      "text": "has_indexes",
+      "passed": true,
+      "evidence": "Indexes defined on costing_cards(user_id), costing_card_ingredients(costing_card_id) and costing_card_ingredients(user_id) on lines 102-103"
+    },
+    {
+      "text": "ingredients_as_structured_data",
+      "passed": true,
+      "evidence": "Ingredients stored as separate table (costing_card_ingredients) with rows for ingredient_name, quantity, unit, cost_per_unit, and currency field for structured tracking"
+    }
+  ]
+}

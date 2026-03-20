@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "xendit-webhook-incident",
+  "configuration": "without_skill",
+  "expectations": [
+    {"text": "Classifies as P0 severity (payment failure)", "passed": false, "evidence": "Labels severity as 'HIGH (payment processing blocked)' but does not use AKBai's P0/P1/P2 classification system."},
+    {"text": "Provides phone-accessible response actions (Vercel dashboard, Slack)", "passed": false, "evidence": "References Cloudflare Pages analytics and Supabase dashboard but doesn't frame actions as phone-accessible. Uses the wrong deployment platform (Cloudflare instead of Vercel)."},
+    {"text": "Recommends immediate rollback as first action", "passed": false, "evidence": "First action is 'Assess Impact Scope' and 'Status Page' rather than immediate rollback. Rollback appears much later in the guide. Does not recommend rolling back as immediate stabilization."},
+    {"text": "Explains impact: users pay but subscriptions don't activate", "passed": true, "evidence": "Scenario C covers 'Payments Processing but User Not Seeing Tier Access' and the webhook troubleshooting explains subscription activation flow."},
+    {"text": "Mentions replaying missed webhook events after recovery", "passed": false, "evidence": "No mention of replaying missed webhook events from Xendit. Only covers fixing the code/config and testing with a new payment."},
+    {"text": "Acknowledges solo-founder constraint (at day job, limited availability)", "passed": true, "evidence": "Title mentions 'Situation: Slack alerts during work meeting' and structures immediate actions for 'While in Meeting'. Author note mentions 'solo founder working business hours'."}
+  ]
+}

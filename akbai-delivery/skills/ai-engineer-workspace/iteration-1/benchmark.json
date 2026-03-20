@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "skill_name": "ai-engineer",
+    "skill_path": "/sessions/bold-dreamy-fermi/mnt/AKBai/akbai-delivery/skills/ai-engineer",
+    "executor_model": "claude-opus-4-6",
+    "analyzer_model": "claude-opus-4-6",
+    "timestamp": "2026-03-15T16:00:00Z",
+    "evals_run": [1, 2, 3],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "OCR Prompt",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 138.8,
+        "tokens": 72481,
+        "tool_calls": 13,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Structured JSON schema with required fields", "passed": true, "evidence": "Complete schema with store_name, date, items[], total_centavos, payment_method"},
+        {"text": "Amounts in centavos", "passed": true, "evidence": "Explicit centavos convention throughout"},
+        {"text": "Per-field confidence scoring", "passed": true, "evidence": "ConfidenceSchema with per-field 0.0-1.0 scores"},
+        {"text": "Edge case handling (crumpled, thermal, handwritten)", "passed": true, "evidence": "8 edge cases documented"},
+        {"text": "GCash/Maya handling", "passed": true, "evidence": "Dedicated GCash screenshot section"},
+        {"text": "Haiku model specified", "passed": true, "evidence": "claude-haiku-4-5 with cost justification"},
+        {"text": "Warnings array", "passed": true, "evidence": "warnings: string[] in schema"}
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "OCR Prompt",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.57,
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "time_seconds": 56.3,
+        "tokens": 42031,
+        "tool_calls": 6,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Structured JSON schema with required fields", "passed": false, "evidence": "Uses pesos with decimals, not centavos in field names"},
+        {"text": "Amounts in centavos", "passed": false, "evidence": "Uses peso decimals instead of integer centavos"},
+        {"text": "Per-field confidence scoring", "passed": false, "evidence": "Uses categorical flags array, not per-field numeric scores"},
+        {"text": "Edge case handling (crumpled, thermal, handwritten)", "passed": true, "evidence": "Covered in special cases section"},
+        {"text": "GCash/Maya handling", "passed": true, "evidence": "GCash section present"},
+        {"text": "Haiku model specified", "passed": true, "evidence": "claude-haiku-4-5 specified"},
+        {"text": "Warnings array", "passed": true, "evidence": "confidence_flags array present"}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "Build 0 Architecture",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 219.0,
+        "tokens": 77059,
+        "tool_calls": 17,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Multi-layer prompt assembly order", "passed": true, "evidence": "6-layer structure with visual diagrams and pseudocode"},
+        {"text": "KA persona with Taglish voice rules", "passed": true, "evidence": "Complete persona block with 6 prohibited behaviors"},
+        {"text": "BIR disclaimer with trigger conditions", "passed": true, "evidence": "7 trigger categories with 18+ regex patterns"},
+        {"text": "TAX_SCOPE with boundaries", "passed": true, "evidence": "7 in-scope and 5 out-of-scope items"},
+        {"text": "Prompt injection defense", "passed": true, "evidence": "3-layer strategy with examples"},
+        {"text": "Domain expansion without rewrite", "passed": true, "evidence": "8-step expansion process documented"},
+        {"text": "Server-side assembly explicit", "passed": true, "evidence": "Stated multiple times throughout"}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "Build 0 Architecture",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 190.7,
+        "tokens": 63619,
+        "tool_calls": 11,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Multi-layer prompt assembly order", "passed": true, "evidence": "5-layer structure defined"},
+        {"text": "KA persona with Taglish voice rules", "passed": true, "evidence": "Core persona block with voice pillars"},
+        {"text": "BIR disclaimer with trigger conditions", "passed": true, "evidence": "Disclaimer text present"},
+        {"text": "TAX_SCOPE with boundaries", "passed": true, "evidence": "In-scope and out-of-scope boundaries"},
+        {"text": "Prompt injection defense", "passed": true, "evidence": "5 attack vectors covered"},
+        {"text": "Domain expansion without rewrite", "passed": true, "evidence": "Expansion protocol documented"},
+        {"text": "Server-side assembly explicit", "passed": true, "evidence": "Stated in overview and checklist"}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "Morning Briefing Fix",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 74.1,
+        "tokens": 57276,
+        "tool_calls": 9,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Taglish output", "passed": true, "evidence": "Natural code-switching throughout examples"},
+        {"text": "Peso sign formatting", "passed": true, "evidence": "Consistent ₱ with thousands separators"},
+        {"text": "Personalized greeting with first name", "passed": true, "evidence": "Maria/name used naturally in greetings"},
+        {"text": "Graceful zero-transaction handling", "passed": true, "evidence": "Empathetic handling without shame"},
+        {"text": "Calm urgency on BIR deadlines", "passed": true, "evidence": "Heads up lang po pattern"},
+        {"text": "BIR disclaimer present", "passed": true, "evidence": "Disclaimer on all tax-related content"},
+        {"text": "Short message format", "passed": true, "evidence": "7-10 line card format, not dashboard dump"}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "Morning Briefing Fix",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 115.5,
+        "tokens": 44007,
+        "tool_calls": 10,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Taglish output", "passed": true, "evidence": "Filipino-English mix in all examples"},
+        {"text": "Peso sign formatting", "passed": true, "evidence": "₱ used consistently, no PHP/Php"},
+        {"text": "Personalized greeting with first name", "passed": true, "evidence": "Names in greetings across scenarios"},
+        {"text": "Graceful zero-transaction handling", "passed": true, "evidence": "Encouraging messaging without guilt"},
+        {"text": "Calm urgency on BIR deadlines", "passed": true, "evidence": "Graduated urgency with warmth"},
+        {"text": "BIR disclaimer present", "passed": true, "evidence": "Disclaimer at bottom of all examples"},
+        {"text": "Short message format", "passed": true, "evidence": "Conversational sentences, not label-value"}
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": 143.97, "stddev": 72.5, "min": 74.1, "max": 219.0},
+      "tokens": {"mean": 68939, "stddev": 10153, "min": 57276, "max": 77059}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.86, "stddev": 0.25, "min": 0.57, "max": 1.0},
+      "time_seconds": {"mean": 120.83, "stddev": 67.3, "min": 56.3, "max": 190.7},
+      "tokens": {"mean": 49886, "stddev": 11715, "min": 42031, "max": 63619}
+    },
+    "delta": {
+      "pass_rate": "+0.14",
+      "time_seconds": "+23.1",
+      "tokens": "+19053"
+    }
+  },
+  "notes": [
+    "Eval 1 (OCR Prompt) shows the strongest skill advantage: with_skill 100% vs without_skill 57%. The baseline failed on AKBai-specific conventions (centavos, per-field confidence) that are documented in the skill's reference files.",
+    "Evals 2 and 3 both pass 100% with and without skill. The without-skill versions had enough context in the prompt to produce correct outputs, but the with-skill versions used more tokens and time to produce more comprehensive, project-aligned outputs.",
+    "The skill adds ~23s average execution time and ~19K tokens but ensures project-specific conventions (centavos, confidence scoring rubric, BIR disclaimer patterns) are followed consistently.",
+    "The OCR eval is the strongest discriminator — project-specific financial conventions like centavos and per-field confidence scoring are only reliably produced with skill guidance."
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Output includes a structured JSON schema with store_name, date, items[], total_centavos, payment_method fields",
+      "passed": true,
+      "evidence": "resibo-scanner-prompt.md §2 (Output Schema) contains complete TypeScript/Zod schema (lines 201-259) with all required fields. Complete system prompt (lines 24-196) explicitly defines JSON structure with store_name, date, items[], total_centavos, payment_method fields in the REQUIRED OUTPUT FORMAT section."
+    },
+    {
+      "text": "Monetary amounts specified in centavos (not pesos with decimals)",
+      "passed": true,
+      "evidence": "resibo-scanner-prompt.md §4 (MONETARY AMOUNTS, lines 92-100) explicitly states: 'All monetary amounts must be in centavos (₱34.50 = 3450 centavos)' and includes conversion examples. Zod schema (line 244) validates total_centavos as 'z.number().int().nonnegative()'. README.md lines 42-43 reinforces: 'All Amounts in Centavos — Consistency across the platform. ₱34.50 = 3450 centavos.'"
+    },
+    {
+      "text": "Includes per-field confidence scoring (0.0–1.0)",
+      "passed": true,
+      "evidence": "resibo-scanner-prompt.md §3 (Confidence Scoring Rules, lines 356-388) includes full rubric with per-field scores for store_name, date, total, items. Zod schema defines ConfidenceSchema (lines 225-231) with individual fields scored 0.0-1.0. System prompt §7 (lines 125-138) specifies per-field and overall confidence calculation."
+    },
+    {
+      "text": "Mentions handling of crumpled receipts, thermal fade, and handwritten amounts",
+      "passed": true,
+      "evidence": "resibo-scanner-prompt.md §4 (Edge Cases & Handling) covers all three: 7a Crumpled (lines 393-401), 7c Handwritten Amounts (lines 413-422), 7d Thermal Paper Fade (lines 424-431). System prompt §SPECIAL CASES (lines 165-183) also addresses 'Crumpled/Faded Receipts' and 'Handwritten Amounts'. README.md lines 47-50 lists these as 8 edge cases in key design decisions."
+    },
+    {
+      "text": "Mentions GCash/Maya screenshot handling",
+      "passed": true,
+      "evidence": "resibo-scanner-prompt.md §2 (Complete System Prompt) lines 158-163 includes 'GCash/Maya Screenshots' special case section. §4 (Edge Cases) section 7e (lines 433-443) provides detailed handling strategy: 'Extract transaction details, Set payment_method to gcash/maya, Digital text typically high-confidence 0.9–1.0'. README.md line 50 lists 'GCash/Maya screenshots' as key edge case."
+    },
+    {
+      "text": "Specifies claude-haiku-4-5 as the model (not Sonnet)",
+      "passed": true,
+      "evidence": "resibo-scanner-prompt.md header (line 4): 'Model: claude-haiku-4-5 (Vision)'. System prompt API call pattern (lines 483-504) specifies 'model: claude-haiku-4-5'. README.md header (line 1): 'Model: claude-haiku-4-5 (Vision)'. §1 Key Design Decisions (lines 28-34) explicitly justifies 'Haiku, Not Sonnet' and shows cost calculation: Haiku ~₱0.16 vs Sonnet ~₱34.50."
+    },
+    {
+      "text": "Includes warnings array for edge case reporting",
+      "passed": true,
+      "evidence": "resibo-scanner-prompt.md §2 system prompt §8 WARNINGS (lines 140-149) defines 'warnings' as 'Human-readable list' with examples: 'Crumpled/folded receipt', 'Handwritten amount', 'Thermal paper fade', 'Partial text cutoff', 'Multiple receipts', 'Mixed languages', 'Date ambiguous', 'Low confidence scan'. Zod schema (line 252) validates: 'warnings: z.array(z.string()).default([])'. README.md lines 101-102 confirm 'warnings array is human-readable list for UX'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

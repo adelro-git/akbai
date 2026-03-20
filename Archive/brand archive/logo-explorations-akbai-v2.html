@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — Logo Explorations v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);font-size:15px;padding:52px 28px 100px}
+.container{max-width:1000px;margin:0 auto}
+
+/* Header */
+.page-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+h1{font-size:36px;font-weight:800;line-height:1.1;margin-bottom:8px}
+.grad{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:14px;color:var(--muted);max-width:560px;margin-bottom:52px;line-height:1.6}
+.divider{border:none;border-top:1px solid var(--dim);margin:56px 0}
+
+/* Direction layout */
+.dir{margin-bottom:32px}
+.dir-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+
+.dir-panels{display:grid;grid-template-columns:220px 1fr 300px;gap:1px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim)}
+.panel{display:flex;align-items:center;justify-content:center;background:var(--ink);padding:32px}
+.panel-icon{min-height:180px}
+.panel-lockup{min-height:180px}
+.panel-info{background:var(--card);padding:28px;flex-direction:column;align-items:flex-start;justify-content:center;min-height:180px}
+.panel-info h3{font-size:16px;font-weight:800;margin-bottom:6px}
+.panel-info .meta{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.panel-info p{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* Wordmark */
+.wm{font-weight:800;letter-spacing:-.01em;line-height:1;font-size:28px}
+.wh{color:#fff}
+.wg{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.wt{background:linear-gradient(135deg,#20C9A0,#0FB8D9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.wv{background:linear-gradient(135deg,#A78BFA,#818CF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lockup{display:flex;align-items:center;gap:16px}
+
+/* Size row */
+.sizes{display:flex;align-items:center;gap:24px;background:var(--card);border:1px solid var(--dim);border-radius:14px;padding:28px 32px}
+.sz{display:flex;flex-direction:column;align-items:center;gap:8px}
+.sz span{font-size:10px;color:var(--muted);font-weight:600}
+.size-note{flex:1;padding-left:20px;border-left:1px solid var(--dim);font-size:13px;color:var(--muted);line-height:1.6}
+
+/* Color moods at bottom */
+.moods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.mood{background:var(--card);border:1px solid var(--dim);border-radius:14px;overflow:hidden}
+.mood-display{background:var(--ink);display:flex;flex-direction:column;align-items:center;gap:16px;padding:32px}
+.mood-info{padding:16px 20px}
+.mood-info h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.mood-info p{font-size:12px;color:var(--muted);line-height:1.5}
+.swatch-row{display:flex;gap:8px;margin-top:8px}
+.swatch-dot{width:18px;height:18px;border-radius:50%}
+
+@media(max-width:760px){
+  .dir-panels{grid-template-columns:1fr}
+  .moods{grid-template-columns:1fr}
+  h1{font-size:26px}
+  .sizes{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<!-- Hidden SVG defs -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<defs>
+  <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#FF8E53"/>
+  </linearGradient>
+  <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#20C9A0"/><stop offset="100%" stop-color="#0FB8D9"/>
+  </linearGradient>
+  <linearGradient id="vg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#A78BFA"/><stop offset="100%" stop-color="#818CF8"/>
+  </linearGradient>
+  <!-- Gradient for filled square bg (D2) -->
+  <linearGradient id="sqg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#FF8E53"/>
+  </linearGradient>
+  <!-- Rounded rect clip for D2 -->
+  <clipPath id="rr24"><rect x="0" y="0" width="100" height="100" rx="24"/></clipPath>
+  <clipPath id="rr24sm"><rect x="0" y="0" width="68" height="68" rx="17"/></clipPath>
+</defs>
+</svg>
+
+<div class="container">
+
+<div class="page-label">AKBai · Logo Explorations · v2</div>
+<h1>Refined <span class="grad">Directions</span></h1>
+<p class="sub">Heavy geometric forms. One or two elements only. No literal body references. The gesture is implied through mass, curvature, and negative space — not depicted.</p>
+
+<!-- ══════════════════════════════════════════════
+     D1 — BOLD ARC (Heavy C)
+     A single thick continuous arc — the embrace with mass
+     ══════════════════════════════════════════════ -->
+<div class="dir">
+  <div class="dir-label">01 — The Heavy Arc</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!-- Single heavy arc. Center≈(47,50) r=30. Opens right. 270°. -->
+        <path d="M 68,23 A 30,30 0 1 0 68,77"
+              fill="none" stroke="url(#cg)" stroke-width="22" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 68,23 A 30,30 0 1 0 68,77"
+                fill="none" stroke="url(#cg)" stroke-width="22" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Heavy Arc</h3>
+      <div class="meta">Bold stroke · 1 element</div>
+      <p>One single form with real mass. The thick C-arc has enough weight to feel like a shape, not a line. The opening on the right creates natural tension — it suggests reach and enclosure simultaneously without depicting either. Scales cleanly because there's nothing to lose at small sizes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     D2 — NEGATIVE SPACE C
+     Gradient-filled square, dark C cutout reveals background
+     ══════════════════════════════════════════════ -->
+<div class="dir">
+  <div class="dir-label">02 — Negative Space</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100">
+        <!-- Gradient fill -->
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="url(#sqg)"/>
+        <!-- Dark overlay with C-shaped cutout using even-odd -->
+        <!-- C annulus: outer r=30 center(44,50), inner r=16 center(44,50) -->
+        <!-- Outer: M 67,29 A 30,30 0 1 0 67,71 (≈270° CCW arc) -->
+        <!-- Inner: L 53,63 A 16,16 0 0 1 53,37 Z (small CW arc back up) -->
+        <path fill-rule="evenodd" fill="#07101e" clip-path="url(#rr24)" d="
+          M -5,-5 L 105,-5 L 105,105 L -5,105 Z
+          M 67,29 A 30,30 0 1 0 67,71
+          L 54,63 A 16,16 0 0 1 54,37 Z
+        "/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="url(#sqg)"/>
+          <path fill-rule="evenodd" fill="#07101e" clip-path="url(#rr24)" d="
+            M -5,-5 L 105,-5 L 105,105 L -5,105 Z
+            M 67,29 A 30,30 0 1 0 67,71
+            L 54,63 A 16,16 0 0 1 54,37 Z
+          "/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Negative Space</h3>
+      <div class="meta">Filled form · Inverted · 1 element</div>
+      <p>The same C-shape as D1 but inverted — the gradient fills the square and the gesture is carved out of it as dark negative space. The mark is the absence, not the presence. More energetic and modern. The gradient square also works as a plain app icon slab when the C reads at small sizes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     D3 — THE CRESCENT
+     Filled solid crescent — mass and warmth without any line
+     ══════════════════════════════════════════════ -->
+<div class="dir">
+  <div class="dir-label">03 — The Crescent</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Filled crescent (C-shape opening right).
+          Outer circle center (42,50) r=33. Points at ±50° from center-right:
+            Upper: 42+33*cos(50°)=42+21.2=63.2, 50-33*sin(50°)=50-25.3=24.7 → (63,25)
+            Lower: (63,75)
+          Inner circle center (42,50) r=18. Same angles:
+            Upper: 42+18*cos(50°)=42+11.6=53.6, 50-18*sin(50°)=50-13.8=36.2 → (54,36)
+            Lower: (54,64)
+          Path: outer large CCW arc → line to inner → inner small CW arc → close
+        -->
+        <path d="
+          M 63,25
+          A 33,33 0 1 0 63,75
+          L 54,64
+          A 18,18 0 0 1 54,36
+          Z
+        " fill="url(#cg)"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 63,25 A 33,33 0 1 0 63,75 L 54,64 A 18,18 0 0 1 54,36 Z" fill="url(#cg)"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Crescent</h3>
+      <div class="meta">Filled shape · Solid mass · 1 element</div>
+      <p>A solid filled crescent — no stroke, no lines. Pure shape. The gradient runs through the form itself. This is heavier and more confident than a stroked arc. The crescent suggests embrace and enclosure while reading as a distinct, ownable symbol. Works as a standalone icon without any wordmark context.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     D4 — THE OPEN GATE
+     Two heavy arcs leaning inward — partnership without touching
+     ══════════════════════════════════════════════ -->
+<div class="dir">
+  <div class="dir-label">04 — The Open Gate</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Two heavy bracket-like arcs facing each other.
+          Left arc: like a "(" — opens right. Center(30,50) r=18, stroke 16.
+            Points: top(30,32) bottom(30,68), arc goes LEFT (full semicircle facing left, opening right).
+            M 30,32 A 18,18 0 0 0 30,68  (sweep=0 = CCW, small arc = the left-facing semicircle)
+          Right arc: like a ")" — opens left. Center(70,50) r=18, stroke 16.
+            M 70,32 A 18,18 0 0 1 70,68  (sweep=1 = CW = right-facing semicircle opening left)
+          But these would just be two parentheses.
+          Better: use a single arc for each that shows some curve angle, not a full semicircle.
+          Left: starts upper-right (42,28) curves left to lower-right (42,72). Arc goes leftward.
+          Right: starts upper-left (58,28) curves right to lower-left (58,72). Arc goes rightward.
+          These two arcs frame a gateway/opening in the center.
+        -->
+        <!-- Left arc: C-shape opening to center-right -->
+        <path d="M 50,24 A 26,26 0 0 0 50,76"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <!-- Right arc: reverse C, opening to center-left — offset right -->
+        <path d="M 60,30 A 20,20 0 0 1 60,70"
+              fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 50,24 A 26,26 0 0 0 50,76"
+                fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70"
+                fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Open Gate</h3>
+      <div class="meta">2 arcs · Layered weight · Shadow form</div>
+      <p>Two arcs of different weights facing the same direction — the bold coral arc is the AI presence, the ghost arc behind it is the user. The slight offset and opacity difference creates a layered depth without complexity. The two-form relationship is felt, not seen. Most abstract of the six.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     D5 — THE CONVERGENCE
+     Two thick strokes meeting at a shared peak — the moment of contact
+     ══════════════════════════════════════════════ -->
+<div class="dir">
+  <div class="dir-label">05 — The Convergence</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Two heavy curved strokes converging to a single shared point at top.
+          Left stroke: from (20,78) curves up to (50,20). Heavy coral.
+          Right stroke: from (80,78) curves up to (50,20). White, slightly thinner/ghost.
+          The convergence point at (50,20) is the contact — the akbay moment.
+        -->
+        <!-- Left — coral, dominant -->
+        <path d="M 22,78 Q 22,20 50,20"
+              fill="none" stroke="url(#cg)" stroke-width="18" stroke-linecap="round"/>
+        <!-- Right — white ghost, slightly offset for depth -->
+        <path d="M 78,78 Q 78,20 50,20"
+              fill="none" stroke="white" stroke-width="14" stroke-linecap="round" opacity="0.18"/>
+        <!-- Convergence point — the moment of contact -->
+        <circle cx="50" cy="20" r="7" fill="url(#cg)"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 22,78 Q 22,20 50,20" fill="none" stroke="url(#cg)" stroke-width="18" stroke-linecap="round"/>
+          <path d="M 78,78 Q 78,20 50,20" fill="none" stroke="white" stroke-width="14" stroke-linecap="round" opacity="0.18"/>
+          <circle cx="50" cy="20" r="7" fill="url(#cg)"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Convergence</h3>
+      <div class="meta">2 strokes + dot · Momentum</div>
+      <p>Two heavy curves rise from the base and meet at a single dot — the moment of contact. The coral arc is dominant and visible; the white arc is a ghost presence behind it. The dot at the apex is where the partnership is made real. The Maria Moment visualised as geometry: two things converging toward clarity.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     D6 — THE SWEEP
+     One asymmetric filled form — motion captured as mass
+     ══════════════════════════════════════════════ -->
+<div class="dir">
+  <div class="dir-label">06 — The Sweep</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          A single asymmetric teardrop-like filled form.
+          Wide at the base-left (origin of the reach), narrowing as it arcs up and over.
+          Built as a closed filled path — the width comes from the path itself, not stroke.
+          Outer edge: from (16,74) Q(10,28) (44,16) Q(72,8) (84,36)
+          Inner edge (narrow tail): from (84,44) Q(70,20) (44,26) Q(20,36) (30,70)
+          This creates a tadpole/teardrop form.
+        -->
+        <path d="
+          M 16,74
+          Q 8,28 44,16
+          Q 72,6 84,34
+          Q 90,48 82,60
+          Q 72,72 64,66
+          Q 50,58 36,64
+          Q 22,70 16,74
+          Z
+        " fill="url(#cg)" opacity="0.95"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="
+            M 16,74 Q 8,28 44,16 Q 72,6 84,34
+            Q 90,48 82,60 Q 72,72 64,66
+            Q 50,58 36,64 Q 22,70 16,74 Z
+          " fill="url(#cg)" opacity="0.95"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Sweep</h3>
+      <div class="meta">Filled path · Asymmetric · Motion</div>
+      <p>A single filled asymmetric form — wide at the origin, narrowing as it arcs over. The shape captures the sweeping motion of the akbay gesture as a body of mass rather than a line. No stroke, no outlines — pure filled gradient form. The most distinctly ownable of the six: nothing in Philippine tech looks like this.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SIZE TEST — D1 and D3 side by side
+     ══════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="page-label">Size Test — D1 (Arc) vs D3 (Crescent) at every scale</div>
+
+<div style="margin-bottom:12px">
+  <div class="sizes">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;min-width:60px">D1 Arc</div>
+    <div class="sz">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 68,23 A 30,30 0 1 0 68,77" fill="none" stroke="url(#cg)" stroke-width="22" stroke-linecap="round"/>
+      </svg><span>64px</span>
+    </div>
+    <div class="sz">
+      <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 68,23 A 30,30 0 1 0 68,77" fill="none" stroke="url(#cg)" stroke-width="22" stroke-linecap="round"/>
+      </svg><span>48px</span>
+    </div>
+    <div class="sz">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 68,23 A 30,30 0 1 0 68,77" fill="none" stroke="url(#cg)" stroke-width="24" stroke-linecap="round"/>
+      </svg><span>32px</span>
+    </div>
+    <div class="sz">
+      <svg width="20" height="20" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 68,23 A 30,30 0 1 0 68,77" fill="none" stroke="url(#cg)" stroke-width="28" stroke-linecap="round"/>
+      </svg><span>20px</span>
+    </div>
+    <div class="size-note">Heavy stroke holds well at all sizes. The C-opening remains readable down to 20px.</div>
+  </div>
+</div>
+
+<div>
+  <div class="sizes">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;min-width:60px">D3 Cres.</div>
+    <div class="sz">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 63,25 A 33,33 0 1 0 63,75 L 54,64 A 18,18 0 0 1 54,36 Z" fill="url(#cg)"/>
+      </svg><span>64px</span>
+    </div>
+    <div class="sz">
+      <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 63,25 A 33,33 0 1 0 63,75 L 54,64 A 18,18 0 0 1 54,36 Z" fill="url(#cg)"/>
+      </svg><span>48px</span>
+    </div>
+    <div class="sz">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 63,25 A 33,33 0 1 0 63,75 L 54,64 A 18,18 0 0 1 54,36 Z" fill="url(#cg)"/>
+      </svg><span>32px</span>
+    </div>
+    <div class="sz">
+      <svg width="20" height="20" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 63,25 A 33,33 0 1 0 63,75 L 54,64 A 18,18 0 0 1 54,36 Z" fill="url(#cg)"/>
+      </svg><span>20px</span>
+    </div>
+    <div class="size-note">Filled shape holds shape at all sizes. No detail to lose. The gradient fills the crescent directly — no rendering artefacts.</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     COLOR MOODS — D3 Crescent
+     ══════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="page-label">Color Moods — D3 Crescent at 3 temperatures</div>
+
+<div class="moods">
+  <!-- Coral-Mango -->
+  <div class="mood">
+    <div class="mood-display">
+      <svg width="72" height="72" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 63,25 A 33,33 0 1 0 63,75 L 54,64 A 18,18 0 0 1 54,36 Z" fill="url(#cg)"/>
+      </svg>
+      <div class="wm" style="font-size:24px"><span class="wh">AKB</span><span class="wg">ai</span></div>
+    </div>
+    <div class="mood-info">
+      <h4>Coral → Mango</h4>
+      <p>Warm, human, Filipino energy. Breaks from all PH fintech blue. Maria the baker uses this every morning.</p>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#FF6B6B"></div>
+        <div class="swatch-dot" style="background:#FF8E53"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Teal -->
+  <div class="mood">
+    <div class="mood-display">
+      <svg width="72" height="72" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 63,25 A 33,33 0 1 0 63,75 L 54,64 A 18,18 0 0 1 54,36 Z" fill="url(#tg)"/>
+      </svg>
+      <div class="wm" style="font-size:24px"><span class="wh">AKB</span><span class="wt">ai</span></div>
+    </div>
+    <div class="mood-info">
+      <h4>Teal → Cyan</h4>
+      <p>Trust, financial confidence, tech-forward. Closer to fintech norms — signals competence for the BIR and money features.</p>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#20C9A0"></div>
+        <div class="swatch-dot" style="background:#0FB8D9"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Violet -->
+  <div class="mood">
+    <div class="mood-display">
+      <svg width="72" height="72" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="M 63,25 A 33,33 0 1 0 63,75 L 54,64 A 18,18 0 0 1 54,36 Z" fill="url(#vg)"/>
+      </svg>
+      <div class="wm" style="font-size:24px"><span class="wh">AKB</span><span class="wv">ai</span></div>
+    </div>
+    <div class="mood-info">
+      <h4>Violet → Indigo</h4>
+      <p>Premium, AI-signal, nothing like any PH competitor. Slightly cooler — could feel less warm for Maria, but very strong for agency owner positioning.</p>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#A78BFA"></div>
+        <div class="swatch-dot" style="background:#818CF8"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom prompt -->
+<div style="margin-top:32px;background:rgba(255,255,255,.03);border:1px solid var(--dim);border-radius:12px;padding:20px 24px">
+  <p style="font-size:13px;color:var(--muted);line-height:1.7">
+    <strong style="color:var(--text)">Your call:</strong> Which direction and color mood should we take forward? Once you pick, I'll refine the mark geometry, finalise the wordmark spacing, and build the full lockup set (dark · light · mono · reversed) before moving to the brand guide.
+  </p>
+</div>
+
+</div>
+</body>
+</html>

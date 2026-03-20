@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "sentry-setup",
+  "configuration": "without_skill",
+  "expectations": [
+    {"text": "References Gap A4 from the gap registry as context", "passed": false, "evidence": "No mention of Gap A4 or the gap registry anywhere in the response."},
+    {"text": "Provides concrete install commands (npm install @sentry/nextjs)", "passed": true, "evidence": "Step 2: 'npm install @sentry/nextjs' with explanation of what it installs."},
+    {"text": "Includes config code with DSN, release tagging, and sample rates", "passed": true, "evidence": "Full sentry.config.ts with DSN, CF_PAGES_COMMIT_SHA release tagging, tracesSampleRate 0.1, replays config."},
+    {"text": "Configures alert rules appropriate for AKBai (payment errors, auth spikes)", "passed": false, "evidence": "Alert section is generic (Step 8) — only covers basic email alerts and mentions 'error rate > 5%' as Phase 2 threshold. No AKBai-specific rules for payment errors or auth spikes."},
+    {"text": "Mentions Slack integration for alert routing", "passed": false, "evidence": "Slack integration is deferred to 'Phase 2' with minimal detail. No setup instructions for Phase 1."},
+    {"text": "Notes free tier limits (5K events/mo) and cost implications", "passed": true, "evidence": "Step 1.1 mentions '5,000 errors/month' free tier and Phase 1 upgrade to Team plan."}
+  ]
+}

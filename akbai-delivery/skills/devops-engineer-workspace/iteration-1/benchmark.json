@@ -1,0 +1,93 @@
+{
+  "metadata": {
+    "skill_name": "devops-engineer",
+    "skill_path": "/sessions/laughing-eager-gauss/mnt/AKBai/akbai-delivery/skills/devops-engineer",
+    "executor_model": "claude-opus-4-6",
+    "analyzer_model": "claude-opus-4-6",
+    "timestamp": "2026-03-17T00:30:00Z",
+    "evals_run": ["deploy-with-migration", "xendit-webhook-incident", "sentry-setup"],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_name": "deploy-with-migration",
+      "configurations": {
+        "with_skill": {
+          "pass_rate": 1.0,
+          "passed": 6,
+          "total": 6,
+          "time_seconds": 46.7,
+          "tokens": 46868
+        },
+        "without_skill": {
+          "pass_rate": 0.833,
+          "passed": 5,
+          "total": 6,
+          "time_seconds": 50.4,
+          "tokens": 37049
+        }
+      }
+    },
+    {
+      "eval_name": "xendit-webhook-incident",
+      "configurations": {
+        "with_skill": {
+          "pass_rate": 1.0,
+          "passed": 6,
+          "total": 6,
+          "time_seconds": 53.5,
+          "tokens": 54672
+        },
+        "without_skill": {
+          "pass_rate": 0.333,
+          "passed": 2,
+          "total": 6,
+          "time_seconds": 51.3,
+          "tokens": 39560
+        }
+      }
+    },
+    {
+      "eval_name": "sentry-setup",
+      "configurations": {
+        "with_skill": {
+          "pass_rate": 1.0,
+          "passed": 6,
+          "total": 6,
+          "time_seconds": 86.8,
+          "tokens": 53698
+        },
+        "without_skill": {
+          "pass_rate": 0.5,
+          "passed": 3,
+          "total": 6,
+          "time_seconds": 83.6,
+          "tokens": 41590
+        }
+      }
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "mean_pass_rate": 1.0,
+      "mean_time_seconds": 62.3,
+      "mean_tokens": 51746
+    },
+    "without_skill": {
+      "mean_pass_rate": 0.556,
+      "mean_time_seconds": 61.8,
+      "mean_tokens": 39400
+    },
+    "delta": {
+      "pass_rate": "+0.444",
+      "time_seconds": "+0.5",
+      "tokens": "+12346"
+    }
+  },
+  "notes": [
+    "With-skill version achieved 100% pass rate across all 3 evals (18/18 assertions).",
+    "Without-skill version scored 56% (10/18 assertions). Key failures: wrong deploy order (migration after code), no P0 classification, no phone-accessible rollback, no webhook replay, no Gap A4 reference, no AKBai-specific alert rules, Slack integration deferred.",
+    "The incident response eval showed the biggest gap: with-skill 6/6 vs without-skill 2/6. The skill's runbook and solo-founder context made the critical difference.",
+    "Token usage is ~30% higher with skill (reading reference files), but time is comparable since the skill provides structured guidance rather than the model needing to reason from scratch."
+  ]
+}

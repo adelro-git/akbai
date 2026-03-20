@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "xendit-webhook-incident",
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "Classifies as P0 severity (payment failure)", "passed": true, "evidence": "Opens with 'Severity: P0 (Payment failure — immediate action required)' and explains why it's P0."},
+    {"text": "Provides phone-accessible response actions (Vercel dashboard, Slack)", "passed": true, "evidence": "Step 2 is explicitly 'Assess via Phone' with Vercel Dashboard mobile, UptimeRobot via Slack, and Sentry mobile web checks."},
+    {"text": "Recommends immediate rollback as first action", "passed": true, "evidence": "Case A: 'Rollback immediately via Vercel mobile' with step-by-step instructions for promoting previous deployment from phone."},
+    {"text": "Explains impact: users pay but subscriptions don't activate", "passed": true, "evidence": "Step 1 states 'Users are paying ₱399–₱899 via GCash, but AKBai never receives the webhook, so their subscriptions don't activate. They see Free tier after paying.'"},
+    {"text": "Mentions replaying missed webhook events after recovery", "passed": true, "evidence": "Step 5 'Check for Affected Users' section with SQL query to find affected users and manual subscription remediation."},
+    {"text": "Acknowledges solo-founder constraint (at day job, limited availability)", "passed": true, "evidence": "Entire response structured around 'You're in a meeting at Globe' context, with phone-based steps, evening deep-dive schedule, and P0 escalation rules from runbook."}
+  ]
+}

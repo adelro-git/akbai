@@ -1,0 +1,181 @@
+================================================================================
+BUILD 0 — AI SCOPE DEFINITION & SYSTEM PROMPT ARCHITECTURE
+DELIVERY SUMMARY
+================================================================================
+
+DELIVERABLE
+-----------
+File: build0-prompt-architecture.md
+Location: /sessions/bold-dreamy-fermi/mnt/AKBai/akbai-delivery/ai-engineer-workspace/iteration-1/eval-2-build0-architecture/without_skill/outputs/
+Size: 54 KB, 1,415 lines
+Status: Production-Ready
+
+WHAT'S INCLUDED
+---------------
+
+1. SYSTEM PROMPT ASSEMBLY ARCHITECTURE
+   - 5-layer assembly design (Core Persona → Active Domains → User Context → Conversation History → Feature Context)
+   - Server-side only (never exposed to client)
+   - Complete pseudocode implementation in TypeScript
+   - Architecture diagram and step-by-step flow
+
+2. CORE KA PERSONA BLOCK (~800 tokens)
+   - Identity, voice pillars, communication rules
+   - Tone calibration by context (morning briefing, tax deadline, error, etc.)
+   - Universal boundaries (no tax advice, no guaranteed outcomes, warm + competent)
+   - Error recovery pattern (acknowledge → take responsibility → explain → next step)
+
+3. MODULAR DOMAIN SCOPES (Phase 1)
+   - [FINANCIAL_SCOPE] — income, expenses, profitability, cash flow
+   - [TAX_SCOPE] — BIR deadlines, filing reminders, compliance
+   - [COMMUNICATION_SCOPE] — customer DM drafting, warm tone
+   - Each scope includes: role, in-scope queries, out-of-scope redirects, disclaimers, boundaries
+
+4. PHASE 4+ DOMAIN EXPANSION PROTOCOL
+   - Template for adding new domains (Marketing, Strategy, HR, Inventory)
+   - Feature flag system for gradual rollout
+   - Conversation domain tagging (prevents context bleed)
+   - Redirect logging for demand signal tracking
+   - Zero code rewrites — pure configuration changes
+
+5. BIR DISCLAIMER RULES (Hard-Coded, Non-Negotiable)
+   - Taglish + English versions
+   - Every tax response includes: "Paalala: Ang guidance na ito ay informational lang. I-verify mo sa iyong accountant o CPA bago mag-file."
+   - Persistent in-app disclaimer visible in chat UI
+   - Clear escalation patterns for when to defer to professionals
+
+6. PROMPT INJECTION DEFENSES (All 5 Attack Vectors)
+   - System prompt leak attempts
+   - Role confusion / jailbreak attacks
+   - Context injection / impersonation
+   - Tax/legal strategy override attempts
+   - User impersonation via token spoofing
+   
+   Defense mechanisms:
+   - Output validation pipeline (8 checks before response returned)
+   - Security logging to Sentry
+   - Graceful error responses (never expose system details)
+
+7. CONVERSATION HISTORY MANAGEMENT
+   - Domain-tagged conversations table structure
+   - RLS policies (users read/write own data only)
+   - Soft delete + 30-day retention window
+   - Domain isolation (financial history doesn't see tax history)
+
+8. PRODUCTION DEPLOYMENT CHECKLIST
+   - 11 pre-deployment gates (all critical)
+   - 3-phase rollout strategy (10% → 50% → 100%)
+   - Monitoring dashboards (validation metrics, disclaimer compliance, domain adoption, performance)
+
+9. TESTING & REGRESSION FRAMEWORK
+   - 20–30 test cases covering all domains
+   - Test library structure (tax-scope.test.ts, injection-defenses.test.ts, taglish-style.test.ts, etc.)
+   - Example tests included (disclaimer compliance, prompt injection, Taglish consistency)
+   - Test coverage targets (90–100% depending on category)
+
+10. APPENDICES
+    - Appendix A: Complete realistic system prompt assembly example (Maria, Pro tier, financial query)
+    - Appendix B: Full Phase 4 [MARKETING_SCOPE] example (ready to copy-paste)
+
+KEY FEATURES
+------------
+
+✓ Production-ready code & pseudocode
+✓ Server-side assembly (API key never exposed)
+✓ User-scoped prompts (personalized per auth.uid())
+✓ Domain-modular design (Phase 4+ expands without rewriting)
+✓ Compliance-first (BIR disclaimers, boundaries, injection defenses)
+✓ Taglish-native (voice rules, tone calibration, natural code-switching)
+✓ Analytics-ready (domain-tagged conversations, redirect logs, demand signal tracking)
+✓ Test-driven (regression framework with 90–100% coverage targets)
+✓ Securely hardened (8-step validation pipeline, security logging, Sentry alerts)
+
+HARD GATES (Must Complete Before Build 1)
+------------------------------------------
+
+□ System Prompt Finalized (locked in this document)
+□ Prompt Injection Defenses Tested (against all 5 attack vectors)
+□ Output Validation Live (validateAndSanitizeResponse deployed)
+□ BIR Disclaimer Hard-Coded (100% compliance verified)
+□ Conversation Table Migrated (ka_conversations with domain column + RLS)
+□ Feature Flags Set Up (feature_flags JSONB in users table)
+□ Sentry Monitoring Active (validation failures + suspicious patterns)
+□ Taglish Style Guide Complete (written + approved by SME)
+□ Prompt Regression Tests Ready (20–30 cases, runnable before each change)
+□ API Routes Secured (no API key exposure, session auth required)
+□ Circuit Breaker Implemented (daily spend cap, graceful degradation)
+□ Timezone Enforcement (UTC+8 for all timestamps + notifications)
+
+DEPLOYMENT TIMELINE
+-------------------
+
+Phase 1: Soft Launch (Day 1–7)
+  - 10% Free tier users
+  - Monitor error rates, validation failures
+  - Alert threshold: >5 failures/hour = pause & investigate
+
+Phase 2: Gradual Rollout (Week 2–3)
+  - 50% Free tier, 10% Pro tier
+  - Continue monitoring
+
+Phase 3: General Availability (Week 4+)
+  - 100% of all tiers
+  - Keep feature flags for emergency kill-switch
+
+DOCUMENT STRUCTURE
+------------------
+
+1. Overview (purpose, principles)
+2. System Prompt Assembly Architecture (5-layer design, pseudocode)
+3. Core KA Persona Block (fixed, shared identity)
+4. Modular Domain Scopes (Financial, Tax, Communication + Phase 4+ template)
+5. Domain Expansion Protocol (how Phase 4+ domains bolt on)
+6. BIR Disclaimer Rules (hard-coded, non-negotiable)
+7. Prompt Injection Defenses (5 attack vectors, 8-step validation)
+8. Conversation History Management (domain-tagged, RLS, soft-delete)
+9. Production Deployment Checklist (gates, rollout, monitoring)
+10. Testing & Regression Framework (20–30 cases, coverage targets)
+11. Appendix A: Realistic example (Maria, Pro tier, financial query)
+12. Appendix B: Phase 4 [MARKETING_SCOPE] (ready to implement)
+
+NEXT STEPS FOR ANTON
+--------------------
+
+1. Read the document (estimate: 60–90 min for full understanding)
+2. Review with Filipino design partner or SME for Taglish authenticity
+3. Set up Supabase tables (ka_conversations, security_logs, redirect_logs)
+4. Implement output validation pipeline (8-step checks)
+5. Write/configure Sentry alerts for suspicious patterns
+6. Build Test Library (20–30 regression test cases)
+7. Set up Feature Flags in users table
+8. Configure timezone enforcement (UTC+8)
+9. Deploy with 3-phase rollout (10% → 50% → 100%)
+10. Begin Build 1 (Kilala Kita onboarding) after all gates pass
+
+WHAT THIS DOCUMENT DOES NOT INCLUDE
+------------------------------------
+
+- UI/UX design (handled by separate design gate)
+- Specific Claude model pricing (handled by Circuit Breaker config)
+- WhatsApp API integration (Phase 2+)
+- Voice input implementation (Phase 2+)
+- Multi-language support beyond Taglish (future expansion)
+- Custom behavior teaching (Phase 3 feature)
+
+THIS IS A HARD GATE
+-------------------
+
+Build 0 must be frozen and deployed before Build 1 (Kilala Kita) begins.
+
+Do NOT modify system prompt without running full regression test suite.
+
+Do NOT deploy without completing all 11 pre-deployment gates.
+
+Do NOT go live without Sentry monitoring and feature flags in place.
+
+================================================================================
+Version: 1.0
+Date: March 15, 2026
+Status: Production-Ready
+Owner: AI Engineer
+================================================================================

@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKBai Delivery Plugin — Build Guide v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --card-alt:#111f36;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+  --hs:#F59E0B;
+  --he:#D97706;
+  --ts:#20C9A0;
+  --te:#0FB8D9;
+  --violet:#A78BFA;
+  --blue:#60A5FA;
+  --red:#F87171;
+  --green:#4ADE80;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);line-height:1.7;font-size:15px}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(7,16,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--dim);padding:14px 32px;display:flex;align-items:center;gap:18px;overflow-x:auto}
+nav a{color:var(--muted);text-decoration:none;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;transition:color .2s}
+nav a:hover{color:#fff}
+.nav-brand{font-weight:800;font-size:13px;background:linear-gradient(135deg,var(--hs),var(--he));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-right:8px;flex-shrink:0}
+
+.container{max-width:1060px;margin:0 auto;padding:0 32px}
+section{padding:64px 0;border-bottom:1px solid var(--dim);scroll-margin-top:60px}
+section:last-child{border-bottom:none;padding-bottom:100px}
+
+.section-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.section-title{font-size:32px;font-weight:800;line-height:1.2;margin-bottom:12px}
+.section-sub{font-size:15px;color:var(--muted);max-width:720px;margin-bottom:36px;line-height:1.65}
+h3{font-size:20px;font-weight:700;margin:28px 0 12px;line-height:1.3}
+h4{font-size:16px;font-weight:700;margin:20px 0 8px}
+p{margin-bottom:14px;line-height:1.7;color:var(--text)}
+.honey{background:linear-gradient(135deg,var(--hs),var(--he));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.teal{background:linear-gradient(135deg,var(--ts),var(--te));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.card{background:var(--card);border:1px solid var(--dim);border-radius:14px;padding:24px;margin-bottom:16px}
+.card h4{margin-top:0}
+.card p:last-child{margin-bottom:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:10px;margin-right:6px}
+.tag-h{background:rgba(245,158,11,.12);color:#F59E0B}
+.tag-t{background:rgba(32,201,160,.12);color:#20C9A0}
+.tag-v{background:rgba(167,139,250,.12);color:#A78BFA}
+.tag-b{background:rgba(96,165,250,.12);color:#60A5FA}
+.tag-r{background:rgba(248,113,113,.12);color:#F87171}
+.tag-g{background:rgba(74,222,128,.12);color:#4ADE80}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0 24px}
+table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--dim);background:rgba(255,255,255,.02)}
+table td{padding:12px 14px;border-bottom:1px solid var(--dim);color:var(--text);vertical-align:top}
+table tr:last-child td{border-bottom:none}
+
+ul,ol{margin:0 0 16px 24px;color:var(--text)}
+li{margin-bottom:6px;line-height:1.6}
+li strong{color:#fff}
+
+code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px;font-size:13px;font-family:'SF Mono',monospace}
+pre{background:var(--card);border:1px solid var(--dim);border-radius:10px;padding:16px;margin:12px 0 20px;overflow-x:auto;font-size:13px;line-height:1.5;white-space:pre-wrap;color:var(--text)}
+
+.callout{background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(32,201,160,.04));border:1px solid rgba(245,158,11,.18);border-radius:14px;padding:24px;margin:20px 0}
+.callout-warn{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.18)}
+.callout-info{background:rgba(96,165,250,.06);border-color:rgba(96,165,250,.18)}
+.callout-success{background:rgba(74,222,128,.06);border-color:rgba(74,222,128,.18)}
+.callout-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+
+.prompt-block{background:#0F172A;border:1px solid rgba(245,158,11,.15);border-radius:12px;padding:20px 24px;margin:16px 0}
+.prompt-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hs);margin-bottom:10px}
+.prompt-text{font-family:'SF Mono',monospace;font-size:12.5px;line-height:1.7;color:#E2E8F0;white-space:pre-wrap}
+.prompt-text em{color:#FCD34D;font-style:normal}
+
+.ref-list{background:var(--card-alt);border-radius:10px;padding:16px 20px;margin:12px 0}
+.ref-list h5{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ts);margin-bottom:10px}
+.ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--dim);font-size:13px}
+.ref-item:last-child{border-bottom:none}
+.ref-file{font-family:'SF Mono',monospace;font-size:12px;color:var(--hs);white-space:nowrap;min-width:200px}
+.ref-desc{color:var(--muted)}
+
+.phase{display:inline-block;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;margin-right:8px}
+.phase-a{background:rgba(248,113,113,.12);color:#F87171}
+.phase-b{background:rgba(245,158,11,.12);color:#F59E0B}
+.phase-c{background:rgba(32,201,160,.12);color:#20C9A0}
+
+.cover{min-height:70vh;display:flex;flex-direction:column;justify-content:center;padding:80px 32px;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;top:-150px;right:-150px;width:700px;height:700px;background:radial-gradient(circle,rgba(245,158,11,.07) 0%,transparent 60%);pointer-events:none}
+
+.skill-block{border:1px solid var(--dim);border-radius:14px;overflow:hidden;margin-bottom:24px}
+.skill-header{padding:18px 24px;border-bottom:1px solid var(--dim);display:flex;align-items:center;gap:14px}
+.skill-header .emoji{font-size:24px}
+.skill-header h4{margin:0;font-size:16px}
+.skill-header .phase-tag{margin-left:auto}
+.skill-body{padding:24px}
+
+@media(max-width:768px){
+  .g2{grid-template-columns:1fr}
+  .section-title{font-size:26px}
+  .cover{padding:52px 20px;min-height:auto}
+  .container{padding:0 20px}
+  nav{padding:12px 16px}
+  .ref-item{flex-direction:column;gap:4px}
+  .ref-file{min-width:auto}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">AKBai</span>
+  <a href="#overview">Overview</a>
+  <a href="#shared">Shared Context</a>
+  <a href="#phase-a">Phase A</a>
+  <a href="#phase-b">Phase B</a>
+  <a href="#phase-c">Phase C</a>
+  <a href="#commands">Commands</a>
+  <a href="#sessions">Build Sessions</a>
+</nav>
+
+<!-- ═══ COVER ═══ -->
+<div class="cover">
+  <div style="max-width:1060px;margin:0 auto;width:100%">
+    <div class="section-label">AKBai · Plugin Build Guide · v1.0</div>
+    <div class="section-title" style="font-size:42px;margin-bottom:16px">
+      <span class="honey">Plugin Build Guide</span><br>
+      Skill-by-Skill Construction Playbook
+    </div>
+    <p style="font-size:17px;color:var(--muted);max-width:680px;margin-bottom:40px">
+      The Plugin Strategy told you <em>what</em> to build and <em>when</em>. This guide tells you <em>how</em> — exact prompts, SKILL.md content specs, reference file outlines, and session templates for constructing every skill in the akbai-delivery plugin.
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:800px">
+      <div style="border-left:2px solid rgba(245,158,11,.3);padding-left:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Companion To</div>
+        <div style="font-size:14px;font-weight:600">Plugin Strategy v1</div>
+      </div>
+      <div style="border-left:2px solid rgba(32,201,160,.3);padding-left:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Date</div>
+        <div style="font-size:14px;font-weight:600">March 11, 2026</div>
+      </div>
+      <div style="border-left:2px solid rgba(167,139,250,.3);padding-left:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Build Sessions</div>
+        <div style="font-size:14px;font-weight:600">8–11 sessions</div>
+      </div>
+      <div style="border-left:2px solid rgba(96,165,250,.3);padding-left:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Source Docs</div>
+        <div style="font-size:14px;font-weight:600">Roadmap v13 + Fin v5</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ 1. OVERVIEW ═══ -->
+<section id="overview">
+<div class="container">
+  <div class="section-label">01</div>
+  <div class="section-title">How to Use This Guide</div>
+  <div class="section-sub">Each skill section gives you everything needed for a single build session: the SKILL.md content spec, reference file outlines, and the exact prompt to paste into a fresh Claude conversation.</div>
+
+  <h3>The Build Process for Each Skill</h3>
+  <p>For every skill in this guide, you follow the same 5-step process:</p>
+  <ol>
+    <li><strong>Open a fresh Claude conversation</strong> — one skill per session, never stack skills.</li>
+    <li><strong>Invoke the skill-creator skill</strong> — say "use skill-creator" to load the creation workflow.</li>
+    <li><strong>Paste the build prompt from this guide</strong> — each skill section has a pre-written prompt with all the context Claude needs.</li>
+    <li><strong>Review the draft SKILL.md</strong> — Claude will generate the skill file. Review it, request changes, iterate.</li>
+    <li><strong>Write reference files</strong> — Claude will also draft the reference docs. Save everything to the plugin directory.</li>
+  </ol>
+
+  <div class="callout callout-warn">
+    <div class="callout-label" style="color:var(--red)">Critical: Build Shared Context First</div>
+    <p style="margin:0">Before building any skill, you must create the <code>shared/</code> reference files (Section 02). Every skill reads from <code>shared/project-context.md</code> — if it doesn't exist, your skills will hallucinate context instead of referencing real data.</p>
+  </div>
+
+  <h3>What Gets Built</h3>
+  <table>
+    <tr><th>Phase</th><th>Skills</th><th>Estimated Sessions</th><th>Prerequisite</th></tr>
+    <tr><td><span class="phase phase-a">Shared</span></td><td>4 shared reference files</td><td>1 session</td><td>None — do this first</td></tr>
+    <tr><td><span class="phase phase-a">Phase A</span></td><td>project-manager, solutions-architect, fullstack-engineer, data-architect</td><td>3–4 sessions</td><td>Shared context</td></tr>
+    <tr><td><span class="phase phase-b">Phase B</span></td><td>ai-engineer, qa-engineer, security-compliance, devops-engineer</td><td>3–4 sessions</td><td>Phase A skills</td></tr>
+    <tr><td><span class="phase phase-c">Phase C</span></td><td>ux-designer, marketing-lead, product-owner, ops-lead</td><td>2–3 sessions</td><td>Phase A + B skills</td></tr>
+  </table>
+</div>
+</section>
+
+
+<!-- ═══ 2. SHARED CONTEXT ═══ -->
+<section id="shared">
+<div class="container">
+  <div class="section-label">02</div>
+  <div class="section-title">Shared Context Files</div>
+  <div class="section-sub">These 4 files live in <code>shared/</code> and are loaded once per conversation by whichever skill needs them. Build all 4 in a single session before anything else.</div>
+
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">📋</span>
+      <h4>shared/project-context.md</h4>
+      <span class="phase phase-a phase-tag">Build First</span>
+    </div>
+    <div class="skill-body">
+      <p>The "briefing doc" every skill reads. ~200 lines covering who, what, why, and constraints. Every skill's SKILL.md should say: "Read <code>shared/project-context.md</code> first if you haven't already."</p>
+
+      <h4>Required Sections</h4>
+      <ul>
+        <li><strong>Product Overview</strong> — AKBai, "Katuwang ng Negosyo Mo", AI business partner PWA for Filipino MSMEs. Solo founder: Anton del Rosario (day job at Globe Telecom).</li>
+        <li><strong>Target Users</strong> — 1.1M digitally-active Filipino MSMEs. 4 personas: Maria (home baker, 35–45), Jose (online seller, 28–35), Ana (freelance creative, 25–30), Andoy (sari-sari store, 40–55). Primary: Maria.</li>
+        <li><strong>Tech Stack</strong> — Next.js 14 App Router, Supabase (Postgres + Storage + Auth + Edge Functions), Claude API (Haiku for OCR/fast, Sonnet for KA reasoning), Xendit (subscriptions), Vercel (deploy), Cloudflare Pages (fallback Month 7+). Mobile-first PWA.</li>
+        <li><strong>Tier Structure</strong> — Free: text-only, 10 queries/day, Haiku-only. Pro ₱399/mo: 50 scans/mo, Sonnet+Haiku. Business ₱899/mo: 80 scans/mo, GSheets OAuth, multi-seat.</li>
+        <li><strong>Core Features (MVP)</strong> — Resibo Scanner (receipt OCR), Saan Napunta (expense dashboard), Ang Umaga Mo (morning briefing), Deadline Watcher (BIR calendar), Invoice Cards, Costing Cards, Reply Drafter.</li>
+        <li><strong>Phase Structure</strong> — Phase 0A (Legal, Weeks 1–4), Phase 0B (Validation, Weeks 4–10), Phase 1 (MVP Build, Months 1–6), Sense Check Gate, Phase 2 (Growth, Months 6–12), Phase 3 (Platform, Month 12+).</li>
+        <li><strong>Current Phase</strong> — [Update this as you progress]</li>
+        <li><strong>Key Constraints</strong> — Solo founder with day job. Claude Pro token limits. NPC (RA 10173) compliance required. BIR tax features are informational only (not tax advice). All user-facing text defaults to warm Taglish. Receipt scan cost: ₱0.16/scan ($0.0028 × 57.2 PHP/USD).</li>
+        <li><strong>KA Persona</strong> — "Katuwang" (equal partner). Warm, hyper-competent, Taglish, uses "po" appropriately, never condescending. Proactive (speaks first). Not a chatbot — a business partner.</li>
+        <li><strong>Unit Economics</strong> — Pro LTV: ₱9,975 (25 months). Blended CAC: ₱110. LTV/CAC: 91x. Break-even: Month 7. Y1 net profit target: ₱110K.</li>
+      </ul>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — Paste Into Fresh Session</div>
+        <div class="prompt-text">I'm building a Cowork plugin called "akbai-delivery" and need to create the shared context file that all 12 skills will reference. Create <em>shared/project-context.md</em> — a ~200-line briefing doc.
+
+Here's the data to condense:
+
+PRODUCT: AKBai ("Katuwang ng Negosyo Mo") — AI business partner PWA for Filipino MSMEs. Solo founder Anton del Rosario (day job at Globe Telecom). Domain: projectka.ph.
+
+TARGET: 1.1M digitally-active Filipino MSMEs. Personas: Maria (home baker, 35–45, primary), Jose (online seller, 28–35), Ana (freelance creative, 25–30), Andoy (sari-sari store, 40–55).
+
+STACK: Next.js 14 App Router, Supabase (Postgres + Storage + Auth + Edge Functions), Claude API (Haiku for OCR, Sonnet for reasoning), Xendit (subscriptions), Vercel (deploy), Cloudflare Pages (Month 7+ fallback). Mobile-first PWA.
+
+TIERS: Free (text-only, 10q/day, Haiku-only), Pro ₱399/mo (50 scans, Sonnet+Haiku), Business ₱899/mo (80 scans, GSheets OAuth, multi-seat).
+
+MVP FEATURES: Resibo Scanner, Saan Napunta (expense dashboard), Ang Umaga Mo (morning briefing), Deadline Watcher (BIR calendar), Invoice Cards, Costing Cards, Reply Drafter.
+
+PHASES: 0A Legal (Wks 1–4), 0B Validation (Wks 4–10), Phase 1 MVP (Mo 1–6, target: 50 users, 20 paying, ₱6K–₱10K MRR), Sense Check Gate, Phase 2 Growth (Mo 6–12, target: 200 registered users, 80 paying, ₱30K–₱50K MRR), Phase 3 Platform (Mo 12+).
+
+UNIT ECONOMICS: Receipt scan cost ₱0.16/scan. Pro LTV ₱9,975 (25 months). Blended CAC ₱110. LTV/CAC 91x. Break-even Month 7. Y1 net profit ₱110K.
+
+KA PERSONA: "Katuwang" = equal partner. Warm, hyper-competent, Taglish, uses "po" naturally, never condescending, proactive (speaks first). Not a chatbot.
+
+CONSTRAINTS: Solo founder w/ day job. Claude Pro token limits. NPC RA 10173 compliance. BIR features are informational (not tax advice). All text defaults to warm Taglish.
+
+Format as clean Markdown with clear section headers. Every skill's SKILL.md will say "Read shared/project-context.md first" — so make it scannable and factual, not narrative.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">🔧</span>
+      <h4>shared/tech-stack.md</h4>
+      <span class="phase phase-a phase-tag">Build First</span>
+    </div>
+    <div class="skill-body">
+      <p>Canonical tech stack reference with version numbers, configuration patterns, and conventions. ~100 lines.</p>
+      <h4>Required Sections</h4>
+      <ul>
+        <li><strong>Framework</strong> — Next.js 14, App Router, TypeScript, Tailwind CSS, mobile-first responsive.</li>
+        <li><strong>Database</strong> — Supabase Postgres. RLS on every table (user_id). Soft-delete with retention policy. Edge Functions for webhooks.</li>
+        <li><strong>AI Layer</strong> — Claude API. Haiku: receipt OCR, quick answers, free tier. Sonnet: KA reasoning, complex tasks, Pro/Business tier. Daily spend cap circuit breaker.</li>
+        <li><strong>Payments</strong> — Xendit. Subscription billing. GCash as primary payment method. Concierge GCash stopgap for first 20–50 users.</li>
+        <li><strong>Deployment</strong> — Vercel (primary), Cloudflare Pages (Month 7+ fallback). Sentry (errors), PostHog (analytics), UptimeRobot (monitoring).</li>
+        <li><strong>Code Conventions</strong> — TypeScript strict mode. Components in /components/. API routes in /app/api/. Edge Functions in /supabase/functions/. Feature folders for pillar modules.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">📊</span>
+      <h4>shared/gap-registry.md</h4>
+      <span class="phase phase-a phase-tag">Build First</span>
+    </div>
+    <div class="skill-body">
+      <p>Condensed version of the 26-item gap registry from Roadmap v13. Organized by category with severity and status tracking. ~80 lines.</p>
+      <h4>Required Sections</h4>
+      <ul>
+        <li><strong>Category A — Compliance Gaps</strong> — NPC registration, privacy policy, DPO designation, data breach notification procedures, BIR disclaimer implementation.</li>
+        <li><strong>Category B — UX Gaps</strong> — Empty states, error messages, loading states, onboarding flow, accessibility pass, Taglish copy for all screens.</li>
+        <li><strong>Category C — Business Logic Gaps</strong> — BIR deadline calculation edge cases (holidays, mid-year registration), receipt OCR accuracy thresholds, tier gating logic.</li>
+        <li><strong>Category D — Operational Gaps</strong> — Incident response playbook, support triage process, monitoring dashboards, backup/recovery procedures.</li>
+        <li><strong>Summary</strong> — 26 total gaps, 8 CRITICAL (hard gates before launch), severity-based priority.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">📖</span>
+      <h4>shared/glossary.md</h4>
+      <span class="phase phase-a phase-tag">Build First</span>
+    </div>
+    <div class="skill-body">
+      <p>AKBai-specific terms and Filipino business glossary. ~60 lines. Ensures all skills use consistent terminology.</p>
+      <h4>Required Entries</h4>
+      <ul>
+        <li><strong>Product Terms</strong> — KA/Katuwang, Resibo Scanner, Saan Napunta, Ang Umaga Mo, Deadline Watcher, Kilala Kita (onboarding), Maria Moment.</li>
+        <li><strong>Filipino Business Terms</strong> — MSME, BIR (Bureau of Internal Revenue), 1701Q (quarterly income tax), 2550M/Q (VAT returns), 8% flat tax option, DTI, SEC, NPC (National Privacy Commission), RA 10173 (Data Privacy Act).</li>
+        <li><strong>Technical Terms</strong> — RLS (Row-Level Security), Edge Function, ADR (Architecture Decision Record), Circuit Breaker (API spend cap), Sense Check Gate.</li>
+        <li><strong>Persona Names</strong> — Maria (home baker), Jose (online seller), Ana (freelance creative), Andoy (sari-sari store owner).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="prompt-block">
+    <div class="prompt-label">Session Template — Build All 4 Shared Files</div>
+    <div class="prompt-text">I'm building a Cowork plugin called "akbai-delivery". I need to create the 5 shared context files that all skills will reference. Please create these as Markdown files:
+
+1. shared/project-context.md (~200 lines) — the master briefing doc
+2. shared/tech-stack.md (~100 lines) — canonical tech stack reference
+3. shared/gap-registry.md (~80 lines) — condensed 26-item gap registry
+4. shared/glossary.md (~60 lines) — AKBai + Filipino business terms
+5. shared/brand-context.md (~80 lines) — brand identity, voice pillars, colors, typography, messaging, competitive positioning
+
+[Then paste the project-context.md build prompt data from above, plus any additional details for the other 3 files]
+
+Save all 4 files. These become the foundation that every skill reads.</div>
+  </div>
+</div>
+</section>
+
+
+<!-- ═══ 3. PHASE A ═══ -->
+<section id="phase-a">
+<div class="container">
+  <div class="section-label">03</div>
+  <div class="section-title">Phase A — Foundation Skills</div>
+  <div class="section-sub">Build these 4 skills first. They cover project management, architecture decisions, feature implementation, and data modeling — the core of your Phase 0 and early Phase 1 work.</div>
+
+  <!-- SKILL 1: PROJECT MANAGER -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">📋</span>
+      <h4>project-manager</h4>
+      <span class="phase phase-a phase-tag">Phase A</span>
+    </div>
+    <div class="skill-body">
+      <p>Your sprint planner, backlog groomer, and progress tracker. This is the skill you use to decide what to build next, track dependencies, and run phase gate reviews.</p>
+
+      <h4>SKILL.md Content Spec (~250 lines)</h4>
+      <ul>
+        <li><strong>Role Definition</strong> — "You are Anton's project manager for AKBai. Your job is to keep the solo founder focused on the highest-impact work, prevent scope creep, and ensure phase gates are met before progressing." Include the constraint that Anton has a day job and can only work evenings/weekends.</li>
+        <li><strong>Sprint Planning Protocol</strong> — How to plan a 2-week sprint: (1) check current phase from project-context.md, (2) review gap-registry.md for overdue items, (3) propose 3–5 tasks sized for 10–15 hours of evening/weekend work, (4) flag dependencies, (5) output as sprint plan with task IDs.</li>
+        <li><strong>Backlog Management</strong> — How to groom the backlog: prioritize by (1) CRITICAL gap items, (2) features needed for next phase gate, (3) user-requested features, (4) tech debt. Never let backlog exceed 20 items.</li>
+        <li><strong>Phase Gate Logic</strong> — Decision tree for each phase transition: Phase 0A→0B (legal foundations complete?), 0B→1 (100+ waitlist?), Phase 1 Sense Check (8-signal framework), Phase 1→2 (all 8 signals green/yellow?), Phase 2→3 (200 users, ₱50K+ MRR?).</li>
+        <li><strong>Status Reporting</strong> — Template for weekly standup: what shipped, what's in progress, blockers, metrics update. Format for both GitHub issue comment and build-in-public social post.</li>
+        <li><strong>Blocker Escalation</strong> — Decision tree: if blocked by technical issue → solutions-architect. If blocked by compliance → security-compliance. If blocked by unclear requirements → product-owner.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/roadmap-context.md</span>
+          <span class="ref-desc">~200 lines. Condensed Roadmap v13: phase timeline, feature list per phase, dependencies between features, milestone targets. NOT the full 61-page roadmap — only what the PM needs for sprint planning.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/phase-gates.md</span>
+          <span class="ref-desc">~80 lines. Exact criteria for each phase transition. Phase 0A→0B: 5 legal items. 0B→1: 100 waitlist, brand done, 5 articles. Phase 1→2: 8-signal Sense Check framework with thresholds.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/sprint-templates.md</span>
+          <span class="ref-desc">~60 lines. Sprint plan template, sprint review template, sprint retro template. All sized for solo founder (10–15 hrs/sprint).</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — project-manager Skill</div>
+        <div class="prompt-text">Use skill-creator. I want to create a skill called "project-manager" for my AKBai Cowork plugin.
+
+PURPOSE: Sprint planning, backlog grooming, dependency tracking, progress reporting, and phase gate management for a solo founder building a Filipino MSME SaaS (AKBai) while working a day job.
+
+CONTEXT THE SKILL NEEDS:
+- Reads shared/project-context.md for product overview
+- Reads shared/gap-registry.md for overdue items
+- Has its own references: roadmap-context.md (condensed timeline), phase-gates.md (transition criteria), sprint-templates.md
+
+DECISION TREES THE SKILL MUST ENCODE:
+1. Sprint planning: check phase → review gaps → propose 3–5 tasks for 10–15 hrs → flag dependencies → output sprint plan
+2. Phase gates: Phase 0A→0B (5 legal items done?), 0B→1 (100 waitlist?), Phase 1→2 (8-signal sense check), 2→3 (300+ users, ₱50K+ MRR)
+3. Blocker escalation: technical → solutions-architect, compliance → security-compliance, unclear reqs → product-owner
+4. Backlog max 20 items, prioritized by: CRITICAL gaps > phase gate features > user requests > tech debt
+
+TRIGGERS: "sprint", "plan", "backlog", "what should I work on", "status", "blockers", "timeline", "sense check", "phase gate"
+
+CONSTRAINTS: Solo founder, 10–15 hrs/week, Claude Pro token limits. Sprints are 2 weeks. Never suggest tasks that require >4 hrs of uninterrupted work (Anton works evenings).
+
+Also create the 3 reference files:
+1. roadmap-context.md — condensed from this data: <em>[paste relevant sections from Roadmap v13]</em>
+2. phase-gates.md — exact Go/No-Go criteria per phase
+3. sprint-templates.md — sprint plan, review, retro templates</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 2: SOLUTIONS ARCHITECT -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">🏛️</span>
+      <h4>solutions-architect</h4>
+      <span class="phase phase-a phase-tag">Phase A</span>
+    </div>
+    <div class="skill-body">
+      <p>Makes and records every technical decision. Ensures consistency across the codebase. Creates Architecture Decision Records (ADRs) for every non-trivial choice.</p>
+
+      <h4>SKILL.md Content Spec (~250 lines)</h4>
+      <ul>
+        <li><strong>Role Definition</strong> — "You are the solutions architect for AKBai. Every technical decision must be consistent with the existing stack and recorded as an ADR. You optimize for: solo founder maintainability, Claude Pro token efficiency, and mobile-first performance."</li>
+        <li><strong>ADR Protocol</strong> — When to create an ADR (any non-trivial tech choice), ADR format (title, status, context, decision, consequences), naming convention (ADR-001, ADR-002...).</li>
+        <li><strong>Stack Decision Framework</strong> — Decision tree for common choices: "Should I use an Edge Function or API route?" → if webhook → Edge Function, if needs full Node.js → API route. "Haiku or Sonnet?" → if OCR/classification → Haiku, if reasoning/generation → Sonnet. "Supabase realtime or polling?" → if dashboard → realtime, if background job → polling.</li>
+        <li><strong>Integration Patterns</strong> — How Claude API integrates (API route → server-side call → structured JSON response → client render). How Xendit integrates (webhook → Edge Function → subscription status update). How receipt scanning works (camera → Haiku Vision → structured JSON → Supabase).</li>
+        <li><strong>Performance Budgets</strong> — PWA targets: First Contentful Paint < 2s, TTI < 3.5s, Lighthouse mobile > 85. Bundle size < 200KB gzipped. Claude API response < 5s for chat, < 8s for OCR.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/tech-stack.md</span>
+          <span class="ref-desc">Symlink to shared/tech-stack.md or copy with additional architectural notes: why each tool was chosen, what it replaces, cost at scale.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/architecture-decisions.md</span>
+          <span class="ref-desc">Living ADR log. Starts empty. Each ADR is appended here. Initial ADRs to seed: ADR-001 (Next.js over Remix), ADR-002 (Supabase over Firebase), ADR-003 (Xendit over PayMongo).</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/api-design.md</span>
+          <span class="ref-desc">~80 lines. API conventions: REST naming, error response format, pagination pattern, auth header requirements, rate limit headers.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — solutions-architect Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "solutions-architect" for my AKBai Cowork plugin.
+
+PURPOSE: System design decisions, API design, integration patterns, and ADR management for a solo founder building AKBai (Filipino MSME PWA).
+
+STACK: Next.js 14 App Router, Supabase (Postgres + Auth + Storage + Edge Functions), Claude API (Haiku + Sonnet), Xendit (subscriptions), Vercel, Cloudflare Pages.
+
+THE SKILL MUST ENCODE:
+1. ADR creation protocol — when to create, format, naming (ADR-001+)
+2. Stack decision trees: Edge Function vs API route, Haiku vs Sonnet, realtime vs polling, server component vs client component
+3. Integration patterns: Claude API (server-side, structured JSON, circuit breaker), Xendit (webhook → Edge Function), receipt OCR (camera → Haiku Vision → JSON → Supabase)
+4. Performance budgets: FCP <2s, TTI <3.5s, Lighthouse mobile >85, bundle <200KB, Claude API <5s chat/<8s OCR
+5. Always optimize for: solo founder maintainability, token efficiency, mobile-first
+
+TRIGGERS: "how should we build", "architecture", "system design", "API design", "should we use", "ADR", "which approach"
+
+Create 3 reference files:
+1. tech-stack.md — canonical stack reference with version numbers and conventions
+2. architecture-decisions.md — ADR log template, seeded with 3 initial ADRs (Next.js choice, Supabase choice, Xendit choice)
+3. api-design.md — REST conventions, error format, pagination, auth patterns</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 3: FULLSTACK ENGINEER -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">⚡</span>
+      <h4>fullstack-engineer</h4>
+      <span class="phase phase-a phase-tag">Phase A</span>
+    </div>
+    <div class="skill-body">
+      <p>The workhorse skill. Writes Next.js components, Supabase queries, API routes, and Edge Functions. Knows AKBai's code conventions and follows established patterns.</p>
+
+      <h4>SKILL.md Content Spec (~300 lines)</h4>
+      <ul>
+        <li><strong>Role Definition</strong> — "You are a senior fullstack engineer building AKBai. You write production-quality TypeScript. You follow the established patterns in the codebase. You ask for the ADR if a design decision isn't clear rather than guessing."</li>
+        <li><strong>Code Generation Protocol</strong> — (1) Check if an ADR exists for this feature, (2) review the Supabase schema for relevant tables, (3) scaffold: page route → component → API route → Supabase query → types, (4) always include error handling and loading states, (5) all user-facing text in Taglish.</li>
+        <li><strong>Component Patterns</strong> — Card component structure (AKBai uses a Chat + Card hybrid UI). Mobile-first responsive. Tailwind CSS only. Feature folders: /app/(features)/resibo/, /app/(features)/deadline/, etc.</li>
+        <li><strong>Supabase Patterns</strong> — Always use typed client. RLS policies on every new table. Soft-delete pattern (deleted_at timestamp, not hard delete). Edge Functions for webhooks only. Service role key NEVER in client code.</li>
+        <li><strong>Claude API Patterns</strong> — All Claude calls server-side via API route. Structured JSON response with Zod validation. Haiku for classification/OCR, Sonnet for generation/reasoning. Daily spend cap circuit breaker. Retry with exponential backoff (max 3 retries).</li>
+        <li><strong>Error Handling</strong> — Every API route returns {success, data, error} shape. Client-side error boundaries on every feature page. Taglish error messages for users, English for logs.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/nextjs-conventions.md</span>
+          <span class="ref-desc">~120 lines. App Router file structure, naming conventions, server vs client components, middleware patterns, Tailwind config, TypeScript strict settings.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/supabase-patterns.md</span>
+          <span class="ref-desc">~100 lines. Typed client setup, RLS policy templates, Edge Function boilerplate, common query patterns (paginated list, upsert, soft-delete filter).</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/claude-integration.md</span>
+          <span class="ref-desc">~80 lines. Claude API wrapper, structured output pattern with Zod, Haiku vs Sonnet routing logic, circuit breaker implementation, retry strategy.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — fullstack-engineer Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "fullstack-engineer" for my AKBai Cowork plugin.
+
+PURPOSE: Write production-quality TypeScript for AKBai — Next.js components, Supabase queries, API routes, Edge Functions. This is the most-used skill during Phase 1 MVP build.
+
+STACK: Next.js 14 App Router, TypeScript strict, Tailwind CSS, Supabase (typed client, RLS everywhere), Claude API (Haiku + Sonnet, server-side only), Xendit.
+
+CODE GENERATION PROTOCOL:
+1. Check for existing ADR before making design decisions
+2. Review Supabase schema for relevant tables
+3. Scaffold: page route → component → API route → Supabase query → types
+4. Always include error handling ({success, data, error} shape) and loading states
+5. All user-facing text in Taglish
+
+PATTERNS TO ENCODE:
+- Chat + Card hybrid UI (not traditional CRUD screens)
+- Feature folders: /app/(features)/resibo/, /app/(features)/deadline/
+- Supabase: typed client, RLS on every table, soft-delete (deleted_at), Edge Functions for webhooks only, service role key NEVER in client
+- Claude API: server-side via API route, Zod-validated structured JSON, Haiku for OCR/classification, Sonnet for reasoning, daily spend cap circuit breaker, retry with exponential backoff (3 max)
+- Mobile-first responsive, Tailwind only, no CSS modules
+
+TRIGGERS: "implement", "build this", "create component", "create page", "edge function", "fix this bug", "write the code for", "scaffold"
+
+Create 3 reference files:
+1. nextjs-conventions.md — file structure, naming, server/client split, Tailwind config
+2. supabase-patterns.md — typed client, RLS templates, Edge Function boilerplate, query patterns
+3. claude-integration.md — API wrapper, Zod structured output, Haiku/Sonnet routing, circuit breaker</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 4: DATA ARCHITECT -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">🗄️</span>
+      <h4>data-architect</h4>
+      <span class="phase phase-a phase-tag">Phase A</span>
+    </div>
+    <div class="skill-body">
+      <p>Owns the Supabase schema, RLS policies, data migrations, and NPC-compliant data flows. Schema decisions happen early and are hard to change — this skill ensures they're right from Day 1.</p>
+
+      <h4>SKILL.md Content Spec (~250 lines)</h4>
+      <ul>
+        <li><strong>Role Definition</strong> — "You are the data architect for AKBai. Every schema decision must be NPC-compliant (RA 10173), support RLS isolation, and be migration-safe. You think about data flows across the full lifecycle: collection → storage → processing → deletion."</li>
+        <li><strong>Schema Design Protocol</strong> — (1) Define the table purpose and relationships, (2) add RLS policy (always user_id based), (3) add soft-delete column (deleted_at), (4) add audit columns (created_at, updated_at), (5) generate migration SQL, (6) document in schema reference.</li>
+        <li><strong>Core Tables</strong> — users, businesses, transactions, receipts, invoices, bir_deadlines, ka_conversations, subscriptions. Each with RLS, soft-delete, audit columns.</li>
+        <li><strong>NPC Data Flow Compliance</strong> — Data classification (PII vs business data vs analytics). Encryption at rest (Supabase default). Data retention schedule (user can request deletion, 7-day purge window). Audit log for data access.</li>
+        <li><strong>Migration Strategy</strong> — Always create migration SQL files. Never alter production schema without a migration. Use Supabase CLI for migration management. Rollback plan for every migration.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/supabase-schema.md</span>
+          <span class="ref-desc">~150 lines. Full schema DDL for all core tables. RLS policies for each table. Indexes. Foreign key relationships. This is the living schema reference — update it with every migration.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/data-flows.md</span>
+          <span class="ref-desc">~80 lines. How data moves through each pillar: Receipt scanning flow, expense aggregation flow, BIR deadline calculation flow, invoice generation flow, subscription/payment flow.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/npc-compliance.md</span>
+          <span class="ref-desc">~60 lines. NPC privacy-by-design checklist: data classification, encryption requirements, retention schedules, account deletion process, breach notification protocol.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — data-architect Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "data-architect" for my AKBai Cowork plugin.
+
+PURPOSE: Supabase schema design, RLS policies, data migrations, and NPC-compliant data flow management for AKBai.
+
+DATABASE: Supabase (Postgres). All tables must have: RLS policy (user_id based), soft-delete (deleted_at timestamp), audit columns (created_at, updated_at).
+
+CORE TABLES TO DOCUMENT: users, businesses, transactions, receipts, invoices, bir_deadlines, ka_conversations, subscriptions.
+
+SCHEMA DESIGN PROTOCOL:
+1. Define table purpose + relationships
+2. Add RLS policy (always user_id scoped)
+3. Add soft-delete + audit columns
+4. Generate migration SQL
+5. Document in schema reference
+
+NPC COMPLIANCE (RA 10173):
+- Data classification: PII (name, email, phone) vs business data (transactions, receipts) vs analytics
+- Encrypted at rest (Supabase default)
+- Retention: user deletion → 7-day purge window
+- Audit log table for data access
+- Breach notification: 72-hour NPC window
+
+MIGRATION RULES: Always create SQL migration files. Never alter prod without migration. Supabase CLI for management. Rollback plan required.
+
+TRIGGERS: "schema", "database", "Supabase", "migration", "RLS", "data model", "table", "data flow", "privacy"
+
+Create 3 reference files:
+1. supabase-schema.md — full DDL, RLS policies, indexes, relationships (living document)
+2. data-flows.md — receipt scanning flow, expense aggregation, BIR calculation, invoice generation, payment flow
+3. npc-compliance.md — privacy-by-design checklist, data classification, retention, deletion, breach protocol</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- ═══ 4. PHASE B ═══ -->
+<section id="phase-b">
+<div class="container">
+  <div class="section-label">04</div>
+  <div class="section-title">Phase B — Engineering Depth</div>
+  <div class="section-sub">Add these 4 skills as you start building features in Phase 1 and need AI integration, testing, security, and deployment capabilities.</div>
+
+  <!-- SKILL 5: AI ENGINEER -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">🤖</span>
+      <h4>ai-engineer</h4>
+      <span class="phase phase-b phase-tag">Phase B</span>
+    </div>
+    <div class="skill-body">
+      <p>Builds all Claude API integrations: KA persona prompts, receipt OCR pipeline, AI guardrails, and Taglish response generation.</p>
+
+      <h4>SKILL.md Content Spec (~280 lines)</h4>
+      <ul>
+        <li><strong>KA Persona System Prompt</strong> — The complete system prompt for the Katuwang persona. Tone rules, Taglish patterns, "po" usage, proactive behavior, what KA should never say (tax advice, guaranteed returns).</li>
+        <li><strong>OCR Pipeline Design</strong> — Camera input → image preprocessing → Haiku Vision API call → structured JSON extraction (store name, date, items, total, payment method) → validation → Supabase storage. Edge cases: crumpled receipt, no date visible, handwritten amounts, multiple currencies.</li>
+        <li><strong>Prompt Engineering Patterns</strong> — Structured output with Zod schemas. System prompt versioning (system_prompt_v1, v2...). A/B testing prompt variants. Cost tracking per prompt type.</li>
+        <li><strong>AI Guardrails</strong> — BIR disclaimer ("Ito ay gabay lamang, hindi tax advice"). Hallucination prevention for financial data. Never invent transaction amounts. Flag low-confidence OCR results. Circuit breaker on daily spend.</li>
+        <li><strong>Model Routing</strong> — Decision tree: Haiku for OCR, classification, simple Q&A, free tier. Sonnet for morning briefing generation, complex financial analysis, reply drafting, Pro/Business tier.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/prompt-library.md</span>
+          <span class="ref-desc">All system prompts: KA persona base prompt, receipt OCR extraction prompt, morning briefing generation prompt, reply drafter prompt. Versioned (v1, v2...).</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/ocr-pipeline.md</span>
+          <span class="ref-desc">End-to-end OCR pipeline: image preprocessing, Haiku Vision call parameters, structured output schema, validation rules, edge case handling, accuracy thresholds.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/ai-guardrails.md</span>
+          <span class="ref-desc">BIR disclaimer text, hallucination prevention rules, low-confidence handling, financial data accuracy requirements, circuit breaker config.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — ai-engineer Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "ai-engineer" for my AKBai Cowork plugin.
+
+PURPOSE: Claude API integration, prompt engineering for KA persona, OCR pipeline, AI guardrails, and Taglish response generation.
+
+KA PERSONA: "Katuwang" = Filipino AI business partner. Warm, hyper-competent, Taglish, uses "po" naturally, proactive (speaks first, e.g., "Magandang umaga po, Maria! Eto ang update mo..."). Never: tax advice, guaranteed returns, condescending, robotic, corporate.
+
+OCR PIPELINE: Camera → Haiku Vision → structured JSON (store_name, date, items[], total, payment_method, category) → Zod validation → Supabase. Cost: ₱0.16/scan ($0.0028 × 57.2). Edge cases: crumpled receipt, missing date, handwritten amounts, partial text.
+
+MODEL ROUTING: Haiku → OCR, classification, simple Q&A, free tier queries. Sonnet → morning briefing, complex analysis, reply drafting, Pro/Business tier.
+
+GUARDRAILS: BIR disclaimer on all tax-related outputs. Never invent financial amounts. Flag low-confidence OCR (<80%). Daily spend cap circuit breaker. Prompt injection prevention on user inputs.
+
+TRIGGERS: "prompt", "Claude API", "OCR", "AI response", "hallucination", "KA persona", "Taglish AI", "system prompt"
+
+Create 3 reference files:
+1. prompt-library.md — versioned system prompts for KA persona, OCR extraction, morning briefing, reply drafter
+2. ocr-pipeline.md — full pipeline spec, Haiku Vision parameters, output schema, validation, edge cases
+3. ai-guardrails.md — BIR disclaimers, hallucination prevention, confidence thresholds, circuit breaker config</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 6: QA ENGINEER -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">✅</span>
+      <h4>qa-engineer</h4>
+      <span class="phase phase-b phase-tag">Phase B</span>
+    </div>
+    <div class="skill-body">
+      <p>Test strategy, test writing (unit/integration/e2e), and regression prevention. Critical for BIR deadline logic and Xendit payment flows.</p>
+
+      <h4>SKILL.md Content Spec (~200 lines)</h4>
+      <ul>
+        <li><strong>Test Strategy</strong> — Unit tests (Jest/Vitest) for business logic. Integration tests for Supabase queries. E2E tests (Playwright) for critical user flows. No tests for simple CRUD — focus testing budget on: BIR date logic, OCR parsing, payment flows, RLS policies.</li>
+        <li><strong>Per-Feature Test Checklist</strong> — For each feature: happy path, empty state, error state, permission denied (RLS), edge cases specific to Filipino context (holiday dates, GCash-specific scenarios).</li>
+        <li><strong>Critical Test Scenarios</strong> — BIR deadline calculations (weekend/holiday rollover, mid-year registration, VAT threshold crossing). Xendit webhook idempotency. Receipt OCR accuracy on Filipino receipt formats. Free/Pro/Business tier gating.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/test-strategy.md</span>
+          <span class="ref-desc">Testing pyramid for AKBai: what to test at each level, tooling (Jest, Playwright), coverage targets, CI integration.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/test-checklist.md</span>
+          <span class="ref-desc">Per-feature test requirements: BIR engine (10 critical scenarios), Xendit (5 payment scenarios), OCR (8 receipt type scenarios), RLS (3 isolation tests per table).</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — qa-engineer Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "qa-engineer" for my AKBai Cowork plugin.
+
+PURPOSE: Test strategy, test writing (Jest/Vitest unit, Playwright e2e), and regression prevention for AKBai.
+
+TESTING PRIORITIES (most critical first):
+1. BIR deadline calculations — weekend/holiday rollover, mid-year registration, VAT threshold, partial-year deadlines
+2. Xendit payment flows — webhook idempotency, subscription lifecycle, failed payment handling
+3. Receipt OCR — Filipino receipt format accuracy, edge cases (crumpled, handwritten, missing fields)
+4. RLS policy isolation — ensure user A cannot see user B's data
+5. Tier gating — Free/Pro/Business feature access, scan limits, query limits
+
+DO NOT test: simple CRUD, basic UI rendering, obvious happy paths. Testing budget is limited — focus on business-critical logic.
+
+TRIGGERS: "test", "write tests", "QA", "regression", "test plan", "coverage", "test strategy"
+
+Create 2 reference files:
+1. test-strategy.md — testing pyramid, tooling, coverage targets, CI integration
+2. test-checklist.md — per-feature test requirements with specific scenario counts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 7: SECURITY COMPLIANCE -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">🔒</span>
+      <h4>security-compliance</h4>
+      <span class="phase phase-b phase-tag">Phase B</span>
+    </div>
+    <div class="skill-body">
+      <p>NPC compliance, data privacy implementation, security hardening, and BIR feature legal boundaries. NPC registration is a hard gate before launch.</p>
+
+      <h4>SKILL.md Content Spec (~220 lines)</h4>
+      <ul>
+        <li><strong>NPC Compliance Checklist</strong> — Registration requirements, DPO designation, privacy impact assessment, data processing agreements, breach notification (72-hour window), annual compliance report.</li>
+        <li><strong>Security Architecture</strong> — Authentication (Supabase Auth, JWT), authorization (RLS), encryption (at rest via Supabase, in transit via HTTPS), secrets management (Vercel env vars), input sanitization (especially receipt uploads — prevent prompt injection via image text).</li>
+        <li><strong>BIR Feature Legal Boundaries</strong> — AKBai provides tax reminders and calculations, NOT tax advice. Disclaimer required on all tax-related outputs. No liability for incorrect BIR deadline calculations. User responsible for filing.</li>
+        <li><strong>Security Hardening Checklist</strong> — CORS configuration, rate limiting on API routes, webhook signature verification (Xendit), content security policy, OWASP top 10 review.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/npc-checklist.md</span>
+          <span class="ref-desc">Full NPC compliance tracker with status, deadlines, and responsible actions.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/security-architecture.md</span>
+          <span class="ref-desc">Auth, RLS, encryption, secrets, rate limiting, CORS — full security posture document.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/bir-compliance.md</span>
+          <span class="ref-desc">BIR feature legal boundaries, disclaimer text, liability limitations, user consent requirements.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — security-compliance Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "security-compliance" for my AKBai Cowork plugin.
+
+PURPOSE: NPC (RA 10173) compliance, data privacy, security hardening, and BIR feature legal boundaries.
+
+NPC REQUIREMENTS: Registration, DPO designation, privacy impact assessment, data processing agreements, breach notification (72-hr window), annual compliance report. This is a HARD GATE before launch.
+
+SECURITY ARCHITECTURE: Supabase Auth (JWT), RLS per table, encryption at rest (Supabase default), HTTPS in transit, Vercel env vars for secrets, input sanitization (especially receipt uploads — prevent prompt injection via OCR text).
+
+BIR LEGAL: AKBai = tax reminders, NOT tax advice. Disclaimer on ALL tax outputs: "Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo." No liability for BIR deadline miscalculations. User responsible for filing.
+
+TRIGGERS: "security", "NPC", "privacy", "compliance", "data protection", "BIR legal", "breach", "OWASP"
+
+Create 3 reference files:
+1. npc-checklist.md — full compliance tracker with status and deadlines
+2. security-architecture.md — auth, RLS, encryption, rate limiting, CORS
+3. bir-compliance.md — legal boundaries, disclaimer text, liability limitations</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 8: DEVOPS ENGINEER -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">🚀</span>
+      <h4>devops-engineer</h4>
+      <span class="phase phase-b phase-tag">Phase B</span>
+    </div>
+    <div class="skill-body">
+      <p>CI/CD pipeline, Vercel/Cloudflare deployment, monitoring (Sentry/PostHog), and incident response. Becomes critical from Sprint 7+ when real payments are involved.</p>
+
+      <h4>SKILL.md Content Spec (~200 lines)</h4>
+      <ul>
+        <li><strong>Deployment Pipeline</strong> — GitHub push → Vercel preview → automated checks → production deploy. Environment variables checklist. Supabase migration verification before deploy.</li>
+        <li><strong>Monitoring Stack</strong> — Sentry (error tracking, release tags), PostHog (user analytics, feature flags), UptimeRobot (endpoint monitoring, Xendit webhook health). Alert thresholds and escalation.</li>
+        <li><strong>Incident Response Protocol</strong> — Solo founder incident playbook: detect (Sentry/UptimeRobot alert) → assess severity (P0: data breach/payment failure, P1: core feature down, P2: degraded) → mitigate → communicate (status page) → postmortem.</li>
+        <li><strong>Pre-Deploy Checklist</strong> — Tests pass, env vars set, Supabase migrations applied, Sentry release tagged, UptimeRobot paused during deploy, rollback plan documented.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/deployment-guide.md</span>
+          <span class="ref-desc">Vercel + Cloudflare setup, environment variables, domain config, CI/CD pipeline, rollback procedures.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/monitoring-setup.md</span>
+          <span class="ref-desc">Sentry, PostHog, UptimeRobot configuration. Alert thresholds. Dashboard setup.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/incident-runbook.md</span>
+          <span class="ref-desc">Solo founder incident protocol: P0/P1/P2 definitions, triage steps, communication templates, NPC breach notification if applicable, postmortem template.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — devops-engineer Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "devops-engineer" for my AKBai Cowork plugin.
+
+PURPOSE: CI/CD, Vercel/Cloudflare deployment, monitoring, and incident response for a solo founder running a production PWA with real payments.
+
+DEPLOYMENT: GitHub → Vercel preview → automated checks → production. Cloudflare Pages as Month 7+ fallback. Supabase migrations must be verified before every deploy.
+
+MONITORING: Sentry (errors, release tags), PostHog (analytics, feature flags), UptimeRobot (uptime, Xendit webhook health). Alert → Slack/email → Anton's phone.
+
+INCIDENT PROTOCOL (solo founder — may be at day job when incident hits):
+- P0: data breach, payment failure, NPC violation → immediate response, even during Globe work hours
+- P1: core feature down for all users → respond within 1 hour
+- P2: degraded performance, non-critical feature broken → next available evening
+
+TRIGGERS: "deploy", "CI/CD", "monitoring", "Sentry", "Vercel", "incident", "downtime", "production issue"
+
+Create 3 reference files:
+1. deployment-guide.md — full CI/CD pipeline, env vars, domain config, rollback
+2. monitoring-setup.md — Sentry, PostHog, UptimeRobot config and alert thresholds
+3. incident-runbook.md — P0/P1/P2 protocols, communication templates, postmortem format</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- ═══ 5. PHASE C ═══ -->
+<section id="phase-c">
+<div class="container">
+  <div class="section-label">05</div>
+  <div class="section-title">Phase C — Full Delivery</div>
+  <div class="section-sub">Complete the team with UX design, marketing, product ownership, and operations skills. Add these for launch readiness and ongoing operations.</div>
+
+  <!-- SKILL 9: UX DESIGNER -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">🎨</span>
+      <h4>ux-designer</h4>
+      <span class="phase phase-c phase-tag">Phase C</span>
+    </div>
+    <div class="skill-body">
+      <p>UX flow design, Taglish copy writing, mobile-first design patterns, accessibility, and the Chat + Card hybrid UI system.</p>
+
+      <h4>SKILL.md Content Spec (~230 lines)</h4>
+      <ul>
+        <li><strong>AKBai UI System</strong> — Chat + Card hybrid. KA speaks in chat bubbles, data surfaces in Cards (Expense Card, Morning Briefing Card, Deadline Card, Invoice Card). Cards are actionable — tap to expand, swipe to dismiss, long-press for options.</li>
+        <li><strong>Taglish Copy Rules</strong> — Default language: Taglish (Filipino-English mix). KA uses "po" when appropriate. Never corporate-speak. Short sentences (max 2 lines per chat bubble). Numbers always in digits, never spelled out. Peso sign: ₱, not PHP.</li>
+        <li><strong>Mobile-First Patterns</strong> — Touch targets 44x44px minimum. Bottom navigation (max 4 items). Card stack layout. Thumb-zone optimization. Camera integration for receipt scanning. Offline-first for Morning Briefing cache.</li>
+        <li><strong>Empty States & Errors</strong> — Every screen has a designed empty state with KA encouraging action. Errors are warm and actionable: "Hindi ko ma-scan ang resibo, boss. Subukan ulit — clear ang photo at maliwanag ang lighting."</li>
+        <li><strong>Accessibility</strong> — WCAG 2.1 AA target. Color contrast (watch orange-on-white from brand palette). Screen reader labels on all Cards. Alt text for receipt images.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/ux-flows.md</span>
+          <span class="ref-desc">All 8 core UX flows: onboarding (Kilala Kita), receipt scan, expense review, morning briefing, BIR deadline, invoice creation, costing, reply drafting.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/taglish-copy-guide.md</span>
+          <span class="ref-desc">KA voice rules, 10 do/don't examples, common Taglish patterns, tone calibration per context (celebratory, warning, neutral, encouraging).</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/mobile-first.md</span>
+          <span class="ref-desc">PWA design constraints, touch targets, navigation pattern, card layout specs, offline behavior, camera integration UX.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — ux-designer Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "ux-designer" for my AKBai Cowork plugin.
+
+PURPOSE: UX flow design, Taglish copy writing, mobile-first patterns, accessibility, and the Chat + Card hybrid UI for AKBai.
+
+UI SYSTEM: Chat + Card hybrid. KA speaks in chat bubbles, data in Cards (Expense Card, Morning Briefing, Deadline Card, Invoice Card). Cards are actionable — tap, swipe, long-press. NOT traditional CRUD screens.
+
+TAGLISH COPY RULES: Default Taglish. "po" used naturally. Never corporate-speak. Max 2 lines per bubble. Numbers in digits. ₱ not PHP. Empty states: KA encouraging action. Errors: warm + actionable ("Hindi ko ma-scan ang resibo, boss...").
+
+MOBILE-FIRST: 44x44px touch targets. Bottom nav (4 items max). Card stack layout. Thumb-zone optimized. Camera integration for Resibo Scanner. Offline-first for Morning Briefing cache.
+
+ACCESSIBILITY: WCAG 2.1 AA. Watch orange-on-white contrast. Screen reader labels on Cards. Alt text on receipt images.
+
+TRIGGERS: "UX", "wireframe", "copy", "Taglish copy", "user flow", "empty state", "error message", "design", "mobile design"
+
+Create 3 reference files:
+1. ux-flows.md — 8 core UX flows (onboarding through reply drafting)
+2. taglish-copy-guide.md — KA voice rules, 10 do/don't examples, tone calibration
+3. mobile-first.md — PWA constraints, touch targets, card layout, offline behavior</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 10: MARKETING LEAD -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">📣</span>
+      <h4>marketing-lead</h4>
+      <span class="phase phase-c phase-tag">Phase C</span>
+    </div>
+    <div class="skill-body">
+      <p>GTM strategy, content creation, competitive positioning, social media, and Facebook group outreach. Pre-loaded with AKBai's brand voice and Filipino MSME personas.</p>
+
+      <h4>SKILL.md Content Spec (~220 lines)</h4>
+      <ul>
+        <li><strong>Brand Voice</strong> — Katuwang voice: warm, hyper-competent, Taglish, build-in-public authentic. Never salesy, never corporate, never condescending. Uses real numbers and honest metrics.</li>
+        <li><strong>Channel Strategy</strong> — Primary: Facebook MSME groups (value-bombing posts), TikTok/IG (short-form video). Secondary: SEO blog (projectka.ph/blog), email sequences. Phase 2: micro-influencer barter program (5–10 creators, 10K–100K followers).</li>
+        <li><strong>Content Types</strong> — FB value-bombing posts (teach something, end with "Comment BETA"), Taglish SEO articles (1,200–1,800 words), TikTok captions, email sequences, waitlist/launch copy.</li>
+        <li><strong>Competitive Positioning</strong> — AKBai vs Taxumo (tax-only), ChatGenie (comms-only), SOFI AI (generic), Packworks (sari-sari only). AKBai's angle: integrated AI business partner, not a single-function tool. 90%+ cost advantage on receipt scanning.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/brand-voice.md</span>
+          <span class="ref-desc">Full brand personality guide, Katuwang voice rules, 5 do/don't examples, tone calibration per channel (FB post vs email vs in-app).</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/competitive-brief.md</span>
+          <span class="ref-desc">Condensed competitive landscape: Taxumo, ChatGenie, SOFI AI, Packworks. Pricing, features, weaknesses, AKBai differentiation.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/content-calendar.md</span>
+          <span class="ref-desc">Channel strategy templates, content calendar framework, BIR deadline organic post schedule, micro-influencer outreach templates.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — marketing-lead Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "marketing-lead" for my AKBai Cowork plugin.
+
+PURPOSE: GTM strategy, Taglish content creation, competitive positioning, and Facebook group outreach for AKBai.
+
+BRAND VOICE: Katuwang — warm, hyper-competent, Taglish, build-in-public authentic. Never salesy, corporate, or condescending. Real numbers. Solo founder voice.
+
+CHANNELS: FB MSME groups (value-bombing), TikTok/IG (short-form), SEO blog (projectka.ph/blog), email. Phase 2: micro-influencer barter (5–10 creators).
+
+COMPETITIVE POSITIONING: AKBai = integrated AI business partner. Competitors are single-function: Taxumo (tax-only, more expensive), ChatGenie (comms-only), SOFI AI (generic chatbot), Packworks (sari-sari inventory). AKBai advantage: 90%+ cost advantage on scanning, all-in-one.
+
+CONTENT TEMPLATES: FB value posts (teach + "Comment BETA"), SEO articles (1,200–1,800 words Taglish), TikTok captions, email sequences, launch copy.
+
+TRIGGERS: "marketing", "content", "social media", "Facebook post", "competitive", "GTM", "launch", "blog post", "campaign"
+
+Create 3 reference files:
+1. brand-voice.md — full personality guide, Katuwang voice rules, do/don't examples
+2. competitive-brief.md — condensed competitor analysis with differentiation angles
+3. content-calendar.md — channel templates, BIR post schedule, influencer outreach scripts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 11: PRODUCT OWNER -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">🎯</span>
+      <h4>product-owner</h4>
+      <span class="phase phase-c phase-tag">Phase C</span>
+    </div>
+    <div class="skill-body">
+      <p>Feature prioritization, user story writing, acceptance criteria, tier allocation decisions, and the 8-Signal Sense Check Gate framework.</p>
+
+      <h4>SKILL.md Content Spec (~200 lines)</h4>
+      <ul>
+        <li><strong>Feature Prioritization Framework</strong> — Score by: (1) Maria Moment impact (does this get Maria to "Kumikita ka" faster?), (2) technical complexity, (3) tier allocation (Free/Pro/Business), (4) dependency on other features. Never build a feature that doesn't serve the Maria Moment.</li>
+        <li><strong>User Story Format</strong> — "As [persona], I want [action] so that [value]." Acceptance criteria in Given/When/Then. Always include: happy path, empty state, error state, tier restriction if applicable.</li>
+        <li><strong>Sense Check Gate</strong> — 8-signal framework for Phase 1→2: (1) registered users ≥50, (2) paying subscribers ≥20, (3) MRR ≥₱6K, (4) free-to-paid conversion ≥20%, (5) 7-day retention ≥40%, (6) NPS ≥30, (7) support ticket resolution <24hrs, (8) unit economics positive. Green/Yellow/Red thresholds for each.</li>
+        <li><strong>Tier Allocation Logic</strong> — Free: text-only queries (10/day), Haiku-only, no scans. Pro: 50 scans/mo, Sonnet+Haiku, full feature set. Business: 80 scans/mo, GSheets OAuth, multi-seat (owner + 1 staff).</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/feature-matrix.md</span>
+          <span class="ref-desc">Full MVP feature list with tier allocation (Free/Pro/Business), phase assignment (1/2/3), and dependency map.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/user-personas.md</span>
+          <span class="ref-desc">4 personas with pain points, goals, tech comfort, and which features matter most to each.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/sense-check.md</span>
+          <span class="ref-desc">8-signal framework with Green/Yellow/Red thresholds, measurement methods, and Go/No-Go decision logic.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — product-owner Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "product-owner" for my AKBai Cowork plugin.
+
+PURPOSE: Feature prioritization, user stories, acceptance criteria, tier allocation, and sense check gate management.
+
+PRIORITIZATION: Score by Maria Moment impact, technical complexity, tier allocation, dependencies. THE NORTH STAR: "Does this get Maria to 'Kumikita ka. ₱18,400 ang net mo this month' faster?"
+
+USER STORIES: "As [persona], I want [action] so that [value]." AC in Given/When/Then. Include: happy path, empty state, error state, tier restriction.
+
+SENSE CHECK (Phase 1→2): 8 signals with thresholds: registered users ≥50, paying ≥20, MRR ≥₱6K, free-to-paid ≥20%, 7-day retention ≥40%, NPS ≥30, support resolution <24hrs, unit economics positive.
+
+TIER ALLOCATION: Free (text, 10q/day, Haiku), Pro ₱399 (50 scans, Sonnet+Haiku), Business ₱899 (80 scans, GSheets OAuth, multi-seat).
+
+TRIGGERS: "user story", "acceptance criteria", "prioritize", "which feature", "sense check", "MVP scope", "tier allocation"
+
+Create 3 reference files:
+1. feature-matrix.md — feature list with tier, phase, and dependency map
+2. user-personas.md — Maria, Jose, Ana, Andoy profiles with pain points
+3. sense-check.md — 8-signal framework with Green/Yellow/Red thresholds</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL 12: OPS LEAD -->
+  <div class="skill-block">
+    <div class="skill-header">
+      <span class="emoji">⚙️</span>
+      <h4>ops-lead</h4>
+      <span class="phase phase-c phase-tag">Phase C</span>
+    </div>
+    <div class="skill-body">
+      <p>Daily/weekly operating rhythm, support queue management, revenue tracking, and the "flag-as-wrong" review process. Activated once you have real users.</p>
+
+      <h4>SKILL.md Content Spec (~180 lines)</h4>
+      <ul>
+        <li><strong>Daily Rhythm</strong> — Morning (5 min): check Sentry errors, UptimeRobot status, support queue. Evening (build session): current sprint task. Solo founder constraint: everything must be checkable on phone during Globe work hours.</li>
+        <li><strong>Weekly Rhythm</strong> — Monday: standup + plan. Wednesday/Saturday: build session (2–4 hrs). Sunday: metrics review + competitor monitoring ritual (15 min).</li>
+        <li><strong>Support Triage</strong> — Tier 1: KA auto-response (FAQ, common errors). Tier 2: manual response needed (billing, data issues). Tier 3: escalation (data breach, NPC, legal). Response SLA: Tier 1 instant, Tier 2 <24hrs, Tier 3 <4hrs.</li>
+        <li><strong>Revenue Tracking</strong> — Monthly metrics: MRR, new MRR, churned MRR, net growth. Per-user: LTV, feature usage, scan count. Thresholds: churn >5%/mo = red flag, free-to-paid <15% = investigate funnel.</li>
+        <li><strong>Flag-as-Wrong Review</strong> — When users flag an AI response as wrong: (1) log the flagged interaction, (2) review context + Claude output, (3) determine if prompt issue or data issue, (4) fix and add to regression tests.</li>
+      </ul>
+
+      <div class="ref-list">
+        <h5>Reference Files</h5>
+        <div class="ref-item">
+          <span class="ref-file">references/daily-rhythm.md</span>
+          <span class="ref-desc">Anton's daily/weekly ops cadence, phone-checkable morning routine, build session structure.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/support-playbook.md</span>
+          <span class="ref-desc">Tier 1/2/3 triage, auto-response templates, escalation criteria, trust recovery protocol for billing issues.</span>
+        </div>
+        <div class="ref-item">
+          <span class="ref-file">references/revenue-tracking.md</span>
+          <span class="ref-desc">MRR tracking template, unit economics dashboard fields, churn analysis framework, flag-as-wrong review process.</span>
+        </div>
+      </div>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Build Prompt — ops-lead Skill</div>
+        <div class="prompt-text">Use skill-creator. Create a skill called "ops-lead" for my AKBai Cowork plugin.
+
+PURPOSE: Daily/weekly ops rhythm, support triage, revenue tracking, and flag-as-wrong review for a solo founder running a live product.
+
+DAILY RHYTHM: Morning 5 min (phone): Sentry errors, UptimeRobot, support queue. Evening: build session. Must work within day-job constraints (Globe Telecom).
+
+WEEKLY: Monday standup. Wed/Sat build (2–4 hrs). Sunday metrics + competitor check (15 min).
+
+SUPPORT TRIAGE: Tier 1 (KA auto-response) → Tier 2 (manual, <24hr SLA) → Tier 3 (escalation, <4hr SLA for data breach/NPC/legal).
+
+REVENUE: Monthly MRR/churn/growth tracking. Red flags: churn >5%/mo, free-to-paid <15%.
+
+FLAG-AS-WRONG: Log flagged interaction → review context → determine cause (prompt vs data) → fix → add regression test.
+
+TRIGGERS: "operations", "daily check", "support", "revenue", "MRR", "churn", "flag review", "metrics", "weekly rhythm"
+
+Create 3 reference files:
+1. daily-rhythm.md — phone-checkable morning routine, build session structure
+2. support-playbook.md — Tier 1/2/3 triage, auto-response templates, trust recovery
+3. revenue-tracking.md — MRR tracking, unit economics, churn analysis, flag-as-wrong process</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- ═══ 6. COMMANDS ═══ -->
+<section id="commands">
+<div class="container">
+  <div class="section-label">06</div>
+  <div class="section-title">Slash Command Specs</div>
+  <div class="section-sub">Each command is a single Markdown file in <code>commands/</code> that invokes the right skill(s) and follows a defined protocol. Build these alongside or after their parent skills.</div>
+
+  <table>
+    <tr>
+      <th>Command</th>
+      <th>Primary Skill</th>
+      <th>What the .md File Should Contain</th>
+    </tr>
+    <tr>
+      <td><code>/sprint</code></td>
+      <td>project-manager</td>
+      <td>Instructions to: (1) read current phase from project-context.md, (2) check gap-registry.md, (3) generate sprint plan with 3–5 tasks sized for 10–15 hrs, (4) output in sprint plan template format.</td>
+    </tr>
+    <tr>
+      <td><code>/build [feature]</code></td>
+      <td>solutions-architect → fullstack-engineer</td>
+      <td>Chain: (1) check for existing ADR, (2) design schema changes via data-architect patterns, (3) scaffold feature folder structure, (4) generate implementation with tests. Output: working code + migration SQL.</td>
+    </tr>
+    <tr>
+      <td><code>/review</code></td>
+      <td>fullstack-engineer + security-compliance</td>
+      <td>Dual review: (1) code quality (conventions, error handling, types), (2) security (RLS, input validation, secrets exposure, prompt injection). Output: review comments with severity.</td>
+    </tr>
+    <tr>
+      <td><code>/test [scope]</code></td>
+      <td>qa-engineer</td>
+      <td>Generate test suite for specified feature. Use test-checklist.md for required scenarios. Output: Jest/Playwright test files ready to run.</td>
+    </tr>
+    <tr>
+      <td><code>/deploy</code></td>
+      <td>devops-engineer</td>
+      <td>Pre-deployment checklist: tests pass, env vars verified, migrations applied, Sentry release tagged, rollback plan. Output: Go/No-Go with blockers if any.</td>
+    </tr>
+    <tr>
+      <td><code>/incident</code></td>
+      <td>devops-engineer + ops-lead</td>
+      <td>Emergency protocol: (1) assess severity (P0/P1/P2), (2) immediate mitigation steps, (3) communication template for users, (4) if P0 data breach → NPC 72-hour notification checklist.</td>
+    </tr>
+    <tr>
+      <td><code>/standup</code></td>
+      <td>project-manager</td>
+      <td>Generate weekly standup from provided inputs: what shipped, what's next, blockers, metrics. Output: GitHub issue comment + build-in-public social post.</td>
+    </tr>
+    <tr>
+      <td><code>/gap-check</code></td>
+      <td>project-manager + product-owner</td>
+      <td>Read gap-registry.md, flag overdue items by severity, suggest top 3 priorities for current sprint. Output: gap status table + recommendations.</td>
+    </tr>
+    <tr>
+      <td><code>/sense-check</code></td>
+      <td>product-owner + ops-lead</td>
+      <td>Run 8-signal Sense Check Gate with provided metrics. Output: signal-by-signal Green/Yellow/Red assessment + Go/No-Go recommendation for Phase 1→2.</td>
+    </tr>
+    <tr>
+      <td><code>/schema [action]</code></td>
+      <td>data-architect</td>
+      <td>View, modify, or validate Supabase schema. Actions: "view [table]", "add [table]", "migrate [change]", "validate". Always output migration SQL.</td>
+    </tr>
+    <tr>
+      <td><code>/prompt [feature]</code></td>
+      <td>ai-engineer</td>
+      <td>Create or iterate on Claude API prompts. Load prompt-library.md, show current version, accept modifications, validate output format with Zod schema.</td>
+    </tr>
+    <tr>
+      <td><code>/copy [context]</code></td>
+      <td>ux-designer</td>
+      <td>Write Taglish UI copy for specified context. Load taglish-copy-guide.md. Output: copy variants (2–3 options), character counts, tone notes.</td>
+    </tr>
+    <tr>
+      <td><code>/compliance [type]</code></td>
+      <td>security-compliance</td>
+      <td>NPC compliance check, BIR legal review, or security audit. Load relevant checklist. Output: status of each item + action items for non-compliant items.</td>
+    </tr>
+    <tr>
+      <td><code>/metrics</code></td>
+      <td>ops-lead</td>
+      <td>Review business metrics from provided data. Output: MRR dashboard summary, trend analysis, single highest-leverage recommendation.</td>
+    </tr>
+    <tr>
+      <td><code>/retro</code></td>
+      <td>project-manager</td>
+      <td>Sprint retrospective: what worked, what didn't, what to change. Output: structured retro with action items for next sprint.</td>
+    </tr>
+  </table>
+
+  <div class="callout callout-info">
+    <div class="callout-label" style="color:var(--blue)">Building Commands</div>
+    <p style="margin:0">Each command is a single .md file in <code>commands/</code>. The file content is the instruction set Claude follows when the slash command is invoked. Keep each under 100 lines. The command should reference the parent skill's reference files by path, not duplicate their content. Build commands alongside their parent skills — when building <code>project-manager</code>, also create <code>/sprint</code>, <code>/standup</code>, <code>/gap-check</code>, and <code>/retro</code> at the same time.</p>
+  </div>
+</div>
+</section>
+
+
+<!-- ═══ 7. BUILD SESSIONS ═══ -->
+<section id="sessions">
+<div class="container">
+  <div class="section-label">07</div>
+  <div class="section-title">Session-by-Session Build Plan</div>
+  <div class="section-sub">The exact sequence of sessions to build the complete plugin, optimized for Claude Pro token limits.</div>
+
+  <table>
+    <tr>
+      <th style="width:100px">Session</th>
+      <th>What to Build</th>
+      <th>Skills Created</th>
+      <th>Commands Created</th>
+      <th>Est. Time</th>
+    </tr>
+    <tr>
+      <td><strong>Build 0</strong></td>
+      <td>AI Scope Definition & System Prompt Architecture</td>
+      <td>—</td>
+      <td>—</td>
+      <td>30 min</td>
+    </tr>
+    <tr>
+      <td><strong>Session 1</strong></td>
+      <td>Plugin scaffold + shared context files</td>
+      <td>—</td>
+      <td>—</td>
+      <td>45 min</td>
+    </tr>
+    <tr>
+      <td><strong>Session 2</strong></td>
+      <td>project-manager skill + PM commands</td>
+      <td>project-manager</td>
+      <td>/sprint, /standup, /gap-check, /retro</td>
+      <td>1.5 hrs</td>
+    </tr>
+    <tr>
+      <td><strong>Session 3</strong></td>
+      <td>solutions-architect + data-architect skills</td>
+      <td>solutions-architect, data-architect</td>
+      <td>/schema</td>
+      <td>2 hrs</td>
+    </tr>
+    <tr>
+      <td><strong>Session 4</strong></td>
+      <td>fullstack-engineer skill + build/review commands</td>
+      <td>fullstack-engineer</td>
+      <td>/build, /review</td>
+      <td>2 hrs</td>
+    </tr>
+    <tr>
+      <td><strong>Session 5</strong></td>
+      <td>ai-engineer + qa-engineer skills</td>
+      <td>ai-engineer, qa-engineer</td>
+      <td>/prompt, /test</td>
+      <td>2 hrs</td>
+    </tr>
+    <tr>
+      <td><strong>Session 6</strong></td>
+      <td>security-compliance + devops-engineer skills</td>
+      <td>security-compliance, devops-engineer</td>
+      <td>/compliance, /deploy, /incident</td>
+      <td>1.5 hrs</td>
+    </tr>
+    <tr>
+      <td><strong>Session 7</strong></td>
+      <td>ux-designer + marketing-lead skills</td>
+      <td>ux-designer, marketing-lead</td>
+      <td>/copy</td>
+      <td>1.5 hrs</td>
+    </tr>
+    <tr>
+      <td><strong>Session 8</strong></td>
+      <td>product-owner + ops-lead skills</td>
+      <td>product-owner, ops-lead</td>
+      <td>/sense-check, /metrics</td>
+      <td>1.5 hrs</td>
+    </tr>
+    <tr>
+      <td><strong>Session 9</strong></td>
+      <td>Integration testing — run each command, fix issues</td>
+      <td>—</td>
+      <td>—</td>
+      <td>2 hrs</td>
+    </tr>
+    <tr>
+      <td><strong>Session 10</strong></td>
+      <td>Description optimization (skill-creator loop)</td>
+      <td>—</td>
+      <td>—</td>
+      <td>1.5 hrs</td>
+    </tr>
+    <tr style="font-weight:700">
+      <td>Total</td>
+      <td></td>
+      <td>12 skills</td>
+      <td>15 commands</td>
+      <td>~14 hrs</td>
+    </tr>
+  </table>
+
+  <div class="callout callout-warn">
+    <div class="callout-label" style="color:var(--red)">Session Rules</div>
+    <p style="margin:0"><strong>One fresh conversation per session.</strong> Never try to build 2+ skills in one conversation — token overflow kills quality. Each session: open new chat → invoke skill-creator → paste the build prompt from this guide → iterate → save outputs. The build prompts above are pre-optimized to give Claude everything it needs in one shot.</p>
+  </div>
+
+  <h3>After Building: Plugin Assembly</h3>
+  <p>Once all skills and commands are created, assemble the plugin:</p>
+  <ol>
+    <li><strong>Use <code>create-cowork-plugin</code></strong> — this skill generates the plugin.json manifest, README, and directory structure. Point it at your completed skills and commands.</li>
+    <li><strong>Install locally</strong> — the plugin installs into your Cowork environment.</li>
+    <li><strong>Test every command</strong> — Session 9 is dedicated to running each slash command and fixing issues.</li>
+    <li><strong>Optimize descriptions</strong> — Session 10 uses the skill-creator's description optimization loop to ensure triggers fire accurately.</li>
+  </ol>
+
+  <div class="callout callout-success">
+    <div class="callout-label" style="color:var(--green)">What You'll Have When Done</div>
+    <p style="margin:0">A single <code>akbai-delivery</code> plugin that loads AKBai's full context into every Claude session. 12 role-based skills that know your stack, your schema, your brand voice, and your compliance requirements. 15 slash commands for routine workflows. ~26 reference files containing your condensed project knowledge. Total plugin overhead: ~7,700 tokens per conversation, leaving 17K–22K for your actual work.</p>
+  </div>
+
+  <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--dim)">
+    <p style="font-size:13px;color:var(--muted);text-align:center">AKBai Plugin Build Guide v1.0 · March 11, 2026 · Companion to Plugin Strategy v1.0<br>Prepared for Anton del Rosario · Confidential — For Internal Planning Only</p>
+  </div>
+</div>
+</section>
+
+</body>
+</html>

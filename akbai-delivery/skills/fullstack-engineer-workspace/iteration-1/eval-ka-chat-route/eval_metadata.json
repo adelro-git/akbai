@@ -1,0 +1,15 @@
+{
+  "eval_id": 2,
+  "eval_name": "ka-chat-route",
+  "prompt": "Create the API route for POST /api/ka/chat. It should accept a message from the user, load their business profile from Supabase, build the KA persona system prompt, call Claude Sonnet (or Haiku for free tier), validate the response, and return it. Include the circuit breaker check, retry logic, tier-based model routing, and proper error handling with the {success, data, error} envelope. Make sure the conversation history is stored in ka_conversations table.",
+  "assertions": [
+    { "id": "a1", "text": "Auth check at the start of the route (getUser)", "type": "code_check" },
+    { "id": "a2", "text": "Returns {success, data/error} envelope format", "type": "code_check" },
+    { "id": "a3", "text": "Tier-based model selection (Haiku for free, Sonnet for paid)", "type": "code_check" },
+    { "id": "a4", "text": "Circuit breaker check before Claude API call", "type": "code_check" },
+    { "id": "a5", "text": "Retry with exponential backoff (max 3 retries)", "type": "code_check" },
+    { "id": "a6", "text": "Conversation history stored to ka_conversations table", "type": "code_check" },
+    { "id": "a7", "text": "Zod validation on request body", "type": "code_check" },
+    { "id": "a8", "text": "Uses ANTHROPIC_API_KEY from server env, never exposed to client", "type": "code_check" }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "Auth check at the start of the route (getUser)",
+      "passed": true,
+      "evidence": "route.ts lines 77-86: supabase.auth.getUser() called immediately, returns 401 if missing/error"
+    },
+    {
+      "text": "Returns {success, data/error} envelope format",
+      "passed": true,
+      "evidence": "route.ts uses apiSuccess() and apiError() helpers which return standard envelope format with success boolean and data/error properties"
+    },
+    {
+      "text": "Tier-based model selection (Haiku for free, Sonnet for paid)",
+      "passed": true,
+      "evidence": "model-router.ts lines 43-82: selectModel() routes free tier to Haiku only, Pro/Business to task-based routing (Haiku for simple, Sonnet for ka_reasoning)"
+    },
+    {
+      "text": "Circuit breaker check before Claude API call",
+      "passed": true,
+      "evidence": "route.ts line 146 comment indicates circuit breaker checked inside callClaude(). callClaude() catches ClaudeCircuitOpenError on line 202"
+    },
+    {
+      "text": "Retry with exponential backoff (max 3 retries)",
+      "passed": false,
+      "evidence": "No explicit retry logic found in route.ts. while callClaude() is mentioned and imports exist, the actual retry implementation isn't shown in the provided files."
+    },
+    {
+      "text": "Conversation history stored to ka_conversations table",
+      "passed": true,
+      "evidence": "route.ts lines 228-245: storeConversationMessage() called twice for both user and assistant messages, storing to ka_conversations table"
+    },
+    {
+      "text": "Zod validation on request body",
+      "passed": true,
+      "evidence": "route.ts lines 104-114: KAChatRequestSchema.safeParse(body) validates message and domain fields"
+    },
+    {
+      "text": "Uses ANTHROPIC_API_KEY from server env, never exposed to client",
+      "passed": true,
+      "evidence": "route.ts is server-side API route. callClaude() imported from /lib/claude/client which reads ANTHROPIC_API_KEY from environment"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 1,
+    "total": 8,
+    "pass_rate": 0.875
+  }
+}

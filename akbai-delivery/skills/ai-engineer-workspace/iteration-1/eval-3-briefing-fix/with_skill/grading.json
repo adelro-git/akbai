@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Revised prompt produces Taglish output (mix of Filipino and English, not pure English)",
+      "passed": true,
+      "evidence": "All examples demonstrate natural Taglish: 'Magandang umaga, Maria! Happy Tuesday — eto ang update mo.', 'Walang na-record kahapon — rest day ba o busy lang with other stuff?', 'Laban lang, Ana — tight weeks pass. Ikaw strong!'. The prompt explicitly requires 'Taglish — more Filipino when personal, more English when technical' (line 35 of prompt). Examples 1-5 consistently blend Filipino and English naturally."
+    },
+    {
+      "text": "Numbers use ₱ sign (not PHP or Php)",
+      "passed": true,
+      "evidence": "All numeric examples use ₱ consistently: '₱5,200 ang na-earn mo kahapon', '₱3,100 ang gastos', '₱18,400 ang available cash mo', '₱12,300 ang available cash mo', '₱1,800 available cash', '₱8,900 ang na-earn mo', '₱34,200 ang cash mo', '₱3,200 ang na-earn mo', '₱22,400 — solid base'. The v1.0.0 comparison explicitly shows the correction from 'PHP 5,200' to '₱5,200' (lines 11-19). Prompt rule at line 37: 'Every number: digits + ₱ sign + formatted (₱18,400 not ₱18400)'"
+    },
+    {
+      "text": "Includes warm personalized greeting with user first name",
+      "passed": true,
+      "evidence": "All 5 examples open with personalized greetings using first names: 'Magandang umaga, Maria!', 'Magandang umaga, Jose!', 'Magandang umaga, Ana!', 'Magandang umaga, Andoy!'. Examples also show varied day-based greetings. Prompt specifies at line 38: 'Use {{user_first_name}} naturally once' and lines 50-53 provide greeting examples all including names."
+    },
+    {
+      "text": "Handles zero-transaction days gracefully (not shaming)",
+      "passed": true,
+      "evidence": "Example 2 (Jose) demonstrates graceful zero-transaction handling: 'Walang na-recorded kahapon — rest day ba o busy lang with other stuff? No worries, okay lang yan.' The briefing summary (lines 61-66) explicitly states this improvement: 'Acknowledges zero transactions gracefully, never shames', 'Offers plausible explanations (rest day, busy with other things)', 'Shows empathy'. Prompt at lines 64-67 provides non-shaming language options."
+    },
+    {
+      "text": "BIR deadline presented with calm urgency, not alarm",
+      "passed": true,
+      "evidence": "Examples 4 and 5 show calm urgency phrasing: 'Heads up lang po — 2550M deadline in 3 days (April 20). I-check natin together...' and 'Upcoming: 1701A filing in 3 weeks (May 10) — we have time, pero better i-prepare na.' The comparison notes (lines 123-131) explicitly highlight: 'No \"URGENT\" or \"Action required\" (panic language)', 'Deadline is phrased as \"Heads up lang po\" (calm, respectful)', 'Tone is \"3 days, we\\'ll handle it\" not \"3 days, emergency\"'. Prompt at lines 83-88 requires 'Calm urgency, never panic.'"
+    },
+    {
+      "text": "Includes BIR disclaimer on tax-related content",
+      "passed": true,
+      "evidence": "Examples 1, 4, and 5 (all containing BIR deadline content) include the disclaimer: 'Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo.' This is present in lines 23, 118, and 152. The prompt notes at line 89: '**BIR Disclaimer:** This section must trigger the BIR disclaimer post-processing.' Testing notes (line 220) confirm: '✅ BIR disclaimer: Present on Examples 4–5 (tax content)'"
+    },
+    {
+      "text": "Output is structured as short messages (not label-value dashboard dump)",
+      "passed": true,
+      "evidence": "All examples flow as natural conversational text, not label-value pairs. Contrast with v1.0.0 examples (lines 11-12, 44-45, 104-106) which use dashboard format ('Yesterday income: PHP 5,200. Yesterday expenses: PHP 3,100.'). v1.1.0 examples use narrative flow: '₱5,200 ang na-earn mo kahapon, ₱3,100 ang gastos. Net mo: ₱2,100 — nice!' Prompt specifies at line 36: 'Short sentences. This is a text, not an email.' and line 111: 'Total length: 7-10 lines max. Card format, not essay.'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,213 @@
+================================================================================
+BIR DEADLINE WATCHER — FILE PLACEMENT GUIDE
+================================================================================
+
+COPY-PASTE THESE FILES TO THE FOLLOWING LOCATIONS IN YOUR PROJECT:
+
+1. SQL MIGRATION
+   Source:  ./002_add_bir_deadlines.sql
+   Dest:    supabase/migrations/002_add_bir_deadlines.sql
+   Action:  Copy → supabase migration up
+
+2. ZOD SCHEMAS
+   Source:  ./deadline-schemas.ts
+   Dest:    lib/utils/zod-schemas/deadline.ts
+   Action:  Copy (may need to create directory if it doesn't exist)
+
+3. API ROUTE
+   Source:  ./route.ts
+   Dest:    app/api/deadlines/route.ts
+   Action:  Copy (may need to create directory if it doesn't exist)
+
+4. PAGE COMPONENT
+   Source:  ./page.tsx
+   Dest:    app/(app)/(features)/deadlines/page.tsx
+   Action:  Copy (may need to create directory if it doesn't exist)
+
+5. LOADING SKELETON
+   Source:  ./loading.tsx
+   Dest:    app/(app)/(features)/deadlines/loading.tsx
+   Action:  Copy to same directory as page.tsx
+
+6. ERROR BOUNDARY
+   Source:  ./error.tsx
+   Dest:    app/(app)/(features)/deadlines/error.tsx
+   Action:  Copy to same directory as page.tsx
+
+7. DEADLINE CARD COMPONENT
+   Source:  ./deadline-card.tsx
+   Dest:    components/features/deadlines/deadline-card.tsx
+   Action:  Copy (may need to create directory if it doesn't exist)
+
+================================================================================
+QUICK INTEGRATION CHECKLIST
+================================================================================
+
+[ ] 1. Copy all files to their respective destinations (see above)
+
+[ ] 2. Run migration:
+       supabase migration up 002_add_bir_deadlines.sql
+
+[ ] 3. Generate types:
+       supabase gen types typescript > lib/supabase/types.ts
+
+[ ] 4. Install dependencies:
+       npm install date-fns date-fns-tz
+
+[ ] 5. Add to bottom navigation (components/ui/bottom-nav.tsx):
+       <NavItem href="/deadlines" icon={<CalendarIcon />} label="Deadlines" />
+       (Import CalendarIcon from appropriate icon library or create simple SVG)
+
+[ ] 6. Test the feature:
+       npm run dev
+       Navigate to http://localhost:3000/deadlines
+       Should see empty state if no deadlines exist
+
+[ ] 7. Create a test deadline via API:
+       POST http://localhost:3000/api/deadlines
+       Body: { "form_type": "1701Q", "due_date": "2026-04-15" }
+       Should create deadline and appear on page
+
+[ ] 8. Test color indicators:
+       - Create deadline 5 days away → Should show AMBER background
+       - Create deadline 2 days away → Should show RED background
+       - Create deadline 10 days away → Should show default GREEN (no warning)
+
+================================================================================
+PROJECT STRUCTURE AFTER INTEGRATION
+================================================================================
+
+app/
+├── api/
+│   └── deadlines/
+│       └── route.ts                    ← API endpoint (GET + POST)
+└── (app)/
+    └── (features)/
+        └── deadlines/
+            ├── page.tsx                ← Main page
+            ├── loading.tsx             ← Loading skeleton
+            └── error.tsx               ← Error boundary
+
+components/
+└── features/
+    └── deadlines/
+        └── deadline-card.tsx           ← Reusable card component
+
+lib/
+└── utils/
+    └── zod-schemas/
+        └── deadline.ts                 ← Validation schemas
+
+supabase/
+└── migrations/
+    └── 002_add_bir_deadlines.sql       ← Database migration
+
+================================================================================
+DEPENDENCIES REQUIRED
+================================================================================
+
+These should already be in your package.json for a standard AKBai project:
+  - date-fns (for date formatting and calculations)
+  - date-fns-tz (for timezone handling)
+  - zod (for validation)
+  - @supabase/ssr (Supabase client)
+
+If missing, run:
+  npm install date-fns date-fns-tz
+
+================================================================================
+WHAT EACH FILE DOES (BRIEF)
+================================================================================
+
+002_add_bir_deadlines.sql
+  └─ Creates bir_deadlines table with RLS, indexes, and audit columns
+
+deadline-schemas.ts
+  └─ Zod schemas for API validation (single source of truth for types)
+
+route.ts
+  └─ GET: Returns user's deadlines
+  └─ POST: Creates new deadline
+
+page.tsx
+  └─ Server Component that fetches and displays all deadlines
+  └─ Groups: unfiled first, then filed
+
+deadline-card.tsx
+  └─ Interactive card showing one deadline
+  └─ Color coded: RED (3d), AMBER (7d), GREEN (default)
+  └─ Shows: form type, due date, days remaining, filed status
+
+loading.tsx
+  └─ Skeleton UI shown while page loads
+
+error.tsx
+  └─ Error boundary with retry button
+
+README.md
+  └─ Complete implementation guide and architecture decisions
+
+IMPLEMENTATION_SUMMARY.md
+  └─ High-level overview of what was built
+
+================================================================================
+TESTING QUICK START
+================================================================================
+
+1. Navigate to the deadlines page:
+   http://localhost:3000/deadlines
+
+2. Should see empty state: "Walang BIR deadlines para sa iyo ngayon..."
+
+3. Create a deadline via API call:
+   curl -X POST http://localhost:3000/api/deadlines \
+     -H "Content-Type: application/json" \
+     -d '{"form_type": "1701Q", "due_date": "2026-03-20"}'
+
+4. Refresh page, should see deadline with color based on days remaining:
+   - Today (0 days): RED background, "Overdue"
+   - 1-3 days: RED background, "X days left"
+   - 4-7 days: AMBER background, "X days left"
+   - 8+ days: GREEN background, "X days left"
+
+5. Test filed status:
+   Create deadline API call will show as "Unfiled"
+   (Mark as Filed button doesn't function yet in MVP)
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Issue: "Cannot find module '@/lib/utils/zod-schemas/deadline'"
+  → Make sure deadline-schemas.ts is placed at: lib/utils/zod-schemas/deadline.ts
+  → Check that your tsconfig.json has "@/*" pointing to the project root
+
+Issue: "Cannot find module 'date-fns-tz'"
+  → Run: npm install date-fns-tz
+
+Issue: Page shows "May problema sa pag-load"
+  → Check browser console for errors
+  → Verify Supabase auth is set up correctly
+  → Check that migration was applied: SELECT * FROM bir_deadlines;
+
+Issue: Color indicators not showing (all cards green)
+  → Verify date-fns imports are correct
+  → Clear .next build cache: rm -rf .next && npm run dev
+
+Issue: Days remaining calculation wrong
+  → Likely timezone issue — verify server is UTC and client uses Asia/Manila
+  → Check DevTools: new Date() should show UTC time
+
+================================================================================
+DONE!
+================================================================================
+
+Once all files are in place and migration is applied, the feature is ready.
+No additional configuration needed beyond what's listed in the checklist above.
+
+For questions, refer to:
+  - README.md (comprehensive guide)
+  - IMPLEMENTATION_SUMMARY.md (high-level overview)
+  - SKILL.md (fullstack engineer conventions)
+
+Happy coding! 🚀

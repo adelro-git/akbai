@@ -1,0 +1,15 @@
+{
+  "eval_id": 3,
+  "eval_name": "deadline-watcher",
+  "prompt": "I need to add the BIR Deadline Watcher feature. Scaffold the whole thing: Supabase migration for the bir_deadlines table with RLS, the API route at /api/deadlines that returns upcoming deadlines for the user, and the page at /app/(app)/(features)/deadlines/ with a DeadlineCard component that shows the form type, due date, days remaining, and a filed/unfiled status badge. The card should turn amber when 7 days away and red when 3 days or less. Everything mobile-first.",
+  "assertions": [
+    { "id": "a1", "text": "Migration SQL enables RLS on bir_deadlines table", "type": "code_check" },
+    { "id": "a2", "text": "RLS policies scope to auth.uid() = user_id", "type": "code_check" },
+    { "id": "a3", "text": "Table includes deleted_at column and soft-delete pattern", "type": "code_check" },
+    { "id": "a4", "text": "API route includes auth check and user-scoped query", "type": "code_check" },
+    { "id": "a5", "text": "DeadlineCard uses conditional color: amber/honey for 7-day warning, red for 3-day urgent", "type": "code_check" },
+    { "id": "a6", "text": "User-facing text contains Taglish", "type": "content_check" },
+    { "id": "a7", "text": "Page is a Server Component, DeadlineCard is appropriately split (client if interactive)", "type": "code_check" },
+    { "id": "a8", "text": "Mobile-first responsive design (base styles for mobile, sm:/md: for larger)", "type": "code_check" }
+  ]
+}

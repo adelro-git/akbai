@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "run_type": "without_skill",
+  "expectations": [
+    {"text": "Correctly calculates MRR as ₱4,788 (12 × ₱399)", "passed": true, "evidence": "'₱399/month × 12 = ₱4,788 MRR' explicitly calculated"},
+    {"text": "Flags churn rate as red (1/12 or ~1/13 = >5% threshold)", "passed": false, "evidence": "Notes '2.9% weekly churn—not yet alarming' — doesn't flag it against the 5%/month threshold"},
+    {"text": "Uses the Sunday Metrics Template format with traffic lights", "passed": false, "evidence": "Uses ✅⚠️🔴 mixed with 🟡🟢 — not the consistent traffic light format. No template structure."},
+    {"text": "References Phase 1 MRR target (₱6K-₱10K) and shows gap", "passed": true, "evidence": "'Phase 1 gate requires ₱6k–₱10k MRR by Month 6' and '48–80% of Phase 1 target'"},
+    {"text": "Includes a top priority and notes for Monday standup", "passed": false, "evidence": "Has 'Priorities for This Week' but no Monday standup prep or specific standup notes"}
+  ]
+}

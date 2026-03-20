@@ -1,0 +1,31 @@
+{
+  "eval_id": 1,
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "covers_all_user_tables",
+      "passed": true,
+      "evidence": "Response explicitly covers: users, businesses, transactions, receipts, invoices, bir_deadlines, ka_conversations, subscriptions, daily_entries with RLS policy examples for each"
+    },
+    {
+      "text": "includes_test_script",
+      "passed": true,
+      "evidence": "Includes complete runnable JavaScript test script (test-rls-isolation.mjs) with 310+ lines that creates two test users, inserts data, and verifies cross-user isolation with 7 distinct attack scenarios"
+    },
+    {
+      "text": "identifies_system_tables",
+      "passed": true,
+      "evidence": "Response explicitly identifies webhook_events, daily_api_spend, and audit_log as system tables with no policies for anon key and service-role only access: 'These tables have NO policies for the anon key — effectively deny-all'"
+    },
+    {
+      "text": "covers_storage_rls",
+      "passed": true,
+      "evidence": "Response mentions Supabase Storage bucket RLS for receipt/invoice PDFs in the Four-Layer Architecture section: 'Supabase Storage RLS (file layer) — Receipt/invoice PDFs are prefix-protected by user_id'"
+    },
+    {
+      "text": "explains_auth_uid_mechanism",
+      "passed": true,
+      "evidence": "Detailed explanation of auth.uid() mapping is provided in 'How RLS Blocks Cross-User Access' section with examples showing USING clause filters and WITH CHECK enforcement"
+    }
+  ]
+}

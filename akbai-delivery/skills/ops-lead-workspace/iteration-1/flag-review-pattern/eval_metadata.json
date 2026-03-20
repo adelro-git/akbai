@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "flag-review-pattern",
+  "prompt": "I got 3 flag-as-wrong reports this week, all about receipt scanning giving wrong amounts. What should I do?",
+  "assertions": [
+    {"text": "Identifies 3+ flags as a pattern requiring escalation to ai-engineer", "type": "structural"},
+    {"text": "Walks through the flag review workflow (context, root cause, fix, regression test)", "type": "structural"},
+    {"text": "Classifies possible root causes (prompt vs data vs model vs user misunderstanding)", "type": "structural"},
+    {"text": "Provides a time estimate for the review work", "type": "qualitative"},
+    {"text": "Mentions closing the loop with affected users (Taglish notification)", "type": "qualitative"}
+  ]
+}

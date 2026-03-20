@@ -1,0 +1,23 @@
+{
+  "skill_name": "ops-lead",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What do I need to check today? I'm about to leave for work at Globe and have 5 minutes.",
+      "expected_output": "A phone-scannable morning check with traffic light indicators for systems, support, revenue, and flags. Should include a 'tonight's priority' line. Must be concise enough to read in under 1 minute.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I got 3 flag-as-wrong reports this week, all about receipt scanning giving wrong amounts. What should I do?",
+      "expected_output": "Should identify this as a pattern (3+ flags in same category = escalation signal), walk through the flag review workflow (pull context, determine root cause, apply fix, regression test), and recommend escalating to ai-engineer since it's a pattern. Should reference the support-playbook and revenue-tracking references.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "It's Sunday morning. Give me my weekly metrics review. We have 35 registered users, 12 Pro subscribers, 0 Business subscribers. 1 user churned this week (payment failure). 2 new Sentry errors. Uptime was 99.8%.",
+      "expected_output": "Should produce the Sunday Metrics Template format with traffic lights. MRR = 12 × ₱399 = ₱4,788. Should flag churn rate (1/12 = 8.3% > 5% threshold = red flag). Should note MRR is below Phase 1 target of ₱6K-₱10K. Should include competitor pulse section and top priority for the week.",
+      "files": []
+    }
+  ]
+}

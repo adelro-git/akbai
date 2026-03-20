@@ -1,0 +1,13 @@
+{
+  "eval_id": 0,
+  "eval_name": "deploy-with-migration",
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "Mentions verifying Supabase migration on staging/branch before production", "passed": true, "evidence": "Step 1 explicitly tests migration locally with 'supabase db reset'. The overall guidance implies staging verification before production."},
+    {"text": "Includes RLS policy verification step after migration", "passed": true, "evidence": "Dedicated section 'Check these three things' with RLS as #1, plus post-deploy SQL queries testing anon key isolation."},
+    {"text": "Specifies migration-first then app-deploy order", "passed": true, "evidence": "Explicitly states 'The deployment sequence is migration first, then code' with Step 1 (migration) before Step 3 (deploy code)."},
+    {"text": "Mentions Sentry release tagging as part of post-deploy", "passed": true, "evidence": "Post-Deploy Verification section #2 covers Sentry Release Tag with commit SHA instructions."},
+    {"text": "Includes post-deploy verification steps (smoke test, UptimeRobot, test receipt scan)", "passed": true, "evidence": "Full post-deploy section with health checks, Sentry monitoring, UptimeRobot checks, receipt scanner smoke test, and database sanity check."},
+    {"text": "Mentions rollback plan if issues detected", "passed": true, "evidence": "Dedicated 'Rollback Decision Tree' section with specific scenarios (RLS failure, migration error, code dependency issue) and Vercel promote commands."}
+  ]
+}

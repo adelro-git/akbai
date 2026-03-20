@@ -1,0 +1,13 @@
+{
+  "eval_id": 0,
+  "eval_name": "deploy-with-migration",
+  "configuration": "without_skill",
+  "expectations": [
+    {"text": "Mentions verifying Supabase migration on staging/branch before production", "passed": true, "evidence": "Step 1 covers running migration locally with supabase start and supabase db push, validating schema."},
+    {"text": "Includes RLS policy verification step after migration", "passed": true, "evidence": "Shows RLS policies in expected schema and mentions verifying RLS is enabled, though less thorough than with-skill version."},
+    {"text": "Specifies migration-first then app-deploy order", "passed": false, "evidence": "Actually deploys code to Cloudflare Pages FIRST (Step 2) then applies migration to production (Step 3). This is the WRONG order — migration must come before app deploy."},
+    {"text": "Mentions Sentry release tagging as part of post-deploy", "passed": true, "evidence": "Step 5a mentions 'Release tag: git rev-parse --short HEAD (should match this deployment)'."},
+    {"text": "Includes post-deploy verification steps (smoke test, UptimeRobot, test receipt scan)", "passed": true, "evidence": "Step 4 covers end-to-end testing, Sentry monitoring, database health checks."},
+    {"text": "Mentions rollback plan if issues detected", "passed": true, "evidence": "Step 6 covers both code rollback (Cloudflare Pages) and migration rollback, plus a hotfix alternative."}
+  ]
+}

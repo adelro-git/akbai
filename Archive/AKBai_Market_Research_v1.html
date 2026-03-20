@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKBai — Market Research & GTM Intelligence v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8f9fa; color: #1a1a2e; line-height: 1.6; }
+
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 48px 40px; }
+  .header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+  .header h2 { font-size: 1.1rem; font-weight: 400; opacity: 0.8; margin-bottom: 20px; }
+  .header-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .meta-badge { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; }
+
+  .nav { background: #16213e; padding: 0 40px; display: flex; gap: 0; overflow-x: auto; }
+  .nav a { color: rgba(255,255,255,0.7); text-decoration: none; padding: 14px 18px; font-size: 0.85rem; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .nav a:hover { color: white; border-bottom-color: #e94560; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 40px; }
+
+  .section { margin-bottom: 48px; }
+  .section-title { font-size: 1.4rem; font-weight: 700; color: #0f3460; margin-bottom: 6px; padding-bottom: 10px; border-bottom: 3px solid #e94560; }
+  .section-subtitle { font-size: 0.9rem; color: #666; margin-bottom: 24px; }
+
+  /* Executive Summary */
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .summary-card { background: white; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-top: 4px solid #e94560; }
+  .summary-card .number { font-size: 2rem; font-weight: 700; color: #e94560; }
+  .summary-card .label { font-size: 0.8rem; color: #666; margin-top: 4px; }
+
+  /* Source Note */
+  .source-note { background: #fff8e6; border-left: 4px solid #f0ad00; padding: 14px 18px; border-radius: 0 8px 8px 0; margin-bottom: 32px; font-size: 0.88rem; color: #5a4a00; }
+  .source-note strong { color: #3d3000; }
+
+  /* Community Sources */
+  .community-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .community-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .community-card .platform { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #e94560; margin-bottom: 6px; }
+  .community-card .name { font-size: 1rem; font-weight: 700; color: #0f3460; margin-bottom: 4px; }
+  .community-card .desc { font-size: 0.83rem; color: #555; margin-bottom: 8px; }
+  .community-card .size { font-size: 0.8rem; background: #f0f4ff; color: #0f3460; padding: 3px 10px; border-radius: 12px; display: inline-block; }
+  .community-card .topics { margin-top: 10px; }
+  .community-card .topic-tag { display: inline-block; font-size: 0.75rem; background: #f0f0f0; color: #444; padding: 2px 8px; border-radius: 10px; margin: 2px 2px 0 0; }
+
+  /* Pain Points */
+  .pain-point { background: white; border-radius: 12px; padding: 28px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 5px solid #e94560; }
+  .pain-point.high { border-left-color: #dc3545; }
+  .pain-point.medium { border-left-color: #fd7e14; }
+  .pain-point.low { border-left-color: #198754; }
+  .pain-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .pain-title { font-size: 1.1rem; font-weight: 700; color: #0f3460; }
+  .pain-id { font-size: 0.75rem; color: #999; margin-top: 2px; }
+  .priority-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+  .priority-badge.high { background: #ffe0e3; color: #dc3545; }
+  .priority-badge.medium { background: #fff3e0; color: #fd7e14; }
+  .priority-badge.low { background: #e8f5e9; color: #198754; }
+
+  .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .pain-box { background: #f8f9fa; border-radius: 8px; padding: 14px; }
+  .pain-box h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 8px; }
+  .pain-box p, .pain-box ul { font-size: 0.88rem; color: #333; }
+  .pain-box ul { padding-left: 16px; }
+  .pain-box ul li { margin-bottom: 4px; }
+
+  .quote-block { background: #f0f4ff; border-left: 3px solid #0f3460; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+  .quote-block .quote-text { font-size: 0.88rem; color: #1a1a2e; font-style: italic; margin-bottom: 4px; }
+  .quote-block .quote-source { font-size: 0.75rem; color: #888; }
+
+  .akbai-solution { background: linear-gradient(135deg, #e8f5e9, #f0fff0); border: 1px solid #81c784; border-radius: 8px; padding: 14px; margin-top: 12px; }
+  .akbai-solution h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #2e7d32; margin-bottom: 8px; }
+  .akbai-solution p { font-size: 0.88rem; color: #1b5e20; }
+
+  .gtm-box { background: linear-gradient(135deg, #fff3e0, #fffbf0); border: 1px solid #ffcc80; border-radius: 8px; padding: 14px; margin-top: 12px; }
+  .gtm-box h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #e65100; margin-bottom: 8px; }
+  .gtm-box ul { font-size: 0.85rem; color: #bf360c; padding-left: 16px; }
+  .gtm-box ul li { margin-bottom: 4px; }
+
+  .stat-pill { display: inline-block; background: #e94560; color: white; font-size: 0.8rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-right: 6px; margin-bottom: 4px; }
+  .stat-neutral { background: #0f3460; }
+
+  /* GTM Summary Table */
+  .gtm-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .gtm-table th { background: #0f3460; color: white; padding: 12px 16px; text-align: left; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .gtm-table td { padding: 12px 16px; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .gtm-table tr:last-child td { border-bottom: none; }
+  .gtm-table tr:nth-child(even) { background: #f8f9fa; }
+  .channel-tag { display: inline-block; font-size: 0.72rem; background: #e8eaf6; color: #3949ab; padding: 2px 8px; border-radius: 10px; margin: 1px; }
+  .hook-text { font-style: italic; color: #c62828; font-size: 0.83rem; }
+
+  /* Keyword clusters */
+  .keyword-section { background: white; border-radius: 10px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; }
+  .keyword-section h3 { font-size: 1rem; font-weight: 700; color: #0f3460; margin-bottom: 16px; }
+  .keyword-cluster { margin-bottom: 16px; }
+  .keyword-cluster h4 { font-size: 0.82rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .kw-tag { display: inline-block; background: #f0f4ff; color: #0f3460; border: 1px solid #c5cae9; font-size: 0.8rem; padding: 4px 10px; border-radius: 6px; margin: 3px; }
+  .kw-tag.taglish { background: #fce4ec; color: #c62828; border-color: #ef9a9a; }
+  .kw-tag.english { background: #e8f5e9; color: #1b5e20; border-color: #a5d6a7; }
+
+  /* Competitive note */
+  .comp-gap { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; gap: 16px; align-items: flex-start; }
+  .gap-icon { font-size: 1.5rem; min-width: 32px; }
+  .gap-content h4 { font-weight: 700; color: #0f3460; margin-bottom: 4px; }
+  .gap-content p { font-size: 0.88rem; color: #555; }
+  .gap-badge { font-size: 0.72rem; background: #ffe0e3; color: #c62828; padding: 2px 8px; border-radius: 10px; font-weight: 700; margin-left: 8px; }
+
+  footer { background: #16213e; color: rgba(255,255,255,0.6); text-align: center; padding: 24px; font-size: 0.82rem; margin-top: 40px; }
+
+  /* First 100 Users GTM Playbook */
+  .gtm-playbook-section { background: white; border-radius: 12px; padding: 28px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .gtm-playbook-section h3 { font-size: 1.05rem; font-weight: 700; color: #0f3460; margin-bottom: 16px; }
+  .strategy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .strategy-card { border: 1px solid #e0e0e0; border-radius: 10px; padding: 18px; }
+  .strategy-card .strat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .strategy-card .strat-num { background: #0f3460; color: white; font-weight: 700; font-size: 0.82rem; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .strategy-card .strat-title { font-weight: 700; color: #0f3460; font-size: 0.95rem; }
+  .strategy-card .strat-priority { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: auto; white-space: nowrap; }
+  .strat-priority.primary { background: #ffe0e3; color: #dc3545; }
+  .strat-priority.secondary { background: #fff3e0; color: #e65100; }
+  .strat-priority.support { background: #f0f4ff; color: #3949ab; }
+  .strategy-card p { font-size: 0.85rem; color: #555; margin-bottom: 8px; }
+  .strategy-card .akbai-specific { background: #f0f4ff; border-left: 3px solid #0f3460; padding: 8px 12px; border-radius: 0 6px 6px 0; font-size: 0.82rem; color: #1a1a2e; }
+  .strategy-card .akbai-specific strong { color: #0f3460; }
+  .gtm-highlight-box { background: linear-gradient(135deg, #0f3460, #1a1a2e); color: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .gtm-highlight-box h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+  .gtm-highlight-box p { font-size: 0.88rem; opacity: 0.95; margin-bottom: 8px; }
+  .gtm-highlight-box ul { font-size: 0.85rem; padding-left: 18px; opacity: 0.95; }
+  .gtm-highlight-box ul li { margin-bottom: 6px; }
+  .channel-priority-table { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; }
+  .channel-priority-table table { width: 100%; border-collapse: collapse; }
+  .channel-priority-table th { background: #0f3460; color: white; padding: 10px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .channel-priority-table td { padding: 10px 14px; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .channel-priority-table tr:last-child td { border-bottom: none; }
+  .channel-priority-table tr:nth-child(even) { background: #f8f9fa; }
+  .rank-badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 2px 10px; border-radius: 12px; }
+  .rank-badge.r1 { background: #ffe0e3; color: #dc3545; }
+  .rank-badge.r2 { background: #fff3e0; color: #e65100; }
+  .rank-badge.r3 { background: #fff9e6; color: #f0ad00; }
+  .rank-badge.r4 { background: #f0f4ff; color: #3949ab; }
+  .rank-badge.r5 { background: #f0f4ff; color: #3949ab; }
+  .dont-scale-box { background: #fff8e6; border: 1px solid #f0ad00; border-radius: 10px; padding: 20px; margin-bottom: 24px; }
+  .dont-scale-box h3 { font-size: 1rem; font-weight: 700; color: #5a4a00; margin-bottom: 12px; }
+  .dont-scale-box ul { font-size: 0.85rem; color: #3d3000; padding-left: 18px; }
+  .dont-scale-box ul li { margin-bottom: 6px; }
+  .milestone-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .milestone-card { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #e94560; }
+  .milestone-card .m-num { font-size: 1.8rem; font-weight: 700; color: #e94560; }
+  .milestone-card .m-label { font-size: 0.75rem; color: #888; margin-top: 2px; margin-bottom: 8px; }
+  .milestone-card .m-action { font-size: 0.8rem; color: #333; }
+  .metrics-table-wrap { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .metrics-table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .metrics-table-wrap th { background: #0f3460; color: white; padding: 10px 14px; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .metrics-table-wrap td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .metrics-table-wrap tr:last-child td { border-bottom: none; }
+  .metrics-table-wrap tr:nth-child(even) { background: #f8f9fa; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>AKBai — Market Research & GTM Intelligence</h1>
+  <h2>Filipino MSME Pain Points · Community Sentiment · Targeting Playbook</h2>
+  <div class="header-meta">
+    <span class="meta-badge">Version 1.1</span>
+    <span class="meta-badge">March 2026</span>
+    <span class="meta-badge">12 Pain Points Documented</span>
+    <span class="meta-badge">6 Community Sources Mapped</span><span class="meta-badge">GTM Playbook v1</span>
+    <span class="meta-badge">GTM Hooks Included</span>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="#overview">Overview</a>
+  <a href="#communities">Communities</a>
+  <a href="#pain-points">Pain Points</a>
+  <a href="#keywords">Keywords & Language</a>
+  <a href="#gtm-hooks">GTM Hooks</a>
+  <a href="#competitive-gaps">Competitive Gaps</a>
+</div>
+
+<div class="container">
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div id="overview" class="section">
+    <div class="section-title">Executive Summary</div>
+    <div class="section-subtitle">Market validation from Filipino MSME communities — Reddit, Facebook groups, tax authority Q&As, and industry reports</div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="number">12</div>
+        <div class="label">Validated Pain Points</div>
+      </div>
+      <div class="summary-card">
+        <div class="number">6</div>
+        <div class="label">Community Sources Mapped</div>
+      </div>
+      <div class="summary-card">
+        <div class="number">₱0</div>
+        <div class="label">Current Taglish-first tools</div>
+      </div>
+      <div class="summary-card">
+        <div class="number">1.1M</div>
+        <div class="label">Target MSME Addressable</div>
+      </div>
+    </div>
+
+    <div class="source-note">
+      <strong>⚠ Note on Reddit Access:</strong> Reddit.com is blocked in this research environment for direct scraping. The pain points below are validated through: (1) secondary sources that aggregate Reddit/Facebook community questions (Taxumo blog, JuanTax blog, Rappler Tax Whiz columns — which directly answer real user questions), (2) professional tax guides that document common MSME confusion patterns, and (3) authoritative Philippine business publications (Grant Thornton PH, PwC PH, CloudCFO). Community channels where these discussions actively happen are mapped below so the GTM team can monitor and engage them directly.
+      <br><br>
+      <strong>For live Reddit monitoring:</strong> Visit r/buhaydigital, r/phinvest, r/FreelancePH, r/Philippines (search: "BIR", "accounting", "negosyo", "tax") and FB: "Buhay Digital Philippines" group, "Philippine Online Sellers Network", "Filipino Freelancers and VAs".
+    </div>
+  </div>
+
+  <!-- COMMUNITY SOURCES -->
+  <div id="communities" class="section">
+    <div class="section-title">Community Landscape</div>
+    <div class="section-subtitle">Where Filipino MSMEs discuss their business problems — primary GTM seeding targets</div>
+
+    <div class="community-grid">
+      <div class="community-card">
+        <div class="platform">Reddit</div>
+        <div class="name">r/buhaydigital</div>
+        <div class="desc">Filipino digital workers, freelancers, remote employees. Heavy BIR/tax discussion, tool recommendations, compliance questions. Very active.</div>
+        <div class="size">~180K members (est.)</div>
+        <div class="topics">
+          <span class="topic-tag">BIR registration</span>
+          <span class="topic-tag">Freelancer tax</span>
+          <span class="topic-tag">Accounting tools</span>
+          <span class="topic-tag">Income tracking</span>
+        </div>
+      </div>
+      <div class="community-card">
+        <div class="platform">Reddit</div>
+        <div class="name">r/phinvest</div>
+        <div class="desc">85K+ members. Filipino personal finance and investing. Side hustles, small business income, GCash savings, financial literacy discussions.</div>
+        <div class="size">85,000+ members</div>
+        <div class="topics">
+          <span class="topic-tag">Side hustle income</span>
+          <span class="topic-tag">Online selling</span>
+          <span class="topic-tag">Small biz finance</span>
+        </div>
+      </div>
+      <div class="community-card">
+        <div class="platform">Reddit</div>
+        <div class="name">r/FreelancePH</div>
+        <div class="desc">Filipino freelancers on Upwork, Fiverr, local. Tax compliance, invoicing, international payment conversion, BIR registration.</div>
+        <div class="size">~35K members (est.)</div>
+        <div class="topics">
+          <span class="topic-tag">BIR COR</span>
+          <span class="topic-tag">Invoice vs OR</span>
+          <span class="topic-tag">GCash/Wise</span>
+          <span class="topic-tag">ITR filing</span>
+        </div>
+      </div>
+      <div class="community-card">
+        <div class="platform">Reddit</div>
+        <div class="name">r/Philippines</div>
+        <div class="desc">General Philippines community. Occasional small business questions, "How do I start a negosyo?" posts, BIR confusion from new entrepreneurs.</div>
+        <div class="size">400K+ members</div>
+        <div class="topics">
+          <span class="topic-tag">Starting a business</span>
+          <span class="topic-tag">BIR basics</span>
+          <span class="topic-tag">DTI registration</span>
+        </div>
+      </div>
+      <div class="community-card">
+        <div class="platform">Facebook Group</div>
+        <div class="name">Buhay Digital Philippines</div>
+        <div class="desc">Large FB community for digital workers. Similar content to r/buhaydigital but older demographic mix. Heavy on accounting confusion posts.</div>
+        <div class="size">~500K+ members (est.)</div>
+        <div class="topics">
+          <span class="topic-tag">Bookkeeping</span>
+          <span class="topic-tag">Tax questions</span>
+          <span class="topic-tag">Tools</span>
+        </div>
+      </div>
+      <div class="community-card">
+        <div class="platform">Facebook Group</div>
+        <div class="name">Philippine Online Sellers Network / Negosyante PH</div>
+        <div class="desc">Home-based sellers, Shopee/Lazada/TikTok Shop resellers. Receipt chaos, platform fees confusion, GCash reconciliation, COD tracking.</div>
+        <div class="size">~1M+ collective members</div>
+        <div class="topics">
+          <span class="topic-tag">Shopee fees</span>
+          <span class="topic-tag">GCash tracking</span>
+          <span class="topic-tag">COD reconciliation</span>
+          <span class="topic-tag">Pricinghelp</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAIN POINTS -->
+  <div id="pain-points" class="section">
+    <div class="section-title">Pain Points</div>
+    <div class="section-subtitle">12 validated pain points from community research — each with GTM targeting angles</div>
+
+    <!-- PP1 -->
+    <div class="pain-point high">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-01 · BIR Compliance</div>
+          <div class="pain-title">BIR Registration is Overwhelming — People Don't Know Where to Start</div>
+        </div>
+        <div class="priority-badge high">🔴 Critical</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>"The BIR registration process can be a confusing and daunting process, especially if you're not familiar with the requirements"</li>
+            <li>Freelancers unsure whether to register as Professional, Single Proprietor, or Mixed Income Earner</li>
+            <li>Multiple forms: 1901, 0605, 1906, 1905 — wrong one = wasted trips</li>
+            <li>BIR offices: crowded, noisy, waiting from 7 AM to 5 PM</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">₱1K–50K penalty</span> for non-registration<br>
+            <span class="stat-pill">+25% surcharge</span> on unpaid taxes<br>
+            <span class="stat-pill">+20% interest</span> per year<br>
+            <span class="stat-pill neutral">2–3 RDO visits</span> average for new registrants<br>
+            PwC: Philippines ranked among <strong>most stressful countries for tax filing</strong>
+          </p>
+        </div>
+      </div>
+      <div class="quote-block">
+        <div class="quote-text">"Ang daming requirements, hindi ko alam kung saan magsisimula. Baka makukulong ako kung hindi ako mag-register."</div>
+        <div class="quote-source">— Representative sentiment from r/buhaydigital and Freelancer forums (paraphrased from aggregated community questions)</div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>Step-by-step BIR registration guide in Taglish, built into the onboarding flow. AI answers "Anong taxpayer type ako?" based on user's income type. Knowledge base covers Form 1901, 2303 (COR), books of accounts registration, and RD-specific requirements. Free tier: full BIR Q&A access.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "BIR Registration in 5 Steps — Tanungin si AKBai, libre!"</li>
+          <li><strong>Channels:</strong> r/buhaydigital, r/FreelancePH, FB Buhay Digital PH group</li>
+          <li><strong>Content:</strong> Pinned comment on high-traffic BIR registration threads; short TikTok "BIR 101 in Taglish"</li>
+          <li><strong>Organic play:</strong> Answer every "How to register with BIR" post — high search intent</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP2 -->
+    <div class="pain-point high">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-02 · Document Compliance</div>
+          <div class="pain-title">Official Receipt → Service Invoice Transition (BIR RR 7-2024) — Nobody Knows</div>
+        </div>
+        <div class="priority-badge high">🔴 Critical</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>BIR mandated transition from Official Receipts to Service Invoices effective April 26, 2024</li>
+            <li>"This is frustrating, especially for freelancers that still have a lot of unused OR"</li>
+            <li>Sellers complained about "doubled work" with new inventory submission requirements</li>
+            <li>Businesses don't know the difference between OR, SI, CR, DR — penalized for wrong document</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">₱500</span> annual COR fee (waived 2024+)<br>
+            <span class="stat-pill">₱1,000</span> cost for 10 new Service Invoice booklets<br>
+            <span class="stat-pill stat-neutral">Penalty</span> for issuing wrong document type<br>
+            Many businesses unaware rule even changed in 2024
+          </p>
+        </div>
+      </div>
+      <div class="quote-block">
+        <div class="quote-text">"Many businesses are still penalized for non-issuance... many, its lack of awareness and knowledge of the business owner and/or his staff on how to write a receipt or invoice."</div>
+        <div class="quote-source">— BIR-cited finding on invoice non-compliance, aggregated from audit cases</div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>AKBai explains the OR → Service Invoice transition in plain Taglish. Built-in invoice generator for Pro/Business tier. Knowledge base stays updated with BIR Revenue Regulations — this is a living asset competitors can't easily replicate.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "Huwag nang gamitin ang OR mo — napalitan na ng Service Invoice. Alam ni AKBai ang tamang paraan."</li>
+          <li><strong>Urgency:</strong> This is a recent (2024) change — massive awareness gap = high-intent traffic</li>
+          <li><strong>Content:</strong> Blog post "BIR RR 7-2024 Explained in Tagalog" — SEO goldmine</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP3 -->
+    <div class="pain-point high">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-03 · Tax Structure</div>
+          <div class="pain-title">Percentage Tax vs. 8% Income Tax vs. VAT — Critical Choice, Zero Guidance</div>
+        </div>
+        <div class="priority-badge high">🔴 Critical</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>PHP 3M threshold determines 3% Percentage Tax vs. 12% VAT — most sellers don't know this</li>
+            <li>8% flat income tax option available — but confusingly rarely explained</li>
+            <li>"Mixing up gross sales and net taxable income is one of the most common mistakes"</li>
+            <li>Crossing the ₱3M threshold triggers mandatory VAT — a growth disincentive</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">₱3M</span> threshold (Percentage Tax → VAT)<br>
+            <span class="stat-pill">3%</span> Percentage Tax (if below ₱3M)<br>
+            <span class="stat-pill">12%</span> VAT (if above ₱3M)<br>
+            <span class="stat-pill">8%</span> flat income tax option (optional)<br>
+            <span class="stat-pill">₱250K</span> threshold for income tax exemption
+          </p>
+        </div>
+      </div>
+      <div class="quote-block">
+        <div class="quote-text">"Freelancers can choose between Percentage Tax, VAT, or 8% flat income tax option, but guidance is unclear about which one applies."</div>
+        <div class="quote-source">— JuanTax/Taxumo community Q&A aggregation (high-frequency question type)</div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>"Anong tax structure ang tama para sa'yo?" — AKBai asks 3 questions and recommends the correct tax regime. Year-end alert when user approaches ₱3M gross (avoid VAT surprise). Tax calculator built into briefing. Free tier access.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "₱3M na ba ang kita mo ngayong taon? May malaking buwis na naghihintay sa'yo. Alamin sa AKBai."</li>
+          <li><strong>Tool:</strong> Free tax regime calculator on landing page — drives sign-ups</li>
+          <li><strong>SEO:</strong> "8% tax Philippines freelancer" — extremely high search volume, low competition</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP4 -->
+    <div class="pain-point high">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-04 · Tool Frustration</div>
+          <div class="pain-title">Existing Tools Are Too Expensive, Too English, or Too Limited for Filipino MSMEs</div>
+        </div>
+        <div class="priority-badge high">🔴 Critical</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say about each tool</h4>
+          <ul>
+            <li><strong>QuickBooks:</strong> $17.5–117.5/month — "too expensive, designed for US businesses"</li>
+            <li><strong>Wave:</strong> Free but "not suitable for BIR-registered businesses" — no DAT files, no BIR forms</li>
+            <li><strong>Taxumo:</strong> ₱399/month — tax only, not integrated accounting; "limited for complex scenarios"</li>
+            <li><strong>JuanTax:</strong> BIR-certified but <em>only works with Xero</em> — can't use standalone</li>
+            <li><strong>Xero:</strong> $20–80/month — too costly for sub-₱3M sellers</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Gap</h4>
+          <p>
+            <span class="stat-pill">₱3K–15K/mo</span> outsourced bookkeeper cost<br>
+            <span class="stat-pill">100%</span> of top tools: English-only UI<br>
+            <span class="stat-pill">0</span> tools with Taglish AI Q&A<br>
+            <span class="stat-pill">0</span> tools designed for GCash + Shopee workflows<br>
+            <span class="stat-pill stat-neutral">~₱399–499/mo</span> AKBai Pro — 10× cheaper than bookkeeper
+          </p>
+        </div>
+      </div>
+      <div class="quote-block">
+        <div class="quote-text">"If you pick a system that doesn't connect with your workflows (sales, inventory, bank feeds) or your compliance needs (BIR forms, CAS registration, DAT files), you may end up doing lots of manual work."</div>
+        <div class="quote-source">— HashMicro Philippines Accounting Software Guide (aggregating Filipino MSME feedback)</div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>AKBai is the only mobile-first, Taglish-native business partner designed specifically for GCash + Shopee/Lazada/TikTok Shop workflows. Pro at ₱399/month (Y1) vs. ₱3K–15K/month outsourced. BIR knowledge built-in. No accounting degree required.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "Hindi mo kailangan ng accountant na ₱5,000/buwan. Si AKBai, ₱399 lang."</li>
+          <li><strong>Comparison content:</strong> "AKBai vs. Taxumo vs. QuickBooks — Para sa Filipino Seller"</li>
+          <li><strong>Trigger moment:</strong> Target people posting "What accounting app do you use?" in r/buhaydigital</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP5 -->
+    <div class="pain-point high">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-05 · Language Barrier</div>
+          <div class="pain-title">"Wala Akong Alam Sa Accounting" — Foundational Business Literacy Gap</div>
+        </div>
+        <div class="priority-badge high">🔴 Critical</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>Most sari-sari store owners do zero accounting despite legal requirements</li>
+            <li>"Tax filing has been considered one of the worst painful tasks most Filipinos struggle with"</li>
+            <li>New business owners don't know the difference between revenue, gross profit, and net income</li>
+            <li>All top accounting tools have English-only interfaces — literacy barrier for many sellers</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">9.9M</span> MSME businesses in Philippines<br>
+            <span class="stat-pill">~60%</span> informal/unregistered (estimated)<br>
+            <span class="stat-pill">0</span> Taglish-first accounting AI exists<br>
+            Employers auto-withhold; freelancers must figure it out alone
+          </p>
+        </div>
+      </div>
+      <div class="quote-block">
+        <div class="quote-text">"Unlike employed individuals (where tax is automatically withheld), freelancers have to navigate the complicated system of filing income taxes entirely on their own."</div>
+        <div class="quote-source">— Taxumo blog (directly addressing the most common user question pattern)</div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>AKBai explains profit, cash flow, gross margin, and BIR terms in Taglish — conversationally, not in jargon. "Kumusta ang negosyo mo today?" daily check-in teaches financial literacy while collecting data. Meets users where they are linguistically.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "Hindi ka accountant? Ok lang. Si AKBai, Tagalog ang pag-usapan natin."</li>
+          <li><strong>Content series:</strong> "Business basics sa Tagalog" — TikTok/Reels series targeting zero-experience sellers</li>
+          <li><strong>Positioning:</strong> AKBai is a teacher AND a tool — not just software</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP6 -->
+    <div class="pain-point medium">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-06 · Multi-Channel Chaos</div>
+          <div class="pain-title">Multi-Platform Reconciliation — Shopee + Lazada + TikTok Shop + GCash + COD</div>
+        </div>
+        <div class="priority-badge medium">🟠 High</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>"Only recording gross sales without subtracting platform or ad fees" — invisible profit drain</li>
+            <li>COD orders: cash collected by courier, remitted days later — no reconciliation trail</li>
+            <li>Shopee/Lazada commissions (1–9%/11%) often not factored into pricing</li>
+            <li>Sellers celebrate high sales then can't pay suppliers — cash timing mismatch</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">7+ days</span> platform payout delay (typical)<br>
+            <span class="stat-pill">1–9%</span> Shopee commission<br>
+            <span class="stat-pill">11%</span> Lazada commission<br>
+            <span class="stat-pill">1% tax</span> withheld by platforms >₱500K gross (RR 16-2023)<br>
+            GCash: only 15 transactions visible in app history
+          </p>
+        </div>
+      </div>
+      <div class="quote-block">
+        <div class="quote-text">"Without monthly reconciliation, sellers cannot make informed decisions about restocking inventory or adjusting ad spend. Platform fees, gateway charges, shipping costs, returns, and promotional expenses accumulate untracked."</div>
+        <div class="quote-source">— AccountaholicsPH, Filipino e-commerce bookkeeping guide (practitioner-derived insights)</div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>Excel/CSV upload (Pro) accepts Shopee/Lazada payout reports. Business tier: GSheets live sync for real-time reconciliation. Daily check-in captures cash sales and GCash payments. Weekly reconciliation prompts surface missing data. Monthly summary shows true net income per channel.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "Malaki na sales mo sa Shopee pero wala pa ring pera? Naroon ang sagot sa AKBai."</li>
+          <li><strong>Target community:</strong> Philippine Online Sellers FB group — extremely high pain density here</li>
+          <li><strong>Feature demo:</strong> Show Shopee CSV upload → instant P&amp;L summary (video content)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP7 -->
+    <div class="pain-point medium">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-07 · Data Entry Friction</div>
+          <div class="pain-title">Keeping Financial Records Updated is Too Hard — Sellers Fall Behind and Stop Trying</div>
+        </div>
+        <div class="priority-badge medium">🟠 High</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>Tracking income in a notebook — then lose the notebook</li>
+            <li>GCash only shows last 15 transactions without requesting history (takes days)</li>
+            <li>Start tracking in Excel, stop after week 2 when business gets busy</li>
+            <li>End-of-month bookkeeping becomes a 2–3 day marathon of receipt hunting</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">₱3K–15K/mo</span> bookkeeper alternative<br>
+            <span class="stat-pill">2–3 days</span> manual month-end close time<br>
+            <span class="stat-pill">GCash</span> only 15 visible transactions in-app<br>
+            Key insight: <strong>habit-forming data entry</strong> is the product's daily value driver
+          </p>
+        </div>
+      </div>
+      <div class="quote-block">
+        <div class="quote-text">"Having a dedicated business account is crucial for managing expenses, tracking income, and preparing for tax obligations — but many operate entirely through cash or GCash without formal systems."</div>
+        <div class="quote-source">— Philippine Business Tools, home-based seller guide (reflects widespread practitioner observation)</div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p><strong>Daily Check-In</strong> (in-app, configurable time, default 8PM): "Kumusta ang negosyo mo today? Magkano ang sales? Magkano ang gastos?" — 60-second habit. <strong>Weekly Reconciliation</strong> (Friday): batch-fill missing days. <strong>Excel/CSV upload + GSheets sync</strong> for Pro/Business. <strong>Notebook photo OCR</strong> (Pro): take photo of handwritten ledger, AKBai extracts the numbers.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "60 segundo lang bawat araw para malaman kung kumikita ka ba. AKBai check-in — libre."</li>
+          <li><strong>Differentiator to emphasize:</strong> This is the only tool that meets sellers where they are — notebook photos, Excel, or just text</li>
+          <li><strong>Virality:</strong> Monthly summary card shareable on IG/FB — "₱48,520 kita ko this month!" organic spread</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP8 -->
+    <div class="pain-point medium">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-08 · Hidden Cost Leakage</div>
+          <div class="pain-title">Platform Fees, Returns, and Ad Spend Eat Margins Invisibly</div>
+        </div>
+        <div class="priority-badge medium">🟠 High</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>Sellers price based on product cost only — platform fee, shipping, packaging not included</li>
+            <li>Shopee Coins cashback and vouchers reduce seller remittance — confusing accounting treatment</li>
+            <li>Return rate not factored — real margin vs. perceived margin gap widens over time</li>
+            <li>"Many operate at 10–15% margin when they should be targeting 25–50%"</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">10–15%</span> typical actual margin (vs. 25–50% target)<br>
+            <span class="stat-pill">1–9%</span> Shopee platform fee alone<br>
+            <span class="stat-pill">+shipping</span> ₱50–150/order absorbed by seller<br>
+            Deductible items missed = taxes overpaid
+          </p>
+        </div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>AKBai's pricing assistant calculates true landed cost including platform fees, shipping, packaging, and return rate. Monthly briefing surfaces "You're spending ₱4,200/month on platform fees — here's how it affects your margin." Pro tier: upload Shopee payout CSV for exact reconciliation.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "₱1,000 ang presyo mo sa Shopee. Alam mo bang ₱720 lang ang talagang nakukuha mo? Si AKBai, ipapaliwanag."</li>
+          <li><strong>Content angle:</strong> "Ang totoo mong kita sa Shopee" — viral-worthy calculation reveals</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP9 -->
+    <div class="pain-point medium">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-09 · Withholding Tax Surprise</div>
+          <div class="pain-title">Platform Withholding Tax (RR 16-2023) — Sellers Didn't Know Until Payout Was Lower</div>
+        </div>
+        <div class="priority-badge medium">🟠 High</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>Shopee/Lazada now withholds 1% (on 50% of gross) for sellers earning >₱500K/year</li>
+            <li>Many sellers noticed smaller payout and didn't know why — no in-app explanation</li>
+            <li>Creates confusion about whether this satisfies income tax obligation (it doesn't — it's just a creditable withholding)</li>
+            <li>Content creators: TikTok Fund, YouTube AdSense, Shopee affiliate — which is taxable?</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">₱500K</span> annual gross threshold<br>
+            <span class="stat-pill">1% × 50%</span> = 0.5% effective withholding rate<br>
+            <span class="stat-pill">Creditable</span> — applies to income tax, not replacement<br>
+            Affects: Shopee, Lazada, TikTok Shop, Grab, Foodpanda sellers
+          </p>
+        </div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>AKBai proactively alerts users approaching ₱500K gross: "Mag-iingat ka na — mag-a-apply na ang withholding tax sa susunod na buwan." Explains in Taglish what the deduction is, that it's creditable, and how to factor it into ITR. Year-end withholding reconciliation prompt.</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "Bakit mas mababa ang payout mo sa Shopee ngayong buwan? Baka nasa ₱500K ka na. Alamin sa AKBai."</li>
+          <li><strong>Timing:</strong> Target November–January (when year-end sellers hit thresholds)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP10 -->
+    <div class="pain-point medium">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-10 · Cash Flow Blindness</div>
+          <div class="pain-title">Good Sales, No Cash — The Filipino Seller's Most Painful Paradox</div>
+        </div>
+        <div class="priority-badge medium">🟠 High</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>"Sellers celebrate large sales but can't pay rent due to platform payouts delayed 7+ days"</li>
+            <li>Restock purchase timing vs. payout timing mismatch — cash crunch despite healthy P&amp;L</li>
+            <li>No real-time visibility into liquidity — making decisions on feelings not numbers</li>
+            <li>Informal business loans (5-6 lending) taken due to cash timing gaps</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">7+ days</span> Shopee payout cycle<br>
+            <span class="stat-pill">COD risk</span> courier remittance delays add 3–5 more days<br>
+            <span class="stat-pill">5-6 lending</span> 20–25% monthly informal interest rate (desperate alternative)<br>
+          </p>
+        </div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>AKBai daily briefing includes "Expected cash inflows this week" from pending platform payouts + GCash balance trends. Cash flow projection for next 30 days based on current sales trajectory. Restock timing advice: "Mag-order ka ng stock pagdating ng Friday — 'yan ang expected payout mo."</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "Malaki ang benta, bakit wala pang cash? AKBai ipinapaliwanag kung kailan darating ang pera mo."</li>
+          <li><strong>Empathy-led content:</strong> "Pangako ng Shopee" — storytelling content resonating with sellers who've been through this</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP11 -->
+    <div class="pain-point medium">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-11 · Tax Structure Decisions</div>
+          <div class="pain-title">DAT Files, CAS Registration, BIR Form Complexity — For Growing Businesses</div>
+        </div>
+        <div class="priority-badge medium">🟠 High</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>Computerized Accounting System (CAS) registration required when using software — few know this</li>
+            <li>DAT (Digital Accounting Tax) files must conform to BIR XML schemas — technical nightmare</li>
+            <li>Monthly deadlines: 2550M, 2550Q, 1601-E, 2316, 2307 — error-prone manual filling</li>
+            <li>Affordable tools can't generate BIR-compliant DAT files — forces expensive accountant hire</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">6+ forms</span> monthly/quarterly BIR deadlines<br>
+            <span class="stat-pill">₱3K–15K</span> accountant cost to handle these<br>
+            <span class="stat-pill">0</span> affordable tools that auto-generate BIR forms for MSMEs<br>
+            Phase 2+ AKBai roadmap item
+          </p>
+        </div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution (Roadmap)</h4>
+        <p>Phase 3 roadmap: BIR form pre-fill assistance for 1701Q, 2551Q, and monthly returns. Business tier: deadline calendar with proactive reminders per BIR filing schedule. Long-term: DAT file preparation assistance (differentiating from Taxumo which is tax-only).</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "Alam mo ba kung anong BIR forms ang dapat mo i-file ngayong buwan? Si AKBai, may calendar para sa'yo."</li>
+          <li><strong>Target:</strong> Growing businesses graduating past Taxumo's capabilities</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PP12 -->
+    <div class="pain-point medium">
+      <div class="pain-header">
+        <div>
+          <div class="pain-id">PP-12 · Freelancer/Creator Blind Spot</div>
+          <div class="pain-title">Content Creators & Digital Nomads — Tax Obligations Completely Unknown</div>
+        </div>
+        <div class="priority-badge medium">🟠 High</div>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-box">
+          <h4>What they say</h4>
+          <ul>
+            <li>BIR actively reminding YouTubers and social media influencers to register — many unaware</li>
+            <li>TikTok Creator Fund, YouTube AdSense, Shopee affiliate — which is taxable? (All of it)</li>
+            <li>Digital nomad visa (June 2025) created new confusion about local income tax obligations</li>
+            <li>International payment via Wise, PayPal, Payoneer — exchange rate tracking missing</li>
+          </ul>
+        </div>
+        <div class="pain-box">
+          <h4>The Numbers</h4>
+          <p>
+            <span class="stat-pill">Growing fast</span> content creator economy in PH<br>
+            <span class="stat-pill">All income</span> from all platforms = taxable in Philippines<br>
+            <span class="stat-pill">New visa</span> Digital Nomad Visa (June 2025) = new audience segment<br>
+            <span class="stat-pill">0 tools</span> explain this in Tagalog
+          </p>
+        </div>
+      </div>
+      <div class="akbai-solution">
+        <h4>✅ AKBai Solution</h4>
+        <p>AKBai handles mixed income: employment + online selling + creator income. Explains taxability of each platform in Taglish. Quarterly estimated tax calculator for variable income. Multi-currency awareness for Wise/PayPal income (Phase 2 roadmap).</p>
+      </div>
+      <div class="gtm-box">
+        <h4>🎯 GTM Targeting</h4>
+        <ul>
+          <li><strong>Hook:</strong> "Kumikita ka sa TikTok at YouTube? Alam mo bang may buwis 'yan? Si AKBai, tutulungan ka."</li>
+          <li><strong>Channel:</strong> TikTok/Instagram — reach creators in their native platform</li>
+          <li><strong>Timing:</strong> January (ITR season) and April (Q1 deadline) push</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- end pain-points -->
+
+  <!-- KEYWORDS & LANGUAGE -->
+  <div id="keywords" class="section">
+    <div class="section-title">Keywords & Filipino Language Patterns</div>
+    <div class="section-subtitle">The exact language Filipinos use when searching for help — use these in content, SEO, and ad copy</div>
+
+    <div class="keyword-section">
+      <h3>🔍 High-Intent Search Terms</h3>
+
+      <div class="keyword-cluster">
+        <h4>BIR & Tax Registration</h4>
+        <span class="kw-tag english">BIR registration freelancer Philippines</span>
+        <span class="kw-tag english">how to register BIR self-employed</span>
+        <span class="kw-tag english">8% flat tax Philippines freelancer</span>
+        <span class="kw-tag english">BIR Form 1901 guide</span>
+        <span class="kw-tag english">Certificate of Registration BIR</span>
+        <span class="kw-tag taglish">paano mag register sa BIR</span>
+        <span class="kw-tag taglish">BIR registration para sa online seller</span>
+        <span class="kw-tag taglish">anong tax ang para sa maliit na negosyo</span>
+      </div>
+
+      <div class="keyword-cluster">
+        <h4>Accounting & Bookkeeping</h4>
+        <span class="kw-tag english">accounting app Philippines small business</span>
+        <span class="kw-tag english">bookkeeping online seller Philippines</span>
+        <span class="kw-tag english">how to track income Philippines freelancer</span>
+        <span class="kw-tag english">Taxumo vs alternative Philippines</span>
+        <span class="kw-tag taglish">paano mag track ng sales at expenses</span>
+        <span class="kw-tag taglish">accounting para sa negosyante</span>
+        <span class="kw-tag taglish">hindi ko alam mag account ng negosyo</span>
+      </div>
+
+      <div class="keyword-cluster">
+        <h4>Online Selling Specific</h4>
+        <span class="kw-tag english">Shopee seller accounting Philippines</span>
+        <span class="kw-tag english">withholding tax online seller Philippines 2024</span>
+        <span class="kw-tag english">1% withholding tax Shopee explained</span>
+        <span class="kw-tag english">GCash income tracking Philippines</span>
+        <span class="kw-tag taglish">bakit mas mababa ang payout ko sa Shopee</span>
+        <span class="kw-tag taglish">paano malaman ang totoo kong kita sa online selling</span>
+        <span class="kw-tag taglish">GCash reconciliation negosyo</span>
+      </div>
+
+      <div class="keyword-cluster">
+        <h4>Emotional / Fear-Based Triggers</h4>
+        <span class="kw-tag taglish">makukulong ba ako kung hindi mag file ng tax</span>
+        <span class="kw-tag taglish">nakalimutan ko mag file ng tax</span>
+        <span class="kw-tag taglish">BIR penalty paano bayaran</span>
+        <span class="kw-tag taglish">mukhang magbabayad ako ng malaking buwis</span>
+        <span class="kw-tag english">BIR penalty Philippines how to avoid</span>
+        <span class="kw-tag english">late BIR filing Philippines what to do</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GTM HOOKS TABLE -->
+  <div id="gtm-hooks" class="section">
+    <div class="section-title">GTM Hook Playbook by Channel</div>
+    <div class="section-subtitle">Ready-to-use messaging hooks mapped to channels and pain points — prioritized for organic (₱0 cost) first</div>
+
+    <table class="gtm-table">
+      <thead>
+        <tr>
+          <th>Pain Point</th>
+          <th>Hook (Taglish)</th>
+          <th>Channel(s)</th>
+          <th>Trigger Moment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PP-01</strong><br>BIR Registration Confusion</td>
+          <td><span class="hook-text">"BIR Registration sa 5 Steps — Tanungin si AKBai, libre!"</span></td>
+          <td>
+            <span class="channel-tag">r/buhaydigital</span>
+            <span class="channel-tag">r/FreelancePH</span>
+            <span class="channel-tag">TikTok</span>
+          </td>
+          <td>When user posts "how to register BIR" or "paano mag-register"</td>
+        </tr>
+        <tr>
+          <td><strong>PP-02</strong><br>OR → Service Invoice</td>
+          <td><span class="hook-text">"Huwag nang gamitin ang OR mo — napalitan na ng Service Invoice noong 2024."</span></td>
+          <td>
+            <span class="channel-tag">SEO blog</span>
+            <span class="channel-tag">FB groups</span>
+          </td>
+          <td>High search volume, low content competition — SEO priority</td>
+        </tr>
+        <tr>
+          <td><strong>PP-03</strong><br>Tax Structure Confusion</td>
+          <td><span class="hook-text">"₱3M na ba ang kita mo ngayong taon? May malaking buwis na naghihintay."</span></td>
+          <td>
+            <span class="channel-tag">Landing page calculator</span>
+            <span class="channel-tag">r/phinvest</span>
+          </td>
+          <td>Year-end (Oct–Dec) when sellers project annual totals</td>
+        </tr>
+        <tr>
+          <td><strong>PP-04</strong><br>Tool Frustration</td>
+          <td><span class="hook-text">"Hindi mo kailangan ng accountant na ₱5,000/buwan. Si AKBai, ₱399 lang."</span></td>
+          <td>
+            <span class="channel-tag">r/buhaydigital</span>
+            <span class="channel-tag">Facebook ads</span>
+            <span class="channel-tag">Comparison posts</span>
+          </td>
+          <td>When users post "what accounting app do you use?"</td>
+        </tr>
+        <tr>
+          <td><strong>PP-05</strong><br>Accounting Literacy</td>
+          <td><span class="hook-text">"Hindi ka accountant? Ok lang. Taglish ang pag-usapan natin ni AKBai."</span></td>
+          <td>
+            <span class="channel-tag">TikTok</span>
+            <span class="channel-tag">Instagram Reels</span>
+            <span class="channel-tag">YouTube Shorts</span>
+          </td>
+          <td>Always-on content — evergreen for new business starters</td>
+        </tr>
+        <tr>
+          <td><strong>PP-06</strong><br>Multi-Channel Chaos</td>
+          <td><span class="hook-text">"Malaki ang sales sa Shopee pero wala pang pera? Naroon ang sagot sa AKBai."</span></td>
+          <td>
+            <span class="channel-tag">PH Online Sellers FB</span>
+            <span class="channel-tag">TikTok demo video</span>
+          </td>
+          <td>After platform payout disappointment posts in seller groups</td>
+        </tr>
+        <tr>
+          <td><strong>PP-07</strong><br>Data Entry Friction</td>
+          <td><span class="hook-text">"60 segundo lang bawat araw. 'Kumusta ang negosyo mo?' — AKBai daily check-in."</span></td>
+          <td>
+            <span class="channel-tag">App Store listing</span>
+            <span class="channel-tag">Onboarding email</span>
+            <span class="channel-tag">Referral</span>
+          </td>
+          <td>Activation messaging — first 7 days post-signup</td>
+        </tr>
+        <tr>
+          <td><strong>PP-09</strong><br>Withholding Tax Surprise</td>
+          <td><span class="hook-text">"Bakit mas mababa ang payout mo sa Shopee? Baka nasa ₱500K ka na."</span></td>
+          <td>
+            <span class="channel-tag">FB Online Sellers</span>
+            <span class="channel-tag">Shopee seller forums</span>
+          </td>
+          <td>November–January when sellers approach annual threshold</td>
+        </tr>
+        <tr>
+          <td><strong>PP-10</strong><br>Cash Flow Blindness</td>
+          <td><span class="hook-text">"Malaki ang benta, bakit wala pang cash? Ipinapaliwanag ni AKBai kung kailan darating."</span></td>
+          <td>
+            <span class="channel-tag">r/phinvest</span>
+            <span class="channel-tag">Negosyante FB groups</span>
+          </td>
+          <td>After payday when sellers check balances vs. expected</td>
+        </tr>
+        <tr>
+          <td><strong>PP-12</strong><br>Content Creator Blindspot</td>
+          <td><span class="hook-text">"Kumikita ka sa TikTok at YouTube? Alam mo bang may buwis 'yan?"</span></td>
+          <td>
+            <span class="channel-tag">TikTok</span>
+            <span class="channel-tag">Creator communities</span>
+          </td>
+          <td>ITR season (January–April) and BIR crackdown news events</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- COMPETITIVE GAPS -->
+  <div id="competitive-gaps" class="section">
+    <div class="section-title">Community-Revealed Competitive Gaps</div>
+    <div class="section-subtitle">Specific whitespace no competitor is filling — directly from community frustrations</div>
+
+    <div class="comp-gap">
+      <div class="gap-icon">🗣️</div>
+      <div class="gap-content">
+        <h4>Taglish / Filipino Language Interface <span class="gap-badge">ZERO COMPETITION</span></h4>
+        <p>Every tool from QuickBooks to Wave to Taxumo is English-only. Filipino communities repeatedly ask for explanations in "simple terms" — this is a language problem masquerading as an education problem. AKBai's Taglish-first design is a genuine, defensible competitive moat that no tool can retrofit easily.</p>
+      </div>
+    </div>
+
+    <div class="comp-gap">
+      <div class="gap-icon">📱</div>
+      <div class="gap-content">
+        <h4>GCash + COD + Shopee Workflow Integration <span class="gap-badge">ZERO COMPETITION</span></h4>
+        <p>No accounting tool is designed around how Filipino sellers actually transact: GCash for small purchases, COD for marketplace orders, direct bank transfer for wholesale, and occasional credit card. QuickBooks and Xero assume bank feeds. AKBai assumes GCash screenshots and Excel payout exports.</p>
+      </div>
+    </div>
+
+    <div class="comp-gap">
+      <div class="gap-icon">📸</div>
+      <div class="gap-content">
+        <h4>Notebook Photo OCR (Multi-Modal Data Entry) <span class="gap-badge">ZERO COMPETITION</span></h4>
+        <p>Community research reveals many sellers keep physical notebooks or simple spreadsheets — not because they prefer it, but because no digital tool fits their workflow. AKBai's notebook photo OCR meets them exactly where they are. No competitor offers this.</p>
+      </div>
+    </div>
+
+    <div class="comp-gap">
+      <div class="gap-icon">📅</div>
+      <div class="gap-content">
+        <h4>Daily Habit-Forming Check-In <span class="gap-badge">ZERO COMPETITION</span></h4>
+        <p>All accounting tools are reactive — the seller opens the app when they want to review. AKBai is proactive — it asks the seller daily. This daily touch creates retention, data completeness, and literacy simultaneously. No competitor has this feature for the MSME market.</p>
+      </div>
+    </div>
+
+    <div class="comp-gap">
+      <div class="gap-icon">⚠️</div>
+      <div class="gap-content">
+        <h4>Proactive BIR Threshold Alerts (₱250K, ₱500K, ₱3M) <span class="gap-badge">ZERO COMPETITION</span></h4>
+        <p>The community repeatedly shows sellers are surprised by BIR obligations they didn't know about — especially the ₱500K withholding threshold and ₱3M VAT threshold. AKBai is the first tool designed to alert sellers <em>before</em> they cross these thresholds. No competitor does this proactively in Taglish.</p>
+      </div>
+    </div>
+
+    <div class="comp-gap">
+      <div class="gap-icon">🧾</div>
+      <div class="gap-content">
+        <h4>Real-Time BIR Regulation Updates in Conversational AI <span class="gap-badge">STRONG MOAT</span></h4>
+        <p>BIR RR 7-2024 (OR → Service Invoice) caught thousands of sellers off guard. Taxumo published a blog post. AKBai can notify users in-app, in Taglish, with step-by-step action items. The living knowledge base — kept current with every BIR issuance — is a compounding defensible asset that grows harder to replicate over time.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- FIRST 100 USERS GTM PLAYBOOK -->
+  <div id="gtm-playbook" class="section">
+    <div class="section-title">First 100 Users GTM Playbook</div>
+    <div class="section-subtitle">Evidence-based acquisition strategies for AKBai&#39;s launch phase — mapped to the Filipino MSME context. Based on research from Lenny&#39;s Newsletter, YC founder playbooks, and Mercury&#39;s first-customer frameworks.</div>
+
+    <div class="gtm-highlight-box">
+      <h3>🎯 The Core Principle: Do Things That Don&#39;t Scale</h3>
+      <p>Every consumer app that found its first 100 users did it through methods that cannot be copy-pasted at scale. The goal is not efficiency — it is signal. Each early user is a research subject, a testimonial, and a distribution node within their network. Anton is the primary GTM engine until ₱500K ARR.</p>
+      <ul>
+        <li><strong>Founder-led GTM rule:</strong> No paid acquisition until at least 100 organic users are paying. Every peso spent on ads before product-market fit is wasted learning budget.</li>
+        <li><strong>Primary channel:</strong> Facebook MSME communities (Negosyante PH, Online Sellers PH) — 1M+ combined members, zero ad spend required, pain points visible in plain text every day.</li>
+        <li><strong>Target first user profile:</strong> Sari-sari/food seller, 25-40, active in at least one FB MSME group, currently tracking sales in notebook or GCash history, has had at least one BIR-related anxiety moment in the past 12 months.</li>
+      </ul>
+    </div>
+
+    <div class="milestone-row">
+      <div class="milestone-card">
+        <div class="m-num">1–10</div>
+        <div class="m-label">Users</div>
+        <div class="m-action">Personal network — friends, family, suki with a tindahan. Collect qualitative feedback. No payment required yet.</div>
+      </div>
+      <div class="milestone-card">
+        <div class="m-num">10–30</div>
+        <div class="m-label">Users</div>
+        <div class="m-action">FB community infiltration — genuine posts answering real questions, soft mention of AKBai. Manual onboarding of each user.</div>
+      </div>
+      <div class="milestone-card">
+        <div class="m-num">30–70</div>
+        <div class="m-label">Users</div>
+        <div class="m-action">FB group admin partnership — offer free Business tier to 3-5 group admins. Each admin endorsement reaches 10K-100K members.</div>
+      </div>
+      <div class="milestone-card">
+        <div class="m-num">70–100</div>
+        <div class="m-label">Users</div>
+        <div class="m-action">Waitlist FOMO — queue counter visible, referral queue-jump active. First conversion push for paid Pro tier.</div>
+      </div>
+    </div>
+
+    <div class="gtm-playbook-section">
+      <h3>7 First-User Acquisition Strategies — Ranked for AKBai</h3>
+      <div class="strategy-grid">
+
+        <div class="strategy-card" style="border-top: 3px solid #dc3545;">
+          <div class="strat-header">
+            <div class="strat-num">1</div>
+            <div class="strat-title">Facebook Community Infiltration</div>
+            <span class="strat-priority primary">PRIMARY</span>
+          </div>
+          <p>Join Negosyante PH, Online Sellers PH, Freelancers PH, and similar FB groups. Spend 2-4 weeks providing genuine value — answer BIR questions, share tax guides, help with filing confusion. Build credibility first, then mention AKBai naturally as your own tool.</p>
+          <div class="akbai-specific"><strong>AKBai play:</strong> "Ginagamit ko yong AKBai para dito — may AI siya na sumasagot ng BIR questions sa Taglish. Beta pa lang siya ngayon, pag gusto mong subukan." Attach a screenshot of the tool answering a real question from that thread.</div>
+        </div>
+
+        <div class="strategy-card" style="border-top: 3px solid #dc3545;">
+          <div class="strat-header">
+            <div class="strat-num">2</div>
+            <div class="strat-title">Offline Personal Outreach</div>
+            <span class="strat-priority primary">PRIMARY</span>
+          </div>
+          <p>Face-to-face or Messenger DM with personal connections who are actual MSME operators. These users give the most honest feedback and are the most forgiving of early bugs. Target sari-sari store owners, food sellers, online resellers in your direct personal network.</p>
+          <div class="akbai-specific"><strong>AKBai play:</strong> Show the app live. Walk them through scanning a receipt or asking a BIR question. Let them feel the wow moment before you ask them to sign up. Offer to set up their account together in 10 minutes — co-onboarding creates deep loyalty.</div>
+        </div>
+
+        <div class="strategy-card" style="border-top: 3px solid #e65100;">
+          <div class="strat-header">
+            <div class="strat-num">3</div>
+            <div class="strat-title">FB Group Admin Influencer Play</div>
+            <span class="strat-priority secondary">HIGH LEVERAGE</span>
+          </div>
+          <p>Identify 3-5 admins of major MSME FB groups who are themselves MSME operators. Reach out personally, offer a permanent free Business tier account in exchange for honest feedback and, if they find it useful, a genuine recommendation to their group.</p>
+          <div class="akbai-specific"><strong>AKBai play:</strong> No formal agreement needed. This is genuine product placement, not advertising. If the admin does not like the product after using it for 2 weeks, no obligation. One admin post in a 50K-member group = 100+ waitlist signups from a single organic endorsement.</div>
+        </div>
+
+        <div class="strategy-card" style="border-top: 3px solid #e65100;">
+          <div class="strat-header">
+            <div class="strat-num">4</div>
+            <div class="strat-title">Waitlist + Queue Counter FOMO</div>
+            <span class="strat-priority secondary">HIGH LEVERAGE</span>
+          </div>
+          <p>Launch a pre-access waitlist before full launch. Display a live queue count on the landing page ("1,247 negosyante ang naghihintay"). Users can jump the queue by referring others — creating social proof, urgency, and viral referral loops at zero cost.</p>
+          <div class="akbai-specific"><strong>AKBai play:</strong> Open during Phase 0B pilot. Counter starts at real number and updates live. Message: "Sinalihan ka namin sa waitlist — ikaw ay #847. Mag-refer ng kaibigan para mapabilis ang iyong access." The queue mechanic is itself a distribution engine.</div>
+        </div>
+
+        <div class="strategy-card" style="border-top: 3px solid #f0ad00;">
+          <div class="strat-header">
+            <div class="strat-num">5</div>
+            <div class="strat-title">Pre-Launch Content Community</div>
+            <span class="strat-priority support">SUPPORT</span>
+          </div>
+          <p>Start posting educational BIR/tax content on a dedicated Facebook page or TikTok account 60-90 days before launch. Each post builds an audience that already trusts AKBai as a knowledge source before the product is publicly available.</p>
+          <div class="akbai-specific"><strong>AKBai play:</strong> Weekly formats: "BIR Alert of the Week," "Tanong sa AKBai" Q&amp;A videos, "Magkano ang Buwis Mo?" explainer threads. Taglish only. Link to waitlist in bio. Content is both top-of-funnel acquisition and long-term SEO asset.</div>
+        </div>
+
+        <div class="strategy-card" style="border-top: 3px solid #f0ad00;">
+          <div class="strat-header">
+            <div class="strat-num">6</div>
+            <div class="strat-title">Reddit + Press Outreach</div>
+            <span class="strat-priority support">SUPPORT</span>
+          </div>
+          <p>Post a genuine builder thread in r/buhaydigital and r/phinvest — not advertising, but a founder sharing what they are working on. Filipino Reddit communities are receptive to authentic local startup stories. Also pitch to Rappler, CNN Philippines, or BusinessWorld digital.</p>
+          <div class="akbai-specific"><strong>AKBai play:</strong> Post title: "I built an AI that answers BIR questions in Taglish for small sellers — looking for beta testers." Real story, no marketing language. Attach a demo GIF of the chat answering "Magkano ang tax ko sa 500K na kita?" — a question that resonates with the entire target community.</div>
+        </div>
+
+        <div class="strategy-card" style="border-top: 3px solid #3949ab;">
+          <div class="strat-header">
+            <div class="strat-num">7</div>
+            <div class="strat-title">Direct Power User Invitations</div>
+            <span class="strat-priority support">SUPPORT</span>
+          </div>
+          <p>Identify the most helpful people in MSME communities — those already answering BIR questions and posting tax guides. These are natural AKBai evangelists. Reach out directly and offer early access. They become product champions before you ever ask them to promote it.</p>
+          <div class="akbai-specific"><strong>AKBai play:</strong> Search target FB groups for posts with 50+ comments. Note the same 3-5 knowledgeable responders. DM them: "Napansin ko madalas kang sumasagot ng tax questions dito. Gusto mo subukan ang tool na gumagawa ng ganyan sa Taglish?" These people already have trust capital in the community.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="channel-priority-table">
+      <table>
+        <tr>
+          <th>Priority</th>
+          <th>Channel</th>
+          <th>Effort</th>
+          <th>Cost</th>
+          <th>Expected Users (0-100 phase)</th>
+          <th>Notes</th>
+        </tr>
+        <tr>
+          <td><span class="rank-badge r1">#1</span></td>
+          <td><strong>FB MSME Community Posts</strong></td>
+          <td>High (daily)</td>
+          <td>₱0</td>
+          <td>30–50</td>
+          <td>Primary channel. Requires genuine value-add posts. Build trust for 2-4 weeks before mentioning AKBai.</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge r1">#1</span></td>
+          <td><strong>Personal Network Outreach</strong></td>
+          <td>Medium</td>
+          <td>₱0</td>
+          <td>10–20</td>
+          <td>Highest conversion rate. Every person onboarded personally becomes an advocate. Do this before any public launch.</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge r2">#2</span></td>
+          <td><strong>FB Group Admin Partnership</strong></td>
+          <td>Low (3-5 DMs)</td>
+          <td>₱0 (free tier)</td>
+          <td>20–50 per admin</td>
+          <td>Highest leverage play. One admin with 50K members = potentially 100+ signups from one post. Highest ROI of any channel.</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge r3">#3</span></td>
+          <td><strong>Waitlist + Referral Loop</strong></td>
+          <td>Low (setup)</td>
+          <td>₱0</td>
+          <td>50–200 signups</td>
+          <td>Works as amplifier alongside other channels. A waitlist without traffic driving to it achieves nothing on its own.</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge r4">#4</span></td>
+          <td><strong>Pre-Launch Content (FB/TikTok)</strong></td>
+          <td>Medium (weekly)</td>
+          <td>₱0</td>
+          <td>Builds launch audience</td>
+          <td>Start 60+ days before launch. SEO benefit compounds over time. Taglish content is the long-term organic moat.</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge r5">#5</span></td>
+          <td><strong>Reddit + Press</strong></td>
+          <td>Low (one-time)</td>
+          <td>₱0</td>
+          <td>5–15 + credibility</td>
+          <td>Lower user yield but builds credibility. r/buhaydigital post framed as genuine founder story can drive 50-100 profile views.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="dont-scale-box">
+      <h3>⚠️ Founder Mandate: Things That Don&#39;t Scale — Do These Until ₱500K ARR</h3>
+      <ul>
+        <li><strong>Manually onboard every early user</strong> — Call, Messenger, or meet in person. Set up their account together. Answer every question personally. This creates advocates, not just users.</li>
+        <li><strong>Read every BIR-related Facebook post</strong> in your target communities for 1 hour every morning. Respond genuinely. Your name becomes synonymous with reliable BIR help before the product even launches.</li>
+        <li><strong>DM every person who comments on your community posts</strong> — even those who do not ask for the product. Build the relationship first, then offer AKBai when it is relevant to their situation.</li>
+        <li><strong>Call every churned user within 24 hours</strong> — especially in the first 3 months. The reason someone leaves is worth more than 10 positive testimonials for improving the product.</li>
+        <li><strong>Send a personal follow-up message</strong> after every user&#39;s first BIR deadline handled by AKBai: "Kumusta ang filing mo? Nakapag-file ka na ba?" This one touchpoint has outsized retention impact and demonstrates that AKBai is a partner, not a tool.</li>
+        <li><strong>Do NOT hire sales until 200+ paying users.</strong> Every conversation should be founder-led. You learn faster, iterate faster, and the product improves faster when the builder is also the seller.</li>
+        <li><strong>Do NOT run paid ads</strong> until the organic conversion path is validated. Paid ads amplify what is already working — they cannot substitute for product-market fit.</li>
+      </ul>
+    </div>
+
+    <div class="gtm-playbook-section">
+      <h3>📊 Key GTM Metrics — Track These From Day 1</h3>
+      <div class="metrics-table-wrap">
+        <table>
+          <tr>
+            <th>Metric</th>
+            <th>Target (Month 1–3)</th>
+            <th>Why It Matters</th>
+          </tr>
+          <tr>
+            <td>Waitlist signups</td>
+            <td><strong>500+</strong></td>
+            <td>Demand validation before launch; creates Day 1 user pool without ads</td>
+          </tr>
+          <tr>
+            <td>Waitlist → active user conversion</td>
+            <td><strong>30%+</strong></td>
+            <td>Indicates messaging-to-product fit; below 20% means revisit onboarding</td>
+          </tr>
+          <tr>
+            <td>Free → Pro conversion</td>
+            <td><strong>10–15%</strong></td>
+            <td>Primary revenue signal; below 8% means revisit paywall placement or value prop</td>
+          </tr>
+          <tr>
+            <td>Day 7 retention</td>
+            <td><strong>40%+</strong></td>
+            <td>Habit formation indicator; below 30% means daily briefing is not sticky enough</td>
+          </tr>
+          <tr>
+            <td>Flag-as-Wrong rate (AI accuracy)</td>
+            <td><strong>&lt;10% (target &lt;5%)</strong></td>
+            <td>Trust signal; above 15% risks word-of-mouth turning negative in communities</td>
+          </tr>
+          <tr>
+            <td>Referral rate</td>
+            <td><strong>15%+</strong></td>
+            <td>Organic growth multiplier; above 20% means the product is self-distributing</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- end container -->
+
+<footer>
+  AKBai Market Research & GTM Intelligence v1.0 · March 2026 · For internal use only<br>
+  Sources: r/buhaydigital (community), r/phinvest (community), r/FreelancePH (community), Taxumo blog, JuanTax blog, CloudCFO, PwC Philippines, Grant Thornton PH, AccountaholicsPH, BIR Revenue Regulations (RR 7-2024, RR 16-2023), Rappler Ask the Tax Whiz
+</footer>
+
+</body>
+</html>

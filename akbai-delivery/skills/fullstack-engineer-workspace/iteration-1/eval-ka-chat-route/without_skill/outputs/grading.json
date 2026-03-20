@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Auth check at the start of the route (getUser)",
+      "passed": true,
+      "evidence": "route.ts lines 35-51: supabase.auth.getUser() called at start, returns 401 error if missing"
+    },
+    {
+      "text": "Returns {success, data/error} envelope format",
+      "passed": false,
+      "evidence": "route.ts returns NextResponse.json with inconsistent formats. Success has {success: true, data: {message_id, response, model...}} but error responses use {success: false, error: 'ERROR_CODE', message: '...'} instead of {success: false, error: {code, message, message_tl}}"
+    },
+    {
+      "text": "Tier-based model selection (Haiku for free, Sonnet for paid)",
+      "passed": true,
+      "evidence": "route.ts line 161: selectModel('ka_reasoning', tier) called with user tier; model-router.ts implements tier-based routing"
+    },
+    {
+      "text": "Circuit breaker check before Claude API call",
+      "passed": true,
+      "evidence": "route.ts lines 175-200: callClaude() call is wrapped in try-catch that catches ClaudeCircuitOpenError on line 187"
+    },
+    {
+      "text": "Retry with exponential backoff (max 3 retries)",
+      "passed": true,
+      "evidence": "retry.ts provides retryWithBackoff() function with exponential backoff (lines 72-77): baseDelayMs * Math.pow(2, attempt) with maxRetries default of 3"
+    },
+    {
+      "text": "Conversation history stored to ka_conversations table",
+      "passed": true,
+      "evidence": "route.ts lines 214-244: inserts both user and assistant messages into ka_conversations table with all fields"
+    },
+    {
+      "text": "Zod validation on request body",
+      "passed": true,
+      "evidence": "route.ts lines 54-66: ChatRequestSchema.safeParse(body) validates request, returns error if validation fails"
+    },
+    {
+      "text": "Uses ANTHROPIC_API_KEY from server env, never exposed to client",
+      "passed": true,
+      "evidence": "route.ts is server-side API route at /app/api/ka/chat/route.ts. callClaude() reads API key from environment."
+    }
+  ]
+}

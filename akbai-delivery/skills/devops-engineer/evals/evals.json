@@ -1,0 +1,23 @@
+{
+  "skill_name": "devops-engineer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just merged a PR that adds the Resibo Scanner feature. Walk me through deploying this to production — there's a new Supabase migration for the receipts table.",
+      "expected_output": "Should walk through the full pre-deploy checklist: verify migration applied to staging first, check RLS policies on receipts table, apply migration to production Supabase, verify soft-delete/audit columns preserved, then allow Vercel production deploy, followed by Sentry release tag and post-deploy verification including testing a receipt scan.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm getting Slack alerts that the Xendit webhook endpoint is returning 500 errors. I'm at Globe right now in a meeting. What do I do?",
+      "expected_output": "Should classify as P0 (payment failure), provide immediate phone-based response: check Vercel dashboard on phone, promote previous deployment to roll back, toggle maintenance mode if needed. Explain the impact (users paying but subscriptions not activating). Provide steps for evening follow-up: replay missed webhooks, verify affected user subscriptions, write postmortem.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Help me set up Sentry for AKBai from scratch. We're about to ship to our first beta users and this is a critical gap.",
+      "expected_output": "Should reference Gap A4, walk through full Sentry setup: npm install, wizard, client/server config with proper DSN and release tagging using VERCEL_GIT_COMMIT_SHA, source map config, alert rules (payment errors as P0, auth spikes as P1), custom tags for AKBai features and tiers, and integration with Slack #akbai-alerts channel. Should note the free tier is 5K events/mo and sufficient for Phase 1.",
+      "files": []
+    }
+  ]
+}

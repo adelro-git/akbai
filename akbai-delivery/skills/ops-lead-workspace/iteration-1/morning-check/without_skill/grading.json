@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "run_type": "without_skill",
+  "expectations": [
+    {"text": "Uses traffic light indicators (🟢🟡🔴) for status", "passed": false, "evidence": "Uses checkmarks and bullet points, no traffic light system"},
+    {"text": "Covers all 4 check areas: systems, support, revenue, flags", "passed": false, "evidence": "Covers systems and flags but revenue and support aren't clearly separated into the 4-area framework"},
+    {"text": "Includes a 'tonight's priority' or next action line", "passed": false, "evidence": "Has 'This Week Priority' but no specific evening session priority"},
+    {"text": "Response is phone-scannable (short lines, no dense paragraphs)", "passed": true, "evidence": "Short bullet points, checklist format. Reasonably scannable."},
+    {"text": "Respects the 5-minute constraint (not an overwhelming wall of text)", "passed": true, "evidence": "29 lines, concise. Quick read."}
+  ]
+}

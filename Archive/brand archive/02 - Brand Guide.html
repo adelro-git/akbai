@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — Brand Guide v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --card-alt:#111f36;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+  --hs:#F59E0B;
+  --he:#D97706;
+  --ts:#20C9A0;
+  --te:#0FB8D9;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);line-height:1.7;font-size:15px}
+
+/* ── Nav ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(7,16,30,.90);backdrop-filter:blur(16px);border-bottom:1px solid var(--dim);padding:14px 32px;display:flex;align-items:center;gap:20px;overflow-x:auto}
+nav a{color:var(--muted);text-decoration:none;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;transition:color .2s}
+nav a:hover{color:#fff}
+.nav-brand{font-weight:800;font-size:13px;background:linear-gradient(135deg,var(--hs),var(--he));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-right:8px;flex-shrink:0}
+
+/* ── Layout ── */
+.container{max-width:960px;margin:0 auto;padding:0 32px}
+section{padding:80px 0;border-bottom:1px solid var(--dim);scroll-margin-top:60px}
+section:last-child{border-bottom:none;padding-bottom:120px}
+
+/* ── Type ── */
+.section-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.section-title{font-size:36px;font-weight:800;line-height:1.15;margin-bottom:12px}
+.section-sub{font-size:16px;color:var(--muted);max-width:640px;margin-bottom:40px;line-height:1.65}
+.honey{background:linear-gradient(135deg,var(--hs),var(--he));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.teal{background:linear-gradient(135deg,var(--ts),var(--te));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--dim);border-radius:14px;padding:28px}
+.card h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.card h4{font-size:13px;font-weight:700;margin-bottom:6px}
+.card p{color:var(--muted);font-size:14px;line-height:1.6}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:10px}
+.tag-h{background:rgba(245,158,11,.12);color:#F59E0B}
+.tag-t{background:rgba(32,201,160,.12);color:#20C9A0}
+.tag-v{background:rgba(167,139,250,.12);color:#A78BFA}
+.tag-b{background:rgba(96,165,250,.12);color:#60A5FA}
+
+/* ── Tables ── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 16px;border-bottom:1px solid var(--dim)}
+table td{padding:12px 16px;border-bottom:1px solid var(--dim);color:var(--text);vertical-align:top}
+table tr:last-child td{border-bottom:none}
+
+/* ── Cover ── */
+.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 32px;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;top:-150px;right:-150px;width:700px;height:700px;background:radial-gradient(circle,rgba(245,158,11,.07) 0%,transparent 60%);pointer-events:none}
+.cover::after{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(32,201,160,.05) 0%,transparent 60%);pointer-events:none}
+.cover-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:52px;max-width:960px}
+.cover-meta-item{border-left:2px solid rgba(245,158,11,.25);padding-left:16px}
+.cover-meta-item .label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.cover-meta-item .value{font-size:14px;font-weight:600}
+
+/* ── Palette ── */
+.palette{display:flex;border-radius:14px;overflow:hidden;margin-bottom:24px}
+.palette-swatch{flex:1;height:80px;display:flex;align-items:flex-end;padding:8px 12px}
+.palette-swatch span{font-size:10px;font-weight:700;letter-spacing:.06em;opacity:.85}
+
+/* ── Voice example bubbles ── */
+.bubble-wrap{display:flex;flex-direction:column;gap:12px}
+.bubble{padding:14px 18px;border-radius:14px;font-size:14px;line-height:1.6;max-width:90%}
+.bubble-good{background:rgba(32,201,160,.08);border:1px solid rgba(32,201,160,.18);border-left:3px solid #20C9A0}
+.bubble-bad{background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.14);border-left:3px solid #F87171;color:var(--muted)}
+.bubble-label{font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;margin-bottom:5px}
+.bubble-good .bubble-label{color:#20C9A0}
+.bubble-bad .bubble-label{color:#F87171}
+
+/* ── Archetype ── */
+.arch-card{border-radius:14px;padding:32px}
+.arch-honey{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(217,119,6,.04));border:1px solid rgba(245,158,11,.18)}
+.arch-teal{background:linear-gradient(135deg,rgba(32,201,160,.07),rgba(15,184,217,.04));border:1px solid rgba(32,201,160,.15)}
+
+/* ── Persona cards ── */
+.persona{background:var(--card);border:1px solid var(--dim);border-radius:14px;padding:24px;position:relative;overflow:hidden}
+.persona::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.persona-a::before{background:linear-gradient(90deg,#F59E0B,#D97706)}
+.persona-b::before{background:linear-gradient(90deg,#20C9A0,#0FB8D9)}
+.persona-c::before{background:linear-gradient(90deg,#A78BFA,#818CF8)}
+.persona-d::before{background:linear-gradient(90deg,#60A5FA,#3B82F6)}
+
+/* ── Pillar cards ── */
+.pillar{border-radius:14px;padding:28px;border:1px solid var(--dim)}
+.pillar h3{font-size:20px;font-weight:800;margin-bottom:8px;line-height:1.3}
+.pillar p{color:var(--muted);font-size:14px;line-height:1.65}
+.pillar-1{background:rgba(245,158,11,.05);border-color:rgba(245,158,11,.20)}
+.pillar-2{background:rgba(32,201,160,.04);border-color:rgba(32,201,160,.16)}
+.pillar-3{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.14)}
+.pillar-4{background:rgba(96,165,250,.04);border-color:rgba(96,165,250,.14)}
+
+/* ── Positioning statement ── */
+.pos-statement{background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(32,201,160,.04));border:1px solid rgba(245,158,11,.14);border-radius:16px;padding:40px}
+
+/* ── Tagline display ── */
+.tagline-hero{font-size:28px;font-weight:500;font-style:italic;color:rgba(255,255,255,.60);letter-spacing:.01em}
+
+/* ── Swatch row ── */
+.swatch-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.swatch-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.swatch-hex{font-size:11px;color:var(--muted);font-family:monospace}
+
+/* ── Type scale ── */
+.type-row{padding:16px 0;border-bottom:1px solid var(--dim);display:flex;align-items:baseline;gap:20px}
+.type-row:last-child{border-bottom:none}
+.type-meta{font-size:11px;color:var(--muted);min-width:180px;flex-shrink:0}
+
+/* ── Competitive table highlight ── */
+tr.highlight td{color:var(--text);font-weight:600}
+tr.highlight td:first-child{color:#F59E0B}
+
+/* ── Stat blocks ── */
+.stat-block{text-align:center;background:var(--card);border:1px solid var(--dim);border-radius:14px;padding:28px}
+.stat-number{font-size:36px;font-weight:800;line-height:1;margin-bottom:6px}
+
+@media(max-width:768px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .cover-meta{grid-template-columns:1fr 1fr}
+  .section-title{font-size:28px}
+  .cover{padding:52px 20px;min-height:auto}
+  .container{padding:0 20px}
+  nav{padding:12px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Shared gradient defs -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<defs>
+  <linearGradient id="honey" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#F59E0B"/>
+    <stop offset="100%" stop-color="#D97706"/>
+  </linearGradient>
+  <linearGradient id="teal" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#20C9A0"/>
+    <stop offset="100%" stop-color="#0FB8D9"/>
+  </linearGradient>
+</defs>
+</svg>
+
+<!-- ── Navigation ── -->
+<nav>
+  <span class="nav-brand">AKBai</span>
+  <a href="#story">Brand Story</a>
+  <a href="#logo">Logo</a>
+  <a href="#color">Color</a>
+  <a href="#typography">Typography</a>
+  <a href="#voice">Voice</a>
+  <a href="#audience">Audience</a>
+  <a href="#messaging">Messaging</a>
+  <a href="#archetype">Archetype</a>
+  <a href="#positioning">Positioning</a>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════
+     COVER
+═══════════════════════════════════════════ -->
+<div class="cover">
+  <div style="max-width:960px;margin:0 auto;width:100%">
+    <div class="section-label" style="margin-bottom:20px">AKBai · Brand Identity Guide · v1.0</div>
+
+    <!-- Logo lockup -->
+    <div style="display:flex;align-items:center;gap:24px;margin-bottom:28px">
+      <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div>
+        <div style="font-size:48px;font-weight:800;line-height:1;letter-spacing:-.02em">
+          <span style="color:#fff">AKB</span><span style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span>
+        </div>
+        <div class="tagline-hero" style="margin-top:8px">Kaakbay mo sa negosyo.</div>
+      </div>
+    </div>
+
+    <p style="font-size:18px;color:var(--muted);max-width:580px;line-height:1.65;margin-bottom:52px">
+      This guide defines how AKBai looks, sounds, and presents itself to the world — from the mark on a screen to the words in a chat bubble.
+    </p>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Vision</div>
+        <div class="value">Most trusted AI partner for Filipino entrepreneurs</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Archetype</div>
+        <div class="value">The Sage-Caregiver</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Primary Color</div>
+        <div class="value" style="color:#F59E0B">Warm Honey</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Version</div>
+        <div class="value">Brand Guide v1.0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     01 — BRAND STORY
+═══════════════════════════════════════════ -->
+<section class="container" id="story">
+  <div class="section-label">01 — Brand Story</div>
+  <h2 class="section-title">Where the Name <span class="honey">Comes From</span></h2>
+  <p class="section-sub">AKBai is not an acronym. It is a Filipino word, cut in two, with everything we are embedded in it.</p>
+
+  <div class="g2" style="margin-bottom:24px">
+
+    <div class="card" style="border-color:rgba(245,158,11,.22);background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(217,119,6,.03))">
+      <span class="tag tag-h">Etymology</span>
+      <h3 style="font-size:22px;margin-bottom:12px"><span class="honey">Akbay</span> + AI</h3>
+      <p><strong style="color:var(--text)">Akbay</strong> (Tagalog) — the act of putting your arm around someone's shoulder. Not just help. The physical gesture of walking beside someone, holding them up. It is warmth with weight behind it.</p>
+      <p style="margin-top:10px">The "ai" at the end is both the Taglish suffix for a familiar address ("bai" = friend, buddy in Bisaya) and the technology that powers the product. AKBai is literally: your AI friend who has an arm around you.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag tag-t">Tagline</span>
+      <h3 style="font-size:22px;margin-bottom:12px">"Kaakbay mo sa negosyo."</h3>
+      <p><strong style="color:var(--text)">Kaakbay</strong> means a co-traveler, one who walks beside you with their arm around your shoulder. Not ahead of you. Not behind you. Beside you.</p>
+      <p style="margin-top:10px">The tagline says: AKBai is not a tool you use. It is a partner that walks the business journey with you — every step, every deadline, every sale, every problem.</p>
+    </div>
+
+  </div>
+
+  <div class="g3">
+    <div class="card" style="text-align:center;padding:36px 24px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Vision</div>
+      <p style="font-size:15px;color:var(--text);font-weight:600;line-height:1.5">"Be the most trusted AI partner for Filipino entrepreneurs."</p>
+    </div>
+    <div class="card" style="text-align:center;padding:36px 24px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Mission</div>
+      <p style="font-size:15px;color:var(--text);font-weight:600;line-height:1.5">"Give every Filipino MSME a brilliant, always-on business partner — one that handles the back-office, speaks their language, and cares about their hustle."</p>
+    </div>
+    <div class="card" style="text-align:center;padding:36px 24px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Promise</div>
+      <p style="font-size:15px;color:var(--text);font-weight:600;line-height:1.5">"Hindi ka nag-iisa sa negosyo mo."<br/><span style="font-size:13px;color:var(--muted);font-weight:400">You are not alone in your business.</span></p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     02 — LOGO SYSTEM
+═══════════════════════════════════════════ -->
+<section class="container" id="logo">
+  <div class="section-label">02 — Logo System</div>
+  <h2 class="section-title">The <span class="honey">Mark</span></h2>
+  <p class="section-sub">Two arcs — one dominant, one echo — leaning 20° forward. The lean is momentum. The two-arc relationship is partnership. The Warm Honey gradient is warmth and prosperity.</p>
+
+  <div class="g2" style="margin-bottom:24px">
+
+    <!-- Primary lockup display -->
+    <div style="background:var(--card);border:1px solid var(--dim);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;gap:32px">
+      <div style="display:flex;align-items:center;gap:20px">
+        <svg width="72" height="72" viewBox="0 0 100 100" fill="none">
+          <g transform="rotate(20,50,50)">
+            <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+            <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+          </g>
+        </svg>
+        <div>
+          <div style="font-size:40px;font-weight:800;letter-spacing:-.015em;line-height:1"><span style="color:#fff">AKB</span><span style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+          <div style="font-size:14px;font-weight:500;font-style:italic;color:rgba(255,255,255,.50);margin-top:6px">Kaakbay mo sa negosyo.</div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted)">Primary Lockup · On Dark</div>
+    </div>
+
+    <!-- Mark specs -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div class="section-label" style="margin-bottom:12px">Mark Specs</div>
+        <table>
+          <tbody>
+            <tr><td style="color:var(--muted);width:120px">Mark type</td><td>D4-E — Two-arc system</td></tr>
+            <tr><td style="color:var(--muted)">Rotation</td><td>20° clockwise, pivot at centre</td></tr>
+            <tr><td style="color:var(--muted)">Primary arc</td><td>Warm Honey gradient · r=26 · sw=17</td></tr>
+            <tr><td style="color:var(--muted)">Echo arc</td><td>White · 22% opacity · r=20 · sw=17</td></tr>
+            <tr><td style="color:var(--muted)">Typeface</td><td>Plus Jakarta Sans ExtraBold 800</td></tr>
+            <tr><td style="color:var(--muted)">"AKB"</td><td>White (#FFFFFF)</td></tr>
+            <tr><td style="color:var(--muted)">"ai"</td><td>Warm Honey gradient</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lockup variants row -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="section-label" style="margin-bottom:20px">Lockup Variants</div>
+    <div class="g4" style="gap:2px;background:var(--dim);border-radius:8px;overflow:hidden">
+
+      <!-- On dark -->
+      <div style="background:var(--ink);padding:28px;display:flex;align-items:center;justify-content:center">
+        <div style="display:flex;align-items:center;gap:12px">
+          <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+            <g transform="rotate(20,50,50)">
+              <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+              <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+            </g>
+          </svg>
+          <div style="font-size:20px;font-weight:800;letter-spacing:-.01em"><span style="color:#fff">AKB</span><span style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+        </div>
+      </div>
+
+      <!-- On white -->
+      <div style="background:#FFFFFF;padding:28px;display:flex;align-items:center;justify-content:center">
+        <div style="display:flex;align-items:center;gap:12px">
+          <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+            <g transform="rotate(20,50,50)">
+              <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#honey)" stroke-width="17" stroke-linecap="round"/>
+              <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#07101e" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+            </g>
+          </svg>
+          <div style="font-size:20px;font-weight:800;letter-spacing:-.01em"><span style="color:#07101e">AKB</span><span style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+        </div>
+      </div>
+
+      <!-- Reversed on gradient -->
+      <div style="background:linear-gradient(135deg,#F59E0B,#D97706);padding:28px;display:flex;align-items:center;justify-content:center">
+        <div style="display:flex;align-items:center;gap:12px">
+          <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+            <g transform="rotate(20,50,50)">
+              <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="white" stroke-width="17" stroke-linecap="round"/>
+              <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.35"/>
+            </g>
+          </svg>
+          <div style="font-size:20px;font-weight:800;letter-spacing:-.01em;color:#fff">AKBai</div>
+        </div>
+      </div>
+
+      <!-- Mono gold -->
+      <div style="background:var(--card);padding:28px;display:flex;align-items:center;justify-content:center">
+        <div style="display:flex;align-items:center;gap:12px">
+          <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+            <g transform="rotate(20,50,50)">
+              <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="#F59E0B" stroke-width="17" stroke-linecap="round"/>
+              <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="#F59E0B" stroke-width="17" stroke-linecap="round" opacity="0.30"/>
+            </g>
+          </svg>
+          <div style="font-size:20px;font-weight:800;letter-spacing:-.01em;color:#F59E0B">AKBai</div>
+        </div>
+      </div>
+
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:2px">
+      <div style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px">On Dark</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px">On White</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px">Reversed</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px">Mono</div>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:rgba(245,158,11,.15)">
+    <div class="section-label" style="margin-bottom:14px">Logo Rules</div>
+    <div class="g2" style="gap:24px">
+      <div>
+        <p style="font-size:12px;font-weight:700;color:#20C9A0;margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">✓ Always</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+          <li style="font-size:13px;color:var(--muted);padding-left:14px;position:relative"><span style="position:absolute;left:0;color:#20C9A0">·</span>Use the primary lockup on dark backgrounds first</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:14px;position:relative"><span style="position:absolute;left:0;color:#20C9A0">·</span>Maintain clear space equal to the "A" glyph width on all sides</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:14px;position:relative"><span style="position:absolute;left:0;color:#20C9A0">·</span>Use the reversed (all-white) version on gradient backgrounds</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:14px;position:relative"><span style="position:absolute;left:0;color:#20C9A0">·</span>Use mono for single-colour print, embossing, and engraving</li>
+        </ul>
+      </div>
+      <div>
+        <p style="font-size:12px;font-weight:700;color:#F87171;margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">✗ Never</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+          <li style="font-size:13px;color:var(--muted);padding-left:14px;position:relative"><span style="position:absolute;left:0;color:#F87171">·</span>Rotate, stretch, skew, or distort the mark</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:14px;position:relative"><span style="position:absolute;left:0;color:#F87171">·</span>Place the honey-gradient mark on coloured backgrounds</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:14px;position:relative"><span style="position:absolute;left:0;color:#F87171">·</span>Add shadows, glows, outlines, or effects</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:14px;position:relative"><span style="position:absolute;left:0;color:#F87171">·</span>Use the full lockup below 140px wide — use the icon only</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     03 — COLOR SYSTEM
+═══════════════════════════════════════════ -->
+<section class="container" id="color">
+  <div class="section-label">03 — Color System</div>
+  <h2 class="section-title">Warm Honey <span class="teal">+ Teal</span></h2>
+  <p class="section-sub">Warm Honey is the AKBai color — prosperity, warmth, and the glow of a Filipino morning. Teal is the trust anchor — used for financial data, confirmations, and success states inside the product.</p>
+
+  <!-- Primary palette strip -->
+  <div class="palette" style="margin-bottom:8px">
+    <div class="palette-swatch" style="background:#F59E0B;flex:2"><span style="color:#fff">#F59E0B</span></div>
+    <div class="palette-swatch" style="background:#D97706;flex:1.5"><span style="color:#fff">#D97706</span></div>
+    <div class="palette-swatch" style="background:#20C9A0;flex:1"><span style="color:#fff">#20C9A0</span></div>
+    <div class="palette-swatch" style="background:#0FB8D9;flex:1"><span style="color:#fff">#0FB8D9</span></div>
+    <div class="palette-swatch" style="background:#07101e;flex:1;border-left:1px solid rgba(255,255,255,.08)"><span style="color:rgba(255,255,255,.50)">#07101e</span></div>
+  </div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:32px;padding:0 2px">Primary Identity → Trust Signal → Dark Background</div>
+
+  <div class="g3" style="margin-bottom:16px">
+
+    <div class="card" style="border-color:rgba(245,158,11,.25)">
+      <span class="tag tag-h">Primary · Brand Identity</span>
+      <h3 class="honey">Warm Honey</h3>
+      <p>The brand colour. Appears on the logo mark, wordmark "ai", CTAs, highlights, and key product moments. Warm Honey signals prosperity, warmth, and the energy of a Filipino entrepreneur's ambition. Rare in the AI/SaaS space — this is how AKBai stands out visually.</p>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#F59E0B"></div><span class="swatch-hex">#F59E0B — Honey Light (gradient start)</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#D97706"></div><span class="swatch-hex">#D97706 — Honey Deep (gradient end)</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(32,201,160,.18)">
+      <span class="tag tag-t">Supporting · Trust Signal</span>
+      <h3 class="teal">Teal</h3>
+      <p>The supporting colour. Used inside the product for financial data, success confirmations, BIR compliance states, and positive alerts. Balances the warmth of Honey with professional credibility. Never competes with Honey in brand identity contexts — this lives in the UI.</p>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#20C9A0"></div><span class="swatch-hex">#20C9A0 — Teal Light</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#0FB8D9"></div><span class="swatch-hex">#0FB8D9 — Teal Cyan</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="tag" style="background:rgba(255,255,255,.06);color:var(--muted)">Background · Dark UI</span>
+      <h3>Ink System</h3>
+      <p>Dark backgrounds are primary — mobile readability, OLED battery efficiency, and the warm gradients pop harder on deep navy than on white. Three tones handle hierarchy.</p>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#07101e"></div><span class="swatch-hex">#07101e — Ink (page bg)</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#0d1a2e"></div><span class="swatch-hex">#0d1a2e — Card</span>
+      </div>
+      <div class="swatch-row">
+        <div class="swatch-dot" style="background:#111f36"></div><span class="swatch-hex">#111f36 — Card Alt</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <div class="section-label" style="margin-bottom:16px">Colour Usage Rules</div>
+    <table>
+      <thead><tr><th>Context</th><th>Use</th><th>Don't Use</th></tr></thead>
+      <tbody>
+        <tr><td>Logo mark</td><td>Warm Honey gradient or all-white (reversed)</td><td>Teal, blue, any other colour</td></tr>
+        <tr><td>Primary CTA button</td><td>Warm Honey gradient fill</td><td>White fill, teal fill</td></tr>
+        <tr><td>Financial data / success</td><td>Teal</td><td>Honey (reserved for brand moments)</td></tr>
+        <tr><td>Error / warning states</td><td>#F87171 (red) / #FBBF24 (yellow)</td><td>Honey or Teal — keep them positive</td></tr>
+        <tr><td>Dark background</td><td>#07101e as page bg, #0d1a2e for cards</td><td>Pure black (#000) — too harsh</td></tr>
+        <tr><td>Light background</td><td>#FFFFFF or #F5F0E8 (warm off-white)</td><td>Cold greys — breaks the warm brand feel</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     04 — TYPOGRAPHY
+═══════════════════════════════════════════ -->
+<section class="container" id="typography">
+  <div class="section-label">04 — Typography</div>
+  <h2 class="section-title">Plus Jakarta <span class="honey">Sans</span></h2>
+  <p class="section-sub">One typeface family across all touchpoints. Geometric, warm, highly legible on mobile. Available free via Google Fonts.</p>
+
+  <div class="g2" style="margin-bottom:24px">
+    <div class="card">
+      <div class="section-label" style="margin-bottom:16px">The Typeface</div>
+      <div style="font-size:48px;font-weight:800;line-height:1;margin-bottom:8px">Aa</div>
+      <div style="font-size:24px;font-weight:400;color:var(--muted);margin-bottom:16px;letter-spacing:.01em">AaBbCcDdEeFf 0123456789</div>
+      <p>Plus Jakarta Sans is a geometric sans-serif with warmth. Its rounded terminals and open apertures make it friendly at conversational sizes while remaining authoritative at display size. The 800 weight is reserved exclusively for the wordmark and display headlines.</p>
+    </div>
+    <div class="card">
+      <div class="section-label" style="margin-bottom:16px">Weight Usage</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:24px;font-weight:800;color:var(--text)">ExtraBold 800</span><span style="font-size:11px;color:var(--muted)">Wordmark, display headlines only</span></div>
+        <div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:22px;font-weight:700;color:var(--text)">Bold 700</span><span style="font-size:11px;color:var(--muted)">Section headings, card titles</span></div>
+        <div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:20px;font-weight:600;color:var(--text)">SemiBold 600</span><span style="font-size:11px;color:var(--muted)">Subheadings, labels, CTAs</span></div>
+        <div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:18px;font-weight:500;color:var(--text)">Medium 500</span><span style="font-size:11px;color:var(--muted)">Taglines, emphasized body text</span></div>
+        <div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:16px;font-weight:400;color:var(--muted)">Regular 400</span><span style="font-size:11px;color:var(--muted)">Body copy, chat bubbles, captions</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label" style="margin-bottom:16px">Type Scale</div>
+    <div class="type-row"><div class="type-meta">Display · 48px · 800</div><div style="font-size:48px;font-weight:800;line-height:1">Negosyo mo</div></div>
+    <div class="type-row"><div class="type-meta">H1 · 32px · 800</div><div style="font-size:32px;font-weight:800">Kaakbay mo sa negosyo</div></div>
+    <div class="type-row"><div class="type-meta">H2 · 24px · 700</div><div style="font-size:24px;font-weight:700">Your business, handled.</div></div>
+    <div class="type-row"><div class="type-meta">H3 · 18px · 600</div><div style="font-size:18px;font-weight:600">BIR deadline in 3 days — ready na ba?</div></div>
+    <div class="type-row"><div class="type-meta">Body · 15px · 400</div><div style="font-size:15px;color:var(--muted)">Na-scan ko na yung receipt mo. Check mo if tama lahat bago i-save natin.</div></div>
+    <div class="type-row"><div class="type-meta">Chat · 14px · 400</div><div style="font-size:14px;color:var(--muted)">Good morning, Maria! May 2 tasks ka ngayon at 1 BIR deadline sa Friday.</div></div>
+    <div class="type-row" style="border:none"><div class="type-meta">Label · 11px · 700</div><div style="font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted)">RECEIPTS · EXPENSES · DEADLINES</div></div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     05 — BRAND VOICE & TONE
+═══════════════════════════════════════════ -->
+<section class="container" id="voice">
+  <div class="section-label">05 — Brand Voice &amp; Tone</div>
+  <h2 class="section-title">How AKBai <span class="honey">Speaks</span></h2>
+  <p class="section-sub">AKBai's voice is the smart ate or kuya who happens to know everything about your business — warm, competent, proactive, and always in your corner.</p>
+
+  <div class="g3" style="margin-bottom:24px">
+    <div class="card" style="border-color:rgba(245,158,11,.20)">
+      <span class="tag tag-h">Voice Pillar 1</span>
+      <h3>Taglish-Fluent</h3>
+      <p>AKBai speaks the way your customers text their barkada — a natural mix of Filipino and English. Never fully formal Tagalog. Never 100% English. The ratio follows the conversation: more Tagalog when it's personal, more English when it's technical. Always says your name.</p>
+    </div>
+    <div class="card" style="border-color:rgba(32,201,160,.16)">
+      <span class="tag tag-t">Voice Pillar 2</span>
+      <h3>Warm but Competent</h3>
+      <p>AKBai never hand-waves. It always shows data, cites numbers, and confirms before saving anything financial. "Based sa records mo, here's what I found..." It is trusted because it earns trust — not because it claims it.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-v">Voice Pillar 3</span>
+      <h3>Proactively Caring</h3>
+      <p>AKBai doesn't wait to be asked. It sends the morning briefing, flags the approaching deadline, and notices when spending jumps — because a real partner pays attention. Not intrusive. Genuinely invested.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="section-label" style="margin-bottom:20px">Voice in Action — Do vs. Don't</div>
+    <div class="g2" style="gap:24px">
+      <div class="bubble-wrap">
+        <div class="bubble bubble-good">
+          <div class="bubble-label">✓ AKBai says this</div>
+          "Na-scan ko na yung receipt mo — check mo if tama lahat bago i-save natin."
+        </div>
+        <div class="bubble bubble-good">
+          "Heads up! BIR deadline in 3 days — ready na ba yung 1701Q mo?"
+        </div>
+        <div class="bubble bubble-good">
+          "Ang laki ng gastos mo this week — ₱18,200 vs ₱12,000 last week. Gusto mo pag-usapan?"
+        </div>
+        <div class="bubble bubble-good">
+          "Nice, sold out na yung ube cake! Restock na ba ng ingredients?"
+        </div>
+        <div class="bubble bubble-good">
+          "Gusto mo ba i-reply ko si Maria? Draft ko na, check mo lang bago ipadala."
+        </div>
+      </div>
+      <div class="bubble-wrap">
+        <div class="bubble bubble-bad">
+          <div class="bubble-label">✗ AKBai never says this</div>
+          "Your receipt has been successfully processed and stored in the system."
+        </div>
+        <div class="bubble bubble-bad">
+          "ALERT: BIR filing deadline approaching. Please take immediate action."
+        </div>
+        <div class="bubble bubble-bad">
+          "Warning: Expense threshold exceeded by 51.67% compared to previous period."
+        </div>
+        <div class="bubble bubble-bad">
+          "Inventory alert: Item 'ube cake' quantity has reached zero (0)."
+        </div>
+        <div class="bubble bubble-bad">
+          "An automated response draft has been generated for your review and approval."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label" style="margin-bottom:16px">Tone Adjustments by Context</div>
+    <table>
+      <thead><tr><th>Situation</th><th>Tone Shift</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Morning briefing</td><td>Warm, energetic, brief</td><td>"Good morning, Ana! 3 tasks today, 1 deadline on Friday. Kaya mo 'to!"</td></tr>
+        <tr><td>Tax deadline warning</td><td>Calm urgency — never panic</td><td>"Friendly reminder lang — BIR 1701Q mo, 3 days na lang. I-check natin?"</td></tr>
+        <tr><td>Financial confirmation</td><td>Precise, transparent, human-in-the-loop</td><td>"₱3,450 ang total expenses ko na na-log ngayong linggo. Tama ba ito?"</td></tr>
+        <tr><td>A sales milestone</td><td>Celebratory, genuine</td><td>"Ay, ₱100,000 na pala ang sales mo this month! 🎉 Congrats, Maria!"</td></tr>
+        <tr><td>Error or unclear input</td><td>Patient, helpful, no blame</td><td>"Hindi ko masyadong naintindihan yung last message mo — puwede mo ba ulitin nang mas detalyado?"</td></tr>
+        <tr><td>Sensitive financial advice</td><td>Careful, shows work, defers to user</td><td>"Based sa cash flow mo, mukhang tight ang susunod na buwan. This is just an observation — you decide what to do."</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     06 — TARGET AUDIENCE
+═══════════════════════════════════════════ -->
+<section class="container" id="audience">
+  <div class="section-label">06 — Target Audience</div>
+  <h2 class="section-title">Digital-First <span class="teal">Filipino MSMEs</span></h2>
+  <p class="section-sub">Not sari-sari stores. These are digitally literate entrepreneurs who already live on GCash, Canva, and Instagram — they just need help with the back-office chaos that comes when the hustle starts to scale.</p>
+
+  <div class="g2" style="margin-bottom:24px">
+    <div class="persona persona-a">
+      <span class="tag tag-h">Persona A</span>
+      <h3>The IG/TikTok Seller</h3>
+      <p>Online resellers, thrift shops, dropshippers. Manages 50+ DMs daily. Ships via Lalamove and J&T. Biggest pain: the "HM po?" flood and manually tracking GCash payments across screenshots.</p>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">Income: ₱20K–₱100K/month &nbsp;·&nbsp; Platform: Instagram, TikTok Shop, Shopee</p>
+    </div>
+    <div class="persona persona-b">
+      <span class="tag tag-t">Persona B</span>
+      <h3>The Home-Based Food Seller</h3>
+      <p>Bakers, meal preppers, kakanin sellers. Hands literally covered in flour. Can't type mid-bake. Needs voice input, costing calculators, and BIR compliance guidance as revenue scales past hobby-level.</p>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">Income: ₱15K–₱80K/month &nbsp;·&nbsp; Platform: Facebook, Viber orders, walk-in</p>
+    </div>
+    <div class="persona persona-c">
+      <span class="tag tag-v">Persona C</span>
+      <h3>The Freelance Creative</h3>
+      <p>Designers, virtual assistants, editors, writers. Earns via GCash and PayPal. Needs expense tracking, 8% flat tax monitoring, and client communication polish. Genuinely terrified of BIR.</p>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">Income: ₱25K–₱150K/month &nbsp;·&nbsp; Platform: Upwork, LinkedIn, referrals</p>
+    </div>
+    <div class="persona persona-d">
+      <span class="tag tag-b">Persona D</span>
+      <h3>The Small Agency Owner</h3>
+      <p>2–5 person teams doing social media management, events, or consulting. Needs task prioritization, financial oversight, and a true AI executive assistant. The most advanced persona — likely Business tier.</p>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">Income: ₱80K–₱250K/month &nbsp;·&nbsp; Platform: LinkedIn, word-of-mouth, retainer clients</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label" style="margin-bottom:16px">Pain Points &amp; Brand Responses</div>
+    <table>
+      <thead><tr><th>Pain Point</th><th>Emotional Driver</th><th>AKBai's Response</th></tr></thead>
+      <tbody>
+        <tr><td><strong>"HM po?" Flood</strong> — Overwhelmed by repetitive DMs</td><td>Exhaustion, lost sales, unprofessional image</td><td>AI drafts + smart auto-replies. "Never miss a customer again."</td></tr>
+        <tr><td><strong>Tax Terror</strong> — Scared of BIR penalties</td><td>Fear, confusion, avoidance</td><td>Proactive deadline alerts + plain-language cheat sheets.</td></tr>
+        <tr><td><strong>Costing Confusion</strong> — Can't calculate real margins</td><td>Uncertainty, underpricing, guilt</td><td>Natural language costing. "Know your worth, down to the peso."</td></tr>
+        <tr><td><strong>Admin Overload</strong> — Manually logging GCash screenshots</td><td>Tedium, time waste, dread</td><td>Snap-and-confirm receipt parsing. "Seconds, not hours."</td></tr>
+        <tr><td><strong>Busy Hands</strong> — Can't type while baking or packing</td><td>Frustration, accessibility gap</td><td>Voice input — "The Tita Feature." Just say it.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     07 — MESSAGING PILLARS
+═══════════════════════════════════════════ -->
+<section class="container" id="messaging">
+  <div class="section-label">07 — Messaging Pillars</div>
+  <h2 class="section-title">What We <span class="honey">Always Say</span></h2>
+  <p class="section-sub">Four core messages AKBai returns to in every channel. Every headline, every feature description, every ad should connect back to one of these four pillars.</p>
+
+  <div class="g2" style="margin-bottom:24px">
+    <div class="pillar pillar-1">
+      <span class="tag tag-h">Pillar 1 — Partnership</span>
+      <h3>"Hindi ka nag-iisa sa negosyo mo."</h3>
+      <p>You're not alone. Your AI katuwang handles the admin, tracks the money, and reminds you of deadlines — so you can focus on what you do best.</p>
+      <p style="margin-top:12px;font-size:12px;color:#F59E0B;font-weight:600">Use for: Hero section, onboarding, brand video</p>
+    </div>
+    <div class="pillar pillar-2">
+      <span class="tag tag-t">Pillar 2 — Confidence</span>
+      <h3>"BIR deadlines? Receipts? Costing? Handled na."</h3>
+      <p>Stop worrying about compliance, stop guessing margins, stop drowning in screenshots. Your AI knows the numbers and tracks the deadlines — always showing you before saving.</p>
+      <p style="margin-top:12px;font-size:12px;color:#20C9A0;font-weight:600">Use for: Features section, comparison pages, demos</p>
+    </div>
+    <div class="pillar pillar-3">
+      <span class="tag tag-v">Pillar 3 — Accessibility</span>
+      <h3>"Sabihin mo lang — kahit busy ang kamay mo."</h3>
+      <p>Baking? Packing? Just say it. Voice input means your AI partner listens even when your hands are full. Taglish understood. No typing needed.</p>
+      <p style="margin-top:12px;font-size:12px;color:#A78BFA;font-weight:600">Use for: Voice feature spotlight, mobile ads</p>
+    </div>
+    <div class="pillar pillar-4">
+      <span class="tag tag-b">Pillar 4 — Growth</span>
+      <h3>"From hustle to real business."</h3>
+      <p>A VA costs ₱5,000+. A bookkeeper costs ₱3,000+. Your AI business partner handles both — plus tax, comms, and ops — for less than your daily coffee budget.</p>
+      <p style="margin-top:12px;font-size:12px;color:#60A5FA;font-weight:600">Use for: Pricing section, paid ads, ROI calculators</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label" style="margin-bottom:16px">Tagline &amp; Supporting Lines</div>
+    <table>
+      <thead><tr><th>Line</th><th>Tone</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr class="highlight"><td><strong>Kaakbay mo sa negosyo.</strong> ★</td><td>Warm, Filipino, partnership-first</td><td>Primary tagline — all brand touchpoints</td></tr>
+        <tr><td>"Hindi ka nag-iisa."</td><td>Emotional, solidarity</td><td>Brand video, onboarding, emotional moments</td></tr>
+        <tr><td>"Your AI Business Partner. In Taglish."</td><td>Clear, direct, discoverability-first</td><td>Landing page SEO, meta description</td></tr>
+        <tr><td>"Run your business. We'll handle the rest."</td><td>Empowering, English-first</td><td>Paid ads, email subject lines</td></tr>
+        <tr><td>"Katuwang mo sa hustle."</td><td>Casual, relatable</td><td>Social media, app store listing</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     08 — BRAND ARCHETYPE
+═══════════════════════════════════════════ -->
+<section class="container" id="archetype">
+  <div class="section-label">08 — Brand Archetype</div>
+  <h2 class="section-title">The <span class="honey">Sage-Caregiver</span></h2>
+  <p class="section-sub">AKBai sits at the intersection of two archetypes — the Sage who knows, and the Caregiver who nurtures. Together they create the "smart ate/kuya who always has your back."</p>
+
+  <div class="g2" style="margin-bottom:24px">
+    <div class="arch-card arch-honey">
+      <span class="tag tag-h">Primary Archetype</span>
+      <h3 style="font-size:22px;margin-bottom:12px">The Sage</h3>
+      <p>Knows the BIR calendar by heart. Understands costing formulas. Can parse a GCash screenshot in seconds. The Sage drives trust — users rely on AKBai because it is demonstrably competent. It doesn't guess; it calculates, cites, and shows its work every time.</p>
+      <p style="margin-top:12px;font-size:13px;color:var(--muted)"><strong style="color:var(--text)">Behavioural expression:</strong> Always shows data. Confirms before saving. Says "Based sa records mo..." never "I think..."</p>
+    </div>
+    <div class="arch-card arch-teal">
+      <span class="tag tag-t">Secondary Archetype</span>
+      <h3 style="font-size:22px;margin-bottom:12px">The Caregiver</h3>
+      <p>Warm, proactive, uses your first name. Sends morning briefings not because you asked, but because it cares about your day going smoothly. The Caregiver drives retention — users come back because AKBai feels like a real partner, not a cold tool.</p>
+      <p style="margin-top:12px;font-size:13px;color:var(--muted)"><strong style="color:var(--text)">Behavioural expression:</strong> Proactive alerts, personal greetings, celebratory milestones, never judging a missed deadline.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label" style="margin-bottom:16px">The AKBai Persona: "Kai"</div>
+    <div class="g3">
+      <div>
+        <h4 style="color:#F59E0B;margin-bottom:8px">Voice</h4>
+        <p>Taglish-fluent. Switches naturally between Filipino and English. Calls you by your first name. Uses "po" when appropriate but never sounds stiff or corporate.</p>
+      </div>
+      <div>
+        <h4 style="color:#20C9A0;margin-bottom:8px">Competence</h4>
+        <p>Never says "I'm not sure." Instead: "Based sa records mo, here's what I found." Always shows the data. Confirms before saving anything financial — trust through transparency.</p>
+      </div>
+      <div>
+        <h4 style="color:#A78BFA;margin-bottom:8px">Warmth</h4>
+        <p>"Good morning, [Name]! 3 tasks mo today, 1 BIR deadline sa Friday." The proactive morning briefing sets the tone — Kai genuinely cares about your hustle succeeding.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     09 — POSITIONING
+═══════════════════════════════════════════ -->
+<section class="container" id="positioning">
+  <div class="section-label">09 — Competitive Positioning</div>
+  <h2 class="section-title">Where AKBai <span class="teal">Stands</span></h2>
+  <p class="section-sub">Every competitor solves one problem. AKBai solves five — in Taglish, with voice, proactively, with human-in-the-loop trust.</p>
+
+  <div class="pos-statement" style="margin-bottom:32px">
+    <div class="section-label" style="margin-bottom:16px">Positioning Statement</div>
+    <p style="font-size:17px;line-height:1.75">
+      <strong>For</strong> digital-first Filipino MSMEs — online sellers, home-based food businesses, freelancers, and small agency owners — <strong>who</strong> are scaling past the informal stage but drowning in admin, tax confusion, and customer message overload,
+    </p>
+    <p style="font-size:17px;line-height:1.75;margin-top:12px">
+      <strong>AKBai</strong> is an AI-powered business operations partner that handles financial tracking, BIR compliance, customer communications, daily operations, and task prioritisation — all through a Taglish chat interface with voice input.
+    </p>
+    <p style="font-size:17px;line-height:1.75;margin-top:12px">
+      <strong>Unlike</strong> single-purpose tools (Taxumo for tax, ChatGenie for chatbots, Packworks for inventory), AKBai is the only AI partner covering all five pillars of running a digital business in the Philippines — with proactive alerts, human-in-the-loop financial accuracy, and a tone that feels like your smartest friend, not a corporate dashboard.
+    </p>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="section-label" style="margin-bottom:16px">Competitive Landscape</div>
+    <table>
+      <thead><tr><th>Player</th><th>What They Do</th><th>The Gap AKBai Fills</th></tr></thead>
+      <tbody>
+        <tr><td>Taxumo / JuanTax</td><td>BIR filing automation</td><td>Tax-only. No comms, no ops, no AI voice, no Taglish</td></tr>
+        <tr><td>ChatGenie</td><td>eCommerce chatbot for Messenger</td><td>Sales chatbot only. No finance, no BIR, no proactive ops</td></tr>
+        <tr><td>Packworks</td><td>Inventory + orders for sari-sari</td><td>Cash-based, no AI, no tax, not for digital MSMEs</td></tr>
+        <tr><td>GCash / Maya</td><td>Digital payments</td><td>Payments only — no tracking, no ops, no intelligence</td></tr>
+        <tr><td>Generic ChatGPT</td><td>General AI assistant</td><td>No PH tax context, no GCash parsing, no proactive alerts, no Taglish</td></tr>
+        <tr class="highlight"><td>AKBai</td><td>All 5 pillars · Taglish · Voice · Proactive</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="g4">
+    <div class="stat-block">
+      <div class="stat-number honey">5</div>
+      <p style="font-size:12px;color:var(--muted)">Business pillars in one chat</p>
+    </div>
+    <div class="stat-block">
+      <div class="stat-number teal">94%</div>
+      <p style="font-size:12px;color:var(--muted)">Cheaper than a part-time VA</p>
+    </div>
+    <div class="stat-block">
+      <div class="stat-number" style="color:#A78BFA">100%</div>
+      <p style="font-size:12px;color:var(--muted)">Native Taglish — built in, not translated</p>
+    </div>
+    <div class="stat-block">
+      <div class="stat-number" style="color:#60A5FA">1st</div>
+      <p style="font-size:12px;color:var(--muted)">Voice-first PH business AI with Taglish</p>
+    </div>
+  </div>
+</section>
+
+
+</body>
+</html>

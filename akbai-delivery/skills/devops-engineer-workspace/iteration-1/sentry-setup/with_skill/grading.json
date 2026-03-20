@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "sentry-setup",
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "References Gap A4 from the gap registry as context", "passed": true, "evidence": "Executive Summary opens with 'Sentry is a CRITICAL hard gate before your first beta user' and tags as 'Severity: CRITICAL (Gap A4)'."},
+    {"text": "Provides concrete install commands (npm install @sentry/nextjs)", "passed": true, "evidence": "Step 2A: 'npm install @sentry/nextjs' and 'npx @sentry/wizard@latest -i nextjs' with explanation of what each command does."},
+    {"text": "Includes config code with DSN, release tagging, and sample rates", "passed": true, "evidence": "Full sentry.client.config.ts and sentry.server.config.ts with DSN, VERCEL_GIT_COMMIT_SHA release, sampleRate 1.0, tracesSampleRate 0.2, replays config."},
+    {"text": "Configures alert rules appropriate for AKBai (payment errors, auth spikes)", "passed": true, "evidence": "Part 5 defines 5 alert rules: Payment Errors (P0), Auth Failures Spike (P1), High Error Rate (P1), New Unhandled Exception (P2), API Performance Degradation (P2)."},
+    {"text": "Mentions Slack integration for alert routing", "passed": true, "evidence": "Part 1C covers Slack integration setup. Part 5B configures #akbai-alerts channel with mobile push notifications."},
+    {"text": "Notes free tier limits (5K events/mo) and cost implications", "passed": true, "evidence": "Cost Summary table shows free tier limits (5K errors/mo, 50 replays, 1 team member) with $26/mo upgrade path. Phase 1 projection of ~500 errors/month."}
+  ]
+}

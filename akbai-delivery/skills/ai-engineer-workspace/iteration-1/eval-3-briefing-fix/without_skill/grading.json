@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Revised prompt produces Taglish output (mix of Filipino and English, not pure English)",
+      "passed": true,
+      "evidence": "All 7 example outputs extensively use Taglish: 'Kumikita ka yesterday,' 'Nice doon,' 'let's gather receipts na,' 'Walang transactions,' 'Magandang umaga,' 'Kaya mo 'yan,' 'gastos,' 'pure profit na yan,' 'Kababayan' references throughout. The prompt explicitly directs 'Taglish, warm but direct' (line 6 of prompt) and all examples demonstrate consistent Filipino-English mixing."
+    },
+    {
+      "text": "Numbers use ₱ sign (not PHP or Php)",
+      "passed": true,
+      "evidence": "All financial examples consistently use ₱ symbol: '₱5,200 in. ₱3,100 gastos. Net: ₱2,100' (Example 1), '₱8,900 ang sales,' '₱6,400 ang sales mo,' '₱102,300 na pala,' etc. The prompt explicitly states in line 93: 'Always use ₱ symbol with no spaces: ₱5,200 (not ₱ 5,200 or PHP 5200).' Zero instances of 'PHP' found in any output example."
+    },
+    {
+      "text": "Includes warm personalized greeting with user first name",
+      "passed": true,
+      "evidence": "Every single example includes the user's first name in the opening: 'Good morning, Maria!' (Examples 1, 5, 6), 'Good morning, Jose!' (Examples 2, 6), 'Magandang umaga, Ana!' (Example 3), 'Good morning, Andoy!' (Example 4), 'Umaga na, Ana!' (Example 7). The prompt explicitly states (line 13): 'Always use the user's first name.'"
+    },
+    {
+      "text": "Handles zero-transaction days gracefully (not shaming)",
+      "passed": true,
+      "evidence": "Example 3 (Ana, zero transactions) handles gracefully: 'Walang recorded transactions kahapon. Busy day? Or nag-rest lang? Either way, today's a fresh start!' Example 7 (completely empty): 'Walang transactions recorded yet. That's okay — it's your first week!' No shaming language used. Instead, text is reassuring and encouraging ('fresh start,' 'either way,' 'that's okay'). Prompt explicitly states (lines 126-138): graceful handling with context-aware messaging, never showing raw ₱0/₱0/₱0."
+    },
+    {
+      "text": "BIR deadline presented with calm urgency, not alarm",
+      "passed": true,
+      "evidence": "Tone varies by deadline proximity but maintains calm throughout: 41 days out (Example 1): 'Heads up po — BIR 1701Q mo, April 25 pa lang. 41 days pa, pero let's gather receipts na?' (friendly, collaborative). 3 days out (Example 5): 'URGENT po: BIR 1701Q deadline sa April 16 na lang — 3 days na lang!' with 'Let me help po' (escalated but still warm). Prompt states (line 109): 'Never panic; use calm urgency: heads up, reminder lang, let's plan.' No all-caps panic or alarm language despite urgency escalation."
+    },
+    {
+      "text": "Includes BIR disclaimer on tax-related content",
+      "passed": true,
+      "evidence": "All 7 examples include the exact BIR disclaimer at the bottom: '⚠️ **Disclaimer:** This briefing is based on recorded transactions only. For tax deadlines and compliance matters, consult with a BIR-accredited accountant po.' The prompt explicitly specifies (lines 118-122): 'Disclaimer (always included at briefing bottom)' with exact wording. No example omits this disclaimer."
+    },
+    {
+      "text": "Output is structured as short messages (not label-value dashboard dump)",
+      "passed": true,
+      "evidence": "All examples use conversational, sentence-based structure with line breaks for scannability, NOT label-value pairs. Example 1 reads naturally: 'Good morning, Maria! / Kumikita ka yesterday — ₱5,200 in. ₱3,100 gastos. / Net: ₱2,100. Nice doon!' versus the 'before' robotic version: 'Good morning Maria. Yesterday income: PHP 5,200. Yesterday expenses: PHP 3,100. Net: PHP 2,100.' The prompt emphasizes (line 6): 'Short sentences. Lead with the why before the numbers' and (line 275 of outputs): 'mobile-scannable, no fluff.' Examples range 100-150 words, warm conversational tone, not data dumps."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

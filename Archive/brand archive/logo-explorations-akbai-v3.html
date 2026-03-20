@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — D4 &amp; D6 Iterations</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);font-size:15px;padding:52px 28px 100px}
+.container{max-width:1000px;margin:0 auto}
+
+/* Header */
+.page-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+h1{font-size:36px;font-weight:800;line-height:1.1;margin-bottom:8px}
+.grad{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:14px;color:var(--muted);max-width:580px;margin-bottom:52px;line-height:1.6}
+.divider{border:none;border-top:1px solid var(--dim);margin:60px 0}
+
+/* Section header */
+.section-head{margin-bottom:28px}
+.section-head h2{font-size:22px;font-weight:800;margin-bottom:5px}
+.section-head p{font-size:13px;color:var(--muted);line-height:1.6;max-width:520px}
+.section-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;background:rgba(255,107,107,.10);color:#FF6B6B;border:1px solid rgba(255,107,107,.22);border-radius:6px;padding:3px 9px;margin-bottom:10px}
+
+/* Direction layout */
+.dir{margin-bottom:14px}
+.dir-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.badge-orig{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(138,155,181,.10);color:var(--muted);border:1px solid rgba(138,155,181,.18);border-radius:4px;padding:2px 7px}
+
+.dir-panels{display:grid;grid-template-columns:220px 1fr 300px;gap:1px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim)}
+.panel{display:flex;align-items:center;justify-content:center;background:var(--ink);padding:32px}
+.panel-icon{min-height:180px}
+.panel-lockup{min-height:180px}
+.panel-info{background:var(--card);padding:28px;flex-direction:column;align-items:flex-start;justify-content:center;min-height:180px}
+.panel-info h3{font-size:16px;font-weight:800;margin-bottom:6px}
+.panel-info .meta{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.panel-info p{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* Wordmark */
+.wm{font-weight:800;letter-spacing:-.01em;line-height:1;font-size:28px}
+.wh{color:#fff}
+.wg{background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lockup{display:flex;align-items:center;gap:16px}
+
+@media(max-width:760px){
+  .dir-panels{grid-template-columns:1fr}
+  h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ Global gradient + clipPath defs ══ -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<defs>
+  <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#FF8E53"/>
+  </linearGradient>
+  <linearGradient id="sqg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#FF8E53"/>
+  </linearGradient>
+  <clipPath id="rr24"><rect x="0" y="0" width="100" height="100" rx="24"/></clipPath>
+</defs>
+</svg>
+
+<div class="container">
+
+<div class="page-label">AKBai · Logo Explorations · v3 — D4 &amp; D6 Iterations</div>
+<h1>Iterating on <span class="grad">Open Gate &amp; Sweep</span></h1>
+<p class="sub">Originals preserved. Four variations each — exploring symmetry, weight contrast, containment, coil tightness, inversion, and duality.</p>
+
+
+<!-- ══════════════════════════════════════════════
+     D4 FAMILY — THE OPEN GATE
+     ══════════════════════════════════════════════ -->
+<div class="section-head">
+  <div class="section-tag">D4 Family</div>
+  <h2>The Open Gate</h2>
+  <p>Two arcs with a weight and opacity relationship. Variations push the symmetry, weight contrast, spatial relationship, and direction of the arcs.</p>
+</div>
+
+
+<!-- ─── D4 Original ─── -->
+<div class="dir">
+  <div class="dir-label">D4 — Original <span class="badge-orig">original</span></div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!-- Coral arc "(" opening right, center(50,50) r=26 -->
+        <path d="M 50,24 A 26,26 0 0 0 50,76"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <!-- Ghost arc ")" opening left, slightly offset right -->
+        <path d="M 60,30 A 20,20 0 0 1 60,70"
+              fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Open Gate</h3>
+      <div class="meta">2 arcs · Layered weight · Shadow form</div>
+      <p>Coral dominant arc with a ghost arc of opposing orientation offset to the right. The opacity and size difference create layered depth. The two-form relationship is felt rather than shown.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4.1 The Portal ─── -->
+<div class="dir">
+  <div class="dir-label">D4.1 — The Portal</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          True symmetric gateway. Both arcs same radius (r=28), same weight.
+          Left "(" : M(36,22)→(36,78) CCW (sweep=0) — curves through left, opens right
+          Right ")" : M(64,22)→(64,78) CW  (sweep=1) — curves through right, opens left
+          Gap between endpoints (x=36 to x=64) forms the mouth of the gate.
+          Right arc at 55% opacity to create depth / perspective recede.
+        -->
+        <path d="M 36,22 A 28,28 0 0 0 36,78"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 64,22 A 28,28 0 0 1 64,78"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 36,22 A 28,28 0 0 0 36,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 64,22 A 28,28 0 0 1 64,78" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Portal</h3>
+      <div class="meta">Facing arcs · Symmetric gateway · Equal weight</div>
+      <p>Two arcs of equal size facing each other — a true gate or threshold. The right arc recedes in opacity, implying depth and perspective. The opening between them is the space you step through into clarity.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4.2 Weight Drama ─── -->
+<div class="dir">
+  <div class="dir-label">D4.2 — Weight Drama</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Extreme weight contrast. Same direction, both arcs "(" opening right.
+          Heavy coral: center(44,50) r=32, sw=24 — a near-semicircle spanning the left half
+          Thin ghost: center(64,50) r=21, sw=7 — hairline companion to the right
+        -->
+        <path d="M 44,18 A 32,32 0 0 0 44,82"
+              fill="none" stroke="url(#cg)" stroke-width="24" stroke-linecap="round"/>
+        <path d="M 64,29 A 21,21 0 0 0 64,71"
+              fill="none" stroke="white" stroke-width="7" stroke-linecap="round" opacity="0.48"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 44,18 A 32,32 0 0 0 44,82" fill="none" stroke="url(#cg)" stroke-width="24" stroke-linecap="round"/>
+          <path d="M 64,29 A 21,21 0 0 0 64,71" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" opacity="0.48"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Weight Drama</h3>
+      <div class="meta">Extreme contrast · Fat + hairline · Same direction</div>
+      <p>One very heavy coral arc paired with a hairline white arc — a 3.5× weight difference. The contrast creates immediate hierarchy without needing size or position to do the work. The AI's mass beside the user's signal.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4.3 The Embrace ─── -->
+<div class="dir">
+  <div class="dir-label">D4.3 — The Embrace</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Large outer arc "(": center(46,50) r=34, sw=17 — wraps wide.
+          The cup opens to the right (x > 46).
+          Small inner arc ")": center(68,50) r=14, sw=13 — nested inside the cup,
+          facing the opposite direction, sw=13 so it's heavy enough to read.
+          The inner arc sits at x=68, within the cup spanning roughly x=[46,80].
+        -->
+        <path d="M 46,16 A 34,34 0 0 0 46,84"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 68,36 A 14,14 0 0 1 68,64"
+              fill="none" stroke="white" stroke-width="13" stroke-linecap="round" opacity="0.38"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 46,16 A 34,34 0 0 0 46,84" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 68,36 A 14,14 0 0 1 68,64" fill="none" stroke="white" stroke-width="13" stroke-linecap="round" opacity="0.38"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Embrace</h3>
+      <div class="meta">Outer + nested · Protective scale · Held</div>
+      <p>A large arc wraps outward while a small opposing arc sits inside its cup — contained, held. The scale difference encodes the relationship: a large AI presence protecting and orienting a smaller business. The akbay geometry without depicting a body.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D4.4 The Parallels ─── -->
+<div class="dir">
+  <div class="dir-label">D4.4 — The Parallels</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Two "()" arcs facing the SAME direction, spread horizontally.
+          Both curve left. Neither faces the other — they move in parallel.
+          Left "(": center(34,50) r=26
+          Right "(": center(62,50) r=26, ghost
+          This reads as motion lines or two entities aligned, going together.
+        -->
+        <path d="M 34,24 A 26,26 0 0 0 34,76"
+              fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 62,24 A 26,26 0 0 0 62,76"
+              fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.19"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 34,24 A 26,26 0 0 0 34,76" fill="none" stroke="url(#cg)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 62,24 A 26,26 0 0 0 62,76" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.19"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Parallels</h3>
+      <div class="meta">Same direction · Motion trail · Side by side</div>
+      <p>Two arcs curving the same way — not facing each other, not embracing, but moving alongside. The ghost arc follows the coral lead. Not opposition, not enclosure: alignment. Two entities in parallel motion.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     D6 FAMILY — THE SWEEP
+     ══════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="section-head">
+  <div class="section-tag">D6 Family</div>
+  <h2>The Sweep</h2>
+  <p>A single asymmetric filled form — wide at one end, narrowing as it arcs over. Variations push the coil tightness, edge character, figure/ground inversion, and duality.</p>
+</div>
+
+
+<!-- ─── D6 Original ─── -->
+<div class="dir">
+  <div class="dir-label">D6 — Original <span class="badge-orig">original</span></div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <path d="
+          M 16,74
+          Q 8,28 44,16
+          Q 72,6 84,34
+          Q 90,48 82,60
+          Q 72,72 64,66
+          Q 50,58 36,64
+          Q 22,70 16,74
+          Z
+        " fill="url(#cg)" opacity="0.95"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 16,74 Q 8,28 44,16 Q 72,6 84,34 Q 90,48 82,60 Q 72,72 64,66 Q 50,58 36,64 Q 22,70 16,74 Z" fill="url(#cg)" opacity="0.95"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Sweep</h3>
+      <div class="meta">Filled path · Asymmetric · Wide origin</div>
+      <p>Single asymmetric filled form — wide at origin, narrowing as it arcs over to the right. Captures the sweeping gesture as a body of mass. Distinctly ownable among Philippine tech: nothing in the market looks like this.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D6.1 The Comma ─── -->
+<div class="dir">
+  <div class="dir-label">D6.1 — The Comma</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Tighter coil. More vertical and closed — like a comma or teardrop.
+          Starts at bottom-center tail, sweeps left and up, forms a head at upper-right,
+          comes back down the right side, closes at the tail.
+          More contained than the original's horizontal reach.
+        -->
+        <path d="
+          M 50,82
+          Q 22,78 18,52
+          Q 14,24 42,16
+          Q 66,10 72,30
+          Q 80,52 64,62
+          Q 54,70 50,82
+          Z
+        " fill="url(#cg)"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 50,82 Q 22,78 18,52 Q 14,24 42,16 Q 66,10 72,30 Q 80,52 64,62 Q 54,70 50,82 Z" fill="url(#cg)"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Comma</h3>
+      <div class="meta">Tighter coil · Vertical · Closed form</div>
+      <p>A tighter, more vertical sweep that coils back on itself — closer to a comma or apostrophe. More contained and centered than the original. The round head holds the energy; the tail trails downward. Feels like a pause before clarity.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D6.2 The Blade ─── -->
+<div class="dir">
+  <div class="dir-label">D6.2 — The Blade</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Elongated and thin — like a brushstroke, feather quill, or leaf.
+          Same diagonal sweep direction as the original but the form is much narrower:
+          the outer and inner edges are pulled closer together, tapering at both ends.
+          Left tail (18,78), arcs up to right head (84,28), then tight inner edge back.
+        -->
+        <path d="
+          M 18,78
+          Q 10,34 44,16
+          Q 70,4 84,28
+          Q 92,46 78,58
+          Q 66,68 56,62
+          Q 40,56 26,70
+          Z
+        " fill="url(#cg)"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 18,78 Q 10,34 44,16 Q 70,4 84,28 Q 92,46 78,58 Q 66,68 56,62 Q 40,56 26,70 Z" fill="url(#cg)"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Blade</h3>
+      <div class="meta">Elongated · Thin body · Brushstroke</div>
+      <p>A longer, thinner variation — pulled out like a brushstroke or feather quill. The narrow body emphasises speed and direction over mass. Both ends taper to near-points. Less weight than the original; more precision. A stroke of insight.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D6.3 Negative Sweep ─── -->
+<div class="dir">
+  <div class="dir-label">D6.3 — Negative Sweep</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100">
+        <!--
+          Figure/ground inversion of the original sweep.
+          Gradient tile fills the icon; the sweep shape is cut out as a dark void.
+          Even-odd fill-rule: first sub-path (full rect) fills the tile,
+          second sub-path (the sweep) punches through it.
+        -->
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="url(#sqg)"/>
+        <path fill-rule="evenodd" fill="#07101e" clip-path="url(#rr24)" d="
+          M -5,-5 L 105,-5 L 105,105 L -5,105 Z
+          M 16,74 Q 8,28 44,16 Q 72,6 84,34 Q 90,48 82,60 Q 72,72 64,66 Q 50,58 36,64 Q 22,70 16,74 Z
+        "/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="url(#sqg)"/>
+          <path fill-rule="evenodd" fill="#07101e" clip-path="url(#rr24)" d="
+            M -5,-5 L 105,-5 L 105,105 L -5,105 Z
+            M 16,74 Q 8,28 44,16 Q 72,6 84,34 Q 90,48 82,60 Q 72,72 64,66 Q 50,58 36,64 Q 22,70 16,74 Z
+          "/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>Negative Sweep</h3>
+      <div class="meta">Inverted · Gradient tile · Shape as void</div>
+      <p>The same sweep — but inverted. Gradient floods the background; the form becomes the absence. Figure and ground flip completely. The shape reads equally well in both treatments, and the two versions are a natural pair for light and dark contexts.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── D6.4 The Pair ─── -->
+<div class="dir">
+  <div class="dir-label">D6.4 — The Pair</div>
+  <div class="dir-panels">
+    <div class="panel panel-icon">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+        <!--
+          Original large sweep (coral) + smaller echo sweep (white, ghost)
+          The echo is a smaller form in the same family of shape, nestled
+          inside the arc of the main sweep — two forms of the same type
+          at different scales, implying a relationship without depicting one.
+        -->
+        <!-- Large coral sweep: original -->
+        <path d="M 16,74 Q 8,28 44,16 Q 72,6 84,34 Q 90,48 82,60 Q 72,72 64,66 Q 50,58 36,64 Q 22,70 16,74 Z"
+              fill="url(#cg)" opacity="0.95"/>
+        <!-- Small white echo: same sweep family, scaled ~0.5x, positioned upper-right -->
+        <path d="
+          M 46,68
+          Q 38,50 54,38
+          Q 66,28 74,42
+          Q 80,54 70,62
+          Q 62,70 56,66
+          Q 50,62 46,68
+          Z
+        " fill="white" opacity="0.30"/>
+      </svg>
+    </div>
+    <div class="panel panel-lockup">
+      <div class="lockup">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="#07101e"/>
+          <path d="M 16,74 Q 8,28 44,16 Q 72,6 84,34 Q 90,48 82,60 Q 72,72 64,66 Q 50,58 36,64 Q 22,70 16,74 Z" fill="url(#cg)" opacity="0.95"/>
+          <path d="M 46,68 Q 38,50 54,38 Q 66,28 74,42 Q 80,54 70,62 Q 62,70 56,66 Q 50,62 46,68 Z" fill="white" opacity="0.30"/>
+        </svg>
+        <div>
+          <div class="wm"><span class="wh">AKB</span><span class="wg">ai</span></div>
+          <div style="font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px">Your AI business partner</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info" style="display:flex">
+      <h3>The Pair</h3>
+      <div class="meta">Large + small · Same family · Nested duality</div>
+      <p>The original sweep plus a smaller echo of the same form inside it. Two shapes of the same type at different scales — the larger wrapping the smaller. The katuwang relationship without any literal body: the AI sweep holds the business form within its arc.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Bottom prompt -->
+<div style="margin-top:44px;background:rgba(255,255,255,.03);border:1px solid var(--dim);border-radius:12px;padding:22px 26px">
+  <p style="font-size:13px;color:var(--muted);line-height:1.75">
+    <strong style="color:var(--text)">Your call:</strong> Which iteration — D4.1 through D4.4, or D6.1 through D6.4 — is pulling you? Once you pick, we deep-refine that one mark: tighten the geometry, nail the wordmark spacing, and build the full lockup set (dark · light · mono · reversed-on-gradient) before moving to the brand guide.
+  </p>
+</div>
+
+</div>
+</body>
+</html>

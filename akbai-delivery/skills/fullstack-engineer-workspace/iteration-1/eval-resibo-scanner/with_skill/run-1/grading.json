@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "page.tsx is a Server Component (no 'use client' directive)",
+      "passed": true,
+      "evidence": "page.tsx has no 'use client' directive and uses async getUser() and server-side supabase query"
+    },
+    {
+      "text": "Supabase query includes .is('deleted_at', null) filter",
+      "passed": true,
+      "evidence": "Line 24 in page.tsx: .is('deleted_at', null)"
+    },
+    {
+      "text": "ScanButton has 'use client' directive",
+      "passed": true,
+      "evidence": "Line 1 in scan-button.tsx: 'use client'"
+    },
+    {
+      "text": "Money is displayed using centavos-to-peso conversion, not raw centavos",
+      "passed": true,
+      "evidence": "receipt-card.tsx lines 29-35: formatPeso() converts centavos/100 to pesos with \u20b1 sign"
+    },
+    {
+      "text": "User-facing text contains Taglish (mix of Filipino and English)",
+      "passed": true,
+      "evidence": "Multiple instances: 'I-scan ang mga receipts', 'Mga Kamakailan na Scan', 'Walang scanned receipts pa. I-scan natin ang una!'"
+    },
+    {
+      "text": "Uses brand color tokens (honey, teal, ink, card) not raw hex or default Tailwind colors",
+      "passed": true,
+      "evidence": "scan-button.tsx uses 'from-honey-light to-honey-deep' and 'from-teal-light to-teal-cyan'; receipt-card.tsx uses 'bg-card', 'text-teal-light'"
+    },
+    {
+      "text": "Includes loading.tsx and error.tsx files",
+      "passed": true,
+      "evidence": "Both files present in outputs directory with appropriate skeletons and error handling"
+    },
+    {
+      "text": "Touch targets have min-h-[44px] or min-h-touch",
+      "passed": true,
+      "evidence": "scan-button.tsx lines 190, 198, 213, 222: min-h-[44px]; error.tsx line 37: min-h-[44px]"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

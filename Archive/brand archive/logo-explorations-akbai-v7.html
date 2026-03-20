@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AKBai — D4-E Angle &amp; Color Study v7</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#07101e;
+  --card:#0d1a2e;
+  --text:#e8ecf2;
+  --muted:#8a9bb5;
+  --dim:rgba(255,255,255,.07);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);font-size:15px;padding:52px 28px 100px}
+.container{max-width:1040px;margin:0 auto}
+
+.page-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+h1{font-size:36px;font-weight:800;line-height:1.1;margin-bottom:8px}
+.sub{font-size:14px;color:var(--muted);max-width:600px;margin-bottom:52px;line-height:1.6}
+.divider{border:none;border-top:1px solid var(--dim);margin:60px 0}
+
+.section-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.section-title{font-size:22px;font-weight:800;margin-bottom:6px}
+.section-sub{font-size:13px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+
+/* ── Rotation grid ── */
+.rotation-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim);margin-bottom:16px}
+.rot-cell{background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;gap:16px}
+.rot-cell.current{background:#0e1e34}
+.rot-angle{font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);text-align:center}
+.rot-cell.current .rot-angle{color:#FF8E53}
+.rot-note{font-size:10px;color:#FF8E53;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── Color panels ── */
+.dir-panels{display:grid;grid-template-columns:220px 1fr 300px;gap:1px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim);margin-bottom:14px}
+.panel{display:flex;align-items:center;justify-content:center;background:var(--ink);padding:32px}
+.panel-icon{min-height:180px}
+.panel-lockup{min-height:180px}
+.panel-info{background:var(--card);padding:28px;flex-direction:column;align-items:flex-start;justify-content:center;min-height:180px}
+.panel-info h3{font-size:16px;font-weight:800;margin-bottom:5px}
+.panel-info .meta{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.panel-info p{font-size:13px;color:var(--muted);line-height:1.65}
+.swatch-row{display:flex;gap:6px;margin-top:12px}
+.swatch{width:18px;height:18px;border-radius:50%}
+
+.wm{font-weight:800;letter-spacing:-.01em;line-height:1;font-size:28px}
+.wh{color:#fff}
+.lockup{display:flex;align-items:center;gap:16px}
+
+/* ── All-colors comparison strip ── */
+.color-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--dim);border-radius:16px;overflow:hidden;border:1px solid var(--dim)}
+.color-cell{background:var(--ink);display:flex;flex-direction:column;align-items:center;padding:28px 16px;gap:14px}
+.color-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.5}
+
+@media(max-width:760px){
+  .dir-panels,.rotation-grid,.color-strip{grid-template-columns:repeat(2,1fr)}
+  h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<!-- All gradient defs -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<defs>
+  <!-- 1. Coral-Mango (current) -->
+  <linearGradient id="g-coral" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF6B6B"/>
+    <stop offset="100%" stop-color="#FF8E53"/>
+  </linearGradient>
+  <!-- 2. Teal-Cyan -->
+  <linearGradient id="g-teal" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#20C9A0"/>
+    <stop offset="100%" stop-color="#0FB8D9"/>
+  </linearGradient>
+  <!-- 3. Violet-Indigo -->
+  <linearGradient id="g-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#A78BFA"/>
+    <stop offset="100%" stop-color="#818CF8"/>
+  </linearGradient>
+  <!-- 4. Gold-Amber -->
+  <linearGradient id="g-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FFB400"/>
+    <stop offset="100%" stop-color="#F59E0B"/>
+  </linearGradient>
+  <!-- 5. Sapphire-Electric -->
+  <linearGradient id="g-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#3B82F6"/>
+    <stop offset="100%" stop-color="#06B6D4"/>
+  </linearGradient>
+</defs>
+</svg>
+
+<div class="container">
+
+<div class="page-label">AKBai · Logo Explorations · v7 — D4-E Angle &amp; Color Study</div>
+<h1>D4-E: Dialing in the <span style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Lean &amp; Color</span></h1>
+<p class="sub">Two questions answered in one file: how far should D4-E tilt, and what color should it be? Angle study at top, color study below.</p>
+
+
+<!-- ═══════════════════════════════════════════
+     PART 1 — ROTATION ANGLE STUDY
+═══════════════════════════════════════════ -->
+
+<div class="section-label">Part 1</div>
+<div class="section-title">Rotation Angle Study</div>
+<p class="section-sub">D4-E tested at 10°, 15°, 20°, 25°, and 30°. All in Coral-Mango. The 20° version is current.</p>
+
+<div class="rotation-grid">
+
+  <!-- 10° -->
+  <div class="rot-cell">
+    <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(10, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+    <div class="rot-angle">10°<br/>Subtle</div>
+  </div>
+
+  <!-- 15° -->
+  <div class="rot-cell">
+    <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(15, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+    <div class="rot-angle">15°<br/>Gentle</div>
+  </div>
+
+  <!-- 20° — current -->
+  <div class="rot-cell current">
+    <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+    <div class="rot-angle">20°<br/>Current</div>
+    <div class="rot-note">← D4-E</div>
+  </div>
+
+  <!-- 25° -->
+  <div class="rot-cell">
+    <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(25, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+    <div class="rot-angle">25°<br/>Bold</div>
+  </div>
+
+  <!-- 30° -->
+  <div class="rot-cell">
+    <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(30, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+    <div class="rot-angle">30°<br/>Aggressive</div>
+  </div>
+
+</div>
+
+<!-- Lockup row at 56px for all 5 angles -->
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--dim);border-radius:12px;overflow:hidden;border:1px solid var(--dim)">
+  <div style="background:var(--card);padding:20px;display:flex;align-items:center;justify-content:center">
+    <div class="lockup">
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none"><g transform="rotate(10,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+      <div class="wm" style="font-size:19px"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div style="background:var(--card);padding:20px;display:flex;align-items:center;justify-content:center">
+    <div class="lockup">
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none"><g transform="rotate(15,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+      <div class="wm" style="font-size:19px"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div style="background:#0e1e34;padding:20px;display:flex;align-items:center;justify-content:center;outline:1px solid rgba(255,107,107,.25)">
+    <div class="lockup">
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+      <div class="wm" style="font-size:19px"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div style="background:var(--card);padding:20px;display:flex;align-items:center;justify-content:center">
+    <div class="lockup">
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none"><g transform="rotate(25,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+      <div class="wm" style="font-size:19px"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div style="background:var(--card);padding:20px;display:flex;align-items:center;justify-content:center">
+    <div class="lockup">
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none"><g transform="rotate(30,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+      <div class="wm" style="font-size:19px"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+</div>
+
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     PART 2 — COLOR PALETTE STUDY (at 20°)
+═══════════════════════════════════════════ -->
+
+<div class="section-label">Part 2</div>
+<div class="section-title">Color Palette Study</div>
+<p class="section-sub">D4-E at 20° across five palettes. The wordmark "ai" follows the same color in each. Echo arc stays white in all versions.</p>
+
+
+<!-- Color 1: Coral-Mango -->
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Palette 1 · Current</div>
+    <h3>Coral-Mango</h3>
+    <p>Warm, energetic, approachable. Feels startup-friendly and human. The strongest emotional warmth — closest to the "akbay" spirit.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FF6B6B"></div>
+      <div class="swatch" style="background:#FF8E53"></div>
+      <div style="font-size:11px;color:var(--muted);align-self:center;margin-left:4px">#FF6B6B → #FF8E53</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Color 2: Teal-Cyan -->
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-teal)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-teal)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#20C9A0,#0FB8D9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Palette 2</div>
+    <h3>Teal-Cyan</h3>
+    <p>Calm, intelligent, trustworthy. Reads more tech and fintech — less warm than coral but very clean. Strong on dark backgrounds.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#20C9A0"></div>
+      <div class="swatch" style="background:#0FB8D9"></div>
+      <div style="font-size:11px;color:var(--muted);align-self:center;margin-left:4px">#20C9A0 → #0FB8D9</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Color 3: Violet-Indigo -->
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-violet)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-violet)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#A78BFA,#818CF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Palette 3</div>
+    <h3>Violet-Indigo</h3>
+    <p>Premium, modern, AI-native. The most "AI company" read — similar territory to Perplexity and Notion. Smart and quiet, but less distinctly Filipino.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#A78BFA"></div>
+      <div class="swatch" style="background:#818CF8"></div>
+      <div style="font-size:11px;color:var(--muted);align-self:center;margin-left:4px">#A78BFA → #818CF8</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Color 4: Gold-Amber -->
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-gold)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-gold)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#FFB400,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Palette 4</div>
+    <h3>Gold-Amber</h3>
+    <p>Confident, premium, prosperity-coded. Gold has strong cultural resonance in the Philippines — success, aspiration, growth. Stands out in the AI space where this palette is rare.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FFB400"></div>
+      <div class="swatch" style="background:#F59E0B"></div>
+      <div style="font-size:11px;color:var(--muted);align-self:center;margin-left:4px">#FFB400 → #F59E0B</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Color 5: Sapphire-Electric -->
+<div class="dir-panels">
+  <div class="panel panel-icon">
+    <svg width="108" height="108" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(20, 50, 50)">
+        <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-blue)" stroke-width="17" stroke-linecap="round"/>
+        <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+      </g>
+    </svg>
+  </div>
+  <div class="panel panel-lockup">
+    <div class="lockup">
+      <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+        <g transform="rotate(20,50,50)">
+          <path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-blue)" stroke-width="17" stroke-linecap="round"/>
+          <path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/>
+        </g>
+      </svg>
+      <div class="wm"><span class="wh">AKB</span><span style="background:linear-gradient(135deg,#3B82F6,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ai</span></div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="meta">Palette 5</div>
+    <h3>Sapphire-Electric</h3>
+    <p>Crisp, authoritative, enterprise-ready. The blue-to-cyan shift reads digital-native without feeling cold. Strong trust signal for B2B — the palette of reliable tech.</p>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#3B82F6"></div>
+      <div class="swatch" style="background:#06B6D4"></div>
+      <div style="font-size:11px;color:var(--muted);align-self:center;margin-left:4px">#3B82F6 → #06B6D4</div>
+    </div>
+  </div>
+</div>
+
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════
+     ALL COLORS — SIDE BY SIDE STRIP
+═══════════════════════════════════════════ -->
+
+<div style="font-size:13px;font-weight:700;margin-bottom:16px">All five colors at a glance — at 20°</div>
+
+<div class="color-strip">
+  <div class="color-cell">
+    <svg width="72" height="72" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-coral)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="color-label">Coral-Mango<br/><span style="color:#FF8E53">#FF6B6B → #FF8E53</span></div>
+  </div>
+  <div class="color-cell">
+    <svg width="72" height="72" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-teal)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="color-label">Teal-Cyan<br/><span style="color:#20C9A0">#20C9A0 → #0FB8D9</span></div>
+  </div>
+  <div class="color-cell">
+    <svg width="72" height="72" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-violet)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="color-label">Violet-Indigo<br/><span style="color:#A78BFA">#A78BFA → #818CF8</span></div>
+  </div>
+  <div class="color-cell">
+    <svg width="72" height="72" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-gold)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="color-label">Gold-Amber<br/><span style="color:#FFB400">#FFB400 → #F59E0B</span></div>
+  </div>
+  <div class="color-cell">
+    <svg width="72" height="72" viewBox="0 0 100 100" fill="none"><g transform="rotate(20,50,50)"><path d="M 50,24 A 26,26 0 0 0 50,76" fill="none" stroke="url(#g-blue)" stroke-width="17" stroke-linecap="round"/><path d="M 60,30 A 20,20 0 0 1 60,70" fill="none" stroke="white" stroke-width="17" stroke-linecap="round" opacity="0.22"/></g></svg>
+    <div class="color-label">Sapphire-Electric<br/><span style="color:#3B82F6">#3B82F6 → #06B6D4</span></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "Migration SQL enables RLS on bir_deadlines table",
+      "passed": true,
+      "evidence": "002_add_bir_deadlines.sql line 36: ALTER TABLE bir_deadlines ENABLE ROW LEVEL SECURITY;"
+    },
+    {
+      "text": "RLS policies scope to auth.uid() = user_id",
+      "passed": true,
+      "evidence": "002_add_bir_deadlines.sql: Line 40 'USING (auth.uid() = user_id AND deleted_at IS NULL)' for SELECT. Line 44 'WITH CHECK (auth.uid() = user_id)' for INSERT. Line 48 'USING (auth.uid() = user_id AND deleted_at IS NULL)' for UPDATE."
+    },
+    {
+      "text": "Table includes deleted_at column and soft-delete pattern",
+      "passed": true,
+      "evidence": "002_add_bir_deadlines.sql line 21: 'deleted_at TIMESTAMPTZ' column defined. Line 28 and 40 and 48: Queries filter on 'deleted_at IS NULL' for soft-delete compliance."
+    },
+    {
+      "text": "API route includes auth check and user-scoped query",
+      "passed": true,
+      "evidence": "route.ts lines 21-35: Auth check with getUser(). Lines 46-47: Query filters .eq('user_id', user.id) and .is('deleted_at', null)"
+    },
+    {
+      "text": "DeadlineCard uses conditional color: amber/honey for 7-day warning, red for 3-day urgent",
+      "passed": true,
+      "evidence": "deadline-card.tsx lines 56-58: amber (yellow-400) for 3-7 days. Lines 53-55: red for ≤3 days. Green for >7 days. Color mapping lines 92-111 applies urgencyColorMap."
+    },
+    {
+      "text": "User-facing text contains Taglish",
+      "passed": true,
+      "evidence": "page.tsx line 66: 'Wala pang BIR deadlines. Kapag may bawong deadline, i-aadd natin dito. Abangan!'. deadline-card.tsx line 55: 'Critical — file now'. Line 58: 'Due soon'. route.ts line 32: 'Kailangan mong mag-login muna'"
+    },
+    {
+      "text": "Page is a Server Component, DeadlineCard is appropriately split",
+      "passed": true,
+      "evidence": "page.tsx (lines 1-200): No 'use client' directive, uses async auth and Supabase query. deadline-card.tsx line 14: Has 'use client' directive for client-side rendering logic."
+    },
+    {
+      "text": "Mobile-first responsive design (base styles for mobile, sm:/md: for larger)",
+      "passed": true,
+      "evidence": "deadline-card.tsx line 127: 'flex flex-col' (mobile base), 'min-h-touch' (mobile touch). page.tsx line 113: 'flex flex-col gap-6 p-4' (mobile base). All layouts use gap/spacing appropriate for mobile first."
+    },
+    {
+      "text": "Every file has a file-level JSDoc/block comment header explaining purpose, feature, and role",
+      "passed": true,
+      "evidence": "002_add_bir_deadlines.sql lines 1-5 has header. page.tsx lines 1-12 has header. deadline-card.tsx lines 1-12 has header. route.ts lines 1-11 has header."
+    },
+    {
+      "text": "Migration SQL has section headers for table, indexes, RLS, and triggers",
+      "passed": true,
+      "evidence": "002_add_bir_deadlines.sql: Line 7 '--- Table: bir_deadlines ---'. Line 24 '--- Indexes: ---'. Line 35 '--- RLS Policies: ---'. Line 51 '--- Triggers: ---'"
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "sunday-metrics",
+  "prompt": "It's Sunday morning. Give me my weekly metrics review. We have 35 registered users, 12 Pro subscribers, 0 Business subscribers. 1 user churned this week (payment failure). 2 new Sentry errors. Uptime was 99.8%.",
+  "assertions": [
+    {"text": "Correctly calculates MRR as ₱4,788 (12 × ₱399)", "type": "factual"},
+    {"text": "Flags churn rate as red (1/12 or ~1/13 = >5% threshold)", "type": "factual"},
+    {"text": "Uses the Sunday Metrics Template format with traffic lights", "type": "structural"},
+    {"text": "References Phase 1 MRR target (₱6K-₱10K) and shows gap", "type": "structural"},
+    {"text": "Includes a top priority and notes for Monday standup", "type": "structural"}
+  ]
+}

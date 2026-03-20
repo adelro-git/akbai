@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "RLS Isolation",
+  "prompt": "How do RLS policies prevent cross-user data leakage across all tables? I need proof that user A cannot read user B's transactions even if they try.",
+  "assertions": [
+    "covers_all_user_tables",
+    "includes_test_script",
+    "identifies_system_tables",
+    "covers_storage_rls",
+    "explains_auth_uid_mechanism"
+  ]
+}
