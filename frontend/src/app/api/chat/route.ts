@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
-import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import {
@@ -16,21 +15,8 @@ import {
   calculateActualCost,
   KA_ERROR_MESSAGES,
 } from '@/lib/claude';
+import { ChatRequestSchema } from '@/lib/claude/schemas';
 import type { KAFeature, UserTier, UserContext } from '@/lib/claude';
-
-const ChatRequestSchema = z.object({
-  message: z.string().min(1).max(2000),
-  feature: z
-    .enum([
-      'general_chat',
-      'resibo_scanner',
-      'morning_briefing',
-      'reply_drafter',
-      'classify_expense',
-      'classify_intent',
-    ])
-    .default('general_chat'),
-});
 
 export async function POST(req: NextRequest) {
   try {
