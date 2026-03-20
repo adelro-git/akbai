@@ -75,28 +75,39 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ============================================================
 -- PROTECT feature_flags from user-side manipulation
+-- Only created if the feature_flags column exists on the users table.
 -- Silently reverts any change to feature_flags on user-initiated updates.
 -- Service role bypasses RLS entirely, so admin writes still work.
 -- ============================================================
-CREATE OR REPLACE FUNCTION public.protect_feature_flags()
-RETURNS TRIGGER AS $$
+DO $$
 BEGIN
-  IF NEW.feature_flags IS DISTINCT FROM OLD.feature_flags THEN
-    NEW.feature_flags = OLD.feature_flags;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'feature_flags'
+  ) THEN
+    CREATE OR REPLACE FUNCTION public.protect_feature_flags()
+    RETURNS TRIGGER AS $fn$
+    BEGIN
+      IF NEW.feature_flags IS DISTINCT FROM OLD.feature_flags THEN
+        NEW.feature_flags = OLD.feature_flags;
+      END IF;
+      RETURN NEW;
+    END;
+    $fn$ LANGUAGE plpgsql;
 
-CREATE TRIGGER protect_feature_flags_trigger
-  BEFORE UPDATE ON public.users
-  FOR EACH ROW EXECUTE FUNCTION public.protect_feature_flags();
+    CREATE TRIGGER protect_feature_flags_trigger
+      BEFORE UPDATE ON public.users
+      FOR EACH ROW EXECUTE FUNCTION public.protect_feature_flags();
+  END IF;
+END;
+$$;
 
 -- ============================================================
 -- BACKFILL: Create subscription rows for existing users
+-- All existing users default to 'free' tier (no paid users yet)
 -- ============================================================
 INSERT INTO public.subscriptions (user_id, tier)
-SELECT id, COALESCE((feature_flags->>'tier')::TEXT, 'free')
+SELECT id, 'free'
 FROM public.users
 WHERE deleted_at IS NULL
 ON CONFLICT (user_id) DO NOTHING;
