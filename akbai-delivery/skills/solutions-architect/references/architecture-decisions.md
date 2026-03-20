@@ -1,6 +1,6 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-004
+> Current highest: ADR-005
 > Last updated: 2026-03-20
 
 ---
@@ -13,6 +13,7 @@
 | ADR-002 | Supabase as backend platform | Accepted | 2026-03-14 |
 | ADR-003 | Xendit as payment processor | Accepted | 2026-03-14 |
 | ADR-004 | Build 0 system prompt architecture | Accepted | 2026-03-20 |
+| ADR-005 | Security hardening (subscriptions, fail-closed, IP rate limiting) | Accepted | 2026-03-20 |
 
 ---
 
@@ -135,3 +136,38 @@ Create a `/lib/claude/` module with 6-layer prompt assembly, model routing, guar
 - Adding a new domain scope requires: one entry in `scopes.ts`, update relevant feature defaults in `DEFAULT_SCOPES`
 
 **Review Trigger:** If prompt complexity exceeds ~20KB assembled or feature count exceeds 12, evaluate moving to a prompt registry with versioning and A/B testing support.
+
+---
+
+## ADR-005: Security Hardening — Subscriptions Table, Fail-Closed Circuit Breaker, IP Rate Limiting
+
+**Status:** Accepted
+**Date:** 2026-03-20
+
+**Context:**
+An external security audit identified 4 vulnerabilities in AKBai's Supabase + Claude API architecture. Three required code changes: (1) user tier stored in a user-writable JSONB column, allowing self-upgrade to Pro; (2) no IP-based rate limiting, enabling mass free account abuse; (3) circuit breaker failing open when Supabase is unavailable, allowing unbounded API spend.
+
+**Decision:**
+Three changes, in order of severity:
+
+1. **Subscriptions table isolation:** Create a `subscriptions` table with SELECT-only RLS. Users can read their tier but cannot modify it. Only the service role (backend/Xendit webhook) can write. The `set_user_tier` RPC handles Anton's manual upgrades and future Xendit webhook integration. A `protect_feature_flags()` trigger on the `users` table silently reverts any user-initiated change to `feature_flags`.
+
+2. **Fail-closed circuit breaker:** If `createServiceClient()` fails or `checkCircuitBreaker()` throws, the chat route returns a 503 with a Taglish maintenance message. Previously, these failures silently disabled all spend protection. Additionally, Anton sets a $150/month hard cap in the Anthropic Console as an external safety net.
+
+3. **In-memory IP rate limiting:** A sliding window rate limiter in `proxy.ts` limits `/api/*` routes to 20 requests per minute per IP. Uses an in-memory `Map` (suitable for single-instance Vercel deployment). Includes automatic cleanup and a 10,000-entry hard cap as a DDoS safety valve.
+
+**Alternatives Considered:**
+- **Column-level RLS for feature_flags:** PostgreSQL doesn't support column-level RLS. A trigger-based approach is cleaner and achieves the same result.
+- **Redis/Vercel KV for rate limiting:** Overkill for Phase 0-1 with a single Vercel instance. The in-memory approach resets on cold starts, which is acceptable (infrequent, and a brief reset is not exploitable).
+- **Cloudflare WAF for IP limiting:** The production-grade solution, but AKBai is on Vercel in Phase 1. Documented as the Month 7+ replacement when migrating to Cloudflare Pages.
+- **Fail-open with logging:** The previous approach. Rejected because a Supabase outage + fail-open = unbounded Anthropic spend, and a solo founder at a day job cannot respond in real-time.
+
+**Consequences:**
+- Tier self-upgrade attack vector is fully closed — subscriptions table is read-only for users
+- Circuit breaker failure now blocks AI requests rather than allowing them — brief downtime is preferable to unbounded spend
+- IP rate limiting adds a layer of defense against mass account creation abuse
+- `set_user_tier` RPC provides a clean interface for both manual and automated tier changes
+- In-memory rate limiter has no persistence — limits reset on Vercel cold starts (acceptable tradeoff)
+- The `protect_feature_flags` trigger adds minimal overhead to user UPDATE operations
+
+**Review Trigger:** When migrating to Cloudflare Pages (Month 7+), replace in-memory rate limiter with Cloudflare WAF rules. When implementing Xendit webhook handler (Build 4), verify `set_user_tier` RPC integrates cleanly.
