@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-20
+> Last updated: 2026-03-21
 
 ---
 
@@ -43,6 +43,26 @@
 - IP-based rate limiting in `proxy.ts`
 - 103 tests across 9 files (all passing)
 - akbai-delivery plugin: 12 skills, 15 slash commands, shared context
+
+### Sprint 2 — 2026-03-21 to 2026-04-04
+
+**Phase:** 0A — Build 0 Complete, Pre-Build 1 Knowledge Foundation
+**Sprint Goal:** Create the 4 KA domain knowledge files so Build 1 (Kilala Kita) can deliver the "Maria Moment."
+**Capacity:** 12 hours
+
+**Tasks:**
+
+| # | Task | Size | Est. Hrs | Status | Notes |
+|---|------|------|----------|--------|-------|
+| 1 | BIR Knowledge Base | M | 3 | PLANNED | Retro action #2. CRITICAL — blocks Build 6, informs Build 1 |
+| 2 | MSME Business Knowledge | M | 3 | PLANNED | Retro action #3. HIGH — personalization depth |
+| 3 | Kilala Kita Onboarding Context | S | 2 | PLANNED | Depends on Tasks 1+2 |
+| 4 | Taglish Manual Population | S | 1.5 | PLANNED | Retro action #4. Design Gate #3 prereq |
+| 5 | Scopes Enrichment + Gap Registry | XS | 1 | PLANNED | Depends on Tasks 1+2+3 |
+| 6 | `.env.local.example` + Dev Setup | XS | 0.5 | PLANNED | Retro action #1 |
+
+**Actual hours used:** TBD — updated during retro
+**Sprint outcome:** IN PROGRESS
 
 ---
 
@@ -92,6 +112,7 @@
 | Sprint | Goal | Hours Plan | Hours Actual | Tasks Plan | Tasks Done | Hit Goal? |
 |--------|------|-----------|-------------|-----------|-----------|-----------|
 | 1 | Ship Build 0 | 10–15 | ~14 | 5 | 5 | YES |
+| 2 | KA domain knowledge files | 12 | TBD | 6 | TBD | TBD |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
@@ -107,7 +128,7 @@
 
 | Source | # | Action | Status |
 |--------|---|--------|--------|
-| Sprint 1 Retro | 1 | Create `.env.local.example` + dev setup docs | PENDING |
-| Sprint 1 Retro | 2 | Create BIR knowledge base | PENDING |
-| Sprint 1 Retro | 3 | Create MSME business knowledge | PENDING |
-| Sprint 1 Retro | 4 | Populate Taglish manual | PENDING |
+| Sprint 1 Retro | 1 | Create `.env.local.example` + dev setup docs | PLANNED — Sprint 2 Task #6 |
+| Sprint 1 Retro | 2 | Create BIR knowledge base | PLANNED — Sprint 2 Task #1 |
+| Sprint 1 Retro | 3 | Create MSME business knowledge | PLANNED — Sprint 2 Task #2 |
+| Sprint 1 Retro | 4 | Populate Taglish manual | PLANNED — Sprint 2 Task #4 |
