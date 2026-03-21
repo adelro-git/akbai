@@ -88,6 +88,20 @@ decision, or discovering something that changes how we work), UPDATE the relevan
 - **Forms:** Use `useRef` + `onClick` (React 19 controlled input bug — `onChange`/`onSubmit` unreliable)
 - **Money:** Integers in centavos (₱34.50 = 3450). Display conversion at UI layer only.
 
+## Branch Workflow
+
+```
+main        ← stable milestones (merge via PR after sprint/build completion)
+  └── dev   ← active development (Claude Code sessions branch off here)
+        └── claude/*  ← per-session branches (merge back to dev via PR, then delete)
+```
+
+**Rules for Claude Code sessions:**
+1. **Branch off `dev`** (or `main` if `dev` doesn't exist) — never work directly on `main`
+2. **Before ending a session:** push your `claude/*` branch and create a PR to merge into `main`
+3. **Context lives in files, not branches** — `sprint-history.md`, `project-context.md`, and `gap-registry.md` are the source of truth across sessions
+4. **New session startup:** read `shared/sprint-history.md` for latest sprint context, `shared/project-context.md` for phase status
+
 ## Key Paths
 - Project root: `/home/user/akbai/`
 - App code: `/home/user/akbai/frontend/src/`
