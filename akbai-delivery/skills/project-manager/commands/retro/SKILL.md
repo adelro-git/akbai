@@ -11,20 +11,22 @@ You are facilitating a sprint retrospective with Anton (solo founder, 10–15 hr
 
 1. **`shared/project-context.md`** — Phase, solo founder constraints (§10), break-even timeline
 2. **`shared/gap-registry.md`** — 29 gaps, 10 CRITICAL hard gates (some action items may become gap entries)
-3. **`references/sprint-templates.md`** — Retro template (use this for output format)
-4. **`references/phase-gates.md`** — Phase gate criteria (context for readiness concerns)
+3. **`shared/sprint-history.md`** — Living sprint/retro log. Read: current sprint's planned tasks, previous retro action items, velocity patterns
+4. **`references/sprint-templates.md`** — Retro template (use this for output format)
+5. **`references/phase-gates.md`** — Phase gate criteria (context for readiness concerns)
 
 ---
 
 ## Workflow
 
 ### Step 1: Set Retro Context
+- Read `shared/sprint-history.md` — find the current sprint entry under **## Sprint Log**
 - Which sprint just ended? (e.g., Sprint 5, Week of March 17)
 - How many hours did Anton allocate vs. use?
 - What was the sprint goal from the plan?
 - Did we hit it? Partially? Miss it?
 
-Read the sprint plan from last cycle (or ask Anton). This frames the retro — we're comparing plan vs. reality.
+Use the sprint plan from `sprint-history.md` as the source of truth — we're comparing plan vs. reality. If the sprint wasn't logged there, ask Anton for the details.
 
 ### Step 2: Gather Honest Feedback
 
@@ -174,6 +176,28 @@ Before closing, ask Anton:
 
 This matters. A founder who burns out stops shipping. Better to hit 60% of a sustainable sprint than 100% of an unsustainable one and then crash.
 
+### Step 11: Save Retro to History
+
+**MANDATORY** — After the retro is finalized, update `shared/sprint-history.md`:
+
+1. **Update the Sprint Log entry** for this sprint:
+   - Change task statuses from `PLANNED` to `DONE` / `PARTIAL` / `DROPPED` with notes
+   - Fill in "Actual hours used" and "Sprint outcome"
+   - Add "What was built" summary (key files/features shipped)
+
+2. **Append to Retro Log** — Add a new entry under **## Retro Log** with:
+   - What Went Well (2–4 items)
+   - What Didn't Go Well (2–4 items)
+   - What We Learned (1–3 insights)
+   - Action Items table (# | Action | Owner | Due By | Status | Notes)
+   - Energy Check (sustainability, Saturday block, evening consistency, recommendation)
+
+3. **Update Velocity & Patterns table** — Fill in actual hours, tasks done, and goal hit for this sprint. Add any new emerging patterns observed.
+
+4. **Update Unresolved Action Items** — Add new action items from this retro. Mark any previously pending items that were resolved during this sprint as `DONE`.
+
+This ensures the next session has full retro context without reconstructing from memory or git history.
+
 ---
 
 ## Action Item Rules
@@ -291,3 +315,7 @@ Include in your escalation: what the issue is, why it matters, and when you need
 - [ ] Output formatted per `references/sprint-templates.md`
 - [ ] Tone is forward-looking (not blame-y)
 - [ ] Action items are 2–3 (not 10)
+- [ ] Retro appended to `shared/sprint-history.md` (Step 11)
+- [ ] Sprint Log entry updated with actual outcomes (Step 11)
+- [ ] Velocity & Patterns table updated
+- [ ] Unresolved Action Items section updated
