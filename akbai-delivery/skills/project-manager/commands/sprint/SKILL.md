@@ -11,9 +11,10 @@ You are helping Anton (solo founder, 10–15 hrs/sprint, evenings + weekends) pl
 
 1. **`shared/project-context.md`** — Product overview, phase structure, solo founder constraints (§10)
 2. **`shared/gap-registry.md`** — 29 total gaps, 10 CRITICAL hard gates that block progress
-3. **`references/phase-gates.md`** — Go/No-Go criteria for phase transitions
-4. **`references/sprint-templates.md`** — Sprint plan template (use this for output format)
-5. **`references/roadmap-context.md`** — Milestones and build order
+3. **`shared/sprint-history.md`** — Living sprint/retro log. Check: last sprint outcome, unresolved action items, carryover tasks, velocity patterns
+4. **`references/phase-gates.md`** — Go/No-Go criteria for phase transitions
+5. **`references/sprint-templates.md`** — Sprint plan template (use this for output format)
+6. **`references/roadmap-context.md`** — Milestones and build order
 
 ---
 
@@ -30,8 +31,10 @@ You are helping Anton (solo founder, 10–15 hrs/sprint, evenings + weekends) pl
 - CRITICAL gaps take absolute priority. Phase gate criteria take second priority.
 
 ### Step 3: Check for Carryover
-Ask Anton directly:
-> "Any tasks carried over from last sprint? And what's your top priority for this sprint — should we focus on [CRITICAL gap], phase gate prep, or something else?"
+Read `shared/sprint-history.md` §"Unresolved Action Items" for pending items from previous retros. Also check the last sprint entry for incomplete tasks.
+
+Then ask Anton:
+> "From the last retro, these action items are still pending: [list items]. Any other tasks carried over? And what's your top priority for this sprint — should we focus on [CRITICAL gap], phase gate prep, or something else?"
 
 Carryover tasks get priority unless explicitly deprioritized.
 
@@ -80,6 +83,20 @@ Use the template from `references/sprint-templates.md`. Include:
 - Detailed breakdown for each task (title, why it matters, itemized checklist, done-when condition)
 - Risks & dependencies section
 - Sprint Definition of Done (3–5 criteria that define sprint success)
+
+### Step 8: Save Sprint Plan to History
+
+**MANDATORY** — After Anton approves the sprint plan, append it to `shared/sprint-history.md`:
+
+1. Add a new entry under **## Sprint Log** with:
+   - Sprint number, date range, phase, goal, capacity
+   - Task table (# | Task | Size | Est. Hrs | Status | Notes) — all tasks start as `PLANNED`
+   - Actual hours: "TBD — updated during retro"
+   - Sprint outcome: "IN PROGRESS"
+2. Update the **Velocity & Patterns** table with a new row (hours actual and goal hit filled in during retro)
+3. Check **Unresolved Action Items** — if any pending items from previous retros are now included as sprint tasks, note that in the action item's Status column (e.g., "PLANNED — Sprint 2 Task #3")
+
+This ensures the next session (or `/retro`) has full context without reconstructing from memory.
 
 ---
 
@@ -172,3 +189,5 @@ Include in your escalation: what the blocker is, why it matters, and the deadlin
 - [ ] Output formatted per `references/sprint-templates.md`
 - [ ] Sprint goal is one sentence
 - [ ] Definition of Done has 3–5 criteria
+- [ ] Sprint plan appended to `shared/sprint-history.md` (Step 8)
+- [ ] Unresolved action items from previous retros checked and referenced

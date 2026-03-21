@@ -12,6 +12,7 @@ These files ground every skill and command:
 - `akbai-delivery/shared/project-context.md` — Product overview, phases, personas, constraints
 - `akbai-delivery/shared/tech-stack.md` — Canonical stack (Next.js 16, Supabase, Claude API, Xendit)
 - `akbai-delivery/shared/gap-registry.md` — 29 gaps, 10 CRITICAL hard gates
+- `akbai-delivery/shared/sprint-history.md` — Sprint plans, retros, velocity, unresolved action items (living document)
 - `akbai-delivery/shared/glossary.md` — Product, business, technical, Taglish terms
 - `akbai-delivery/shared/brand-context.md` — Brand identity, voice pillars, colors, typography
 
@@ -67,6 +68,8 @@ decision, or discovering something that changes how we work), UPDATE the relevan
 | New test pattern established | `skills/qa-engineer/references/test-strategy.md` — add pattern |
 | Deployment config changed | `skills/devops-engineer/references/deployment-guide.md` — update |
 | New Taglish pattern discovered | `skills/ux-designer/references/taglish-copy-guide.md` — add example |
+| Sprint planned (`/sprint`) | `shared/sprint-history.md` — append sprint plan entry (automated by command) |
+| Sprint completed (`/retro`) | `shared/sprint-history.md` — update sprint outcomes, append retro, update velocity (automated by command) |
 | Sprint completed | Ask Anton if sprint learnings should update any skill files |
 | Convention established or changed | Relevant skill's SKILL.md or references — document the convention |
 
@@ -84,6 +87,20 @@ decision, or discovering something that changes how we work), UPDATE the relevan
 - **Middleware:** `proxy.ts` with `export async function proxy()` (Next.js 16 convention, NOT `middleware.ts`)
 - **Forms:** Use `useRef` + `onClick` (React 19 controlled input bug — `onChange`/`onSubmit` unreliable)
 - **Money:** Integers in centavos (₱34.50 = 3450). Display conversion at UI layer only.
+
+## Branch Workflow
+
+```
+main        ← stable milestones (merge via PR after sprint/build completion)
+  └── dev   ← active development (Claude Code sessions branch off here)
+        └── claude/*  ← per-session branches (merge back to dev via PR, then delete)
+```
+
+**Rules for Claude Code sessions:**
+1. **Branch off `dev`** (or `main` if `dev` doesn't exist) — never work directly on `main`
+2. **Before ending a session:** push your `claude/*` branch and create a PR to merge into `main`
+3. **Context lives in files, not branches** — `sprint-history.md`, `project-context.md`, and `gap-registry.md` are the source of truth across sessions
+4. **New session startup:** read `shared/sprint-history.md` for latest sprint context, `shared/project-context.md` for phase status
 
 ## Key Paths
 - Project root: `/home/user/akbai/`
