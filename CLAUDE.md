@@ -12,6 +12,7 @@ These files ground every skill and command:
 - `akbai-delivery/shared/project-context.md` — Product overview, phases, personas, constraints
 - `akbai-delivery/shared/tech-stack.md` — Canonical stack (Next.js 16, Supabase, Claude API, Xendit)
 - `akbai-delivery/shared/gap-registry.md` — 29 gaps, 10 CRITICAL hard gates
+- `akbai-delivery/shared/sprint-history.md` — Sprint plans, retros, velocity, unresolved action items (living document)
 - `akbai-delivery/shared/glossary.md` — Product, business, technical, Taglish terms
 - `akbai-delivery/shared/brand-context.md` — Brand identity, voice pillars, colors, typography
 
@@ -67,6 +68,8 @@ decision, or discovering something that changes how we work), UPDATE the relevan
 | New test pattern established | `skills/qa-engineer/references/test-strategy.md` — add pattern |
 | Deployment config changed | `skills/devops-engineer/references/deployment-guide.md` — update |
 | New Taglish pattern discovered | `skills/ux-designer/references/taglish-copy-guide.md` — add example |
+| Sprint planned (`/sprint`) | `shared/sprint-history.md` — append sprint plan entry (automated by command) |
+| Sprint completed (`/retro`) | `shared/sprint-history.md` — update sprint outcomes, append retro, update velocity (automated by command) |
 | Sprint completed | Ask Anton if sprint learnings should update any skill files |
 | Convention established or changed | Relevant skill's SKILL.md or references — document the convention |
 
