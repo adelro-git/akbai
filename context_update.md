@@ -197,6 +197,103 @@ After all 4 files are created:
 
 ---
 
+## File 5: Business-Type Context Loader — Design Spec (BUILD 1 PREREQUISITE)
+
+> This section is a **design spec only** — no implementation in this session.
+> To be implemented during Build 1 before the Kilala Kita onboarding flow ships.
+
+### Problem
+
+The prompt assembler (`assemble.ts`) currently injects `{{business_type}}` as a string template variable, but all users get the **same** scope content regardless of business type. A food seller and a freelancer see identical TAX_SCOPE and FINANCIAL_SCOPE prompts.
+
+The 4 knowledge files created in this session give KA the *source material*, but without a runtime loader, KA can't use business-type-specific knowledge when talking to users.
+
+### Proposed Architecture
+
+```
+assemble.ts (existing)
+  ├── Layer 1: Core Persona          (unchanged)
+  ├── Layer 2: Domain Scopes         (unchanged — boundary rules)
+  ├── Layer 2.5: Business Context    ← NEW LAYER
+  │   └── Loads a context snippet based on user's business_type
+  ├── Layer 3: Feature Context       (unchanged)
+  └── Layer 4: User Context          (unchanged)
+```
+
+### New File: `frontend/src/lib/claude/prompts/business-context.ts`
+
+```typescript
+// Business-type-specific knowledge snippets injected at Layer 2.5
+// Sourced from: msme-business-knowledge.md + bir-knowledge-base.md
+
+export type BusinessType = 'food_baking' | 'online_selling' | 'freelance_creative' | 'sari_sari_retail';
+
+export const BUSINESS_CONTEXT: Record<BusinessType, string> = {
+  food_baking: `
+    [BUSINESS CONTEXT: Food/Baking]
+    - Typical cost structure: ingredients 40-50%, packaging 5-10%, delivery 10-15%
+    - Cash flow: cash out before cash in (buy → cook → deliver → collect)
+    - BIR: 1701Q quarterly, 1701A annual. If VAT-registered: 2550M monthly
+    - Peak seasons: Christmas, fiestas, graduation, Valentine's
+    - Common blind spots: not tracking delivery costs, underpricing for inflation
+  `,
+  online_selling: `...`,   // From msme-business-knowledge.md §2
+  freelance_creative: `...`, // From msme-business-knowledge.md §3
+  sari_sari_retail: `...`,   // From msme-business-knowledge.md §4 (lighter, Phase 3)
+};
+```
+
+### Changes to `assemble.ts`
+
+```typescript
+// In assemblePrompt():
+const layers = [
+  CORE_PERSONA,
+  ...selectedScopes.map(s => SCOPE_PROMPTS[s]),
+  BUSINESS_CONTEXT[input.businessType],  // ← NEW: Layer 2.5
+  FEATURE_PROMPTS[input.feature],
+  buildUserContext(input),
+];
+```
+
+### Token Budget
+
+| Layer | Current tokens | With business context |
+|-------|---------------|---------------------|
+| Core Persona | ~800 | ~800 (unchanged) |
+| Scopes (avg 2) | ~600 | ~600 (unchanged) |
+| **Business Context** | 0 | **~150-250** (targeted snippets) |
+| Feature Prompt | ~300 | ~300 (unchanged) |
+| User Context | ~100 | ~100 (unchanged) |
+| **Total** | ~1,800 | **~2,000-2,050** |
+
+Acceptable — stays well under the 4K system prompt target.
+
+### Kilala Kita First-Response Integration
+
+The 16 first-response templates (from `kilala-kita-context.md` File 3) should be handled in the onboarding flow itself, **not** in the prompt assembler. Proposed approach:
+
+```typescript
+// In the onboarding completion handler:
+const firstMessage = getFirstKAMessage(businessType, primaryPainPoint);
+// → Returns pre-written Taglish opening from a lookup table
+// → This is NOT a Claude API call — it's a static template
+```
+
+This avoids spending an API call on a message we can craft perfectly in advance, and ensures the critical first impression is consistent.
+
+### Implementation Checklist (for Build 1)
+
+- [ ] Create `business-context.ts` with snippets extracted from knowledge files
+- [ ] Add `BusinessType` to `types.ts`
+- [ ] Update `assemble.ts` to inject Layer 2.5
+- [ ] Add `businessType` to `PromptAssemblyInput` type
+- [ ] Create first-response lookup table for Kilala Kita (16 templates)
+- [ ] Write unit tests: correct context loaded per business type
+- [ ] Write integration test: full prompt assembly with business context stays under 4K tokens
+
+---
+
 ## Key Files Summary
 
 | File | Action |
@@ -207,3 +304,4 @@ After all 4 files are created:
 | `akbai-delivery/skills/ux-designer/references/taglish-manual.md` | **POPULATE** (existing placeholder) |
 | `akbai-delivery/shared/gap-registry.md` | **UPDATE** (note knowledge prereqs) |
 | `frontend/src/lib/claude/prompts/scopes.ts` | **ENRICH** (after knowledge files reviewed) |
+| `frontend/src/lib/claude/prompts/business-context.ts` | **CREATE in Build 1** (design spec in this doc) |
