@@ -98,10 +98,10 @@
 
 | # | Action | Owner | Due By | Status | Notes |
 |---|--------|-------|--------|--------|-------|
-| 1 | Create `.env.local.example` + dev setup docs | Anton | Sprint 2 | PENDING | Retro action #1 |
-| 2 | Create BIR knowledge base (`bir-knowledge-base.md`) | Anton + Claude | Sprint 2 | PENDING | CRITICAL — blocks Build 6, informs Build 1 |
-| 3 | Create MSME business knowledge (`msme-business-knowledge.md`) | Anton + Claude | Sprint 2 | PENDING | HIGH — personalization depth |
-| 4 | Populate Taglish manual (10 sections) | Anton + Claude | Sprint 2–3 | PENDING | MEDIUM — Design Gate #3 prereq |
+| 1 | Create `.env.local.example` + dev setup docs | Anton | Sprint 2 | DONE | Sprint 2 Task #6 |
+| 2 | Create BIR knowledge base (`bir-knowledge-base.md`) | Anton + Claude | Sprint 2 | DONE | Sprint 2 Task #1 |
+| 3 | Create MSME business knowledge (`msme-business-knowledge.md`) | Anton + Claude | Sprint 2 | DONE | Sprint 2 Task #2 (expanded to 16 types) |
+| 4 | Populate Taglish manual (10 sections) | Anton + Claude | Sprint 2 | DONE | Sprint 2 Task #4 |
 | 5 | Create sprint-history.md living document | Anton + Claude | Sprint 2 | DONE | This file |
 
 **Energy Check:**
@@ -109,6 +109,34 @@
 - **Saturday block:** Used (Build 0 integration + security hardening)
 - **Evening consistency:** Strong — multiple evening sessions
 - **Recommendation:** Keep pace. Sprint 2 can target same capacity (10–15 hrs)
+
+### Sprint 2 Retro — 2026-03-22
+
+**What Went Well:**
+- Shipped all 6 tasks — 100% completion rate, all Sprint 1 retro actions resolved
+- Context/knowledge files were highly productive: BIR KB (282 lines), MSME KB (735 lines, expanded from 4 to 16 business types), Kilala Kita (28 templates), Taglish manual (all 10 sections)
+- Task 2 expansion (4→16 types + benchmarks migration) added clear value without blowing capacity
+- TAX_SCOPE enrichment wired domain knowledge directly into the runtime — KA now has real BIR data, not just boundaries
+
+**What Didn't Go Well:**
+- No significant blockers this sprint — clean execution throughout
+
+**What We Learned:**
+- Knowledge foundation sprints are high-leverage: one sprint of context files makes every future build smarter
+- The amount of domain context achievable in a single sprint was surprising — 6 files, 1400+ lines of production-ready reference material
+- Structured sprint plans with clear "Done when" criteria and checklist items keep sessions focused and measurable
+
+**Action Items:**
+
+| # | Action | Owner | Due By | Status | Notes |
+|---|--------|-------|--------|--------|-------|
+| — | No new action items | — | — | — | Clean sprint, no process changes needed |
+
+**Energy Check:**
+- **Sustainability:** Felt good — productive sprint, clean execution
+- **Saturday block:** Used
+- **Evening consistency:** Strong
+- **Recommendation:** Keep pace. Sprint 3 can target same capacity (12 hrs). Ready for Build 1 (Kilala Kita) or next phase gate work.
 
 ---
 
@@ -119,13 +147,15 @@
 | Sprint | Goal | Hours Plan | Hours Actual | Tasks Plan | Tasks Done | Hit Goal? |
 |--------|------|-----------|-------------|-----------|-----------|-----------|
 | 1 | Ship Build 0 | 10–15 | ~14 | 5 | 5 | YES |
-| 2 | KA domain knowledge files | 12 | TBD | 6 | TBD | TBD |
+| 2 | KA domain knowledge files | 12 | ~11 | 6 | 6 | YES |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
 - M-sized tasks (2–3 hrs) fit well in evening blocks
 - "Ship one hard gate per sprint" is a good cadence for Phase 0A
 - Itemized checklists are essential for multi-session work
+- Context/knowledge file sprints can be highly productive — 6/6 tasks in ~11 hrs
+- Task expansion (Task 2: 4→16 types) is fine when it adds clear value and stays within capacity
 
 ---
 
@@ -135,7 +165,7 @@
 
 | Source | # | Action | Status |
 |--------|---|--------|--------|
-| Sprint 1 Retro | 1 | Create `.env.local.example` + dev setup docs | PLANNED — Sprint 2 Task #6 |
+| Sprint 1 Retro | 1 | Create `.env.local.example` + dev setup docs | DONE — Sprint 2 Task #6 (2026-03-22) |
 | Sprint 1 Retro | 2 | Create BIR knowledge base | DONE — Sprint 2 Task #1 (2026-03-21) |
 | Sprint 1 Retro | 3 | Create MSME business knowledge | DONE — Sprint 2 Task #2 (2026-03-22, expanded to 16 types + benchmarks table) |
-| Sprint 1 Retro | 4 | Populate Taglish manual | PLANNED — Sprint 2 Task #4 |
+| Sprint 1 Retro | 4 | Populate Taglish manual | DONE — Sprint 2 Task #4 (2026-03-22, Anton reviewed and approved) |
