@@ -40,7 +40,7 @@ Each feature section lists the specific test scenarios required. The scenario co
 | 1.12 | Gross receipts at ₱2,999,999 → VAT does NOT trigger | Unit | 📝 | — |
 | 1.13 | 8% flat tax filer (Ana persona) — simplified calendar | Unit | 📝 | — |
 | 1.14 | Graduated rate filer — standard deadline calendar | Unit | 📝 | — |
-| 1.15 | All deadline dates output in Asia/Manila timezone | Unit | 📝 | — |
+| 1.15 | All deadline dates output in Asia/Manila timezone | Unit | ✅ | 2026-03-22 — `timezone.test.ts` (12 tests: boundary, year-cross, SQL, format) |
 | 1.16 | Dec 31 deadline + Jan 1 holiday → Jan 2 | Unit | 📝 | — |
 | 1.17 | Notification sequence: 7d, 3d, 1d before each deadline | Unit | 📝 | — |
 
@@ -162,8 +162,8 @@ Each feature section lists the specific test scenarios required. The scenario co
 | 5.6 | Pro: Sonnet for morning briefing, Haiku for OCR | Integration | 📝 | — |
 | 5.7 | Business: 80th scan succeeds, 81st blocked | Unit | 📝 | — |
 | 5.8 | Business: multi-seat access (Accountant role) | Integration | 📝 | — |
-| 5.9 | Onboarding queries exempt from Free daily limit | Unit | 📝 | — |
-| 5.10 | Scan counter resets at midnight Manila time, not UTC | Unit | 📝 | — |
+| 5.9 | Onboarding queries exempt from Free daily limit (3 cases: false/true/undefined) | Unit | ✅ | 2026-03-22 |
+| 5.10 | Scan counter resets at midnight Manila time, not UTC | Unit | ✅ | 2026-03-22 — `timezone.test.ts` boundary tests + `circuit-breaker.test.ts` uses `getManilaToday()` |
 
 **Cross-skill dependency:** Solutions architect defines tier structure and model routing decision tree. AI engineer implements Haiku/Sonnet routing logic. Fullstack engineer implements middleware and counter logic. Data architect defines `subscriptions` table tier column.
 
@@ -186,6 +186,8 @@ These checks verify that builds comply with architecture decisions. Run after ea
 | SA.7 | ADR compliance: all Claude calls through `callClaude()` wrapper | Code review / grep | 📝 |
 | SA.8 | ADR compliance: `retryWithBackoff()` paired with circuit breaker | Code review / grep | 📝 |
 | SA.9 | No direct Supabase service role key usage in client code | grep for SUPABASE_SERVICE_ROLE in /app/, /components/ | 📝 |
+| SA.10 | Sentry captures errors in production (Gap A4) | Deploy → trigger deliberate error → verify in Sentry dashboard | ✅ | Setup complete 2026-03-22 (ADR-007). Manual verification pending first deploy. |
+| SA.11 | All user-facing timestamps in UTC+8 via `@/lib/timezone` (Gap A3) | `timezone.test.ts` (12 unit tests) + code review | ✅ | 2026-03-22 (ADR-006) |
 
 ---
 

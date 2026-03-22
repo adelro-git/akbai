@@ -5,7 +5,7 @@ import type { ChatMessage } from './chat-interface'
 interface MessageListProps {
   messages: ChatMessage[]
   loading: boolean
-  bottomRef: RefObject<HTMLDivElement>
+  bottomRef: RefObject<HTMLDivElement | null>
 }
 
 export default function MessageList({ messages, loading, bottomRef }: MessageListProps) {

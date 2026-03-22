@@ -22,6 +22,17 @@ export default async function ChatPage() {
 
   if (!user) redirect('/login')
 
+  // Check onboarding status — redirect to onboarding if not completed
+  const { data: onboardingCheck } = await supabase
+    .from('users')
+    .select('onboarding_completed')
+    .eq('id', user.id)
+    .single()
+
+  if (!onboardingCheck?.onboarding_completed) {
+    redirect('/onboarding')
+  }
+
   const { data: messages } = await supabase
     .from('ka_conversations')
     .select('id, role, content, created_at')

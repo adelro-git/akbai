@@ -208,6 +208,25 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 **Testing:** Vitest (unit), Playwright (e2e). No tests for simple CRUD — focus on BIR logic, OCR, RLS, payment flows.
 **Git:** Feature branches, PR to main, Vercel preview per PR. No direct pushes to main.
 
+### Timezone Convention
+
+All user-facing timestamps use **UTC+8 (Asia/Manila)**. Use the shared `@/lib/timezone` utilities — never raw `new Date()` for display.
+
+| Use Case | Utility | Example |
+|----------|---------|---------|
+| Daily boundaries (circuit breaker, query limits) | `getManilaToday()` | `'2026-03-22'` |
+| Display timestamps | `formatManilaDate(date, format)` | `'Mar 22, 2026'` |
+| ISO timestamp with offset | `getManilaTimestamp()` | `'2026-03-22T18:30:45+08:00'` |
+| Supabase raw queries | `toManilaSQL(column)` | `created_at AT TIME ZONE 'Asia/Manila'` |
+| Convert Date for date-fns | `toManila(date)` | Manila time in UTC fields |
+| Timezone constant | `MANILA_TZ` | `'Asia/Manila'` |
+
+**Rules:**
+- All user-facing timestamps: UTC+8 (Asia/Manila)
+- Use `@/lib/timezone` utilities — never raw `new Date()` for display
+- Supabase queries: use `AT TIME ZONE 'Asia/Manila'` via `toManilaSQL()` helper
+- Daily boundaries (circuit breaker, query limits): use `getManilaToday()`
+
 ---
 
 ## System Prompt Architecture (Build 0 — Roadmap v14)

@@ -81,4 +81,26 @@ describe('checkCircuitBreaker', () => {
     expect(result.allowed).toBe(false);
     expect(result.reason).toBe('user_cap');
   });
+
+  // --- Gap E3: Onboarding rate-limit exemption ---
+
+  it('exempts free tier query limit during onboarding (onboardingCompleted=false)', async () => {
+    const supabase = createMockSupabase({ globalSpend: 0.5, userSpend: 0.05, userQueryCount: 10 });
+    const result = await checkCircuitBreaker(supabase, 'user-1', 0.01, 'free', false);
+    expect(result.allowed).toBe(true);
+  });
+
+  it('enforces free tier query limit after onboarding (onboardingCompleted=true)', async () => {
+    const supabase = createMockSupabase({ globalSpend: 0.5, userSpend: 0.05, userQueryCount: 10 });
+    const result = await checkCircuitBreaker(supabase, 'user-1', 0.01, 'free', true);
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toBe('user_cap');
+  });
+
+  it('enforces free tier query limit when onboardingCompleted is undefined (safe default)', async () => {
+    const supabase = createMockSupabase({ globalSpend: 0.5, userSpend: 0.05, userQueryCount: 10 });
+    const result = await checkCircuitBreaker(supabase, 'user-1', 0.01, 'free', undefined);
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toBe('user_cap');
+  });
 });

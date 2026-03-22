@@ -12,8 +12,8 @@
 |---|-----|----------|-------------|--------|
 | A1 | Authentication (email OTP via Supabase Auth) | **CRITICAL** | Phase 0A — Build 0 | Must ship before any user data is stored. Supabase Auth + magic link. No auth = no data isolation = PDPA violation. |
 | A2 | Privacy Policy & Terms of Service | **CRITICAL** | Phase 0A — Legal | NPC requires explicit consent checkbox before any data collection. Engage a PH tech lawyer. Do not self-draft. |
-| A3 | Timezone enforcement (UTC+8) | **CRITICAL** | Phase 1 — Day 1 | All timestamps, BIR deadlines, and push notifications must use UTC+8 (Asia/Manila). Supabase default is UTC — must be overridden in every query and display. |
-| A4 | Error monitoring (Sentry) | **CRITICAL** | Phase 1 — Pre-launch | Zero visibility into production crashes without this. Set up Sentry with source maps before first beta user. |
+| A3 | Timezone enforcement (UTC+8) | **CRITICAL** | Phase 1 — Day 1 | ✅ RESOLVED 2026-03-22. Shared `@/lib/timezone` module: `getManilaToday()`, `formatManilaDate()`, `toManila()`, `getManilaTimestamp()`, `toManilaSQL()`. Circuit breaker refactored to use shared utility. 12 tests passing. ADR-006. Convention documented in tech-stack.md. |
+| A4 | Error monitoring (Sentry) | **CRITICAL** | Phase 1 — Pre-launch | ✅ RESOLVED 2026-03-22. `@sentry/nextjs` installed with client+server configs, `instrumentation.ts`, `withSentryConfig` in next.config.js, `global-error.tsx` (Taglish), env vars in `.env.local.example`. ADR-007. Production-only, low sample rates (0.1) for cost control. |
 | A5 | Analytics baseline (PostHog) | **CRITICAL** | Phase 1 — Pre-launch | Required to measure the 8 Sense Check Gate signals. Cannot validate MVP without it. Must be live from Day 1. |
 
 **Note:** Source doc Table 19 summary shows Category A has 5 CRITICAL gaps. The total 8 CRITICAL count includes 3 from Category D below.
@@ -27,7 +27,7 @@
 |---|-----|----------|-------------|--------|
 | B1 | AI loading states | IMPORTANT | Build 3 | Show animated thinking indicator + estimated wait time in Taglish. Claude API calls take 3–10s. Blank screen = user thinks app is broken. |
 | B2 | Free tier limit UX & enforcement | IMPORTANT | Build 3 | Soft limit warning at 80% usage. Hard block at 100% with upgrade CTA. Must be clear BEFORE the limit is hit, not after. |
-| B3 | Onboarding recovery / resumable Kilala Kita | IMPORTANT | Build 1 | If user drops out mid-onboarding and returns, app must resume from last completed step — not restart from scratch. |
+| B3 | Onboarding recovery / resumable Kilala Kita | IMPORTANT | Build 1 | ✅ RESOLVED 2026-03-22. Onboarding saves progress per step via `/api/onboarding` POST. GET returns current step for resume-on-return. `onboarding_step` column on `business_profiles` tracks progress. UI wizard starts from last completed step. |
 | B4 | Profile update flow | IMPORTANT | Build 3 | Users need a way to update business profile after onboarding. BIR status can change. Settings screen required. |
 | B5 | Empty states | IMPORTANT | Build 2 | Every Dashboard card and Chat history must have a Taglish empty state (e.g., "Wala pang data. Mag-upload ka ng receipt para makapagsimula."). |
 | B6 | Push notification timing (UTC+8) | IMPORTANT | Build 4 | BIR deadline alerts must fire in PHT, not UTC. All notification schedules must be stored and triggered in Asia/Manila timezone. |
@@ -72,7 +72,7 @@
 |---|-----|----------|-------------|--------|
 | E1 | Resibo OCR technical spike | **CRITICAL** | Phase 0A — Build 0 | Test Claude Haiku Vision on 10–15 real Filipino receipts (Shopee waybills, SM, faded thermal prints) via Anthropic Console. Must hit 85%+ field accuracy. If Haiku fails, evaluate Sonnet (higher API cost) or adjust marketing promises. This is a hard gate before Build 1. Effort: 1 afternoon. |
 | E2 | Meta API dummy webhook submission | IMPORTANT | Phase 0A — This week | Meta App Review takes 1–3+ months. Submit a simple Next.js endpoint returning 200 OK as the webhook now. Decouples Phase 2 DM Connect from bureaucratic wait. Ping endpoint monthly to keep approval active. Effort: 1 hour. |
-| E3 | Onboarding rate-limit exemption | **CRITICAL** | Build 1 — Architecture | Free tier 10-query/day limit must NOT apply during Kilala Kita onboarding. Users who hit the paywall before the "Maria Moment" (first actionable insight) will churn. API middleware must start the query counter only after onboarding completes and user reaches Dashboard. |
+| E3 | Onboarding rate-limit exemption | **CRITICAL** | Build 1 — Architecture | ✅ RESOLVED 2026-03-22. `checkCircuitBreaker()` accepts optional `onboardingCompleted` param. When `false`, free tier 10-query limit is bypassed. Chat route passes `users.onboarding_completed` to circuit breaker. Safe default: `undefined` still enforces limit. 3 tests. ADR-008. |
 
 ---
 
