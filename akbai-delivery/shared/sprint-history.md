@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-20
+> Last updated: 2026-03-22
 
 ---
 
@@ -43,6 +43,33 @@
 - IP-based rate limiting in `proxy.ts`
 - 103 tests across 9 files (all passing)
 - akbai-delivery plugin: 12 skills, 15 slash commands, shared context
+
+### Sprint 2 — 2026-03-21 to 2026-04-04
+
+**Phase:** 0A — Build 0 Complete, Pre-Build 1 Knowledge Foundation
+**Sprint Goal:** Create the 4 KA domain knowledge files so Build 1 (Kilala Kita) can deliver the "Maria Moment."
+**Capacity:** 12 hours
+
+**Tasks:**
+
+| # | Task | Size | Est. Hrs | Status | Notes |
+|---|------|------|----------|--------|-------|
+| 1 | BIR Knowledge Base | M | 3 | DONE | Shipped 2026-03-21. 282-line reference: forms, deadlines, rates, VAT rules, persona mistakes, glossary. |
+| 2 | MSME Business Knowledge | M | 3 | DONE | Shipped 2026-03-22. Expanded to 735 lines: 6 full profiles + 9 stubs, 16-type taxonomy, fallback chain. Also created `004_business_benchmarks.sql` migration (compounding knowledge table). |
+| 3 | Kilala Kita Onboarding Context | S | 2 | DONE | Shipped 2026-03-22. 28 first-response templates (5+2 types × 4 pains), knowledge map, personalization variable flow, CPA escalation rules. |
+| 4 | Taglish Manual Population | S | 1.5 | DONE | Shipped 2026-03-22. All 10 sections populated + `filipino-text-vernacular.md`. Anton reviewed and approved 2026-03-22. |
+| 5 | Scopes Enrichment + Gap Registry | XS | 1 | DONE | Shipped 2026-03-22. TAX_SCOPE enriched with BIR form decision tree + persona warnings. Gap registry Design Gate #3 updated. 6 integration tests passing (109 total). |
+| 6 | `.env.local.example` + Dev Setup | XS | 0.5 | DONE | Shipped 2026-03-22. `.env.local.example` created, Dev Setup section added to HANDOVER.md, `.gitignore` updated. Resolves Sprint 1 Retro action #1. |
+
+**Actual hours used:** ~11 hrs (Tasks 1-3: ~8 hrs, Task 4: ~1.5 hrs, Task 5: ~1 hr, Task 6: ~0.5 hrs)
+**Sprint outcome:** COMPLETE — All 6 tasks done. All 4 Sprint 1 retro actions resolved.
+
+**What was built beyond original scope (Task 2 expansion):**
+- 16-type business taxonomy with `{category}_{subtype}` naming convention (was 4 types)
+- 2 new full profiles: Food/Carinderia (§7), Service/Salon (§8)
+- 9 Phase 3 stub profiles with overview tables
+- `business_benchmarks` Supabase table (migration 004) with JSONB metrics, RLS, seed data for 6 types
+- Updated `supabase-schema.md` with §15 business_benchmarks
 
 ---
 
@@ -92,6 +119,7 @@
 | Sprint | Goal | Hours Plan | Hours Actual | Tasks Plan | Tasks Done | Hit Goal? |
 |--------|------|-----------|-------------|-----------|-----------|-----------|
 | 1 | Ship Build 0 | 10–15 | ~14 | 5 | 5 | YES |
+| 2 | KA domain knowledge files | 12 | TBD | 6 | TBD | TBD |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
@@ -107,7 +135,7 @@
 
 | Source | # | Action | Status |
 |--------|---|--------|--------|
-| Sprint 1 Retro | 1 | Create `.env.local.example` + dev setup docs | PENDING |
-| Sprint 1 Retro | 2 | Create BIR knowledge base | PENDING |
-| Sprint 1 Retro | 3 | Create MSME business knowledge | PENDING |
-| Sprint 1 Retro | 4 | Populate Taglish manual | PENDING |
+| Sprint 1 Retro | 1 | Create `.env.local.example` + dev setup docs | PLANNED — Sprint 2 Task #6 |
+| Sprint 1 Retro | 2 | Create BIR knowledge base | DONE — Sprint 2 Task #1 (2026-03-21) |
+| Sprint 1 Retro | 3 | Create MSME business knowledge | DONE — Sprint 2 Task #2 (2026-03-22, expanded to 16 types + benchmarks table) |
+| Sprint 1 Retro | 4 | Populate Taglish manual | PLANNED — Sprint 2 Task #4 |

@@ -1,6 +1,6 @@
 # AKBai — Supabase Schema Reference
 > Living document. Update this file whenever a table is created, modified, or deprecated.
-> Last updated: March 2026 | Source: Tech Stack v1, Roadmap v13, Operations Roadmap v6
+> Last updated: 2026-03-22 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
 
 ---
 
@@ -20,8 +20,9 @@
 12. [daily_api_spend](#12-daily_api_spend)
 13. [audit_log](#13-audit_log)
 14. [redirect_logs](#14-redirect_logs)
-15. [Relationship Diagram](#15-relationship-diagram)
-16. [Index Strategy Summary](#16-index-strategy-summary)
+15. [business_benchmarks](#15-business_benchmarks)
+16. [Relationship Diagram](#16-relationship-diagram)
+17. [Index Strategy Summary](#17-index-strategy-summary)
 
 > **Migration order matters.** Tables are listed in FK dependency order — receipts before transactions (because transactions.receipt_id references receipts.id). Run migrations sequentially by number.
 
@@ -893,7 +894,86 @@ CREATE INDEX idx_redirect_logs_category
 
 ---
 
-## 15. Relationship Diagram
+## 15. business_benchmarks
+
+**Purpose:** Anonymized, aggregated business intelligence per business type. Computed from real user data (transactions, receipts, daily_entries). KA uses this to give data-backed insights at prompt assembly time.
+**Persona interaction:** All — read-only. Data is anonymized aggregates, not individual user data.
+**Data classification:** Analytics (anonymized, no PII)
+
+```sql
+-- Migration: 004_business_benchmarks.sql
+CREATE TABLE public.business_benchmarks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- Dimension keys
+  business_type TEXT NOT NULL,                -- e.g., 'food_baking', 'service_salon'
+  period_type TEXT NOT NULL
+    CHECK (period_type IN ('monthly', 'quarterly')),
+  period_start DATE NOT NULL,                 -- first day of the period
+
+  -- Sample metadata (for statistical validity + privacy)
+  sample_size INTEGER NOT NULL DEFAULT 0,     -- number of businesses contributing
+  min_sample_threshold INTEGER NOT NULL DEFAULT 5, -- don't surface to users if below this
+
+  -- Aggregated metrics (JSONB for flexible shapes per business type)
+  cost_structure JSONB DEFAULT '{}'::jsonb,   -- category → {pct_of_revenue, median, p25, p75}
+  revenue_stats JSONB DEFAULT '{}'::jsonb,    -- {median, p25, p75, income_sources}
+  seasonal_patterns JSONB DEFAULT '{}'::jsonb,-- {peak_months, slow_months, revenue_vs_avg}
+  common_merchants JSONB DEFAULT '[]'::jsonb, -- top 10 anonymized merchant names by frequency
+  common_categories JSONB DEFAULT '[]'::jsonb,-- expense categories ranked by transaction count
+
+  -- Computation tracking
+  computation_version INTEGER NOT NULL DEFAULT 1,
+  -- 0 = editorial seed from msme-business-knowledge.md
+  -- 1+ = computed from real user data
+
+  -- Standard columns
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ NULL
+);
+
+ALTER TABLE public.business_benchmarks ENABLE ROW LEVEL SECURITY;
+
+-- All authenticated users can read (anonymized data, no PII)
+CREATE POLICY "benchmarks_select_authenticated"
+  ON public.business_benchmarks
+  FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Only service role can write (aggregation job / seed script)
+CREATE POLICY "benchmarks_insert_service"
+  ON public.business_benchmarks
+  FOR INSERT WITH CHECK (auth.role() = 'service_role');
+
+CREATE POLICY "benchmarks_update_service"
+  ON public.business_benchmarks
+  FOR UPDATE USING (auth.role() = 'service_role');
+
+CREATE TRIGGER set_updated_at
+  BEFORE UPDATE ON public.business_benchmarks
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+-- One benchmark row per business_type + period (prevents duplicates)
+CREATE UNIQUE INDEX idx_benchmarks_type_period
+  ON public.business_benchmarks(business_type, period_type, period_start)
+  WHERE deleted_at IS NULL;
+
+-- Fast lookup: latest monthly benchmark for a business type (prompt assembly)
+CREATE INDEX idx_benchmarks_latest
+  ON public.business_benchmarks(business_type, period_start DESC)
+  WHERE deleted_at IS NULL AND period_type = 'monthly';
+```
+
+**Notes:**
+- JSONB columns because cost structure shapes differ by business type (salon has "supplies" + "rent" + "labor"; freelancer has "software" + "internet"). Avoids rigid columns that don't apply to all types.
+- `computation_version: 0` = editorial seed from `msme-business-knowledge.md`. KA says "typically for this business type." `computation_version: 1+` = computed from real user data. KA says "based on similar businesses."
+- `min_sample_threshold = 5` prevents surfacing insights based on too few users (privacy + statistical validity).
+- Aggregation runs monthly via a Supabase Edge Function (pg_cron, 1st of month, 3am Manila time). Queries `transactions` joined with `business_profiles` using service role.
+- Prompt assembly queries: `SELECT * FROM business_benchmarks WHERE business_type = $1 AND period_type = 'monthly' ORDER BY period_start DESC LIMIT 1`.
+
+---
+
+## 16. Relationship Diagram
 
 ```
 auth.users (Supabase Auth)
@@ -917,12 +997,13 @@ auth.users (Supabase Auth)
 System tables (no user ownership):
     ├── webhook_events
     ├── daily_api_spend
-    └── redirect_logs
+    ├── redirect_logs
+    └── business_benchmarks (anonymized aggregates, auth-readable)
 ```
 
 ---
 
-## 16. Index Strategy Summary
+## 17. Index Strategy Summary
 
 | Table | Key Indexes | Purpose |
 |-------|------------|---------|
@@ -939,12 +1020,13 @@ System tables (no user ownership):
 | daily_api_spend | spend_date (unique) | Circuit breaker |
 | audit_log | actor_id, resource_type+id, action | Compliance queries |
 | redirect_logs | category+date | Demand analysis |
+| business_benchmarks | type+period_type+period_start (unique), type+period_start DESC | Dedup, prompt assembly lookup |
 
 All user-facing table indexes include `WHERE deleted_at IS NULL` as a partial index condition to skip soft-deleted rows.
 
 ---
 
-## 17. Timezone Handling (Gap A3)
+## 18. Timezone Handling (Gap A3)
 
 All timestamps in the database are stored as `TIMESTAMPTZ` (UTC). Conversion to Philippine Standard Time (PST/PHT, UTC+8) happens in the application layer only.
 
