@@ -71,6 +71,75 @@
 - `business_benchmarks` Supabase table (migration 004) with JSONB metrics, RLS, seed data for 6 types
 - Updated `supabase-schema.md` with §15 business_benchmarks
 
+### Sprint 3 — 2026-03-23 to 2026-04-05
+
+**Phase:** 0A — Build 1 Start
+**Sprint Goal:** Ship the Kilala Kita onboarding UI (Build 1 frontend) and wire UTC+8 timezone enforcement (A3) so the app foundation is ready for user data.
+**Capacity:** 12 hours
+
+**Tasks:**
+
+| # | Task | Size | Est. Hrs | Status | Notes |
+|---|------|------|----------|--------|-------|
+| 1 | UTC+8 timezone enforcement (Gap A3) | S | 2 | PLANNED | |
+| 2 | Kilala Kita onboarding schema + API | M | 3 | PLANNED | Depends: A1 auth scaffold |
+| 3 | Kilala Kita onboarding UI (5-step flow) | L | 4 | PLANNED | Depends: Task 2 |
+| 4 | Onboarding rate-limit exemption (Gap E3) | S | 1.5 | PLANNED | Depends: Task 2 |
+| 5 | Sentry error monitoring setup (Gap A4) | S | 1.5 | PLANNED | |
+
+**Actual hours used:** TBD — updated during retro
+**Sprint outcome:** IN PROGRESS
+
+**Detailed task breakdowns:**
+
+**Task 1: UTC+8 Timezone Enforcement (S — 2 hrs)**
+Why: CRITICAL gap A3 — all BIR deadlines, timestamps, and push notifications must use Asia/Manila.
+- [ ] Create shared `timezone.ts` utility in `/frontend/src/lib/` with `toManila()`, `formatManilaDate()`, `getManilaToday()`
+- [ ] Add Supabase helper for `AT TIME ZONE 'Asia/Manila'` queries
+- [ ] Update chat API route and existing date displays to use the utility
+- [ ] Write 5+ unit tests covering timezone conversion edge cases
+- [ ] Document convention in `shared/tech-stack.md`
+Done when: All user-facing timestamps render in PHT (UTC+8), utility tested, convention documented.
+
+**Task 2: Kilala Kita Onboarding Schema + API (M — 3 hrs)**
+Why: Build 1 data layer — onboarding needs tables for business profiles and resumable step-by-step progress (Gap B3).
+- [ ] Read `kilala-kita-context.md` and map 5 onboarding steps to data fields
+- [ ] Create Supabase migration: `business_profiles` table with RLS, soft-delete
+- [ ] Create `/api/onboarding/route.ts` — POST save/update, GET resume from last step
+- [ ] Add Zod schemas for onboarding input validation per step
+- [ ] Write 4+ API tests: save step, resume from step 3, complete flow, validation errors
+Done when: Onboarding data saves step-by-step, resumes on return, all tests pass.
+
+**Task 3: Kilala Kita Onboarding UI — 5-Step Flow (L — 4 hrs)**
+Why: Build 1 frontend — user's first experience with KA. Must deliver the "Maria Moment."
+- [ ] Create `/app/(features)/onboarding/` route with step-based state machine
+- [ ] Build Step 1: Business type selector (16-type taxonomy from `msme-business-knowledge.md`)
+- [ ] Build Step 2: Income range selector
+- [ ] Build Step 3: Primary pain selector
+- [ ] Build Step 4: BIR consent + data privacy acknowledgment
+- [ ] Build Step 5: KA first response — personalized greeting from `kilala-kita-context.md` templates
+- [ ] Wire to Task 2 API — save progress on each step, resume on return (Gap B3)
+Done when: User completes all 5 steps, sees personalized KA greeting, can resume mid-flow.
+Depends on: Task 2
+
+**Task 4: Onboarding Rate-Limit Exemption (S — 1.5 hrs)**
+Why: CRITICAL gap E3 — free tier 10-query/day must NOT count during onboarding.
+- [ ] Read `circuit-breaker.ts` and identify where query counting happens
+- [ ] Add `isOnboarding` check — bypass counter if `onboarding_step < 5`
+- [ ] Update circuit breaker tests: verify onboarding queries exempt
+- [ ] Add integration test: onboarding flow → complete → counter starts at 0
+Done when: Onboarding queries don't count toward daily limit, verified by tests.
+Depends on: Task 2
+
+**Task 5: Sentry Error Monitoring Setup (S — 1.5 hrs)**
+Why: CRITICAL gap A4 — zero production visibility without error monitoring.
+- [ ] Install `@sentry/nextjs` and run Sentry wizard for config files
+- [ ] Configure DSN from env var, enable source maps
+- [ ] Add Sentry to error boundary and API routes
+- [ ] Add `NEXT_PUBLIC_SENTRY_DSN` to `.env.local.example`
+- [ ] Test: trigger deliberate error, confirm it appears in Sentry
+Done when: Errors from client and server captured in Sentry with source maps.
+
 ---
 
 ## Retro Log
@@ -148,6 +217,7 @@
 |--------|------|-----------|-------------|-----------|-----------|-----------|
 | 1 | Ship Build 0 | 10–15 | ~14 | 5 | 5 | YES |
 | 2 | KA domain knowledge files | 12 | ~11 | 6 | 6 | YES |
+| 3 | Build 1 + infra gaps | 12 | TBD | 5 | TBD | TBD |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
