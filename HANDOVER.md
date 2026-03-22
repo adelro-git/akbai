@@ -498,5 +498,36 @@ Ensure `.env.local` has: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLI
 
 ---
 
+## Dev Setup (New Session Quickstart)
+
+1. **Clone the repo** and enter the frontend directory:
+   ```bash
+   git clone https://github.com/adelro-git/akbai.git
+   cd akbai/frontend
+   ```
+
+2. **Copy the environment template** and fill in your keys:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+   Open `.env.local` and set these required values:
+   - `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — Supabase anon/publishable key
+   - `SUPABASE_SERVICE_ROLE_KEY` — Supabase service role key (server-side only)
+   - `ANTHROPIC_API_KEY` — Claude API key
+
+   **Where to get keys:**
+   - Supabase → [Dashboard](https://supabase.com/dashboard) → Project Settings → API
+   - Anthropic → [Console](https://console.anthropic.com/)
+
+3. **Install dependencies and start the dev server:**
+   ```bash
+   npm install
+   npm run dev
+   ```
+   App runs at **http://localhost:3000**
+
+---
+
 *This document is living. Update it at the start and end of every build session.*
 *Next: read `/AKBai/akbai-delivery/shared/project-context.md`, then activate the skill for Build 0.*

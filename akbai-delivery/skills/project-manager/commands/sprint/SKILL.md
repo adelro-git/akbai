@@ -30,6 +30,9 @@ You are helping Anton (solo founder, 10–15 hrs/sprint, evenings + weekends) pl
 - Check `references/phase-gates.md` for current phase — which gate criteria are unmet?
 - CRITICAL gaps take absolute priority. Phase gate criteria take second priority.
 
+### Step 2b: Check BIR Knowledge Base Staleness
+Read the "Last verified" date from `skills/ai-engineer/references/bir-knowledge-base.md`. If that date is more than 90 days ago (relative to today), automatically add a task to the sprint plan: **"Verify BIR knowledge base"** (Size: S, 1–2 hrs, run `/bir-check`). This task should be included in Step 4 output regardless of other priorities.
+
 ### Step 3: Check for Carryover
 Read `shared/sprint-history.md` §"Unresolved Action Items" for pending items from previous retros. Also check the last sprint entry for incomplete tasks.
 
@@ -179,6 +182,7 @@ Include in your escalation: what the blocker is, why it matters, and the deadlin
 
 - [ ] Current phase confirmed with Anton
 - [ ] CRITICAL gaps identified and prioritized
+- [ ] BIR knowledge base staleness checked (>90 days → add verify task)
 - [ ] Phase gate criteria checked for current/next phase
 - [ ] 3–5 tasks selected, each ≤ 4 hrs
 - [ ] Total hours 11–13 (2–3 hr buffer from 15 hr capacity)

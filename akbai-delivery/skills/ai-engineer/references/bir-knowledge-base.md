@@ -1,7 +1,7 @@
 # AKBai — BIR Knowledge Base
 > Used by: ai-engineer, security-compliance, fullstack-engineer (Build 6 Deadline Watcher)
 > Source: BIR.gov.ph public data, TRAIN Law (RA 10963), RMC 20-2026
-> Last verified: 2026-03-21 | Tax year: 2025–2026 rules
+> Last verified: 2026-03-22 | Tax year: 2025–2026 rules
 > **⚠️ DISCLAIMER: This file is reference material for KA's domain knowledge. All tax-related outputs to users MUST include the BIR disclaimer: "Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo."**
 
 ---
@@ -12,7 +12,8 @@
 
 | Business Type | AKBai Persona | Tax Option | Required Forms | Filing Frequency |
 |--------------|---------------|------------|----------------|------------------|
-| Sole proprietor (non-VAT, graduated) | Maria, Jose, Andoy | Graduated rates | 1701Q, 1701A, 2551Q | Quarterly ITR, Annual ITR, Quarterly percentage tax |
+| Sole proprietor (non-VAT, graduated, OSD) | Maria, Jose, Andoy | Graduated rates + OSD | 1701Q, 1701A, 2551Q | Quarterly ITR, Annual ITR, Quarterly percentage tax |
+| Sole proprietor (non-VAT, graduated, itemized) | Maria, Jose, Andoy | Graduated rates + itemized deductions | 1701Q, **1701**, 2551Q | Quarterly ITR, Annual ITR (Form 1701, not 1701A), Quarterly percentage tax |
 | Sole proprietor (non-VAT, 8% flat) | Ana | 8% flat tax | 1701Q, 1701A | Quarterly ITR, Annual ITR (exempt from 2551Q) |
 | Sole proprietor (VAT-registered) | Jose (if >₱3M) | Graduated rates + VAT | 1701Q, 1701A, 2550Q | Quarterly ITR, Annual ITR, Quarterly VAT |
 | Corporation | (Phase 3+) | Corporate rates | 1702Q, 1702, 2551Q | Quarterly ITR, Annual ITR, Quarterly percentage tax |
@@ -23,15 +24,20 @@
 |------|-----------|-----------|-----------|
 | **1701Q** | Quarterly Income Tax Return (Individuals) | All self-employed / sole proprietors | Q1, Q2, Q3 (no Q4 — covered by annual) |
 | **1701A** | Annual Income Tax Return (Purely Business/Profession) | Sole proprietors using 8% flat or OSD | Annually |
-| **1701** | Annual Income Tax Return (Mixed Income) | Individuals with both compensation + business income | Annually |
+| **1701** | Annual Income Tax Return (Individuals) | Individuals with business/professional income using **itemized deductions** (purely self-employed OR mixed income) | Annually |
 | **2551Q** | Quarterly Percentage Tax Return | Non-VAT taxpayers using graduated rates (NOT 8% flat) | Quarterly |
 | **2550Q** | Quarterly VAT Return | VAT-registered taxpayers (gross >₱3M) | Quarterly |
-| **2550M** | Monthly VAT Declaration | Largely phased out under TRAIN Law; replaced by 2550Q | Monthly (legacy — check BIR for current status) |
+| **2550M** | Monthly VAT Declaration | Quarterly 2550Q is now the **mandatory default** since January 1, 2023 (per RMC 5-2023); monthly 2550M remains an **optional additional filing** with no penalty for switching (clarified by RMC 52-2023) | Monthly (optional) |
 | **1702Q** | Quarterly Income Tax Return (Corporations) | Corporations | Q1, Q2, Q3 |
 | **1702** | Annual Income Tax Return (Corporations) | Corporations | Annually |
 
 ### Key Rule: 8% Flat Tax Exempts from 2551Q
 If a non-VAT individual taxpayer opts for 8% flat tax, they are **exempt** from filing BIR Form 2551Q (percentage tax). The 8% rate replaces both graduated income tax AND 3% percentage tax.
+
+### Key Rule: Form 1701-MS (Micro/Small Taxpayers — RMC 20-2026)
+RMC 20-2026 allows micro and small taxpayers to use **Form 1701-MS** (a simplified annual return) regardless of what their COR says. EOPT definitions: **micro** = gross sales < ₱3M; **small** = gross sales ₱3M to < ₱20M.
+
+**⚠️ Electronic filing gap (practitioner-reported, not officially confirmed on bir.gov.ph):** As of March 2026, multiple tax practitioners report that 1701-MS is not yet available in eBIRForms or eFPS. The reported workaround is to file 1701 or 1701A electronically instead, with no penalty for micro/small taxpayers who do so. KA should guide users toward electronic filing via 1701A, but note this is based on practitioner guidance — users should verify with their RDO if uncertain.
 
 ---
 
@@ -45,6 +51,9 @@ Filed Q1–Q3 only. No Q4 quarterly — the annual return covers the full year.
 | Q1 | January – March | **May 15** |
 | Q2 | April – June | **August 15** |
 | Q3 | July – September | **November 15** |
+
+### How Quarterly Income Tax (1701Q) Is Computed
+Quarterly income tax is computed on **cumulative year-to-date income**, not just the quarter's income. Tax paid in prior quarters is credited against the current quarter's liability. Example: if Q1 tax due = ₱10,000 and Q2 cumulative tax due = ₱25,000, the Q2 payment = ₱25,000 − ₱10,000 = ₱15,000. This is a common confusion point for MSMEs — KA should explain this clearly.
 
 ### Annual Income Tax (1701A / 1701 / 1702)
 
@@ -94,7 +103,8 @@ Same pattern as 2551Q — due on the 25th of the month after the quarter closes.
 - If deadline falls on a **weekend or holiday**, it moves to the **next business day**
 - BIR may issue **extensions via RMC** (Revenue Memorandum Circular) — check BIR.gov.ph
 - Payment and filing happen on the **same deadline** (file and pay together)
-- Late filing penalties: **25% surcharge** (or 10% under EOPT Act) + **6% annual interest** + compromise penalty
+- Late filing penalties: **25% surcharge** (or 10% for micro/small under EOPT Act; **50% if willful neglect or fraud** regardless of size) + **12% annual interest** per TRAIN Law (or 6% for micro/small under EOPT Act) + compromise penalty
+- **Note:** BIR's penalties page (bir.gov.ph/penalties) still shows 20% interest (pre-TRAIN). The 12% rate (double the 6% BSP legal interest) is the legally current rate per Sec. 249 as amended by RA 10963. KA should cite the TRAIN Law rate but note the discrepancy if users question it.
 
 ### Push Notification Sequence (Build 6 — Deadline Watcher)
 For each deadline, KA sends reminders at:
@@ -125,7 +135,7 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 ```
 
 **Key rules:**
-- ₱250,000 deduction applies **only if purely self-employed** (no compensation income)
+- ₱250,000 exemption/reduction applies **only if purely self-employed** (no compensation income)
 - If mixed-income earner: 8% applies on gross sales **without** the ₱250,000 reduction (the reduction is applied on the compensation side)
 - **No itemized deductions** — 8% is on gross, not net
 - **Replaces both** graduated income tax AND 3% percentage tax (exempt from 2551Q)
@@ -178,10 +188,11 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 
 ### VAT Registration Process (for KA awareness — NOT advice)
 1. File BIR Form 1905 (update registration)
-2. Pay registration fee (₱500)
-3. Get new COR reflecting VAT registration
-4. Start charging 12% VAT on all sales
-5. File 2550Q quarterly (instead of 2551Q)
+2. Get updated COR reflecting VAT registration
+3. Start charging 12% VAT on all sales
+4. File 2550Q quarterly (instead of 2551Q)
+
+**Note:** The ₱500 annual registration fee (Form 0605) was **abolished effective January 22, 2024** under the EOPT Act (RA 11976). KA should NOT remind users to pay this fee.
 
 ### Key VAT Facts for KA
 - VAT is **on top of** the selling price (not included unless explicitly stated)
@@ -228,7 +239,7 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 | Term | Filipino Usage | English Definition | KA Context |
 |------|---------------|-------------------|------------|
 | **TIN** | "TIN number ko" | Taxpayer Identification Number — unique 9-12 digit ID | Required for all BIR transactions. KA can store but never display full TIN. |
-| **COR** | "Certificate of Registration" | BIR Certificate of Registration — proves business is BIR-registered | Must be displayed in place of business. KA reminds users to renew annually (January). |
+| **COR** | "Certificate of Registration" | BIR Certificate of Registration — proves business is BIR-registered | Must be displayed in place of business. COR is one-time. The ₱500 annual registration fee was **abolished** under EOPT Act (Jan 2024) — KA should NOT remind users to pay it. |
 | **OR** | "Oficial Resibo" / "Official Receipt" | BIR-registered sequentially-numbered receipt for services | AKBai needs BIR legal sign-off before generating OR numbers (Gap D3). |
 | **SI** | "Sales Invoice" | Document for sale of goods (vs. OR for services) | Required for VAT-registered sellers. |
 | **VAT** | "VAT" (used as-is) | Value Added Tax — 12% on gross sales when registered | Triggered when gross > ₱3M/year. Jose persona's primary concern. |
@@ -272,10 +283,21 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 
 ## Sources
 
-- [BIR Tax Calendar 2025 (PDF)](https://bir-cdn.bir.gov.ph/BIR/pdf/2025%20Tax%20Calendar.pdf)
-- [BIR Tax Reminders](https://www.bir.gov.ph/tax-reminder)
-- [Taxumo BIR Calendar 2025 Guide](https://www.taxumo.com/blog/bir-tax-calendar-2025-deadlines-you-should-not-miss/)
-- [PWC Philippines Tax Summary](https://taxsummaries.pwc.com/philippines/individual/taxes-on-personal-income)
+### Primary (BIR official)
+- [BIR Interactive Tax Calendar 2026](https://www.bir.gov.ph/tax-reminder) — replaced printed PDF calendars per RMC 110-2025
+- [RMC 20-2026 Full Text (BIR CDN)](https://bir-cdn.bir.gov.ph/BIR/pdf/RMC%2020-2026.pdf) — AITR filing guidelines for CY 2025
+
+### Tax calendars & deadline references
+- [PwC 2026 Tax Calendar](https://www.pwc.com/ph/en/client-accounting-services/2026-tax-calendar.html) — month-by-month BIR, SEC, and agency deadlines
+- [Grant Thornton 2026 Tax Calendar](https://www.grantthornton.com.ph/insights/publications/tax-calendar/2026-tax-calendar/) — comprehensive alternative calendar
+
+### Rate tables & tax guides
+- [PwC Philippines Tax Summary](https://taxsummaries.pwc.com/philippines/individual/taxes-on-personal-income) — graduated rates, 8% flat tax (reviewed Dec 2025)
+- [Taxumo BIR Tax Table 2026](https://www.taxumo.com/blog/bir-tax-table-2026/) — rates + SSS/PhilHealth/Pag-IBIG contribution tables
+
+### RMC & compliance guides
+- [CloudCFO: RMC 20-2026 AITR Filing Guidelines](https://cloudcfo.ph/blog/bir-aitr-filing-guidelines-cy-2025/) — detailed RMC 20-2026 breakdown
+- [Taxumo: RMC 20-2026 Explainer](https://help.taxumo.com/en/articles/14107192-understanding-rmc-20-2026-key-updates-for-bir-forms-1701ms-1701-and-1701a)
 - [2026 BIR Annual Compliance Checklist](https://www.aureadalaw.com/post/2026-bir-annual-compliance-checklist-philippines-inventory-list-loose-leaf-alphalist-and-itr-d)
-- [RMC 20-2026 Updates](https://help.taxumo.com/en/articles/14107192-understanding-rmc-20-2026-key-updates-for-bir-forms-1701ms-1701-and-1701a)
 - [BIR Compliance Philippines 2026 Guide](https://philippinehubpartners.com/bir-tax-compliance-philippines-2026-guide/)
+- [CloudCFO: RR 29-2025 De Minimis Benefits Update](https://cloudcfo.ph/blog/ph-tax-update-2026-rr-29-2025-de-minimis-benefits/) — updated employee benefit limits effective Jan 2026
