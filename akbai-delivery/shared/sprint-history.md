@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-21
+> Last updated: 2026-03-22
 
 ---
 
@@ -54,15 +54,22 @@
 
 | # | Task | Size | Est. Hrs | Status | Notes |
 |---|------|------|----------|--------|-------|
-| 1 | BIR Knowledge Base | M | 3 | PLANNED | Retro action #2. CRITICAL — blocks Build 6, informs Build 1 |
-| 2 | MSME Business Knowledge | M | 3 | PLANNED | Retro action #3. HIGH — personalization depth |
-| 3 | Kilala Kita Onboarding Context | S | 2 | PLANNED | Depends on Tasks 1+2 |
-| 4 | Taglish Manual Population | S | 1.5 | PLANNED | Retro action #4. Design Gate #3 prereq |
-| 5 | Scopes Enrichment + Gap Registry | XS | 1 | PLANNED | Depends on Tasks 1+2+3 |
+| 1 | BIR Knowledge Base | M | 3 | DONE | Shipped 2026-03-21. 282-line reference: forms, deadlines, rates, VAT rules, persona mistakes, glossary. |
+| 2 | MSME Business Knowledge | M | 3 | DONE | Shipped 2026-03-22. Expanded to 735 lines: 6 full profiles + 9 stubs, 16-type taxonomy, fallback chain. Also created `004_business_benchmarks.sql` migration (compounding knowledge table). |
+| 3 | Kilala Kita Onboarding Context | S | 2 | DONE | Shipped 2026-03-22. 28 first-response templates (5+2 types × 4 pains), knowledge map, personalization variable flow, CPA escalation rules. |
+| 4 | Taglish Manual Population | S | 1.5 | DONE | Shipped 2026-03-22. All 10 sections populated + new `filipino-text-vernacular.md` (text shortcuts reference). Prompt library updated with input understanding rules. Awaiting Anton's Taglish review. |
+| 5 | Scopes Enrichment + Gap Registry | XS | 1 | PLANNED | Now unblocked (Tasks 1-3 done). Enrich scopes.ts + update gap-registry.md. |
 | 6 | `.env.local.example` + Dev Setup | XS | 0.5 | PLANNED | Retro action #1 |
 
-**Actual hours used:** TBD — updated during retro
+**Actual hours used:** ~8 hrs so far (Tasks 1-3), TBD for Tasks 4-6
 **Sprint outcome:** IN PROGRESS
+
+**What was built beyond original scope (Task 2 expansion):**
+- 16-type business taxonomy with `{category}_{subtype}` naming convention (was 4 types)
+- 2 new full profiles: Food/Carinderia (§7), Service/Salon (§8)
+- 9 Phase 3 stub profiles with overview tables
+- `business_benchmarks` Supabase table (migration 004) with JSONB metrics, RLS, seed data for 6 types
+- Updated `supabase-schema.md` with §15 business_benchmarks
 
 ---
 
@@ -129,6 +136,6 @@
 | Source | # | Action | Status |
 |--------|---|--------|--------|
 | Sprint 1 Retro | 1 | Create `.env.local.example` + dev setup docs | PLANNED — Sprint 2 Task #6 |
-| Sprint 1 Retro | 2 | Create BIR knowledge base | PLANNED — Sprint 2 Task #1 |
-| Sprint 1 Retro | 3 | Create MSME business knowledge | PLANNED — Sprint 2 Task #2 |
+| Sprint 1 Retro | 2 | Create BIR knowledge base | DONE — Sprint 2 Task #1 (2026-03-21) |
+| Sprint 1 Retro | 3 | Create MSME business knowledge | DONE — Sprint 2 Task #2 (2026-03-22, expanded to 16 types + benchmarks table) |
 | Sprint 1 Retro | 4 | Populate Taglish manual | PLANNED — Sprint 2 Task #4 |
