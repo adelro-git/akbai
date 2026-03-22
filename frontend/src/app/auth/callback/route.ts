@@ -10,7 +10,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/chat'
+  const next = searchParams.get('next') ?? '/'
   const errorParam = searchParams.get('error')
 
   if (errorParam) {

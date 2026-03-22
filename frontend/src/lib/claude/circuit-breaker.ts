@@ -3,11 +3,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CircuitBreakerResult, KAFeature, UserTier } from './types';
-
-/** Get today's date in Asia/Manila timezone as YYYY-MM-DD. */
-function getTodayManila(): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Manila' }).format(new Date());
-}
+import { getManilaToday } from '@/lib/timezone';
 
 /**
  * Check if a Claude API call is allowed under the circuit breaker caps.
@@ -16,14 +12,16 @@ function getTodayManila(): string {
  * @param userId - The user making the request
  * @param estimatedCostUsd - Pre-call cost estimate
  * @param tier - User tier (for free tier query limit enforcement)
+ * @param onboardingCompleted - Whether user finished Kilala Kita (Gap E3: exempt during onboarding)
  */
 export async function checkCircuitBreaker(
   supabase: SupabaseClient,
   userId: string,
   estimatedCostUsd: number,
-  tier: UserTier = 'free'
+  tier: UserTier = 'free',
+  onboardingCompleted?: boolean
 ): Promise<CircuitBreakerResult> {
-  const today = getTodayManila();
+  const today = getManilaToday();
   const globalCap = Number(process.env.CIRCUIT_BREAKER_DAILY_CAP_USD ?? 5.0);
   const userCap = Number(process.env.CIRCUIT_BREAKER_USER_CAP_USD ?? 0.5);
   const warningPct = Number(process.env.CIRCUIT_BREAKER_WARNING_PCT ?? 0.8);
@@ -54,8 +52,8 @@ export async function checkCircuitBreaker(
   const userTotal = Number(userSpend?.total_cost_usd ?? 0);
   const userQueryCount = Number(userSpend?.query_count ?? 0);
 
-  // Free tier: enforce 10-query daily limit
-  if (tier === 'free' && userQueryCount >= 10) {
+  // Free tier: enforce 10-query daily limit (only after onboarding — Gap E3)
+  if (tier === 'free' && onboardingCompleted !== false && userQueryCount >= 10) {
     return { allowed: false, reason: 'user_cap', remainingUsd: 0 };
   }
 
@@ -95,7 +93,7 @@ export async function recordSpend(
   costUsd: number,
   feature: KAFeature
 ): Promise<void> {
-  const today = getTodayManila();
+  const today = getManilaToday();
 
   const { error } = await supabase.rpc('increment_daily_spend', {
     p_user_id: userId,

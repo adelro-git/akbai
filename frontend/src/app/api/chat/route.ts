@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
 
     const { data: userData } = await supabase
       .from('users')
-      .select('display_name')
+      .select('display_name, onboarding_completed')
       .eq('id', user.id)
       .single();
 
@@ -136,7 +136,10 @@ export async function POST(req: NextRequest) {
 
     let cbResult;
     try {
-      cbResult = await checkCircuitBreaker(serviceSupabase, user.id, estCost, tier);
+      cbResult = await checkCircuitBreaker(
+        serviceSupabase, user.id, estCost, tier,
+        userData?.onboarding_completed ?? false
+      );
     } catch (cbError) {
       console.error('[Chat] Circuit breaker check failed — blocking requests (fail-closed)', cbError);
       return NextResponse.json(

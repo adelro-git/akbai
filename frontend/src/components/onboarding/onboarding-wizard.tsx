@@ -1,0 +1,208 @@
+'use client';
+
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import StepWelcome from './step-welcome';
+import StepBusinessType from './step-business-type';
+import StepIncomeRange from './step-income-range';
+import StepPainPoint from './step-pain-point';
+import StepBirConsent from './step-bir-consent';
+import type { OnboardingState, BusinessType, IncomeRange, PainPoint } from '@/lib/kilala-kita';
+
+interface OnboardingWizardProps {
+  initialState: OnboardingState;
+}
+
+export default function OnboardingWizard({ initialState }: OnboardingWizardProps) {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(initialState.onboarding_step + 1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState(initialState.display_name ?? '');
+  const [firstMessage, setFirstMessage] = useState<string | null>(null);
+
+  // Carry forward previously saved values for resumability
+  const [savedData, setSavedData] = useState({
+    display_name: initialState.display_name,
+    business_type: initialState.business_type,
+    income_range: initialState.income_range,
+    primary_pain: initialState.primary_pain,
+  });
+
+  const saveStep = useCallback(
+    async (step: number, data: Record<string, unknown>) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetch('/api/onboarding', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ step, ...data }),
+        });
+
+        const json = await res.json();
+
+        if (!res.ok || !json.success) {
+          setError(json.error?.message_tl ?? 'May nangyaring mali. Subukan muli.');
+          return false;
+        }
+
+        // Step 5 returns the first KA message
+        if (json.data?.completed && json.data?.firstMessage) {
+          setFirstMessage(json.data.firstMessage);
+        }
+
+        return true;
+      } catch {
+        setError('Hindi ma-reach ang server. Subukan muli.');
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const handleStep1 = useCallback(
+    async (displayName: string) => {
+      setFirstName(displayName);
+      const ok = await saveStep(1, { display_name: displayName });
+      if (ok) {
+        setSavedData((prev) => ({ ...prev, display_name: displayName }));
+        setCurrentStep(2);
+      }
+    },
+    [saveStep]
+  );
+
+  const handleStep2 = useCallback(
+    async (businessType: BusinessType) => {
+      const ok = await saveStep(2, { business_type: businessType });
+      if (ok) {
+        setSavedData((prev) => ({ ...prev, business_type: businessType }));
+        setCurrentStep(3);
+      }
+    },
+    [saveStep]
+  );
+
+  const handleStep3 = useCallback(
+    async (incomeRange: IncomeRange) => {
+      const ok = await saveStep(3, { income_range: incomeRange });
+      if (ok) {
+        setSavedData((prev) => ({ ...prev, income_range: incomeRange }));
+        setCurrentStep(4);
+      }
+    },
+    [saveStep]
+  );
+
+  const handleStep4 = useCallback(
+    async (primaryPain: PainPoint) => {
+      const ok = await saveStep(4, { primary_pain: primaryPain });
+      if (ok) {
+        setSavedData((prev) => ({ ...prev, primary_pain: primaryPain }));
+        setCurrentStep(5);
+      }
+    },
+    [saveStep]
+  );
+
+  const handleStep5 = useCallback(
+    async (birConsent: boolean) => {
+      const ok = await saveStep(5, { bir_consent: birConsent });
+      if (ok) {
+        setCurrentStep(6); // Show first message screen
+      }
+    },
+    [saveStep]
+  );
+
+  const progressPct = Math.min(((currentStep - 1) / 5) * 100, 100);
+
+  // Step 6: Show first KA message then redirect
+  if (currentStep === 6 && firstMessage) {
+    return (
+      <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+        <div className="bg-kai-card rounded-2xl rounded-tl-sm p-4">
+          <p className="text-white text-base leading-relaxed">{firstMessage}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            router.push('/chat');
+            router.refresh();
+          }}
+          className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all"
+        >
+          Simulan na natin!
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Progress bar */}
+      <div className="w-full h-1.5 bg-kai-card-alt rounded-full overflow-hidden">
+        <div
+          className="h-full bg-honey rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${progressPct}%` }}
+        />
+      </div>
+
+      {/* Step counter */}
+      <p className="text-slate-500 text-xs font-medium">
+        Step {Math.min(currentStep, 5)} ng 5
+      </p>
+
+      {/* Error */}
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+          <p className="text-red-400 text-sm">{error}</p>
+        </div>
+      )}
+
+      {/* Steps */}
+      {currentStep === 1 && (
+        <StepWelcome
+          onComplete={handleStep1}
+          loading={loading}
+          initialName={savedData.display_name}
+        />
+      )}
+      {currentStep === 2 && (
+        <StepBusinessType
+          onComplete={handleStep2}
+          loading={loading}
+          firstName={firstName}
+          initialValue={savedData.business_type}
+        />
+      )}
+      {currentStep === 3 && (
+        <StepIncomeRange
+          onComplete={handleStep3}
+          loading={loading}
+          firstName={firstName}
+          initialValue={savedData.income_range}
+        />
+      )}
+      {currentStep === 4 && (
+        <StepPainPoint
+          onComplete={handleStep4}
+          loading={loading}
+          firstName={firstName}
+          initialValue={savedData.primary_pain}
+        />
+      )}
+      {currentStep === 5 && (
+        <StepBirConsent
+          onComplete={handleStep5}
+          loading={loading}
+          firstName={firstName}
+        />
+      )}
+    </div>
+  );
+}

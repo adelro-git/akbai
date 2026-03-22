@@ -73,7 +73,7 @@ export default function LoginForm() {
         setError('Mali ang code o nag-expire na. Subukan muli.')
         if (otpRef.current) otpRef.current.value = ''
       } else {
-        router.push('/chat')
+        router.push('/')
         router.refresh()
       }
     } catch {
