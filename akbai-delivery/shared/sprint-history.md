@@ -57,12 +57,12 @@
 | 1 | BIR Knowledge Base | M | 3 | DONE | Shipped 2026-03-21. 282-line reference: forms, deadlines, rates, VAT rules, persona mistakes, glossary. |
 | 2 | MSME Business Knowledge | M | 3 | DONE | Shipped 2026-03-22. Expanded to 735 lines: 6 full profiles + 9 stubs, 16-type taxonomy, fallback chain. Also created `004_business_benchmarks.sql` migration (compounding knowledge table). |
 | 3 | Kilala Kita Onboarding Context | S | 2 | DONE | Shipped 2026-03-22. 28 first-response templates (5+2 types × 4 pains), knowledge map, personalization variable flow, CPA escalation rules. |
-| 4 | Taglish Manual Population | S | 1.5 | DONE | Shipped 2026-03-22. All 10 sections populated + new `filipino-text-vernacular.md` (text shortcuts reference). Prompt library updated with input understanding rules. Awaiting Anton's Taglish review. |
-| 5 | Scopes Enrichment + Gap Registry | XS | 1 | PLANNED | Now unblocked (Tasks 1-3 done). Enrich scopes.ts + update gap-registry.md. |
-| 6 | `.env.local.example` + Dev Setup | XS | 0.5 | PLANNED | Retro action #1 |
+| 4 | Taglish Manual Population | S | 1.5 | DONE | Shipped 2026-03-22. All 10 sections populated + `filipino-text-vernacular.md`. Anton reviewed and approved 2026-03-22. |
+| 5 | Scopes Enrichment + Gap Registry | XS | 1 | DONE | Shipped 2026-03-22. TAX_SCOPE enriched with BIR form decision tree + persona warnings. Gap registry Design Gate #3 updated. 6 integration tests passing (109 total). |
+| 6 | `.env.local.example` + Dev Setup | XS | 0.5 | DONE | Shipped 2026-03-22. `.env.local.example` created, Dev Setup section added to HANDOVER.md, `.gitignore` updated. Resolves Sprint 1 Retro action #1. |
 
-**Actual hours used:** ~8 hrs so far (Tasks 1-3), TBD for Tasks 4-6
-**Sprint outcome:** IN PROGRESS
+**Actual hours used:** ~11 hrs (Tasks 1-3: ~8 hrs, Task 4: ~1.5 hrs, Task 5: ~1 hr, Task 6: ~0.5 hrs)
+**Sprint outcome:** COMPLETE — All 6 tasks done. All 4 Sprint 1 retro actions resolved.
 
 **What was built beyond original scope (Task 2 expansion):**
 - 16-type business taxonomy with `{category}_{subtype}` naming convention (was 4 types)
