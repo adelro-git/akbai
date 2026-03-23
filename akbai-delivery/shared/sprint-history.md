@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-22
+> Last updated: 2026-03-24
 
 ---
 
@@ -81,14 +81,14 @@
 
 | # | Task | Size | Est. Hrs | Status | Notes |
 |---|------|------|----------|--------|-------|
-| 1 | UTC+8 timezone enforcement (Gap A3) | S | 2 | PLANNED | |
-| 2 | Kilala Kita onboarding schema + API | M | 3 | PLANNED | Depends: A1 auth scaffold |
-| 3 | Kilala Kita onboarding UI (5-step flow) | L | 4 | PLANNED | Depends: Task 2 |
-| 4 | Onboarding rate-limit exemption (Gap E3) | S | 1.5 | PLANNED | Depends: Task 2 |
-| 5 | Sentry error monitoring setup (Gap A4) | S | 1.5 | PLANNED | |
+| 1 | UTC+8 timezone enforcement (Gap A3) | S | 2 | DONE | Shipped 2026-03-22. Shared `@/lib/timezone` module, 12 tests, convention in tech-stack.md. |
+| 2 | Kilala Kita onboarding schema + API | M | 3 | DONE | Shipped 2026-03-22. Migration 005, `/api/onboarding` route, Zod schemas, 28 first-response templates. Gap B3 resolved. |
+| 3 | Kilala Kita onboarding UI (5-step flow) | L | 4 | DONE | Shipped 2026-03-22. 6 components, step wizard, mobile-first dark theme, Taglish copy, useRef+onClick. |
+| 4 | Onboarding rate-limit exemption (Gap E3) | S | 1.5 | DONE | Shipped 2026-03-22. checkCircuitBreaker() onboardingCompleted param, 3 new tests. ADR-008. |
+| 5 | Sentry error monitoring setup (Gap A4) | S | 1.5 | DONE | Shipped 2026-03-22. @sentry/nextjs client+server configs, global-error.tsx, DSN from env. ADR-007. |
 
-**Actual hours used:** TBD — updated during retro
-**Sprint outcome:** IN PROGRESS
+**Actual hours used:** ~12 hrs (per commit 4f99d14)
+**Sprint outcome:** COMPLETE — All 5 tasks done. 208 tests passing. Gaps A3, A4, B3, E3 resolved.
 
 **Detailed task breakdowns:**
 
@@ -139,6 +139,26 @@ Why: CRITICAL gap A4 — zero production visibility without error monitoring.
 - [ ] Add `NEXT_PUBLIC_SENTRY_DSN` to `.env.local.example`
 - [ ] Test: trigger deliberate error, confirm it appears in Sentry
 Done when: Errors from client and server captured in Sentry with source maps.
+
+### Sprint 4 — 2026-03-24 to 2026-04-06
+
+**Phase:** 0A — Clearing Phase 0B gate
+**Sprint Goal:** Resolve 3 CRITICAL gaps (A5 PostHog, D1 OTP, E1 OCR spike), refresh stale reference files, align UI with UX design system, and ship Build 2 dashboard shell.
+**Capacity:** 13.5 hours
+**Context:** Sense check returned RED (4/8). A1 (Auth) discovered to be 95% complete — marking resolved. Hybrid sprint: gap resolution + visible product progress.
+
+**Tasks:**
+
+| # | Task | Size | Est. Hrs | Status | Notes |
+|---|------|------|----------|--------|-------|
+| 1 | Housekeeping: commit Sprint 3 + ref file refresh + UX alignment | S | 2 | PLANNED | Commit 12 files, update 5 stale ref files, fix 5 UX misalignments (theme-color, touch targets, bubble width) |
+| 2 | PostHog analytics setup (Gap A5) | S | 2.5 | PLANNED | posthog-js + posthog-node, PHProvider, 5 tracking events, ADR-009 |
+| 3 | Custom SMTP + OTP fix (Gap D1) | S | 2 | PLANNED | Resend SMTP, SPF/DKIM/DMARC, Supabase Auth config, Yahoo Mail PH test |
+| 4 | Build 2 Dashboard shell + schema | M | 5 | PLANNED | Migration 006 (daily_check_in), /api/dashboard, KA greeting, empty-state cards, bottom nav |
+| 5 | OCR spike (Gap E1) | S | 2 | PLANNED | Test Haiku Vision on 10-15 real PH receipts, 85%+ accuracy target |
+
+**Actual hours used:** TBD — updated during retro
+**Sprint outcome:** IN PROGRESS
 
 ---
 
@@ -217,7 +237,9 @@ Done when: Errors from client and server captured in Sentry with source maps.
 |--------|------|-----------|-------------|-----------|-----------|-----------|
 | 1 | Ship Build 0 | 10–15 | ~14 | 5 | 5 | YES |
 | 2 | KA domain knowledge files | 12 | ~11 | 6 | 6 | YES |
-| 3 | Build 1 + infra gaps | 12 | TBD | 5 | TBD | TBD |
+| 3 | Build 1 + infra gaps | 12 | ~12 | 5 | 5 | YES |
+
+| 4 | Gap resolution + Build 2 shell | 13.5 | TBD | 5 | TBD | TBD |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
