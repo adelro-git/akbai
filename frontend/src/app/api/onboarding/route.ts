@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { OnboardingStepSchema } from '@/lib/kilala-kita/schemas';
 import { getFirstKAMessage } from '@/lib/kilala-kita/first-responses';
 import type { PainPoint } from '@/lib/kilala-kita/schemas';
@@ -9,16 +10,23 @@ import type { PainPoint } from '@/lib/kilala-kita/schemas';
 // ============================================================
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
 
-  if (authError || !user) {
-    return NextResponse.json(
-      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
-      { status: 401 }
-    );
+  let user;
+  if (SKIP_AUTH) {
+    user = DEV_USER;
+  } else {
+    const {
+      data: { user: authUser },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !authUser) {
+      return NextResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+        { status: 401 }
+      );
+    }
+    user = authUser;
   }
 
   // Validate body
@@ -45,6 +53,32 @@ export async function POST(req: NextRequest) {
       },
       { status: 400 }
     );
+  }
+
+  const stepData = parsed.data;
+
+  // Dev bypass — skip all DB operations, return success
+  if (SKIP_AUTH) {
+    if (stepData.step === 5) {
+      const firstResponse = getFirstKAMessage(
+        'other',
+        'knowing_earnings' as PainPoint,
+        'Boss'
+      );
+      return NextResponse.json({
+        success: true,
+        data: {
+          step: 5,
+          completed: true,
+          firstMessage: firstResponse.message,
+          featureNudge: firstResponse.featureNudge,
+        },
+      });
+    }
+    return NextResponse.json({
+      success: true,
+      data: { step: stepData.step, completed: false },
+    });
   }
 
   // Check current onboarding state
@@ -82,8 +116,6 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-
-  const stepData = parsed.data;
 
   switch (stepData.step) {
     case 1: {
@@ -219,15 +251,35 @@ export async function POST(req: NextRequest) {
 // ============================================================
 export async function GET() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
-  if (!user) {
-    return NextResponse.json(
-      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
-      { status: 401 }
-    );
+  let user;
+  if (SKIP_AUTH) {
+    user = DEV_USER;
+  } else {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+        { status: 401 }
+      );
+    }
+  }
+
+  // Dev bypass — return fresh onboarding state
+  if (SKIP_AUTH) {
+    return NextResponse.json({
+      success: true,
+      data: {
+        onboarding_step: 0,
+        onboarding_completed: false,
+        display_name: null,
+        business_type: null,
+        income_range: null,
+        primary_pain: null,
+        bir_consent: null,
+      },
+    });
   }
 
   const { data: userData } = await supabase

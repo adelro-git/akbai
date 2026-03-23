@@ -31,6 +31,7 @@ You design every screen, flow, card, chat bubble, and interaction in AKBai. The 
 - `references/taglish-copy-guide.md` — KA voice rules, 10 do/don't examples, tone calibration by context, microcopy patterns
 - `references/taglish-manual.md` — **The authoritative Taglish do's and don'ts manual.** Curated real-world examples of natural Taglish vs awkward/wrong Taglish. This is the single source of truth for how KA speaks — when it exists, it overrides any conflicting guidance in other files. If this file is missing or empty, fall back to `taglish-copy-guide.md` and the shared `brand-context.md`.
 - `references/mobile-first.md` — PWA constraints, touch targets, card layout system, offline behavior, camera integration
+- `references/screen-mockups.html` — **7 static HTML/Tailwind prototypes** (Chat, Login, Deadline Watcher, Saan Napunta Dashboard, Main Dashboard, Kilala Kita Steps 1 & 3). Visual source of truth for color system, layout patterns, component styling, and Taglish copy in context.
 
 Read the specific reference file that matches your task. If designing an onboarding screen, start with `ux-flows.md`. If writing error messages or any user-facing copy, **always** start with `taglish-manual.md` (falling back to `taglish-copy-guide.md` if the manual isn't ready yet). If specifying layout or interactions, start with `mobile-first.md`.
 

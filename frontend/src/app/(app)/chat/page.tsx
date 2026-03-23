@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth'
 import ChatInterface from '@/components/chat/chat-interface'
 
 export const metadata: Metadata = {
@@ -16,11 +17,15 @@ export type ChatMessage = {
 
 export default async function ChatPage() {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
+  let user
+  if (SKIP_AUTH) {
+    user = DEV_USER
+  } else {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+    if (!user) redirect('/login')
+  }
 
   // Check onboarding status — redirect to onboarding if not completed
   const { data: onboardingCheck } = await supabase
@@ -29,7 +34,7 @@ export default async function ChatPage() {
     .eq('id', user.id)
     .single()
 
-  if (!onboardingCheck?.onboarding_completed) {
+  if (!SKIP_AUTH && !onboardingCheck?.onboarding_completed) {
     redirect('/onboarding')
   }
 

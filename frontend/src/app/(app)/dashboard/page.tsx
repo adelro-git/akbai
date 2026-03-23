@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -9,11 +10,15 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
+  let user
+  if (SKIP_AUTH) {
+    user = DEV_USER
+  } else {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+    if (!user) redirect('/login')
+  }
 
   return (
     <div
