@@ -30,7 +30,7 @@ export default function ChatBubble({ message }: { message: ChatMessage }) {
           className="w-5 h-5 object-contain"
         />
       </div>
-      <div className="max-w-[78%] bg-kai-card rounded-2xl rounded-bl-sm px-4 py-2.5 shadow-sm">
+      <div className="max-w-[85%] bg-kai-card rounded-2xl rounded-bl-sm px-4 py-2.5 shadow-sm">
         <p className="text-sm text-white leading-relaxed whitespace-pre-wrap">
           {message.content}
         </p>

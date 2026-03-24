@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { checkEmailProvider } from '@/lib/email/verify'
 
 type Step = 'email' | 'otp'
 
@@ -11,11 +12,22 @@ export default function LoginForm() {
   const [step, setStep] = useState<Step>('email')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [emailWarning, setEmailWarning] = useState<string | null>(null)
   const emailRef = useRef<HTMLInputElement>(null)
   const otpRef = useRef<HTMLInputElement>(null)
   const emailValueRef = useRef('')
 
   const supabase = createClient()
+
+  const handleEmailBlur = useCallback(() => {
+    const emailVal = emailRef.current?.value?.trim() || ''
+    if (!emailVal) {
+      setEmailWarning(null)
+      return
+    }
+    const { warning } = checkEmailProvider(emailVal)
+    setEmailWarning(warning ?? null)
+  }, [])
 
   const handleSendOtp = useCallback(async () => {
     const emailVal = emailRef.current?.value?.trim() || ''
@@ -108,7 +120,7 @@ export default function LoginForm() {
     return (
       <div className="space-y-5" data-testid="otp-form">
         <div>
-          <h2 className="text-xl font-bold text-white mb-1">I-enter ang code</h2>
+          <h2 className="text-xl font-semibold text-white mb-1">I-enter ang code</h2>
           <p className="text-slate-400 text-sm">
             Nagpadala kami ng 6-digit code sa{' '}
             <span className="text-white font-medium">{emailValueRef.current}</span>.
@@ -155,7 +167,7 @@ export default function LoginForm() {
             setStep('email')
             setError(null)
           }}
-          className="w-full text-slate-400 text-sm py-2 hover:text-white transition-colors"
+          className="w-full text-slate-400 text-sm min-h-[44px] py-2 hover:text-white transition-colors"
           data-testid="back-to-email-btn"
         >
           Mag-back at magpadala ulit
@@ -167,7 +179,7 @@ export default function LoginForm() {
   return (
     <div className="space-y-5" data-testid="email-form">
       <div>
-        <h2 className="text-xl font-bold text-white mb-1">Mag-login po</h2>
+        <h2 className="text-xl font-semibold text-white mb-1">Mag-login po</h2>
         <p className="text-slate-400 text-sm">
           Magpapadala kami ng login code sa iyong email.
         </p>
@@ -183,10 +195,17 @@ export default function LoginForm() {
           placeholder="you@example.com"
           autoFocus
           onKeyDown={handleEmailKeyDown}
+          onBlur={handleEmailBlur}
           className="w-full bg-kai-card-alt border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-honey focus:ring-1 focus:ring-honey transition-colors"
           data-testid="email-input"
         />
       </div>
+
+      {emailWarning && (
+        <p className="text-yellow-400/80 text-xs leading-relaxed" data-testid="email-warning">
+          {emailWarning}
+        </p>
+      )}
 
       {error && (
         <p className="text-red-400 text-sm" data-testid="login-error">

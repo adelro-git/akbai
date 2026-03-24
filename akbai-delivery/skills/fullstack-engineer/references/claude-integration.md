@@ -1,6 +1,6 @@
 # AKBai — Claude API Integration Patterns
 > Reference for fullstack-engineer skill. API wrapper, Zod structured output, Haiku/Sonnet routing, circuit breaker, retry logic.
-> Last updated: March 2026 | Stack: Anthropic SDK (@anthropic-ai/sdk), Zod, Next.js API routes
+> Last updated: 2026-03-24 | Stack: Anthropic SDK (@anthropic-ai/sdk), Zod, Next.js 16 API routes
 
 ---
 

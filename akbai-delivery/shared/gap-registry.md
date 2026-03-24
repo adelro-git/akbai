@@ -1,6 +1,6 @@
 # AKBai — Pre-Launch Gap Registry
 > Used by: project-manager, solutions-architect, fullstack-engineer, devops-engineer, security-compliance
-> Last updated: 2026-03-20 | Source: Roadmap v14, Operations Playbook v7
+> Last updated: 2026-03-24 | Source: Roadmap v14, Operations Playbook v7
 > 29 total gaps across 5 categories. 10 CRITICAL items are hard gates — must resolve before any user-facing launch.
 
 ---
@@ -70,7 +70,7 @@
 
 | # | Gap | Severity | When to Fix | Action |
 |---|-----|----------|-------------|--------|
-| E1 | Resibo OCR technical spike | **CRITICAL** | Phase 0A — Build 0 | Test Claude Haiku Vision on 10–15 real Filipino receipts (Shopee waybills, SM, faded thermal prints) via Anthropic Console. Must hit 85%+ field accuracy. If Haiku fails, evaluate Sonnet (higher API cost) or adjust marketing promises. This is a hard gate before Build 1. Effort: 1 afternoon. |
+| E1 | Resibo OCR technical spike | **CRITICAL** | Phase 0A — Build 0 | IN PROGRESS (2026-03-24). OCR pipeline code + test harness built: `frontend/src/lib/ocr/` (types, Zod schemas, Filipino receipt prompt, parse-receipt with Haiku-first + Sonnet fallback, cost helpers). API route at `/api/ocr`. 46 unit tests passing. Spike runner script ready at `__tests__/spike-runner.ts`. **AWAITING**: Anton to provide 10-15 real Filipino receipt images, then run spike with `ANTHROPIC_API_KEY=xxx npx tsx src/lib/ocr/__tests__/spike-runner.ts`. Must hit 85%+ field accuracy. |
 | E2 | Meta API dummy webhook submission | IMPORTANT | Phase 0A — This week | Meta App Review takes 1–3+ months. Submit a simple Next.js endpoint returning 200 OK as the webhook now. Decouples Phase 2 DM Connect from bureaucratic wait. Ping endpoint monthly to keep approval active. Effort: 1 hour. |
 | E3 | Onboarding rate-limit exemption | **CRITICAL** | Build 1 — Architecture | ✅ RESOLVED 2026-03-22. `checkCircuitBreaker()` accepts optional `onboardingCompleted` param. When `false`, free tier 10-query limit is bypassed. Chat route passes `users.onboarding_completed` to circuit breaker. Safe default: `undefined` still enforces limit. 3 tests. ADR-008. |
 

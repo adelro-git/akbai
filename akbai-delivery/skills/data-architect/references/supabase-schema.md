@@ -1,6 +1,6 @@
 # AKBai — Supabase Schema Reference
 > Living document. Update this file whenever a table is created, modified, or deprecated.
-> Last updated: 2026-03-22 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
+> Last updated: 2026-03-24 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
 
 ---
 
@@ -970,6 +970,60 @@ CREATE INDEX idx_benchmarks_latest
 - `min_sample_threshold = 5` prevents surfacing insights based on too few users (privacy + statistical validity).
 - Aggregation runs monthly via a Supabase Edge Function (pg_cron, 1st of month, 3am Manila time). Queries `transactions` joined with `business_profiles` using service role.
 - Prompt assembly queries: `SELECT * FROM business_benchmarks WHERE business_type = $1 AND period_type = 'monthly' ORDER BY period_start DESC LIMIT 1`.
+
+---
+
+## Migration Log — Sprint 3 (005_onboarding_fields)
+
+**Migration file:** `005_onboarding_fields.sql`
+**Sprint:** 3 (2026-03-22)
+**Purpose:** Add Kilala Kita onboarding tracking columns to `users` table and CHECK constraints to `business_profiles`.
+
+**Changes to `users` table:**
+```sql
+ALTER TABLE public.users
+  ADD COLUMN primary_pain TEXT,
+  ADD COLUMN bir_consent BOOLEAN DEFAULT false,
+  ADD COLUMN onboarding_step INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN onboarding_completed BOOLEAN NOT NULL DEFAULT false;
+
+-- Constraint: primary_pain must be a known value or NULL
+ALTER TABLE public.users
+  ADD CONSTRAINT users_primary_pain_check
+  CHECK (primary_pain IS NULL OR primary_pain IN (
+    'receipt_tracking', 'bir_compliance', 'customer_messages', 'knowing_earnings'
+  ));
+
+-- Constraint: onboarding_step must be 0-5
+ALTER TABLE public.users
+  ADD CONSTRAINT users_onboarding_step_check
+  CHECK (onboarding_step >= 0 AND onboarding_step <= 5);
+
+-- Index for onboarding status lookups (redirect checks)
+CREATE INDEX idx_users_onboarding_step ON public.users (id, onboarding_step)
+  WHERE deleted_at IS NULL;
+```
+
+**Changes to `business_profiles` table:**
+```sql
+ALTER TABLE public.business_profiles
+  ADD CONSTRAINT business_profiles_type_check
+  CHECK (business_type IS NULL OR business_type IN (
+    'food_baking', 'online_selling', 'freelance_creative',
+    'sari_sari_retail', 'food_carinderia', 'service_salon', 'other'
+  ));
+
+ALTER TABLE public.business_profiles
+  ADD CONSTRAINT business_profiles_income_range_check
+  CHECK (income_range IS NULL OR income_range IN (
+    'below_50k', '50k_150k', '150k_500k', 'above_500k'
+  ));
+```
+
+**Notes:**
+- `onboarding_step` tracks resumability: if a user drops off at step 3, they resume at step 3 on return.
+- `onboarding_completed` is used by the circuit breaker to exempt onboarding users from the 10-query/day free tier limit (ADR-008).
+- `primary_pain` drives KA personalization — determines which feature KA highlights first in Morning Briefing.
 
 ---
 

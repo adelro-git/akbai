@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
+import PostHogProvider from '@/components/providers/posthog-provider'
 import './globals.css'
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#F59E0B',
+  themeColor: '#07101e',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -42,7 +43,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body className="bg-ink text-white min-h-dvh antialiased">
-        {children}
+        <PostHogProvider>
+          {children}
+        </PostHogProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `

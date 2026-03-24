@@ -1,6 +1,6 @@
 # AKBai — Supabase Patterns
 > Reference for fullstack-engineer skill. Typed client setup, RLS templates, Edge Function boilerplate, query patterns, migrations.
-> Last updated: March 2026 | Stack: Supabase (Postgres, Auth, Storage, Edge Functions, Realtime)
+> Last updated: 2026-03-24 | Stack: Supabase (Postgres, Auth, Storage, Edge Functions, Realtime)
 
 ---
 

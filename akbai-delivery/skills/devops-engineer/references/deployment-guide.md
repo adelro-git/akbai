@@ -1,6 +1,6 @@
 # AKBai — Deployment Guide
 > Reference for: devops-engineer skill
-> Last updated: March 2026
+> Last updated: 2026-03-24
 > Source: Tech Stack v1, Roadmap v14, Operations Playbook v7
 
 ## Table of Contents
@@ -206,7 +206,9 @@ XENDIT_SECRET_KEY                 — Xendit API secret. Server-side only.
 XENDIT_WEBHOOK_TOKEN              — Webhook verification token. Server-side only.
 
 # Monitoring
-SENTRY_DSN                        — Sentry Data Source Name (safe for client)
+NEXT_PUBLIC_SENTRY_DSN            — Sentry Data Source Name (safe for client, per ADR-007)
+SENTRY_ORG                        — Sentry organization slug. For source map uploads.
+SENTRY_PROJECT                    — Sentry project slug. For source map uploads.
 SENTRY_AUTH_TOKEN                 — For source map uploads during build. Server-side only.
 NEXT_PUBLIC_POSTHOG_KEY           — PostHog project API key (public)
 NEXT_PUBLIC_POSTHOG_HOST          — PostHog ingestion host (public)

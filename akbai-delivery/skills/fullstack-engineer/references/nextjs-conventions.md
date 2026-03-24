@@ -1,6 +1,6 @@
 # AKBai — Next.js Conventions
 > Reference for fullstack-engineer skill. File structure, naming, server/client split, Tailwind config.
-> Last updated: March 2026 | Stack: Next.js 14 App Router, TypeScript strict, Tailwind CSS, Plus Jakarta Sans
+> Last updated: 2026-03-24 | Stack: Next.js 16 App Router, TypeScript strict, Tailwind CSS, Plus Jakarta Sans
 
 ---
 
@@ -148,7 +148,7 @@
 
 ## Server vs Client Components
 
-Next.js 14 App Router defaults to Server Components. This is important for AKBai because it keeps the client JS bundle small (target < 200KB), which matters on Philippine LTE networks.
+Next.js 16 App Router defaults to Server Components. This is important for AKBai because it keeps the client JS bundle small (target < 200KB), which matters on Philippine LTE networks.
 
 ### When to Use Server Components (default)
 
