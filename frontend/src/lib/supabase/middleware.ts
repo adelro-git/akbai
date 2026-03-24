@@ -1,7 +1,13 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { SKIP_AUTH } from './dev-auth'
 
 export async function updateSession(request: NextRequest) {
+  // Dev bypass — skip all auth redirects
+  if (SKIP_AUTH) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(

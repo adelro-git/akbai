@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import OnboardingWizard from '@/components/onboarding/onboarding-wizard';
 import type { OnboardingState } from '@/lib/kilala-kita';
 
@@ -10,11 +11,15 @@ export const metadata: Metadata = {
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
-  if (!user) redirect('/login');
+  let user;
+  if (SKIP_AUTH) {
+    user = DEV_USER;
+  } else {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+    if (!user) redirect('/login');
+  }
 
   // Fetch onboarding state
   const { data: userData } = await supabase

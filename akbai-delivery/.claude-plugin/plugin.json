@@ -1,12 +1,13 @@
 {
   "name": "akbai-delivery",
-  "version": "0.2.0",
-  "description": "AKBai product delivery plugin — 12 role-based AI skills and 15 slash commands for building, launching, and operating AKBai (Filipino MSME AI business partner).",
+  "version": "0.3.0",
+  "description": "AKBai product delivery plugin — 12 role-based AI skills, 15 slash commands, and 2 automated hooks for building, launching, and operating AKBai (Filipino MSME AI business partner).",
   "author": "Anton del Rosario",
   "skills_count": 12,
   "commands_count": 15,
   "commands_planned": 15,
-  "phase": "commands-complete",
+  "hooks_count": 2,
+  "phase": "hooks-wired",
   "commands": {
     "sprint": {
       "skill": "project-manager",
@@ -73,5 +74,29 @@
       "description": "MRR dashboard, trend analysis, highest-leverage recommendation"
     }
   },
-  "notes": "12 skills + 15 commands complete. All commands include shared context loading, step-by-step workflows, and cross-skill delegation."
+  "hooks": {
+    "pre-bash-guard": {
+      "event": "PreToolUse (Bash)",
+      "file": ".claude/hooks/pre-bash-guard.mjs",
+      "skills": ["fullstack-engineer", "security-compliance", "data-architect", "devops-engineer", "qa-engineer"],
+      "triggers": {
+        "git_commit": "Validates staged files: no `any` types, no API keys in client code, migration RLS/soft-delete, no .env files",
+        "git_push": "Warns when pushing directly from main (branch workflow enforcement)",
+        "next_build": "Runs test suite before build, warns on failures"
+      }
+    },
+    "post-edit-guard": {
+      "event": "PostToolUse (Edit|Write)",
+      "file": ".claude/hooks/post-edit-guard.mjs",
+      "skills": ["data-architect", "security-compliance", "ai-engineer", "fullstack-engineer"],
+      "triggers": {
+        "migration_sql": "Validates RLS, soft-delete, user_id, audit columns on CREATE TABLE",
+        "api_routes": "Checks for Zod validation, blocks hardcoded API keys",
+        "client_files": "Blocks server-side API keys and env vars in client components",
+        "ai_modules": "Blocks 'use client' in Claude/AI files, checks BIR disclaimer on tax content",
+        "money_handling": "Warns on float money values (should be integer centavos)"
+      }
+    }
+  },
+  "notes": "12 skills + 15 commands + 2 automated hooks. Hooks enforce AKBai non-negotiable rules automatically during development. All commands include shared context loading, step-by-step workflows, and cross-skill delegation."
 }

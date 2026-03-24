@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
+import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import {
   assembleSystemPrompt,
   selectModel,
@@ -22,23 +23,30 @@ export async function POST(req: NextRequest) {
   try {
     // --- Auth Check ---
     const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
 
-    if (authError || !user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'UNAUTHORIZED',
-            message: 'Authentication required',
-            message_tl: 'Kailangan mag-login muna.',
+    let user;
+    if (SKIP_AUTH) {
+      user = DEV_USER;
+    } else {
+      const {
+        data: { user: authUser },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !authUser) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'UNAUTHORIZED',
+              message: 'Authentication required',
+              message_tl: 'Kailangan mag-login muna.',
+            },
           },
-        },
-        { status: 401 }
-      );
+          { status: 401 }
+        );
+      }
+      user = authUser;
     }
 
     // --- Zod Validation ---
@@ -68,41 +76,52 @@ export async function POST(req: NextRequest) {
     }
 
     // --- Load User Context ---
-    const { data: profile } = await supabase
-      .from('business_profiles')
-      .select('business_type, bir_registered')
-      .eq('user_id', user.id)
-      .is('deleted_at', null)
-      .single();
+    let tier: UserTier = 'free';
+    let userContext: UserContext;
 
-    const { data: userData } = await supabase
-      .from('users')
-      .select('display_name, onboarding_completed')
-      .eq('id', user.id)
-      .single();
+    if (SKIP_AUTH) {
+      userContext = {
+        firstName: 'Dev',
+        businessType: 'other',
+        tier: 'free',
+        birRegistered: false,
+      };
+    } else {
+      const { data: profile } = await supabase
+        .from('business_profiles')
+        .select('business_type, bir_registered')
+        .eq('user_id', user.id)
+        .is('deleted_at', null)
+        .single();
 
-    // Read tier from subscriptions table (SELECT-only RLS — users cannot modify)
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('tier')
-      .eq('user_id', user.id)
-      .is('deleted_at', null)
-      .single();
+      const { data: userData } = await supabase
+        .from('users')
+        .select('display_name, onboarding_completed')
+        .eq('id', user.id)
+        .single();
 
-    const tier: UserTier = (subscription?.tier as UserTier) ?? 'free';
+      const { data: subscription } = await supabase
+        .from('subscriptions')
+        .select('tier')
+        .eq('user_id', user.id)
+        .is('deleted_at', null)
+        .single();
 
-    const userContext: UserContext = {
-      firstName: userData?.display_name ?? null,
-      businessType: profile?.business_type ?? null,
-      tier,
-      birRegistered: profile?.bir_registered ?? false,
-    };
+      tier = (subscription?.tier as UserTier) ?? 'free';
+
+      userContext = {
+        firstName: userData?.display_name ?? null,
+        businessType: profile?.business_type ?? null,
+        tier,
+        birRegistered: profile?.bir_registered ?? false,
+      };
+    }
 
     // --- Model Selection ---
     const selectedModel = selectModel(tier, feature as KAFeature);
     const maxTokens = getMaxTokens(feature as KAFeature);
 
-    // --- Circuit Breaker (pre-call) ---
+    // --- API Key Check ---
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey || apiKey === 'your-anthropic-api-key-here') {
       return NextResponse.json({
@@ -111,66 +130,69 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // --- Circuit Breaker: Fail-Closed ---
-    // If spend tracking is unavailable, block AI requests rather than allowing unbounded spend.
-    let serviceSupabase: ReturnType<typeof createServiceClient>;
-    try {
-      serviceSupabase = createServiceClient();
-    } catch {
-      console.error('[Chat] Service role client unavailable — blocking requests (fail-closed)');
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'SERVICE_UNAVAILABLE',
-            message: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
-            message_tl: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+    // --- Circuit Breaker (skipped in dev bypass) ---
+    let serviceSupabase: ReturnType<typeof createServiceClient> | null = null;
+    if (!SKIP_AUTH) {
+      // Circuit Breaker: Fail-Closed —
+      // If spend tracking is unavailable, block AI requests rather than allowing unbounded spend.
+      try {
+        serviceSupabase = createServiceClient();
+      } catch {
+        console.error('[Chat] Service role client unavailable — blocking requests (fail-closed)');
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'SERVICE_UNAVAILABLE',
+              message: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+              message_tl: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+            },
           },
-        },
-        { status: 503 }
-      );
-    }
+          { status: 503 }
+        );
+      }
 
-    const estimatedInputTokens = 2000;
-    const estCost = estimateCost(selectedModel, estimatedInputTokens, maxTokens);
+      const estimatedInputTokens = 2000;
+      const estCost = estimateCost(selectedModel, estimatedInputTokens, maxTokens);
 
-    let cbResult;
-    try {
-      cbResult = await checkCircuitBreaker(
-        serviceSupabase, user.id, estCost, tier,
-        userData?.onboarding_completed ?? false
-      );
-    } catch (cbError) {
-      console.error('[Chat] Circuit breaker check failed — blocking requests (fail-closed)', cbError);
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'SERVICE_UNAVAILABLE',
-            message: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
-            message_tl: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+      let cbResult;
+      try {
+        cbResult = await checkCircuitBreaker(
+          serviceSupabase, user.id, estCost, tier,
+          userData?.onboarding_completed ?? false
+        );
+      } catch (cbError) {
+        console.error('[Chat] Circuit breaker check failed — blocking requests (fail-closed)', cbError);
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'SERVICE_UNAVAILABLE',
+              message: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+              message_tl: KA_ERROR_MESSAGES.circuit_breaker_unavailable,
+            },
           },
-        },
-        { status: 503 }
-      );
-    }
+          { status: 503 }
+        );
+      }
 
-    if (!cbResult.allowed) {
-      const errorKey = cbResult.reason === 'global_cap' ? 'global_cap' : 'user_cap';
-      const errorMessage = tier === 'free' && cbResult.reason === 'user_cap'
-        ? KA_ERROR_MESSAGES.free_tier_limit
-        : KA_ERROR_MESSAGES[errorKey];
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'RATE_LIMITED',
-            message: errorMessage,
-            message_tl: errorMessage,
+      if (!cbResult.allowed) {
+        const errorKey = cbResult.reason === 'global_cap' ? 'global_cap' : 'user_cap';
+        const errorMessage = tier === 'free' && cbResult.reason === 'user_cap'
+          ? KA_ERROR_MESSAGES.free_tier_limit
+          : KA_ERROR_MESSAGES[errorKey];
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'RATE_LIMITED',
+              message: errorMessage,
+              message_tl: errorMessage,
+            },
           },
-        },
-        { status: 429 }
-      );
+          { status: 429 }
+        );
+      }
     }
 
     // --- Prompt Assembly ---
@@ -180,21 +202,26 @@ export async function POST(req: NextRequest) {
     });
 
     // --- Conversation History ---
-    const { data: history } = await supabase
-      .from('ka_conversations')
-      .select('role, content')
-      .eq('user_id', user.id)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: true })
-      .limit(20);
+    const history = SKIP_AUTH
+      ? []
+      : (await supabase
+          .from('ka_conversations')
+          .select('role, content')
+          .eq('user_id', user.id)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: true })
+          .limit(20)
+        ).data;
 
-    // Save user message
-    await supabase.from('ka_conversations').insert({
-      user_id: user.id,
-      role: 'user',
-      content: sanitizedInput.trim(),
-      domain: 'general',
-    });
+    // Save user message (skip in dev bypass — no real user in DB)
+    if (!SKIP_AUTH) {
+      await supabase.from('ka_conversations').insert({
+        user_id: user.id,
+        role: 'user',
+        content: sanitizedInput.trim(),
+        domain: 'general',
+      });
+    }
 
     // --- Claude API Call ---
     const anthropic = new Anthropic({ apiKey });
@@ -224,30 +251,31 @@ export async function POST(req: NextRequest) {
     const filteredResponse = filterOutput(rawResponse);
     const finalResponse = applyBIRDisclaimer(filteredResponse, 'chat');
 
-    // --- Record Spend ---
-    // Failure to record spend should log but not block the response (API call already succeeded)
-    try {
-      const actualCost = calculateActualCost(
-        selectedModel,
-        response.usage.input_tokens,
-        response.usage.output_tokens
-      );
-      await recordSpend(serviceSupabase, user.id, actualCost, feature as KAFeature);
-    } catch (spendError) {
-      console.error('[Chat] Failed to record spend — API call succeeded but cost not tracked', spendError);
-    }
+    // --- Record Spend & Save Response (skip in dev bypass) ---
+    if (!SKIP_AUTH && serviceSupabase) {
+      try {
+        const actualCost = calculateActualCost(
+          selectedModel,
+          response.usage.input_tokens,
+          response.usage.output_tokens
+        );
+        await recordSpend(serviceSupabase, user.id, actualCost, feature as KAFeature);
+      } catch (spendError) {
+        console.error('[Chat] Failed to record spend — API call succeeded but cost not tracked', spendError);
+      }
 
-    // --- Save Assistant Response ---
-    await supabase.from('ka_conversations').insert({
-      user_id: user.id,
-      role: 'assistant',
-      content: finalResponse,
-      domain: 'general',
-    });
+      await supabase.from('ka_conversations').insert({
+        user_id: user.id,
+        role: 'assistant',
+        content: finalResponse,
+        domain: 'general',
+      });
+    }
 
     return NextResponse.json({ success: true, data: { message: finalResponse } });
   } catch (error: unknown) {
-    console.error('Chat API error:', error);
+    console.error('Chat API error:', error instanceof Error ? error.message : error);
+    console.error('Chat API stack:', error instanceof Error ? error.stack : 'no stack');
     return NextResponse.json(
       {
         success: false,
