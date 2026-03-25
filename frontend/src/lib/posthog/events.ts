@@ -13,6 +13,7 @@ const EVENTS = {
   CHAT_MESSAGE_SENT: 'chat_message_sent',
   DASHBOARD_VIEWED: 'dashboard_viewed',
   RECEIPT_SCANNED: 'receipt_scanned',
+  DAILY_CHECK_IN_COMPLETED: 'daily_check_in_completed',
 } as const
 
 type EventName = (typeof EVENTS)[keyof typeof EVENTS]
@@ -47,4 +48,9 @@ export function trackDashboardViewed(): void {
 /** Track when a receipt is scanned (for future OCR feature) */
 export function trackReceiptScanned(success: boolean): void {
   capture(EVENTS.RECEIPT_SCANNED, { success })
+}
+
+/** Track when user completes daily check-in with mood + optional financials */
+export function trackDailyCheckInCompleted(hasSales: boolean, hasExpenses: boolean): void {
+  capture(EVENTS.DAILY_CHECK_IN_COMPLETED, { has_sales: hasSales, has_expenses: hasExpenses })
 }
