@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-24
+> Last updated: 2026-03-25
 
 ---
 
@@ -151,15 +151,26 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 | # | Task | Size | Est. Hrs | Status | Notes |
 |---|------|------|----------|--------|-------|
-| 1 | Housekeeping: commit Sprint 3 + ref file refresh + UX alignment | S | 2 | PLANNED | Commit 12 files, update 5 stale ref files, fix 5 UX misalignments (theme-color, touch targets, bubble width) |
-| 2 | PostHog analytics setup (Gap A5) | S | 2.5 | PLANNED | posthog-js + posthog-node, PHProvider, 5 tracking events, ADR-009 |
-| 3 | Custom SMTP + OTP fix (Gap D1) | S | 2 | PLANNED | Resend SMTP, SPF/DKIM/DMARC, Supabase Auth config, Yahoo Mail PH test |
-| 4 | Build 2 Dashboard shell + schema | M | 5 | PLANNED | Migration 006 (daily_check_in), /api/dashboard, KA greeting, empty-state cards, bottom nav |
-| 5 | OCR spike (Gap E1) | S | 2 | PLANNED | Test Haiku Vision on 10-15 real PH receipts, 85%+ accuracy target |
+| 1 | Housekeeping: commit Sprint 3 + ref file refresh + UX alignment | S | 2 | DONE | 8 ref files updated, 5 UX fixes (theme-color, touch targets, bubble width, font weight). Login page redesigned to match screen-mockups.html. |
+| 2 | PostHog analytics setup (Gap A5) | S | 2.5 | DONE | posthog-js + posthog-node, PHProvider with auto-identify, 5 typed events, dashboard-tracker, ADR-009. Gap A5 resolved. |
+| 3 | Custom SMTP + OTP fix (Gap D1) | S | 2 | DONE | Code side: branded email templates, Yahoo PH detection, smtp-setup-guide.md. D1 downgraded to IMPORTANT — Supabase built-in email sufficient for dev. External setup deferred until domain purchased. |
+| 4 | Build 2 Dashboard shell + schema | M | 5 | DONE | Migration 006 (daily_check_in), /api/dashboard with UTC+8 greeting, KaiGreeting, DashboardCard, EmptyStateCard, BottomNav. 43 new tests. |
+| 5 | OCR spike (Gap E1) | S | 2 | DONE | Full pipeline: types, Zod schemas, Filipino receipt prompt, Haiku-first + Sonnet fallback, /api/ocr route, spike runner. 46 tests. Awaiting receipt images from Anton. |
 | 6 | Light-first design system pivot ("Sun-Drenched Atelier") | L | — | DONE | Pivoted from dark-first (#07101e) to light-first (#fdf9f2) with dark mode toggle. Updated 35 files: globals.css MD3 CSS variables, tailwind.config MD3 tokens, 21 component migrations, 9 doc/reference files, new design-system.md spec, email templates. PR #9 merged to main 2026-03-25. |
+| — | Unplanned: Login UX bug fixes | S | — | DONE | OTP autofill fix, back-button email persistence, rate-limit error message, Next.js dev indicator removal. |
+| — | Unplanned: Gap registry + repo cleanup | XS | — | DONE | A1, A5 resolved. D1 downgraded. Stale branches deleted (master, review-dev-progress). |
 
-**Actual hours used:** TBD — updated during retro
-**Sprint outcome:** IN PROGRESS
+**Actual hours used:** ~3-4 hrs Anton time + multi-agent parallel execution (first sprint using this workflow)
+**Sprint outcome:** COMPLETE — All 5 planned tasks code-complete. 6/6 tasks done + 2 unplanned items. 129 new tests. Gaps A1, A5 resolved. D1 downgraded.
+
+**What was built:**
+- PostHog analytics: `posthog-provider.tsx`, `lib/posthog/events.ts`, `lib/posthog/server.ts`, `dashboard-tracker.tsx`
+- Email module: `lib/email/templates.ts`, `lib/email/verify.ts`, `smtp-setup-guide.md`
+- Dashboard shell: `kai-greeting.tsx`, `dashboard-card.tsx`, `empty-state-card.tsx`, `bottom-nav.tsx`, migration 006
+- OCR pipeline: `lib/ocr/` (types, schemas, prompts, parse-receipt), `/api/ocr`, spike runner + fixtures
+- Login redesign: atmospheric glow, gradient CTA, input icons, mockup-aligned layout
+- 8 reference files refreshed, UX alignment (touch targets, theme-color, bubble width)
+- Design system pivot to light-first with MD3 color tokens (separate session)
 
 ---
 
@@ -228,6 +239,38 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **Evening consistency:** Strong
 - **Recommendation:** Keep pace. Sprint 3 can target same capacity (12 hrs). Ready for Build 1 (Kilala Kita) or next phase gate work.
 
+### Sprint 4 Retro — 2026-03-25
+
+**What Went Well:**
+- Multi-agent parallel execution was a game-changer — 5 tasks built simultaneously by isolated agents, all code-complete in one session
+- The skill/command plugin system gave each agent clear context (SKILL.md files, shared references) so they could work autonomously with high-quality output
+- Sprint delivered 129 new tests, 4 new modules (PostHog, email, dashboard, OCR), and resolved 2 CRITICAL gaps — most productive sprint to date
+- Login page UX iteration with Anton's live feedback caught real bugs (autofill, back button, rate limit) that wouldn't surface in tests
+
+**What Didn't Go Well:**
+- Hour estimates were calibrated for manual development (13.5 hrs), but multi-agent execution compressed agent work to ~20 minutes — the real constraint was Anton's time for testing, decisions, and external setup (~3-4 hrs)
+- External dependencies weren't anticipated well: no domain for SMTP, no receipt images for OCR spike, Supabase CLI needed auth token for migration push
+- Login page mockup alignment required multiple iterations — the gap between the screen-mockups.html reference and the implemented UI wasn't flagged until Anton raised it
+
+**What We Learned:**
+- The velocity model needs a fundamental rethink. "Hours" should split into **agent time** (parallel, fast, measured in minutes) and **Anton time** (testing, decisions, external setup — the actual bottleneck). Sprint capacity should be measured in Anton-hours, not total development hours.
+- Multi-session parallel sprints are viable and desirable. Independent workstreams (e.g., OCR pipeline vs. dashboard UI vs. analytics) can be assigned to separate Claude Code sessions, each with a clear branch and scope. A master plan file could coordinate this.
+- External dependencies (domain purchase, API keys, test data) should be identified as explicit "Anton prerequisites" in the sprint plan, separate from development tasks. This prevents mid-sprint surprises.
+
+**Action Items:**
+
+| # | Action | Owner | Due By | Status | Notes |
+|---|--------|-------|--------|--------|-------|
+| 1 | Recalibrate sprint estimation: replace "Est. Hrs" with "Agent Size" (S/M/L) + "Anton Time" (hrs for testing/decisions/setup) | Claude (PM skill) | Sprint 5 planning | OPEN | Current hour model is meaningless with multi-agent execution |
+| 2 | Design parallel sprint framework: master plan file format that assigns independent workstreams to separate sessions with branch conventions | Claude (PM skill) | Sprint 5 planning | OPEN | Anton requested this — would multiply throughput further |
+| 3 | Collect 10-15 real Filipino receipt images for OCR spike completion | Anton | Sprint 5 | OPEN | Carryover from Task 5 — pipeline + test harness ready, just needs test data |
+
+**Energy Check:**
+- **Sustainability:** Felt good — multi-agent workflow reduced Anton's active time significantly
+- **Saturday block:** N/A — sprint executed primarily in one session
+- **Evening consistency:** Sprint compressed into focused session + iterative feedback
+- **Recommendation:** Increase scope for Sprint 5. Multi-agent execution unlocks significantly more throughput per sprint. The bottleneck is now Anton's review/testing time, not development hours. Consider parallel sessions for independent workstreams.
+
 ---
 
 ## Velocity & Patterns
@@ -240,7 +283,7 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | 2 | KA domain knowledge files | 12 | ~11 | 6 | 6 | YES |
 | 3 | Build 1 + infra gaps | 12 | ~12 | 5 | 5 | YES |
 
-| 4 | Gap resolution + Build 2 shell | 13.5 | TBD | 5 | TBD | TBD |
+| 4 | Gap resolution + Build 2 shell | 13.5 (est.) | ~3-4 (Anton) | 5+2 | 7 | YES |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
@@ -249,6 +292,9 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - Itemized checklists are essential for multi-session work
 - Context/knowledge file sprints can be highly productive — 6/6 tasks in ~11 hrs
 - Task expansion (Task 2: 4→16 types) is fine when it adds clear value and stays within capacity
+- **NEW: Multi-agent parallel execution compresses 13+ hrs of dev work into minutes of agent time. The bottleneck shifts from "development hours" to "Anton review/testing/decision time."**
+- **NEW: Hour-based estimation is obsolete for agent sprints. Future sprints should estimate Agent Size (S/M/L) + Anton Time (hrs) separately.**
+- **NEW: Independent workstreams can be parallelized across separate Claude Code sessions for even higher throughput.**
 
 ---
 
@@ -262,3 +308,6 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Sprint 1 Retro | 2 | Create BIR knowledge base | DONE — Sprint 2 Task #1 (2026-03-21) |
 | Sprint 1 Retro | 3 | Create MSME business knowledge | DONE — Sprint 2 Task #2 (2026-03-22, expanded to 16 types + benchmarks table) |
 | Sprint 1 Retro | 4 | Populate Taglish manual | DONE — Sprint 2 Task #4 (2026-03-22, Anton reviewed and approved) |
+| Sprint 4 Retro | 1 | Recalibrate sprint estimation (Agent Size + Anton Time) | OPEN — Sprint 5 planning |
+| Sprint 4 Retro | 2 | Design parallel sprint framework for multi-session execution | OPEN — Sprint 5 planning |
+| Sprint 4 Retro | 3 | Collect 10-15 receipt images for OCR spike | OPEN — Anton, Sprint 5 |
