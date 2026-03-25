@@ -13,6 +13,8 @@ const EVENTS = {
   CHAT_MESSAGE_SENT: 'chat_message_sent',
   DASHBOARD_VIEWED: 'dashboard_viewed',
   RECEIPT_SCANNED: 'receipt_scanned',
+  PROFILE_UPDATED: 'profile_updated',
+  SIGNED_OUT: 'signed_out',
 } as const
 
 type EventName = (typeof EVENTS)[keyof typeof EVENTS]
@@ -47,4 +49,14 @@ export function trackDashboardViewed(): void {
 /** Track when a receipt is scanned (for future OCR feature) */
 export function trackReceiptScanned(success: boolean): void {
   capture(EVENTS.RECEIPT_SCANNED, { success })
+}
+
+/** Track when user updates their business profile */
+export function trackProfileUpdated(): void {
+  capture(EVENTS.PROFILE_UPDATED)
+}
+
+/** Track when user signs out */
+export function trackSignedOut(): void {
+  capture(EVENTS.SIGNED_OUT)
 }
