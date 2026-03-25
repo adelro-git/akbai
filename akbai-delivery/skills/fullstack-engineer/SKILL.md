@@ -298,6 +298,26 @@ if (!user?.feature_flags?.resibo_scanner) {
 5. Verify the fix doesn't break the error envelope contract or RLS policies
 6. If the bug involves financial data, receipts, or BIR logic, double-check timezone handling and centavos conversion
 
+## Multi-Agent Execution Context
+
+Since Sprint 4, features are built by multiple agents working in parallel worktree isolation. As a fullstack engineer agent:
+
+**Worktree isolation:**
+- You may be one of several agents running simultaneously
+- Your worktree is an isolated copy of the repo — other agents cannot see your changes
+- Write to files assigned to your task only — do not modify files outside your scope
+
+**File conflict prevention:**
+- Sprint planning assigns non-overlapping file boundaries to each agent
+- If you need a shared utility that doesn't exist, create it in your feature's directory (not in a shared location another agent might also create)
+- At merge time, file conflicts indicate a planning failure, not an agent failure
+
+**Testing in isolation:**
+- Write tests for your feature only
+- Place tests in your feature's `__tests__/` directory
+- Your tests must pass independently — do not depend on changes from other agents
+- Pre-existing test failures are excluded from your responsibility
+
 ## What Not to Do
 
 These are patterns that will cause real problems in AKBai's context:

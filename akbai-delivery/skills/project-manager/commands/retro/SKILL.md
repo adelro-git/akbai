@@ -7,7 +7,7 @@ description: "Sprint retrospective with structured action items. Ask Anton about
 
 ## Before Starting
 
-You are facilitating a sprint retrospective with Anton (solo founder, 10–15 hrs/sprint, evenings + weekends). A good retro is honest, forward-looking, and produces 2–3 concrete action items for next sprint. Read these files:
+You are facilitating a sprint retrospective with Anton (solo founder, 3–6 hrs Anton review/testing time per sprint, with multi-agent parallel execution handling development). A good retro is honest, forward-looking, and produces 2–3 concrete action items for next sprint. Read these files:
 
 1. **`shared/project-context.md`** — Phase, solo founder constraints (§10), break-even timeline
 2. **`shared/gap-registry.md`** — 29 gaps, 10 CRITICAL hard gates (some action items may become gap entries)
@@ -196,6 +196,8 @@ This matters. A founder who burns out stops shipping. Better to hit 60% of a sus
 
 4. **Update Unresolved Action Items** — Add new action items from this retro. Mark any previously pending items that were resolved during this sprint as `DONE`.
 
+5. **Run Post-Sprint Update Checklist** — This is MANDATORY per CLAUDE.md §Session Learning Protocol. Before closing the sprint, check every item in the Post-Sprint Update Checklist. For each "Yes", either update the file immediately or create an action item for the next sprint. Document which files were updated (or why they weren't) in the retro output.
+
 This ensures the next session has full retro context without reconstructing from memory or git history.
 
 ---
@@ -319,3 +321,5 @@ Include in your escalation: what the issue is, why it matters, and when you need
 - [ ] Sprint Log entry updated with actual outcomes (Step 11)
 - [ ] Velocity & Patterns table updated
 - [ ] Unresolved Action Items section updated
+- [ ] Post-Sprint Update Checklist from CLAUDE.md reviewed
+- [ ] All relevant skill/reference files updated (or deferred with reason)
