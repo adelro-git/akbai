@@ -23,6 +23,7 @@ interface DashboardCardProps {
   icon: string;
   emptyState?: string;
   hasData?: boolean;
+  summary?: string;
 }
 
 export default function DashboardCard({
@@ -32,6 +33,7 @@ export default function DashboardCard({
   icon,
   emptyState,
   hasData = false,
+  summary,
 }: DashboardCardProps) {
   const IconComponent = ICON_MAP[icon];
 
@@ -56,9 +58,19 @@ export default function DashboardCard({
         <div className="min-w-0 flex-1">
           <h3 className="text-on-surface text-sm font-bold truncate">{title}</h3>
           {hasData ? (
-            <p className="text-on-surface-variant text-xs mt-0.5 line-clamp-2">
-              {description}
-            </p>
+            <>
+              <p className="text-on-surface-variant text-xs mt-0.5 line-clamp-2">
+                {description}
+              </p>
+              {summary && (
+                <p
+                  className="text-tertiary text-xs mt-1 font-semibold truncate"
+                  data-testid={`dashboard-card-summary-${icon}`}
+                >
+                  {summary}
+                </p>
+              )}
+            </>
           ) : (
             <p className="text-outline text-xs mt-0.5 italic line-clamp-2">
               {emptyState ?? description}
