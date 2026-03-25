@@ -45,7 +45,7 @@ Follow the workflow defined in the command's SKILL.md.
 3. **TypeScript strict** — No `any` types. Zod schemas on all API inputs.
 4. **Server-side API keys only** — ANTHROPIC_API_KEY and SUPABASE_SERVICE_ROLE_KEY never in client code.
 5. **Taglish UI copy** — Natural Filipino-English code-switching. No corporate filler.
-6. **Mobile-first, dark theme** — Ink (#07101e) background. Plus Jakarta Sans font.
+6. **Mobile-first, light theme default** — Surface (#fdf9f2) background, dark mode available. Plus Jakarta Sans font.
 7. **KA speaks first** — Proactive AI, not reactive chatbot.
 8. **No tax advice** — BIR disclaimer on all tax-related outputs.
 9. **Claude Sonnet for reasoning, Haiku for lightweight** — Route to cheapest capable model.

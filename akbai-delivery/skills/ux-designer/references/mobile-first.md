@@ -45,8 +45,8 @@ AKBai is a Progressive Web App — not a native app. This has specific implicati
   "short_name": "AKBai",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#07101e",
-  "background_color": "#07101e"
+  "theme_color": "#fdf9f2",
+  "background_color": "#fdf9f2"
 }
 ```
 
@@ -109,10 +109,10 @@ Cards are the primary data container in AKBai. They sit in a vertical scroll alo
 
 | Property | Value | Tailwind Class |
 |----------|-------|---------------|
-| Background | #0d1a2e (Card) or #111f36 (Card Alt) | `bg-[#0d1a2e]` |
+| Background | surface-container (light: #f1ede7, dark: #0d1a2e) or surface-container-high (light: #ebe8e1, dark: #111f36) | `bg-surface-container` |
 | Border radius | 12px | `rounded-xl` |
 | Padding | 16px | `p-4` |
-| Shadow | None on dark mode; subtle on light mode | — |
+| Shadow | Amber ambient shadow (primary at 8% opacity, 40px blur) on elevated cards. No grey shadows. | — |
 | Vertical gap between cards | 12px | `gap-3` or `space-y-3` |
 | Max width | 100% of content area (minus 16px side padding) | `mx-4` |
 
@@ -168,10 +168,10 @@ Fixed at viewport bottom. 4 items maximum (Fitts's Law — fewer targets = faste
 | Property | Value |
 |----------|-------|
 | Height | 56px (plus safe area inset on notched phones) |
-| Background | #0d1a2e with 95% opacity (slight blur for content scrolling behind) |
+| Background | Glassmorphism — surface-container-lowest (#ffffff light / #030812 dark) at 80% opacity with 20px backdrop-blur, amber ambient shadow |
 | Item layout | Icon (24px) above label (11px, SemiBold 600) |
-| Active state | Honey (#F59E0B) icon + label |
-| Inactive state | #6B7280 icon + label |
+| Active state | primary-container (#f59e0b) icon + label |
+| Inactive state | on-surface-variant (#534434 light / #d8c3ad dark) |
 | Touch area per item | Equal distribution, minimum 44×56px each |
 | Safe area | `padding-bottom: env(safe-area-inset-bottom)` for iPhone notch |
 
@@ -306,8 +306,8 @@ AKBai users include Maria packing orders in a bodega with intermittent LTE, and 
 │ 📡 Offline — last updated 2 hrs ago │
 └──────────────────────────────────────┘
 ```
-- Background: #1F2937 (subtle, not alarming)
-- Text: #9CA3AF, 12px
+- Background: surface-container-high (#ebe8e1 light / #172740 dark)
+- Text: on-surface-variant, 12px
 - Persists until connectivity returns
 
 **Queued mutation badge**: Small dot indicator on bottom nav items that have pending syncs.
@@ -339,7 +339,7 @@ Never show a blank screen while data loads. Use skeleton screens that mirror the
 
 - **Shape**: Match the content shape. Card skeletons are card-shaped. Text lines are 16px-high rounded rectangles.
 - **Animation**: Gentle pulse (opacity 0.3 → 0.6 → 0.3), 1.5s cycle, ease-in-out. Respect `prefers-reduced-motion` — no animation, show static grey.
-- **Color**: #1F2937 on #07101e background (subtle contrast, not distracting)
+- **Color**: surface-container-high on surface background (subtle contrast, not distracting)
 - **Duration**: If loading takes >3 seconds, add KA typing indicator: "Saglit lang..."
 
 ### Skeleton Patterns

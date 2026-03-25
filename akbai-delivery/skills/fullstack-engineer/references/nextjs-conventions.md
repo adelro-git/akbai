@@ -1,6 +1,6 @@
 # AKBai — Next.js Conventions
 > Reference for fullstack-engineer skill. File structure, naming, server/client split, Tailwind config.
-> Last updated: March 2026 | Stack: Next.js 14 App Router, TypeScript strict, Tailwind CSS, Plus Jakarta Sans
+> Last updated: 2026-03-24 | Stack: Next.js 16 App Router, TypeScript strict, Tailwind CSS, Plus Jakarta Sans
 
 ---
 
@@ -148,7 +148,7 @@
 
 ## Server vs Client Components
 
-Next.js 14 App Router defaults to Server Components. This is important for AKBai because it keeps the client JS bundle small (target < 200KB), which matters on Philippine LTE networks.
+Next.js 16 App Router defaults to Server Components. This is important for AKBai because it keeps the client JS bundle small (target < 200KB), which matters on Philippine LTE networks.
 
 ### When to Use Server Components (default)
 
@@ -248,13 +248,13 @@ export const metadata = {
   title: 'AKBai — Katuwang ng Negosyo Mo',
   description: 'Your AI Business Partner. In Taglish.',
   manifest: '/manifest.json',
-  themeColor: '#07101e',
+  themeColor: '#fdf9f2',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tl" className={jakarta.variable}>
-      <body className="bg-ink text-white font-sans antialiased">
+      <body className="bg-background text-foreground font-sans antialiased">
         {children}
       </body>
     </html>
@@ -389,23 +389,32 @@ const config: Config = {
         sans: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Brand identity
+        // Backward-compat aliases (map old tokens → MD3 semantic tokens)
+        ink: 'hsl(var(--background))',           // Backward compat alias → surface
+        'kai-card': 'hsl(var(--surface-container))',  // Backward compat alias
+        'kai-card-alt': 'hsl(var(--surface-container-high))', // Backward compat alias
+        // Brand identity (via MD3 tokens)
         honey: {
-          light: '#F59E0B',   // Primary — CTAs, highlights, logo
-          DEFAULT: '#F59E0B',
-          deep: '#D97706',    // Hover states, gradient end
+          DEFAULT: 'hsl(var(--primary-container))',
+          deep: 'hsl(var(--primary))',
         },
-        teal: {
-          light: '#20C9A0',   // Financial data, success
-          DEFAULT: '#20C9A0',
-          cyan: '#0FB8D9',    // Positive alerts, trust signals
-        },
-        // Backgrounds
-        ink: '#07101e',       // Page background (dark primary)
-        card: '#0d1a2e',     // Card backgrounds
-        'card-alt': '#111f36', // Alternate card backgrounds
-        // Semantic
-        'warm-white': '#F5F0E8', // Light mode alternative
+        teal: 'hsl(var(--tertiary))',
+        // MD3 Surface Hierarchy
+        surface: 'hsl(var(--surface))',
+        'surface-container': 'hsl(var(--surface-container))',
+        'surface-container-low': 'hsl(var(--surface-container-low))',
+        'surface-container-lowest': 'hsl(var(--surface-container-lowest))',
+        'surface-container-high': 'hsl(var(--surface-container-high))',
+        'surface-container-highest': 'hsl(var(--surface-container-highest))',
+        'on-surface': 'hsl(var(--on-surface))',
+        'on-surface-variant': 'hsl(var(--on-surface-variant))',
+        'outline-variant': 'hsl(var(--outline-variant))',
+        // MD3 Semantic Containers
+        'primary-container': 'hsl(var(--primary-container))',
+        'on-primary-container': 'hsl(var(--on-primary-container))',
+        'secondary-container': 'hsl(var(--secondary-container))',
+        'tertiary-container': 'hsl(var(--tertiary-container))',
+        'error-container': 'hsl(var(--error-container))',
       },
       minHeight: {
         touch: '44px',        // Minimum touch target
@@ -423,11 +432,12 @@ export default config;
 
 ### Tailwind Usage Rules
 
-- Use brand color tokens (`text-honey`, `bg-ink`, `text-teal-light`) instead of raw hex or Tailwind default colors
+- Use semantic MD3 tokens (`bg-surface-container`, `text-on-surface`, `text-on-surface-variant`) for theme-aware colors that work in both light and dark mode
+- Page background: `bg-background` or `bg-surface` (not `bg-ink`)
+- Card pattern: `rounded-xl bg-surface-container p-4` (not `bg-card`)
 - Touch targets: `min-h-touch min-w-touch` on all tappable elements (buttons, links, cards)
 - Mobile-first: write base styles for 375px, use `sm:` / `md:` / `lg:` to scale up
-- Gradient buttons: `bg-gradient-to-r from-honey-light to-honey-deep`
-- Card pattern: `rounded-xl bg-card p-4`
+- Gradient buttons: `bg-gradient-to-r from-honey to-honey-deep`
 - No `@apply` in globals.css except for rare base-level resets
 - No custom CSS classes — if Tailwind can't express it, rethink the design
 

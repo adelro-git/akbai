@@ -1,6 +1,6 @@
 # AKBai — Project Context
 > Shared reference for all akbai-delivery skills. Read this first. ~200 lines.
-> Last updated: 2026-03-20 | Source: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
+> Last updated: 2026-03-24 | Source: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
 
 ---
 
@@ -137,8 +137,8 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Build 0 Complete (2026-03-20)
-> Build 0 (AI Scope Definition) shipped: `/lib/claude/` module with 6-layer prompt assembler, model routing, guardrails, circuit breaker. 31 regression tests passing. Design Gate 1 resolved.
+> Current: Phase 0A — Build 1 In Progress (2026-03-24)
+> Build 0 shipped (2026-03-20). Build 1 (Kilala Kita) frontend shipped (Sprint 3, 2026-03-22). 208 tests passing. Gaps A3, A4, B3, E3 resolved.
 
 ### What's Built
 - **Build 0 — AI Scope Definition** (2026-03-20): `/frontend/src/lib/claude/` module
@@ -160,6 +160,16 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - IP-based rate limiting in `proxy.ts` (20 req/min per IP for `/api/*`)
   - Security audit gaps tracked in gap-registry.md Category F (F1-F4, all resolved)
   - ADR-005 documenting security architecture decisions
+
+- **Sprint 3 — Build 1 Frontend + Infrastructure** (2026-03-22):
+  - UTC+8 timezone enforcement: shared `@/lib/timezone` module with `toManila()`, `getManilaToday()`, `formatManilaDate()` — Gap A3 resolved (ADR-006)
+  - Kilala Kita onboarding UI: 5-step wizard (6 components), mobile-first light theme (dark mode available), Taglish copy, `useRef`+`onClick` pattern — Gap B3 resolved
+  - Onboarding schema: migration 005 (`onboarding_fields`), `/api/onboarding` route, Zod validation, 28 first-response templates
+  - Onboarding rate-limit exemption: `checkCircuitBreaker()` `onboardingCompleted` param — Gap E3 resolved (ADR-008)
+  - Sentry error monitoring: `@sentry/nextjs` client+server configs, `global-error.tsx`, source map uploads — Gap A4 resolved (ADR-007)
+  - Dev-auth bypass for local development (`SKIP_AUTH` + `DEV_USER`)
+  - PWA icons (icon-192.png, icon-512.png) added to `/public/icons/`
+  - 208 tests passing across all modules
 
 ---
 

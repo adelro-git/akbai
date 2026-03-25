@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { checkEmailProvider } from '@/lib/email/verify'
 
 type Step = 'email' | 'otp'
 
@@ -11,14 +12,25 @@ export default function LoginForm() {
   const [step, setStep] = useState<Step>('email')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [emailWarning, setEmailWarning] = useState<string | null>(null)
   const emailRef = useRef<HTMLInputElement>(null)
   const otpRef = useRef<HTMLInputElement>(null)
   const emailValueRef = useRef('')
 
   const supabase = createClient()
 
-  const handleSendOtp = useCallback(async () => {
+  const handleEmailBlur = useCallback(() => {
     const emailVal = emailRef.current?.value?.trim() || ''
+    if (!emailVal) {
+      setEmailWarning(null)
+      return
+    }
+    const { warning } = checkEmailProvider(emailVal)
+    setEmailWarning(warning ?? null)
+  }, [])
+
+  const handleSendOtp = useCallback(async () => {
+    const emailVal = emailRef.current?.value?.trim() || emailValueRef.current || ''
     if (!emailVal) {
       setError('Maglagay ng email address.')
       return
@@ -42,7 +54,11 @@ export default function LoginForm() {
       })
 
       if (otpError) {
-        setError('May problema sa pagpapadala ng code. Subukan muli.')
+        if (otpError.message?.toLowerCase().includes('rate') || otpError.status === 429) {
+          setError('Sandali lang — isang code lang every 60 seconds. Subukan muli mamaya.')
+        } else {
+          setError('May problema sa pagpapadala ng code. Subukan muli.')
+        }
       } else {
         setStep('otp')
       }
@@ -106,35 +122,44 @@ export default function LoginForm() {
 
   if (step === 'otp') {
     return (
-      <div className="space-y-5" data-testid="otp-form">
-        <div>
-          <h2 className="text-xl font-bold text-white mb-1">I-enter ang code</h2>
-          <p className="text-slate-400 text-sm">
+      <section className="space-y-6" data-testid="otp-form">
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold text-on-surface">I-enter ang code</h2>
+          <p className="text-on-surface-variant text-sm">
             Nagpadala kami ng 6-digit code sa{' '}
-            <span className="text-white font-medium">{emailValueRef.current}</span>.
+            <span className="text-on-surface font-medium">{emailValueRef.current}</span>.
           </p>
         </div>
 
         <div className="space-y-2">
-          <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+          <label className="block text-sm font-semibold tracking-wide text-on-surface-variant px-1">
             OTP Code
           </label>
-          <input
-            ref={otpRef}
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            maxLength={6}
-            placeholder="123456"
-            autoFocus
-            onKeyDown={handleOtpKeyDown}
-            className="w-full bg-kai-card-alt border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-lg tracking-widest text-center focus:border-honey focus:ring-1 focus:ring-honey transition-colors"
-            data-testid="otp-input"
-          />
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary-container transition-colors">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </div>
+            <input
+              ref={otpRef}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              placeholder="123456"
+              autoFocus
+              autoComplete="one-time-code"
+              onKeyDown={handleOtpKeyDown}
+              className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl text-on-surface placeholder:text-on-surface-variant/50 text-lg tracking-widest text-center focus:ring-1 focus:ring-primary-container/40 focus:bg-surface-container transition-all duration-300 outline-none"
+              data-testid="otp-input"
+            />
+          </div>
         </div>
 
         {error && (
-          <p className="text-red-400 text-sm" data-testid="login-error">
+          <p className="text-on-error-container text-sm" data-testid="login-error">
             {error}
           </p>
         )}
@@ -143,10 +168,13 @@ export default function LoginForm() {
           type="button"
           onClick={handleVerifyOtp}
           disabled={loading}
-          className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50"
+          className="w-full py-4 px-6 bg-gradient-to-r from-primary-container to-primary text-on-primary-container font-bold rounded-xl shadow-lg shadow-primary-container/10 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed"
           data-testid="verify-otp-btn"
         >
-          {loading ? 'Sine-verify...' : 'I-verify ang Code'}
+          <span>{loading ? 'Sine-verify...' : 'I-verify ang Code'}</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
         </button>
 
         <button
@@ -155,41 +183,51 @@ export default function LoginForm() {
             setStep('email')
             setError(null)
           }}
-          className="w-full text-slate-400 text-sm py-2 hover:text-white transition-colors"
+          className="w-full text-on-surface-variant text-sm min-h-[44px] py-2 hover:text-primary-container transition-colors font-bold"
           data-testid="back-to-email-btn"
         >
           Mag-back at magpadala ulit
         </button>
-      </div>
+      </section>
     )
   }
 
   return (
-    <div className="space-y-5" data-testid="email-form">
-      <div>
-        <h2 className="text-xl font-bold text-white mb-1">Mag-login po</h2>
-        <p className="text-slate-400 text-sm">
-          Magpapadala kami ng login code sa iyong email.
-        </p>
+    <section className="space-y-6" data-testid="email-form">
+      <div className="space-y-2">
+        <label className="block text-sm font-semibold tracking-wide text-on-surface-variant px-1">
+          Email Address
+        </label>
+        <div className="relative group">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary-container transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+          </div>
+          <input
+            ref={emailRef}
+            type="email"
+            defaultValue={emailValueRef.current}
+            placeholder="pangalan@halimbawa.com"
+            autoFocus
+            autoComplete="email"
+            onKeyDown={handleEmailKeyDown}
+            onBlur={handleEmailBlur}
+            className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl text-on-surface placeholder:text-on-surface-variant/50 focus:ring-1 focus:ring-primary-container/40 focus:bg-surface-container transition-all duration-300 outline-none"
+            data-testid="email-input"
+          />
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
-          Email
-        </label>
-        <input
-          ref={emailRef}
-          type="email"
-          placeholder="you@example.com"
-          autoFocus
-          onKeyDown={handleEmailKeyDown}
-          className="w-full bg-kai-card-alt border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-honey focus:ring-1 focus:ring-honey transition-colors"
-          data-testid="email-input"
-        />
-      </div>
+      {emailWarning && (
+        <p className="text-yellow-400/80 text-xs leading-relaxed" data-testid="email-warning">
+          {emailWarning}
+        </p>
+      )}
 
       {error && (
-        <p className="text-red-400 text-sm" data-testid="login-error">
+        <p className="text-on-error-container text-sm" data-testid="login-error">
           {error}
         </p>
       )}
@@ -198,11 +236,14 @@ export default function LoginForm() {
         type="button"
         onClick={handleSendOtp}
         disabled={loading}
-        className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:bg-honey/50 disabled:cursor-not-allowed disabled:hover:bg-honey/50"
+        className="w-full py-4 px-6 bg-gradient-to-r from-primary-container to-primary text-on-primary-container font-bold rounded-xl shadow-lg shadow-primary-container/10 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="send-otp-btn"
       >
-        {loading ? 'Nagpapadala...' : 'Magpadala ng Code'}
+        <span>{loading ? 'Nagpapadala...' : 'Send Magic Link'}</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
       </button>
-    </div>
+    </section>
   )
 }

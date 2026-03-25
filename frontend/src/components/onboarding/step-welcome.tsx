@@ -32,16 +32,16 @@ export default function StepWelcome({ onComplete, loading, initialName }: StepWe
   return (
     <div className="flex flex-col gap-6">
       {/* KA bubble */}
-      <div className="bg-kai-card rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
-        <p className="text-white text-base leading-relaxed">
-          Kumusta! Ako si <span className="text-honey font-semibold">Kai</span>, ang AI business
+      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
+        <p className="text-on-surface text-base leading-relaxed">
+          Kumusta! Ako si <span className="text-primary-container font-semibold">Kai</span>, ang AI business
           partner mo. Ano ang pangalan mo?
         </p>
       </div>
 
       {/* Name input */}
       <div className="space-y-2">
-        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+        <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
           Pangalan
         </label>
         <input
@@ -52,7 +52,7 @@ export default function StepWelcome({ onComplete, loading, initialName }: StepWe
           autoFocus
           maxLength={100}
           onKeyDown={handleKeyDown}
-          className="w-full bg-kai-card-alt border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-honey focus:ring-1 focus:ring-honey transition-colors"
+          className="w-full bg-surface-container-high border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface placeholder-outline focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
         />
       </div>
 
@@ -60,7 +60,7 @@ export default function StepWelcome({ onComplete, loading, initialName }: StepWe
         type="button"
         onClick={handleSubmit}
         disabled={loading}
-        className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-primary-container hover:bg-primary text-on-primary-container font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {loading ? 'Sine-save...' : 'Tara, simulan natin!'}
       </button>

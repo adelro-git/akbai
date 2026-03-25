@@ -24,7 +24,7 @@
 **Design philosophy**: This is the user's first encounter with KA. It must feel like a conversation, not a government form. KA asks one question at a time through chat bubbles, and the user answers by tapping cards or quick-reply chips — minimal typing.
 
 ### Step 1: Welcome + Name
-**Screen**: Full-screen dark background (#07101e), AKBai logo centered top, KA chat bubble appears with typing animation.
+**Screen**: Full-screen surface background (#fdf9f2 light / #07101e dark), AKBai logo centered top, KA chat bubble appears with typing animation.
 
 **KA bubble**: "Kumusta! Ako si Kai, ang business partner mo. Ano ang pangalan mo?"
 

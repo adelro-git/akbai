@@ -9,15 +9,62 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ink: '#07101e',
-        'kai-card': '#0d1a2e',
-        'kai-card-alt': '#111f36',
+        /* --- MD3 Surface tokens (theme-aware via CSS variables) --- */
+        surface: 'hsl(var(--surface))',
+        'surface-dim': 'hsl(var(--surface-dim))',
+        'surface-bright': 'hsl(var(--surface-bright))',
+        'surface-container-lowest': 'hsl(var(--surface-container-lowest))',
+        'surface-container-low': 'hsl(var(--surface-container-low))',
+        'surface-container': 'hsl(var(--surface-container))',
+        'surface-container-high': 'hsl(var(--surface-container-high))',
+        'surface-container-highest': 'hsl(var(--surface-container-highest))',
+        'on-surface': 'hsl(var(--on-surface))',
+        'on-surface-variant': 'hsl(var(--on-surface-variant))',
+        'surface-tint': 'hsl(var(--surface-tint))',
+
+        /* --- MD3 Outline tokens --- */
+        outline: 'hsl(var(--outline))',
+        'outline-variant': 'hsl(var(--outline-variant))',
+
+        /* --- MD3 Primary tokens --- */
+        'primary-container': 'hsl(var(--primary-container))',
+        'on-primary': 'hsl(var(--on-primary))',
+        'on-primary-container': 'hsl(var(--on-primary-container))',
+        'primary-fixed': 'hsl(var(--primary-fixed))',
+        'primary-fixed-dim': 'hsl(var(--primary-fixed-dim))',
+        'inverse-primary': 'hsl(var(--inverse-primary))',
+
+        /* --- MD3 Secondary tokens --- */
+        'secondary-container': 'hsl(var(--secondary-container))',
+        'on-secondary': 'hsl(var(--on-secondary))',
+        'on-secondary-container': 'hsl(var(--on-secondary-container))',
+
+        /* --- MD3 Tertiary tokens --- */
+        tertiary: 'hsl(var(--tertiary))',
+        'tertiary-container': 'hsl(var(--tertiary-container))',
+        'on-tertiary': 'hsl(var(--on-tertiary))',
+        'on-tertiary-container': 'hsl(var(--on-tertiary-container))',
+
+        /* --- MD3 Error tokens --- */
+        'error-container': 'hsl(var(--error-container))',
+        'on-error-container': 'hsl(var(--on-error-container))',
+
+        /* --- MD3 Inverse tokens --- */
+        'inverse-surface': 'hsl(var(--inverse-surface))',
+        'inverse-on-surface': 'hsl(var(--inverse-on-surface))',
+
+        /* --- Backward-compat aliases (old → new, remove later) --- */
+        ink: 'hsl(var(--background))',
+        'kai-card': 'hsl(var(--surface-container))',
+        'kai-card-alt': 'hsl(var(--surface-container-high))',
         honey: {
-          DEFAULT: '#F59E0B',
-          deep: '#D97706',
+          DEFAULT: 'hsl(var(--primary-container))',
+          deep: 'hsl(var(--primary))',
         },
-        teal: '#20C9A0',
-        'user-bubble': '#1a2a42',
+        teal: 'hsl(var(--tertiary))',
+        'user-bubble': 'hsl(var(--secondary-container))',
+
+        /* --- Shadcn/UI compatibility tokens --- */
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -59,6 +106,12 @@ module.exports = {
       },
       fontFamily: {
         sans: ['var(--font-plus-jakarta-sans)', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        /* Amber ambient shadows — no grey shadows allowed */
+        'ambient': '0 20px 40px -5px hsl(var(--primary) / 0.08)',
+        'ambient-lg': '0 30px 60px -5px hsl(var(--primary) / 0.08)',
+        'ambient-nav': '0 -10px 40px -5px hsl(var(--primary) / 0.06)',
       },
     },
   },

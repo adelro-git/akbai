@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import StepWelcome from './step-welcome';
 import StepBusinessType from './step-business-type';
 import StepIncomeRange from './step-income-range';
 import StepPainPoint from './step-pain-point';
 import StepBirConsent from './step-bir-consent';
+import { trackOnboardingStarted, trackOnboardingCompleted } from '@/lib/posthog/events';
 import type { OnboardingState, BusinessType, IncomeRange, PainPoint } from '@/lib/kilala-kita';
 
 interface OnboardingWizardProps {
@@ -20,6 +21,15 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
   const [error, setError] = useState<string | null>(null);
   const [firstName, setFirstName] = useState(initialState.display_name ?? '');
   const [firstMessage, setFirstMessage] = useState<string | null>(null);
+
+  // Track onboarding started (once per mount)
+  const trackedStart = useRef(false);
+  useEffect(() => {
+    if (!trackedStart.current) {
+      trackOnboardingStarted();
+      trackedStart.current = true;
+    }
+  }, []);
 
   // Carry forward previously saved values for resumability
   const [savedData, setSavedData] = useState({
@@ -113,10 +123,11 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
     async (birConsent: boolean) => {
       const ok = await saveStep(5, { bir_consent: birConsent });
       if (ok) {
+        trackOnboardingCompleted(savedData.business_type ?? 'unknown');
         setCurrentStep(6); // Show first message screen
       }
     },
-    [saveStep]
+    [saveStep, savedData.business_type]
   );
 
   const progressPct = Math.min(((currentStep - 1) / 5) * 100, 100);
@@ -125,8 +136,8 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
   if (currentStep === 6 && firstMessage) {
     return (
       <div className="flex flex-col gap-6 animate-in fade-in duration-500">
-        <div className="bg-kai-card rounded-2xl rounded-tl-sm p-4">
-          <p className="text-white text-base leading-relaxed">{firstMessage}</p>
+        <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
+          <p className="text-on-surface text-base leading-relaxed">{firstMessage}</p>
         </div>
         <button
           type="button"
@@ -134,7 +145,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
             router.push('/chat');
             router.refresh();
           }}
-          className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all"
+          className="w-full bg-primary-container hover:bg-primary text-on-primary-container font-semibold py-3 px-4 rounded-xl transition-all"
         >
           Simulan na natin!
         </button>
@@ -145,15 +156,15 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
   return (
     <div className="flex flex-col gap-6">
       {/* Progress bar */}
-      <div className="w-full h-1.5 bg-kai-card-alt rounded-full overflow-hidden">
+      <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
         <div
-          className="h-full bg-honey rounded-full transition-all duration-500 ease-out"
+          className="h-full bg-primary-container rounded-full transition-all duration-500 ease-out"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
       {/* Step counter */}
-      <p className="text-slate-500 text-xs font-medium">
+      <p className="text-outline text-xs font-medium">
         Step {Math.min(currentStep, 5)} ng 5
       </p>
 

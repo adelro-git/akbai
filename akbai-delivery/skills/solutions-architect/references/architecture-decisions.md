@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-007
-> Last updated: 2026-03-22
+> Current highest: ADR-009
+> Last updated: 2026-03-24
 
 ---
 
@@ -17,6 +17,7 @@
 | ADR-006 | UTC+8 (Asia/Manila) timezone enforcement | Accepted | 2026-03-22 |
 | ADR-007 | Sentry error monitoring with @sentry/nextjs | Accepted | 2026-03-22 |
 | ADR-008 | Onboarding rate-limit exemption (Gap E3) | Accepted | 2026-03-22 |
+| ADR-009 | PostHog for product analytics (Gap A5) | Accepted | 2026-03-24 |
 
 ---
 
@@ -283,3 +284,53 @@ Implementation:
 - Depends on Sprint 3 Task 2 (schema adds `onboarding_completed` column to `users` table)
 
 **Review Trigger:** If additional pre-onboarding features are added that require Claude API calls (e.g., a pre-onboarding assessment), evaluate whether the exemption scope needs to expand beyond just the query counter.
+
+---
+
+## ADR-009: PostHog for Product Analytics (Gap A5)
+
+**Status:** Accepted
+**Date:** 2026-03-24
+
+**Context:**
+AKBai has no product analytics to measure user behavior, feature adoption, or onboarding completion rates (Gap A5). The 8 Sense Check Gate signals — including onboarding completion rate, return chat sessions, and dashboard engagement — require an analytics baseline before Phase 0C. Without instrumentation, Anton has no data to validate whether the "Maria Moment" (first actionable insight) is actually landing, whether users complete onboarding, or which features drive retention. A solo founder cannot make informed product decisions based on gut feel alone.
+
+**Decision:**
+Use PostHog Cloud (free tier, 1M events/month) with a dual-client architecture:
+
+1. **Client-side (`posthog-js`):** Initialized via a `PostHogProvider` React context wrapper in the root layout. Handles automatic pageview capture, user identification via Supabase auth session, and typed event tracking. Project API key (`NEXT_PUBLIC_POSTHOG_KEY`) is a publishable key safe for client-side use. PostHog Cloud host: `https://us.i.posthog.com`.
+
+2. **Server-side (`posthog-node`):** Singleton client created via `getPostHogServer()` for server-side event tracking in API routes and server actions. Uses `POSTHOG_PERSONAL_API_KEY` — a server-side secret that must never be exposed to the client.
+
+3. **Typed event functions:** All event tracking goes through typed wrapper functions in `@/lib/posthog/events.ts`, not raw `posthog.capture()` calls scattered across the codebase. Initial 5 events:
+   - `onboarding_started` — user begins Kilala Kita flow
+   - `onboarding_completed` — user finishes onboarding (includes `business_type` property)
+   - `chat_message_sent` — user sends a message to Kai
+   - `dashboard_viewed` — user views dashboard
+   - `receipt_scanned` — future OCR feature (includes `success` property)
+
+4. **User identification:** When a Supabase auth session exists, `posthog.identify(user.id)` is called with the user's email as a property. Auth state changes (login/logout) trigger identify/reset respectively.
+
+5. **Development mode:** PostHog debug mode is enabled in development (`posthog.debug()`), which logs events to the console without sending them to PostHog Cloud.
+
+**Alternatives Considered:**
+- **Mixpanel:** Comparable product analytics with strong funnel analysis. However, PostHog's free tier is more generous (1M vs 100K events/month), PostHog is open-source (self-hostable if needed later), and PostHog's session recording feature (disabled for now) can be enabled without switching tools.
+- **Google Analytics 4:** Free and ubiquitous, but GA4's event model is awkward for product analytics (designed for web marketing, not SaaS feature tracking). No server-side SDK for Node.js. Data retention is limited on the free tier. Privacy concerns with Google data processing for Philippine users.
+- **Amplitude:** Strong product analytics, but free tier is limited to 10M events/month with data retention caps. More complex SDK setup than PostHog. No self-hosting option.
+- **Custom events to Supabase table:** Zero external dependency, but requires building dashboards, funnels, cohort analysis, and retention charts from scratch. Massive yak-shave for a solo founder — PostHog provides all of these out of the box.
+- **No analytics until Phase 1:** Violates the Sense Check Gate requirement. Without a pre-launch analytics baseline, there's no way to measure whether Phase 0C changes improve or regress key metrics.
+
+**Consequences:**
+- 5 core events provide an analytics baseline for the 8 Sense Check Gate signals
+- Typed event functions prevent typo-based silent failures (e.g., `onboarding_comepleted` would be a compile error)
+- PostHog's free tier (1M events/month) is more than sufficient for Phase 0-1 scale
+- Minimal bundle impact: posthog-js is ~5KB gzipped, loaded asynchronously
+- PostHog Cloud (US region) adds ~50-100ms latency for event ingestion from the Philippines — acceptable for analytics (non-blocking, fire-and-forget)
+- User identification links anonymous pre-auth pageviews to authenticated user IDs after login
+- Server-side client enables future server-side event tracking (e.g., API route performance, webhook processing) without client-side dependency
+- Adding a new event requires: one constant in `EVENTS`, one typed function in `events.ts`, one call at the relevant UI touchpoint
+
+**Related Gaps:**
+- Resolves Gap A5 — Analytics baseline (PostHog)
+
+**Review Trigger:** If PostHog event volume approaches 1M/month (unlikely before Phase 2), evaluate paid tier or self-hosting. When session recording is needed for UX research, enable PostHog's built-in recorder instead of adding a separate tool.

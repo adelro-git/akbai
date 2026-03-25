@@ -1,7 +1,7 @@
 # AKBai — Pre-Launch Gap Registry
 > Used by: project-manager, solutions-architect, fullstack-engineer, devops-engineer, security-compliance
-> Last updated: 2026-03-20 | Source: Roadmap v14, Operations Playbook v7
-> 29 total gaps across 5 categories. 10 CRITICAL items are hard gates — must resolve before any user-facing launch.
+> Last updated: 2026-03-25 | Source: Roadmap v14, Operations Playbook v7
+> 32 total gaps across 6 categories. 10 CRITICAL items remain (A1, A5 resolved this sprint; D1 downgraded to IMPORTANT).
 
 ---
 
@@ -10,11 +10,11 @@
 
 | # | Gap | Severity | When to Fix | Action |
 |---|-----|----------|-------------|--------|
-| A1 | Authentication (email OTP via Supabase Auth) | **CRITICAL** | Phase 0A — Build 0 | Must ship before any user data is stored. Supabase Auth + magic link. No auth = no data isolation = PDPA violation. |
+| A1 | Authentication (email OTP via Supabase Auth) | **CRITICAL** | Phase 0A — Build 0 | ✅ RESOLVED 2026-03-25. Supabase Auth OTP working (tested Gmail). Login form with Taglish copy, rate-limit handling, email provider detection (Yahoo PH warning). Auth middleware redirects unauthenticated users. Dev-auth bypass for local development. |
 | A2 | Privacy Policy & Terms of Service | **CRITICAL** | Phase 0A — Legal | NPC requires explicit consent checkbox before any data collection. Engage a PH tech lawyer. Do not self-draft. |
 | A3 | Timezone enforcement (UTC+8) | **CRITICAL** | Phase 1 — Day 1 | ✅ RESOLVED 2026-03-22. Shared `@/lib/timezone` module: `getManilaToday()`, `formatManilaDate()`, `toManila()`, `getManilaTimestamp()`, `toManilaSQL()`. Circuit breaker refactored to use shared utility. 12 tests passing. ADR-006. Convention documented in tech-stack.md. |
 | A4 | Error monitoring (Sentry) | **CRITICAL** | Phase 1 — Pre-launch | ✅ RESOLVED 2026-03-22. `@sentry/nextjs` installed with client+server configs, `instrumentation.ts`, `withSentryConfig` in next.config.js, `global-error.tsx` (Taglish), env vars in `.env.local.example`. ADR-007. Production-only, low sample rates (0.1) for cost control. |
-| A5 | Analytics baseline (PostHog) | **CRITICAL** | Phase 1 — Pre-launch | Required to measure the 8 Sense Check Gate signals. Cannot validate MVP without it. Must be live from Day 1. |
+| A5 | Analytics baseline (PostHog) | **CRITICAL** | Phase 1 — Pre-launch | ✅ RESOLVED 2026-03-25. `posthog-js` + `posthog-node` installed. `PostHogProvider` in root layout with auto-identify via Supabase auth. 5 typed events: `onboarding_started`, `onboarding_completed`, `chat_message_sent`, `dashboard_viewed`, `receipt_scanned`. Server-side singleton client. ADR-009. Env vars configured. |
 
 **Note:** Source doc Table 19 summary shows Category A has 5 CRITICAL gaps. The total 8 CRITICAL count includes 3 from Category D below.
 
@@ -51,7 +51,7 @@
 
 | # | Gap | Severity | When to Fix | Action |
 |---|-----|----------|-------------|--------|
-| D1 | OTP deliverability to Yahoo Mail PH | **CRITICAL** | Phase 0A | Yahoo Mail is common among target users. Supabase default SendGrid has delivery issues for PH. Requires a custom SMTP domain warmed up before launch. |
+| D1 | OTP deliverability to Yahoo Mail PH | IMPORTANT | Phase 1 — Pre-launch | Downgraded 2026-03-25. Supabase built-in email works for dev/early users (tested Gmail OTP successfully). 4 emails/hour free tier is fine for now. Custom SMTP (Resend) deferred until domain purchased and real users onboarding. Code-side prep done: branded email templates (`lib/email/templates.ts`), Yahoo PH detection (`lib/email/verify.ts`), setup guide (`smtp-setup-guide.md`). Revisit when approaching launch. |
 | D2 | Webhook idempotency — Xendit | **CRITICAL** | Build 4 | Xendit webhook can fire twice on retry. Payment handler must deduplicate by payment_id before processing to prevent double-crediting subscriptions. |
 | D3 | OR number generation legality | **CRITICAL** | Phase 1 — Legal review | BIR requires sequentially numbered Official Receipts from a registered OR series. Auto-generating receipt numbers needs BIR legal sign-off before Automated Self-Invoicing ships. |
 | D4 | Dependency monitoring | IMPORTANT | Phase 1 — Pre-launch | Anthropic API, Supabase, Xendit each need health checks + graceful in-app fallback messages. Set up UptimeRobot or Better Uptime. |
@@ -70,7 +70,7 @@
 
 | # | Gap | Severity | When to Fix | Action |
 |---|-----|----------|-------------|--------|
-| E1 | Resibo OCR technical spike | **CRITICAL** | Phase 0A — Build 0 | Test Claude Haiku Vision on 10–15 real Filipino receipts (Shopee waybills, SM, faded thermal prints) via Anthropic Console. Must hit 85%+ field accuracy. If Haiku fails, evaluate Sonnet (higher API cost) or adjust marketing promises. This is a hard gate before Build 1. Effort: 1 afternoon. |
+| E1 | Resibo OCR technical spike | **CRITICAL** | Phase 0A — Build 0 | IN PROGRESS (2026-03-24). OCR pipeline code + test harness built: `frontend/src/lib/ocr/` (types, Zod schemas, Filipino receipt prompt, parse-receipt with Haiku-first + Sonnet fallback, cost helpers). API route at `/api/ocr`. 46 unit tests passing. Spike runner script ready at `__tests__/spike-runner.ts`. **AWAITING**: Anton to provide 10-15 real Filipino receipt images, then run spike with `ANTHROPIC_API_KEY=xxx npx tsx src/lib/ocr/__tests__/spike-runner.ts`. Must hit 85%+ field accuracy. |
 | E2 | Meta API dummy webhook submission | IMPORTANT | Phase 0A — This week | Meta App Review takes 1–3+ months. Submit a simple Next.js endpoint returning 200 OK as the webhook now. Decouples Phase 2 DM Connect from bureaucratic wait. Ping endpoint monthly to keep approval active. Effort: 1 hour. |
 | E3 | Onboarding rate-limit exemption | **CRITICAL** | Build 1 — Architecture | ✅ RESOLVED 2026-03-22. `checkCircuitBreaker()` accepts optional `onboardingCompleted` param. When `false`, free tier 10-query limit is bypassed. Chat route passes `users.onboarding_completed` to circuit breaker. Safe default: `undefined` still enforces limit. 3 tests. ADR-008. |
 
@@ -95,10 +95,10 @@
 | A — Hard Pre-Launch Gates | 5 | 0 | 0 | 5 |
 | B — UX Gaps | 0 | 7 | 0 | 7 |
 | C — Business Logic | 0 | 2 | 1 | 3 |
-| D — Operational (Playbook) | 3 | 6 | 2 | 11 |
+| D — Operational (Playbook) | 2 | 7 | 2 | 11 |
 | E — Pre-Build Checklist (v14) | 2 | 1 | 0 | 3 |
 | F — Security Audit (Mar 2026) | 1 | 2 | 0 | 3 |
-| **TOTAL** | **11** | **18** | **3** | **32** |
+| **TOTAL** | **10** | **19** | **3** | **32** |
 
 **Rule:** All CRITICAL gaps are hard gates. No Phase 1 build proceeds until these are resolved.
 

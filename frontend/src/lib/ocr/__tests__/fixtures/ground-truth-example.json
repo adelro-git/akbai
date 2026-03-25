@@ -1,0 +1,34 @@
+[
+  {
+    "receiptId": "sm-supermarket-001",
+    "merchant": "SM Supermarket Megamall",
+    "date": "2026-03-20",
+    "totalCentavos": 19050,
+    "vatCentavos": 2040,
+    "tin": "000-108-276-000"
+  },
+  {
+    "receiptId": "gcash-payment-001",
+    "merchant": "GCash",
+    "date": "2026-03-19",
+    "totalCentavos": 50000,
+    "vatCentavos": null,
+    "tin": null
+  },
+  {
+    "receiptId": "sari-sari-handwritten-001",
+    "merchant": "Aling Nena Store",
+    "date": "2026-03-18",
+    "totalCentavos": 15000,
+    "vatCentavos": null,
+    "tin": null
+  },
+  {
+    "receiptId": "thermal-faded-001",
+    "merchant": "Puregold",
+    "date": "2026-03-17",
+    "totalCentavos": 85500,
+    "vatCentavos": 9160,
+    "tin": "008-123-456-000"
+  }
+]

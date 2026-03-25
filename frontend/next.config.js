@@ -3,6 +3,7 @@ const path = require('path')
 const { withSentryConfig } = require('@sentry/nextjs')
 
 const nextConfig = {
+  devIndicators: false,
   turbopack: {
     root: path.resolve(__dirname),
   },
