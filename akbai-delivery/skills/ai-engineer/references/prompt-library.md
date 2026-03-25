@@ -1,7 +1,7 @@
 # AKBai — Prompt Library
 > Versioned system prompts for all AI-powered features.
 > Read this file when writing, modifying, or debugging any system prompt.
-> Last updated: March 2026 | Version: 1.0.0
+> Last updated: 2026-03-25 | Version: 1.0.0
 
 ### How Other Agents Use This File
 
@@ -452,7 +452,7 @@ Track every change to production prompts here. This powers the regression test g
 | Date | Prompt | Version | Change | Tested |
 |------|--------|---------|--------|--------|
 | 2026-03-15 | Core KA Persona | 1.0.0 | Initial version | Pending — Build 0 |
-| 2026-03-15 | Resibo Scanner | 1.0.0 | Initial version | Pending — Build 0 |
+| 2026-03-15 | Resibo Scanner | 1.0.0 | Initial version | Sprint 4 (2026-03-25) — OCR pipeline built: extraction prompt implemented in `frontend/src/lib/ocr/prompts.ts`, Haiku Vision first w/ Sonnet fallback, 46 unit tests passing. Awaiting real receipt images for spike validation (Gap E1). |
 | 2026-03-15 | Ang Umaga Mo | 1.0.0 | Initial version | Pending — Build 0 |
 | 2026-03-15 | Reply Drafter | 1.0.0 | Initial version | Pending — Build 0 |
 | 2026-03-15 | General Chat | 1.0.0 | Initial version | Pending — Build 0 |

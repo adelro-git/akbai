@@ -1,6 +1,6 @@
 # AKBai — Test Strategy
 > Used by: qa-engineer, fullstack-engineer, devops-engineer, ai-engineer
-> Last updated: 2026-03-24 | Source: Tech Stack, Gap Registry, all engineering skill specs
+> Last updated: 2026-03-25 | Source: Tech Stack, Gap Registry, all engineering skill specs
 
 ---
 
@@ -19,7 +19,7 @@ AKBai is built by a solo founder with 10–15 hours per sprint. The testing stra
 ### Layer 1: Unit Tests (Vitest)
 **Purpose:** Test pure business logic with no external dependencies.
 **Speed:** < 10ms per test. Full unit suite < 5 seconds.
-**Current count (as of Sprint 3):** 208 tests passing across 16+ files (Vitest).
+**Current count (as of Sprint 4):** 337 tests passing across 20+ files (Vitest). Sprint 4 added 129 new tests: 40 email, 43 dashboard, 46 OCR.
 **When to use:** Any function that takes input and returns output without side effects.
 
 **Primary targets:**
@@ -32,6 +32,10 @@ AKBai is built by a solo founder with 10–15 hours per sprint. The testing stra
 - Timezone conversions (UTC ↔ Asia/Manila, midnight boundary)
 - Query counter logic (daily limit tracking, midnight reset in Manila time)
 - Notification sequence generation (7-day, 3-day, 1-day before deadline)
+- Email templates (17 tests — HTML rendering, placeholder injection, Taglish copy)
+- Email provider detection (23 tests — domain parsing, provider-specific SMTP config)
+- Dashboard API + components (43 tests — API route validation, summary card rendering, data aggregation)
+- OCR pipeline (46 tests — Zod schema validation, image format/size validation, model fallback from Sonnet → Haiku)
 
 **Configuration:**
 ```typescript
@@ -312,3 +316,14 @@ These waste the solo founder's limited testing budget:
 - **Don't chase 100% coverage globally.** Coverage targets apply only to the business-critical modules listed above. Forcing coverage on utility code, UI components, or configuration files wastes time.
 - **Don't write flaky tests.** A test that fails intermittently is worse than no test — it trains the developer to ignore failures. If a test depends on timing, network, or AI output, it's either in the wrong layer or needs a mock.
 - **Don't duplicate type system checks as tests.** If TypeScript strict mode + Zod schemas already prevent a class of errors, writing tests for the same errors is redundant.
+
+---
+
+## 8. Multi-Agent Testing Pattern (Sprint 4)
+
+Sprint 4 introduced a parallel worktree workflow: 5 Claude Code agents worked simultaneously in isolated git worktrees, each writing tests for their own feature area (email templates, email provider detection, dashboard API, dashboard components, OCR pipeline). Key observations:
+
+- **All agent test suites passed individually.** Each agent ran `vitest` against its own test files before committing, ensuring no broken tests were merged.
+- **3 pre-existing failures in `chat/route.test.ts`** were identified during the combined test run. These are caused by a circuit breaker mock issue that predates Sprint 4 — they are not regressions from the new code.
+- **Isolation matters.** Because each agent operated in a separate worktree, there were no merge conflicts in test files. Test file naming conventions (`<feature>.test.ts`) prevented collisions.
+- **Recommended for future sprints** when multiple independent features need test coverage in parallel. The constraint is that agents must not modify the same source files — tests-only parallelism works cleanly.

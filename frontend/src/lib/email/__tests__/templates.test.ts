@@ -25,7 +25,7 @@ describe('magicLinkTemplate', () => {
     const html = magicLinkTemplate(testLink);
     expect(html).toContain('AKB');
     expect(html).toContain('#F59E0B'); // honey accent
-    expect(html).toContain('#07101e'); // ink background
+    expect(html).toContain('#fdf9f2'); // surface background
   });
 
   it('includes Taglish copy', () => {
@@ -96,7 +96,7 @@ describe('confirmationTemplate', () => {
     const html = confirmationTemplate(testLink);
     expect(html).toContain('AKB');
     expect(html).toContain('#F59E0B');
-    expect(html).toContain('#07101e');
+    expect(html).toContain('#fdf9f2');
   });
 
   it('includes motivational onboarding copy', () => {

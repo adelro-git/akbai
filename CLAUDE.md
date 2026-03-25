@@ -70,8 +70,24 @@ decision, or discovering something that changes how we work), UPDATE the relevan
 | New Taglish pattern discovered | `skills/ux-designer/references/taglish-copy-guide.md` — add example |
 | Sprint planned (`/sprint`) | `shared/sprint-history.md` — append sprint plan entry (automated by command) |
 | Sprint completed (`/retro`) | `shared/sprint-history.md` — update sprint outcomes, append retro, update velocity (automated by command) |
-| Sprint completed | Ask Anton if sprint learnings should update any skill files |
+| Sprint completed | MANDATORY: Run post-sprint update checklist (see below). Update ALL relevant skill SKILL.md and reference files before closing the sprint. |
 | Convention established or changed | Relevant skill's SKILL.md or references — document the convention |
+
+### Post-Sprint Update Checklist (Mandatory — enforced by /retro)
+After every sprint retro, check ALL of the following. For each "Yes", update the file before closing:
+
+- [ ] Did we discover a new development pattern or convention? → Update relevant skill's SKILL.md
+- [ ] Did we resolve or change a gap? → Update `shared/gap-registry.md`
+- [ ] Did we ship a new build or feature? → Update `shared/project-context.md` §What's Built
+- [ ] Did we create or modify a schema/migration? → Update `skills/data-architect/references/supabase-schema.md`
+- [ ] Did we add new tests or establish test patterns? → Update `skills/qa-engineer/references/test-strategy.md`
+- [ ] Did we change deployment config or env vars? → Update `skills/devops-engineer/references/deployment-guide.md`
+- [ ] Did we write or change AI prompts? → Update `skills/ai-engineer/references/prompt-library.md`
+- [ ] Did we discover Taglish copy patterns? → Update `skills/ux-designer/references/taglish-copy-guide.md`
+- [ ] Did we make architecture decisions? → Update `skills/solutions-architect/references/architecture-decisions.md`
+- [ ] Did the development workflow itself change? → Update PM skill files and sprint templates
+
+This checklist is the governance mechanism that prevents skill drift over time. Do not skip it.
 
 ### How to Update
 - Keep updates concise — add/modify specific sections, don't rewrite entire files

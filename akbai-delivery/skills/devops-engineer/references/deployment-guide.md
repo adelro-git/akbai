@@ -1,6 +1,6 @@
 # AKBai — Deployment Guide
 > Reference for: devops-engineer skill
-> Last updated: 2026-03-24
+> Last updated: 2026-03-25
 > Source: Tech Stack v1, Roadmap v14, Operations Playbook v7
 
 ## Table of Contents
@@ -210,8 +210,9 @@ NEXT_PUBLIC_SENTRY_DSN            — Sentry Data Source Name (safe for client, 
 SENTRY_ORG                        — Sentry organization slug. For source map uploads.
 SENTRY_PROJECT                    — Sentry project slug. For source map uploads.
 SENTRY_AUTH_TOKEN                 — For source map uploads during build. Server-side only.
-NEXT_PUBLIC_POSTHOG_KEY           — PostHog project API key (public)
-NEXT_PUBLIC_POSTHOG_HOST          — PostHog ingestion host (public)
+NEXT_PUBLIC_POSTHOG_KEY           — PostHog project API key (client-side, public)
+NEXT_PUBLIC_POSTHOG_HOST          — PostHog ingestion host (default: https://us.i.posthog.com, public)
+POSTHOG_PERSONAL_API_KEY          — PostHog personal API key. Server-side only. NEVER prefix with NEXT_PUBLIC_
 
 # Email
 RESEND_API_KEY                    — Resend transactional email. Server-side only.
@@ -239,6 +240,8 @@ NEXT_PUBLIC_APP_URL               — Canonical app URL (for OG tags, emails)
 | XENDIT_SECRET_KEY | 90 days | Xendit Dashboard → Settings → API Keys → Generate → Update Vercel |
 | RESEND_API_KEY | 90 days | Resend Dashboard → API Keys → Create → Update Vercel → Delete old |
 | SENTRY_AUTH_TOKEN | 180 days | Sentry → Settings → Auth Tokens → Create → Update Vercel |
+| POSTHOG_PERSONAL_API_KEY | Annually | PostHog → Settings → Personal API Keys → Create → Update Vercel → Delete old. Low-risk (analytics only, read-only data) but rotate annually as hygiene. |
+| NEXT_PUBLIC_POSTHOG_KEY | Annually | PostHog → Project Settings → Project API Key → Regenerate → Update Vercel → Redeploy. Low-risk (analytics write-only, no PII access). |
 
 ---
 

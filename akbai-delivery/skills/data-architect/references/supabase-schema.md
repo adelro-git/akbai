@@ -1,6 +1,6 @@
 # AKBai — Supabase Schema Reference
 > Living document. Update this file whenever a table is created, modified, or deprecated.
-> Last updated: 2026-03-24 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
+> Last updated: 2026-03-25 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
 
 ---
 
@@ -21,8 +21,9 @@
 13. [audit_log](#13-audit_log)
 14. [redirect_logs](#14-redirect_logs)
 15. [business_benchmarks](#15-business_benchmarks)
-16. [Relationship Diagram](#16-relationship-diagram)
-17. [Index Strategy Summary](#17-index-strategy-summary)
+16. [daily_check_in](#16-daily_check_in)
+17. [Relationship Diagram](#17-relationship-diagram)
+18. [Index Strategy Summary](#18-index-strategy-summary)
 
 > **Migration order matters.** Tables are listed in FK dependency order — receipts before transactions (because transactions.receipt_id references receipts.id). Run migrations sequentially by number.
 
@@ -1027,7 +1028,53 @@ ALTER TABLE public.business_profiles
 
 ---
 
-## 16. Relationship Diagram
+## 16. daily_check_in
+
+**Purpose:** Stores daily mood check-in and KA's personalized greeting per user per day. Part of the Build 2 Dashboard Shell (Sprint 4, Task 4).
+**Persona interaction:** All — the morning greeting surface.
+**Data classification:** Preferences (mood) + AI-generated content (kai_greeting)
+
+```sql
+-- Migration: 006_daily_check_in.sql
+CREATE TABLE public.daily_check_in (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+  check_in_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  mood TEXT,                    -- optional: user's business mood for the day
+  kai_greeting TEXT NOT NULL,   -- the personalized greeting KA generated
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ NULL,  -- soft delete (non-negotiable)
+  UNIQUE(user_id, check_in_date)
+);
+
+ALTER TABLE public.daily_check_in ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "daily_check_in_select_own"
+  ON public.daily_check_in
+  FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "daily_check_in_insert_own"
+  ON public.daily_check_in
+  FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "daily_check_in_update_own"
+  ON public.daily_check_in
+  FOR UPDATE
+  USING (auth.uid() = user_id);
+```
+
+**Notes:**
+- `UNIQUE(user_id, check_in_date)` enforces one check-in per user per day.
+- No `updated_at` column — check-ins are essentially immutable once created (mood can be updated via the UPDATE policy, but this is rare).
+- No `business_id` FK — check-ins are per-user, not per-business. This simplifies the dashboard where KA greets the user regardless of which business is active.
+- `kai_greeting` is generated server-side by Claude (Haiku for cost efficiency) during the morning check-in flow.
+- `check_in_date` is a DATE (timezone-agnostic), representing the calendar date in PHT context. See §19 Timezone Handling.
+
+---
+
+## 17. Relationship Diagram
 
 ```
 auth.users (Supabase Auth)
@@ -1046,6 +1093,7 @@ auth.users (Supabase Auth)
     |
     ├── 1:N ── ka_conversations
     ├── 1:1 ── subscriptions
+    ├── 1:N ── daily_check_in (one per day)
     └── 1:N ── audit_log (as actor)
 
 System tables (no user ownership):
@@ -1057,7 +1105,7 @@ System tables (no user ownership):
 
 ---
 
-## 17. Index Strategy Summary
+## 18. Index Strategy Summary
 
 | Table | Key Indexes | Purpose |
 |-------|------------|---------|
@@ -1075,12 +1123,13 @@ System tables (no user ownership):
 | audit_log | actor_id, resource_type+id, action | Compliance queries |
 | redirect_logs | category+date | Demand analysis |
 | business_benchmarks | type+period_type+period_start (unique), type+period_start DESC | Dedup, prompt assembly lookup |
+| daily_check_in | user_id+check_in_date (unique, inline) | One check-in per user per day |
 
 All user-facing table indexes include `WHERE deleted_at IS NULL` as a partial index condition to skip soft-deleted rows.
 
 ---
 
-## 18. Timezone Handling (Gap A3)
+## 19. Timezone Handling (Gap A3)
 
 All timestamps in the database are stored as `TIMESTAMPTZ` (UTC). Conversion to Philippine Standard Time (PST/PHT, UTC+8) happens in the application layer only.
 
