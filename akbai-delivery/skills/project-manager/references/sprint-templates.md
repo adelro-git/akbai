@@ -1,6 +1,8 @@
 # AKBai — Sprint Templates
 > For project-manager skill — use these templates for formal sprint outputs
 
+> **Updated Sprint 4:** Templates now use Agent Size + Anton Time estimation model. Multi-agent parallel execution compresses dev work; Anton's review/testing time is the real constraint.
+
 ---
 
 ## Sprint Plan Template
@@ -13,20 +15,30 @@
 
 ## Tasks (ordered by priority — work top-down)
 
-| # | Task | Size | Est. Hrs | Priority | Dependencies | Confidence |
-|---|------|------|----------|----------|--------------|------------|
-| 1 | [Task title] | S | 2 | CRITICAL gap A2 | None | High |
-| 2 | [Task title] | M | 3 | Phase gate G1.3 | Task 1 | Medium |
-| 3 | [Task title] | S | 1.5 | Phase gate G1.4 | None | High |
-| 4 | [Task title] | XS | 0.5 | Tech debt | None | High |
-| 5 | [Task title] | M | 2.5 | Phase gate G2.1 | Task 2 | Low |
+| # | Task | Agent Size | Anton Time | Priority | Stream | Confidence |
+|---|------|------------|------------|----------|--------|------------|
+| 1 | [Task title] | S | 0.5 hr | CRITICAL gap A2 | A | High |
+| 2 | [Task title] | M | 1 hr | Phase gate G1.3 | B | Medium |
+| 3 | [Task title] | S | 0.5 hr | Phase gate G1.4 | A | High |
+| 4 | [Task title] | S | 0.25 hr | Tech debt | B | High |
+| 5 | [Task title] | M | 1.5 hr | Phase gate G2.1 | Sequential | Low |
 
-**Total estimated:** [X] hrs / [X] hrs capacity
+**Total Anton time:** [X] hrs / [X] hrs capacity
 **Buffer:** [X] hrs unallocated (aim for 2–3 hrs buffer per sprint)
+
+## Parallel Streams
+
+| Stream | Tasks | Branch | Can Run Simultaneously? |
+|--------|-------|--------|------------------------|
+| A | 1, 3 | claude/sprint{N}-stream-a | Yes — no shared files |
+| B | 2, 4 | claude/sprint{N}-stream-b | Yes — no shared files |
+| Sequential | 5 | (after A, B merge) | No — depends on Tasks 1-4 |
+
+**Multi-session plan:** Streams A and B can be assigned to separate Claude Code sessions for maximum throughput.
 
 ---
 
-### Task 1: [Task title] (S — 2 hrs)
+### Task 1: [Task title] (Agent: S | Anton: 0.5 hr)
 **Why:** [Which gap/gate this addresses and why it's this priority]
 - [ ] [Concrete sub-step 1 — specific action with defined output]
 - [ ] [Concrete sub-step 2]
@@ -34,7 +46,7 @@
 - [ ] [Concrete sub-step 4]
 **Done when:** [One-line definition of done for this task]
 
-### Task 2: [Task title] (M — 3 hrs)
+### Task 2: [Task title] (Agent: M | Anton: 1 hr)
 **Why:** [Which gap/gate this addresses and why it's this priority]
 - [ ] [Concrete sub-step 1]
 - [ ] [Concrete sub-step 2]
@@ -44,7 +56,7 @@
 **Done when:** [One-line definition of done for this task]
 **Depends on:** Task 1
 
-### Task 3: [Task title] (S — 1.5 hrs)
+### Task 3: [Task title] (Agent: S | Anton: 0.5 hr)
 **Why:** [Which gap/gate this addresses]
 - [ ] [Concrete sub-step 1]
 - [ ] [Concrete sub-step 2]
@@ -75,10 +87,10 @@
 **Verdict:** [ACHIEVED / PARTIALLY ACHIEVED / MISSED]
 
 ## Completed
-| # | Task | Planned Hrs | Actual Hrs | Notes |
-|---|------|------------|------------|-------|
-| 1 | [Task] | 2 | 1.5 | [Any learnings] |
-| 2 | [Task] | 3 | 4 | [Took longer because...] |
+| # | Task | Agent Size | Anton Time (planned) | Anton Time (actual) | Notes |
+|---|------|------------|---------------------|---------------------|-------|
+| 1 | [Task] | S | 0.5 hr | 0.25 hr | [Any learnings] |
+| 2 | [Task] | M | 1 hr | 1.5 hr | [Took longer because...] |
 
 ## Not Completed
 | # | Task | Reason | Carry Over? |
@@ -207,9 +219,11 @@
 ## Quick Status Template (for casual "where are we?" questions)
 
 ```markdown
-**Sprint [N]:** [X/Y tasks done] | [Z hrs used / W hrs planned]
+**Sprint [N]:** [X/Y tasks done] | Agent: [X/Y complete] | Anton review: [X/Y approved]
+**Anton time:** [Z hrs used / W hrs planned]
 **Phase [X]:** [N/M gate criteria met]
 **CRITICAL gaps:** [N/8 resolved]
+**Streams:** [A: done | B: in progress | Sequential: blocked]
 **On track?** [Yes / At risk — reason / Behind — reason]
-**Next up:** [Highest priority unfinished task]
+**Next up:** [Highest priority unfinished task] | **Anton action needed:** [review/test/decision/none]
 ```

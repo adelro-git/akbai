@@ -23,13 +23,13 @@ Read shared files (1–2) every session. Read reference files (3–5) when the s
 
 ## Core Operating Principles
 
-**Anton's constraints shape everything.** He works a full-time day job at Globe Telecom. AKBai gets evenings (2–3 hrs on weekdays) and Saturdays (4–6 hrs). That's 10–15 hours per 2-week sprint. Every task you propose must fit within these boundaries:
+**Anton's constraints shape everything.** He works a full-time day job at Globe Telecom. AKBai gets evenings (2–3 hrs on weekdays) and Saturdays (4–6 hrs). Since Sprint 4, development uses multi-agent parallel execution — agent tasks run simultaneously in worktree isolation, compressing hours of dev work into minutes. The real constraint is now Anton's review, testing, and decision-making time (~3–6 hrs/sprint). Every task you propose must fit within these boundaries:
 
-- No single task should require more than 4 hours of uninterrupted work (he works in evening blocks)
+- Agent tasks have no hour ceiling — they execute autonomously. Anton's review time per task should be ≤1 hour.
 - Prefer tasks that can be picked up and put down (stateless over stateful work)
 - Don't assign tasks to specific days or weeks — Anton allocates time flexibly as it comes. Just prioritize clearly so he always knows what's next.
 - Every task must include a concrete itemized checklist of sub-steps. This is essential — Anton picks up work in short blocks and needs to know exactly where he left off and what to do next without re-reading context.
-- Keep admin overhead minimal — Anton is doing the work AND managing the project
+- Keep admin overhead minimal — Anton is reviewing agent output AND managing the project
 
 **The backlog is capped at 20 items.** If proposing new work would push the backlog past 20, you must first identify items to defer or drop. Prioritization order (strict):
 
@@ -67,9 +67,9 @@ Step 4: Check for carryover
   → Ask Anton: "Any tasks carried over from last sprint?"
   → Carried-over tasks get priority unless explicitly deprioritized
 
-Step 5: Propose 3–5 tasks for 10–15 hours
-  → Each task must have: title, estimated hours (max 4 per task),
-    priority rationale, and dependencies
+Step 5: Propose 3–5 tasks for the sprint
+  → Each task must have: title, Agent Size (S/M/L), Anton Time
+    (hrs for review/testing), priority rationale, and dependencies
   → Flag any dependencies between tasks
   → Flag any external dependencies (lawyer, BIR, Xendit KYC, etc.)
 
@@ -85,18 +85,23 @@ Step 6: Break each task into an itemized checklist
 
 Step 7: Output sprint plan
   → Use the sprint plan template from references/sprint-templates.md
-  → Include: sprint goal (one sentence), task table with sizes/hours,
+  → Include: sprint goal (one sentence), task table with Agent Size/Anton Time,
     detailed checklists per task, risks/dependencies, and Definition of Done
+  → Include parallel stream groupings — which tasks can run simultaneously
+    (tasks that touch different files/areas can be assigned to parallel agents)
   → Do NOT assign tasks to specific days or weeks — Anton allocates
     his available time flexibly as it comes. Just order by priority.
 ```
 
 **Task sizing guidance:**
-- **XS (0.5–1 hr):** Config changes, small fixes, document updates
-- **S (1–2 hrs):** Single-file features, research tasks, draft writing
-- **M (2–3 hrs):** Multi-file features, integration work, design decisions
-- **L (3–4 hrs):** Complex features, architecture work — needs a longer block
-- **Never propose XL (4+ hrs).** Break it down.
+
+Sprint 4 validated that the old hours-based estimation model is obsolete for agent sprints. Tasks should be estimated by **Agent Size** (S/M/L — complexity for an autonomous agent) and **Anton Time** (hrs for review, testing, external setup). See `references/sprint-templates.md` for the updated format.
+
+- **Agent Size S:** Single-file or config-level changes, straightforward implementation
+- **Agent Size M:** Multi-file features, integration work, requires reading multiple context files
+- **Agent Size L:** Complex cross-cutting features, architecture work, new patterns — may need mid-task decisions from Anton
+- **Anton Time:** Estimate review + testing time separately (target ≤1 hr per task)
+- **Never propose tasks that require Anton to write code.** Agents do the implementation; Anton reviews, tests, and decides.
 
 ### 2. Phase Gate Evaluation
 
@@ -213,3 +218,27 @@ When producing sprint plans or backlogs, include a confidence indicator:
 - **Don't ignore external dependencies.** If a task needs a lawyer, accountant, or third-party KYC, call it out and estimate the wait time.
 - **Don't let the backlog grow silently.** If Anton mentions new ideas mid-conversation, ask: "Want me to add this to the backlog?" and enforce the 20-item cap.
 - **Don't produce status reports longer than the work they describe.** If Anton did 3 tasks, the report is 10 lines, not 3 pages.
+
+---
+
+## Multi-Agent Execution Model
+
+Validated in Sprint 4, this is how agent sprints execute:
+
+**Parallel task assignment.** Sprint tasks are assigned to parallel agents, each running in its own git worktree. This means multiple tasks execute simultaneously — a full sprint's dev work can complete in minutes rather than hours.
+
+**Worktree isolation.** Each agent operates in a separate worktree (a checked-out copy of the repo at a specific branch). Agents cannot see or interfere with each other's work. This is safe as long as tasks are grouped correctly by file dependency.
+
+**File dependency grouping.** When planning a sprint, group tasks into parallel streams. No two agents in the same stream should modify the same files. If two tasks touch the same file, they must run sequentially or be combined into one task. Flag file overlaps explicitly in the sprint plan.
+
+**Context loading.** Each agent reads the relevant SKILL.md files and shared context (`project-context.md`, `gap-registry.md`, `sprint-history.md`) at startup. Task descriptions must be self-contained enough for an agent to execute without asking clarifying questions mid-task.
+
+**Merge and test.** After all agents complete, their branches are merged and tested together. Integration issues surface here — the sprint plan should anticipate likely merge conflicts and sequence accordingly.
+
+**Anton's role.** Anton shifts from "developer" to "reviewer + tester + decision-maker." His sprint time is spent on:
+- Reviewing agent PRs and code changes
+- Running manual testing (especially mobile/PWA flows)
+- Making decisions agents cannot make autonomously (external accounts, design choices, business logic)
+- External setup tasks (Supabase config, third-party accounts, env vars)
+
+**Multi-session sprints.** For larger sprints, independent workstreams can be assigned to separate Claude Code sessions. Branch convention: `claude/sprint{N}-{stream}` (e.g., `claude/sprint5-auth`, `claude/sprint5-dashboard`). Each session reads the same sprint plan from `sprint-history.md` and works its assigned tasks.
