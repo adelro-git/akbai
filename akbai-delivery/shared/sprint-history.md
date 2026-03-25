@@ -156,6 +156,7 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | 3 | Custom SMTP + OTP fix (Gap D1) | S | 2 | PLANNED | Resend SMTP, SPF/DKIM/DMARC, Supabase Auth config, Yahoo Mail PH test |
 | 4 | Build 2 Dashboard shell + schema | M | 5 | PLANNED | Migration 006 (daily_check_in), /api/dashboard, KA greeting, empty-state cards, bottom nav |
 | 5 | OCR spike (Gap E1) | S | 2 | PLANNED | Test Haiku Vision on 10-15 real PH receipts, 85%+ accuracy target |
+| 6 | Light-first design system pivot ("Sun-Drenched Atelier") | L | — | DONE | Pivoted from dark-first (#07101e) to light-first (#fdf9f2) with dark mode toggle. Updated 35 files: globals.css MD3 CSS variables, tailwind.config MD3 tokens, 21 component migrations, 9 doc/reference files, new design-system.md spec, email templates. PR #9 merged to main 2026-03-25. |
 
 **Actual hours used:** TBD — updated during retro
 **Sprint outcome:** IN PROGRESS
