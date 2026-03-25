@@ -1,6 +1,6 @@
 # AKBai — Project Context
 > Shared reference for all akbai-delivery skills. Read this first. ~200 lines.
-> Last updated: 2026-03-24 | Source: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
+> Last updated: 2026-03-25 | Source: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
 
 ---
 
@@ -137,8 +137,8 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Build 1 In Progress (2026-03-24)
-> Build 0 shipped (2026-03-20). Build 1 (Kilala Kita) frontend shipped (Sprint 3, 2026-03-22). 208 tests passing. Gaps A3, A4, B3, E3 resolved.
+> Current: Phase 0A — Build 2 Shell Shipped (2026-03-25)
+> Build 0 shipped (2026-03-20). Build 1 (Kilala Kita) frontend shipped (Sprint 3, 2026-03-22). Build 2 (Dashboard) shell shipped (Sprint 4, 2026-03-25). 208 tests passing. Gaps A1, A3, A4, A5, B3, E3 resolved.
 
 ### What's Built
 - **Build 0 — AI Scope Definition** (2026-03-20): `/frontend/src/lib/claude/` module
@@ -170,6 +170,14 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - Dev-auth bypass for local development (`SKIP_AUTH` + `DEV_USER`)
   - PWA icons (icon-192.png, icon-512.png) added to `/public/icons/`
   - 208 tests passing across all modules
+
+- **Sprint 4 — PostHog, Email, Dashboard Shell, OCR Pipeline** (2026-03-25):
+  - PostHog analytics: `posthog-provider.tsx`, `lib/posthog/events.ts` (5 typed events), `lib/posthog/server.ts`, ADR-009 — Gap A5 resolved
+  - Email module: `lib/email/templates.ts` (branded Taglish magic link + confirmation), `lib/email/verify.ts` (Yahoo PH detection), `smtp-setup-guide.md` — Gap D1 downgraded to IMPORTANT
+  - Build 2 Dashboard shell: `kai-greeting.tsx`, `dashboard-card.tsx`, `empty-state-card.tsx`, `bottom-nav.tsx`, migration 006 (`daily_check_in`), `/api/dashboard` with UTC+8 greeting
+  - OCR pipeline: `lib/ocr/` (types, schemas, prompts, parse-receipt with Haiku-first + Sonnet fallback), `/api/ocr`, spike runner — Gap E1 pipeline built, awaiting test images
+  - Login page redesigned to match `screen-mockups.html` — Gap A1 (Auth) resolved
+  - 8 reference files refreshed, UX alignment (touch targets, theme-color, bubble width)
 
 ---
 

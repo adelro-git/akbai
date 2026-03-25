@@ -1,6 +1,6 @@
 # AKBai — Taglish Copy Guide
 > KA voice rules, do/don't examples, tone calibration, and microcopy patterns for every UI surface.
-> Last updated: March 2026 | Source: Brand Guide v1.0, Brand Context, Project Context §8
+> Last updated: 2026-03-25 | Source: Brand Guide v1.0, Brand Context, Project Context §8
 
 ---
 
@@ -16,6 +16,8 @@
 8. [Error Messages](#8-error-messages)
 9. [CTA and Button Labels](#9-cta-and-button-labels)
 10. [BIR Disclaimer Rules](#10-bir-disclaimer-rules)
+11. [Login / Auth Microcopy](#11-login--auth-microcopy)
+12. [Dashboard Microcopy](#12-dashboard-microcopy)
 
 ---
 
@@ -137,6 +139,8 @@ The tone shifts depending on what KA is communicating. Here's a guide:
 | Overdue invoice | Supportive, not pushy | 50/50 balanced | Optional | "May pending pa si [Client]..." |
 | Onboarding | Friendly, casual | 65/35 Filipino | No | "Tara, kilalanin kita!" |
 | Settings / account | Neutral, informative | 40/60 English | No | "Eto ang account settings mo." |
+| Login / auth | Welcoming, clear | 65/35 Filipino | Yes (greeting) | "Mag-login po" / "Welcome, Katuwang!" |
+| Dashboard greeting | Warm, energetic | 70/30 Filipino | No | "Magandang umaga, [Name]!" |
 | Free tier upsell | Encouraging, not salesy | 55/45 Filipino | No | "Gusto mo ng full breakdown?" |
 
 ---
@@ -192,6 +196,7 @@ Empty states are KA's opportunity to encourage action. Never show a blank screen
 | Invoice List | "Wala ka pang invoices. Gumawa tayo ng una mo!" | Create first invoice |
 | Costing Cards | "Wala ka pang product na naka-cost. Anong product ang gusto mong simulan?" | Start costing |
 | Reply Drafter | "Wala pang messages na na-draft. I-paste mo ang customer message mo dito." | — (input field is the CTA) |
+| Dashboard (no data yet) | "Darating na ito!" | — (placeholder while features load) |
 
 ---
 
@@ -208,6 +213,11 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 | Daily API cap hit | "Medyo busy si Kai ngayon — maraming nag-a-ask! Try ulit in a few minutes." | "Service temporarily unavailable. Please try again later." |
 | Invalid amount | "Mukhang off yung amount — paki-check? Baka may extra zero?" | "Invalid input. Please enter a valid amount." |
 | Session expired | "Na-sign out ka — sign in ulit para ma-access mo ang data mo." | "Session expired. Please re-authenticate." |
+| OTP rate limited | "Sandali lang — isang code lang every 60 seconds. Subukan muli mamaya." | "Rate limit exceeded. Please wait 60 seconds." |
+| Empty email field | "Maglagay ng email address." | "Email is required." |
+| Incomplete OTP | "Kailangan ng 6-digit code." | "Please enter all 6 digits." |
+| Wrong / expired OTP | "Mali ang code o nag-expire na. Subukan muli." | "Invalid or expired verification code." |
+| Yahoo OTP delay | "Yahoo Mail minsan may delay sa OTP. Check spam folder mo rin." | "Check your spam folder." |
 
 ---
 
@@ -219,6 +229,12 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 - "Tara!" (for onboarding next steps)
 - "Tingnan" (not "View Details")
 - "Gawa ng Invoice" (not "Create Invoice")
+
+**Auth CTAs** (Login flow):
+- "Magpadala ng Code" (send OTP)
+- "Send Magic Link" (magic link variant)
+- "I-verify ang Code" (verify OTP) / "Sine-verify..." (loading state)
+- "Mag-back at magpadala ulit" (back / resend)
 
 **Secondary CTAs** (ghost/outline):
 - "Edit" or "I-edit"
@@ -261,3 +277,69 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 - Skip the disclaimer because "the user knows already"
 - Put the disclaimer inside a collapsible section
 - Use English-only disclaimer text
+
+---
+
+## 11. Login / Auth Microcopy
+
+> Added Sprint 4 (2026-03-25). Patterns used in the OTP / magic-link login flow.
+
+### Headings & Greetings
+| Element | Copy |
+|---------|------|
+| Page heading | "Mag-login po" |
+| Post-login greeting | "Welcome, Katuwang!" |
+
+### Step Descriptions & Instructions
+| Step | Copy |
+|------|------|
+| Email entry instruction | "I-enter ang iyong email para mag-log in." |
+| Email step description | "Magpapadala kami ng login code sa iyong email." |
+| OTP sent confirmation | "Nagpadala kami ng 6-digit code sa [email]." |
+| Auto-signup note | "Walang account? Auto ka na ma-sign up." |
+
+### Button States
+| State | Label |
+|-------|-------|
+| Send OTP (default) | "Magpadala ng Code" |
+| Send magic link | "Send Magic Link" |
+| Verify OTP (default) | "I-verify ang Code" |
+| Verify OTP (loading) | "Sine-verify..." |
+| Back / resend | "Mag-back at magpadala ulit" |
+
+### Validation & Error Messages
+| Condition | Copy |
+|-----------|------|
+| Empty email field | "Maglagay ng email address." |
+| Incomplete OTP | "Kailangan ng 6-digit code." |
+| Wrong / expired OTP | "Mali ang code o nag-expire na. Subukan muli." |
+| Rate limited | "Sandali lang — isang code lang every 60 seconds. Subukan muli mamaya." |
+| Yahoo mail delay | "Yahoo Mail minsan may delay sa OTP. Check spam folder mo rin." |
+
+---
+
+## 12. Dashboard Microcopy
+
+> Added Sprint 4 (2026-03-25). Patterns used on the main dashboard shell.
+
+### Time-of-Day KA Greeting
+KA greets the user based on Manila time (UTC+8):
+- **Before 12:00 PM:** "Magandang umaga, [Name]!"
+- **12:00 PM – 5:59 PM:** "Magandang hapon, [Name]!"
+- **6:00 PM onwards:** "Magandang gabi, [Name]!"
+
+### Empty State
+When a dashboard section has no data yet:
+- "Darating na ito!" — short, encouraging placeholder
+
+### Bottom Navigation Labels
+| Tab | Label |
+|-----|-------|
+| Home | Home |
+| Chat | Chat |
+| Receipts | Resibo |
+| Account | Profile |
+
+**Notes:**
+- "Resibo" (Filipino spelling) replaces "Receipts" — natural and shorter
+- "Home", "Chat", and "Profile" stay English — universally understood on mobile nav bars
