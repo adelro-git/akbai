@@ -94,7 +94,7 @@ export default function StepBusinessType({
         type="button"
         onClick={handleContinue}
         disabled={loading || !selected}
-        className="w-full bg-primary-container hover:bg-primary text-on-primary-container font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {loading ? 'Sine-save...' : 'Sunod'}
       </button>

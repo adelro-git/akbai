@@ -10,8 +10,7 @@ export default function RetryButton() {
     <button
       type="button"
       onClick={() => window.location.reload()}
-      className="rounded-lg px-6 py-3 text-base font-semibold text-white transition-colors hover:opacity-90"
-      style={{ backgroundColor: '#f97316' }}
+      className="rounded-lg px-6 py-3 text-base font-semibold text-on-primary bg-primary-container transition-colors hover:bg-primary"
     >
       I-refresh
     </button>

@@ -15,11 +15,10 @@ export const metadata: Metadata = {
 export default function OfflinePage() {
   return (
     <main
-      className="flex min-h-dvh flex-col items-center justify-center px-6 text-center"
-      style={{ backgroundColor: '#fdf9f2' }}
+      className="flex min-h-dvh flex-col items-center justify-center px-6 text-center bg-background"
     >
       {/* --- AKBai Logo / Brand Mark --- */}
-      <div className="mb-6 text-4xl font-bold" style={{ color: '#1a1a1a' }}>
+      <div className="mb-6 text-4xl font-bold text-on-surface">
         AKBai
       </div>
 
@@ -30,12 +29,11 @@ export default function OfflinePage() {
 
       {/* --- Taglish Offline Message --- */}
       <h1
-        className="mb-2 text-xl font-semibold"
-        style={{ color: '#1a1a1a' }}
+        className="mb-2 text-xl font-semibold text-on-surface"
       >
         Walang internet connection
       </h1>
-      <p className="mb-8 text-base" style={{ color: '#6b7280' }}>
+      <p className="mb-8 text-base text-on-surface-variant">
         I-check ang WiFi o data mo, tapos i-refresh.
       </p>
 

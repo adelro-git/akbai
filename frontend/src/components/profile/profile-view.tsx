@@ -94,7 +94,7 @@ export default function ProfileView({
         >
           <ChevronLeft className="w-6 h-6 text-on-surface" />
         </button>
-        <h1 className="text-xl font-bold text-on-surface">Profile</h1>
+        <h1 className="text-xl font-bold text-on-surface">Profile Mo</h1>
       </header>
 
       <div className="px-4 flex flex-col gap-4">
@@ -142,7 +142,7 @@ export default function ProfileView({
                 className="text-sm font-semibold text-primary-container min-w-[44px] min-h-[44px] flex items-center justify-center"
                 data-testid="edit-btn"
               >
-                Edit
+                I-edit
               </button>
             )}
           </div>
@@ -160,7 +160,7 @@ export default function ProfileView({
           ) : (
             <div className="space-y-3" data-testid="business-info-readonly">
               <div>
-                <p className="text-xs text-on-surface-variant">Business name</p>
+                <p className="text-xs text-on-surface-variant">Pangalan ng negosyo</p>
                 <p className="text-sm font-medium text-on-surface" data-testid="business-name">
                   {localData.businessName ?? 'Hindi pa na-set'}
                 </p>
@@ -172,7 +172,7 @@ export default function ProfileView({
                 </p>
               </div>
               <div>
-                <p className="text-xs text-on-surface-variant">Monthly income range</p>
+                <p className="text-xs text-on-surface-variant">Monthly income mo</p>
                 <p className="text-sm font-medium text-on-surface" data-testid="income-range">
                   {incomeRangeLabel}
                 </p>

@@ -135,7 +135,7 @@ export default function ProfileEditForm({
       {/* Business name */}
       <div>
         <label htmlFor="edit-business-name" className="text-xs text-on-surface-variant block mb-1">
-          Business name
+          Pangalan ng negosyo
         </label>
         <input
           ref={businessNameRef}
@@ -172,7 +172,7 @@ export default function ProfileEditForm({
 
       {/* Income range selector */}
       <div>
-        <p className="text-xs text-on-surface-variant mb-2">Monthly income range</p>
+        <p className="text-xs text-on-surface-variant mb-2">Monthly income mo</p>
         <div className="grid grid-cols-2 gap-2">
           {INCOME_RANGES.map((range) => (
             <button
@@ -222,13 +222,13 @@ export default function ProfileEditForm({
           className="flex-1 min-h-[44px] border border-outline-variant/30 text-on-surface font-semibold rounded-xl transition-colors hover:bg-surface-container-high disabled:opacity-50"
           data-testid="cancel-btn"
         >
-          Cancel
+          I-cancel
         </button>
         <button
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="flex-1 min-h-[44px] bg-primary-container text-on-primary-container font-semibold rounded-xl transition-colors hover:bg-primary disabled:opacity-40"
+          className="flex-1 min-h-[44px] bg-primary-container text-on-primary font-semibold rounded-xl transition-colors hover:bg-primary disabled:opacity-40"
           data-testid="save-btn"
         >
           {saving ? 'Sine-save...' : 'I-save'}

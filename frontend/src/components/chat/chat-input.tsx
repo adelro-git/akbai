@@ -62,11 +62,11 @@ export default function ChatInput({ onSend, loading }: ChatInputProps) {
         <button
           type="submit"
           disabled={!value.trim() || loading}
-          className="w-11 h-11 rounded-full bg-primary-container hover:bg-honey-deep flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-11 h-11 rounded-full bg-primary-container hover:bg-primary flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           data-testid="chat-send-btn"
           aria-label="Send message"
         >
-          <Send size={16} className="text-on-primary-container" />
+          <Send size={16} className="text-on-primary" />
         </button>
       </form>
     </div>

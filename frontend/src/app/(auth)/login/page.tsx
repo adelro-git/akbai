@@ -17,14 +17,20 @@ export default function LoginPage() {
         <header className="flex flex-col items-center text-center space-y-8">
           <div className="relative">
             <div className="absolute inset-0 bg-primary-container/10 blur-2xl rounded-full" />
-            <div className="relative z-10 w-24 h-24">
+            <div className="relative z-10 w-40 h-40">
               <Image
-                src="https://raw.githubusercontent.com/adelro-git/akbai/main/brand/Logo%20Files/AKBai_Logo_Primary_OnDark.png"
+                src="/icons/logo-primary.png"
                 alt="AKBai"
                 fill
-                className="object-contain"
+                className="object-contain dark:hidden"
                 priority
-                unoptimized
+              />
+              <Image
+                src="/icons/logo-primary-dark.png"
+                alt="AKBai"
+                fill
+                className="object-contain hidden dark:block"
+                priority
               />
             </div>
           </div>

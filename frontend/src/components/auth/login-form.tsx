@@ -133,7 +133,7 @@ export default function LoginForm() {
 
         <div className="space-y-2">
           <label className="block text-sm font-semibold tracking-wide text-on-surface-variant px-1">
-            OTP Code
+            6-digit code mo
           </label>
           <div className="relative group">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary-container transition-colors">
@@ -168,7 +168,7 @@ export default function LoginForm() {
           type="button"
           onClick={handleVerifyOtp}
           disabled={loading}
-          className="w-full py-4 px-6 bg-gradient-to-r from-primary-container to-primary text-on-primary-container font-bold rounded-xl shadow-lg shadow-primary-container/10 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full py-4 px-6 bg-gradient-to-r from-primary-container to-primary text-on-primary font-bold rounded-xl shadow-lg shadow-primary-container/10 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed"
           data-testid="verify-otp-btn"
         >
           <span>{loading ? 'Sine-verify...' : 'I-verify ang Code'}</span>
@@ -196,7 +196,7 @@ export default function LoginForm() {
     <section className="space-y-6" data-testid="email-form">
       <div className="space-y-2">
         <label className="block text-sm font-semibold tracking-wide text-on-surface-variant px-1">
-          Email Address
+          Email mo
         </label>
         <div className="relative group">
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary-container transition-colors">
@@ -221,7 +221,7 @@ export default function LoginForm() {
       </div>
 
       {emailWarning && (
-        <p className="text-yellow-400/80 text-xs leading-relaxed" data-testid="email-warning">
+        <p className="text-on-secondary-container text-xs leading-relaxed" data-testid="email-warning">
           {emailWarning}
         </p>
       )}
@@ -236,10 +236,10 @@ export default function LoginForm() {
         type="button"
         onClick={handleSendOtp}
         disabled={loading}
-        className="w-full py-4 px-6 bg-gradient-to-r from-primary-container to-primary text-on-primary-container font-bold rounded-xl shadow-lg shadow-primary-container/10 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full py-4 px-6 bg-gradient-to-r from-primary-container to-primary text-on-primary font-bold rounded-xl shadow-lg shadow-primary-container/10 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="send-otp-btn"
       >
-        <span>{loading ? 'Nagpapadala...' : 'Send Magic Link'}</span>
+        <span>{loading ? 'Nagpapadala...' : 'Magpadala ng code'}</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
         </svg>

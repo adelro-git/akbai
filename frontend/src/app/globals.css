@@ -79,25 +79,25 @@
 
   /* ===== DARK THEME — Ink & Amber ===== */
   .dark {
-    /* Surface hierarchy (deep ink tones) */
-    --background: 220 50% 7%;        /* #07101e (ink) */
-    --foreground: 220 35% 92%;       /* #dae3f7 */
-    --surface: 220 50% 7%;           /* #07101e */
-    --surface-dim: 220 40% 5%;       /* #050c16 */
-    --surface-bright: 220 35% 15%;   /* #1c2b3e */
-    --surface-container-lowest: 220 45% 4%; /* #030812 */
-    --surface-container-low: 220 40% 8%;    /* #0a1422 */
-    --surface-container: 218 43% 12%;       /* #0d1a2e (kai-card) */
-    --surface-container-high: 218 38% 15%;  /* #111f36 (kai-card-alt) */
-    --surface-container-highest: 218 30% 18%; /* #172740 */
+    /* Surface hierarchy (deep ink tones — raised for better contrast) */
+    --background: 220 45% 9%;        /* #0b1525 (ink, slightly lifted) */
+    --foreground: 220 20% 95%;       /* #eef1f7 */
+    --surface: 220 45% 9%;           /* #0b1525 */
+    --surface-dim: 220 40% 6%;       /* #070e19 */
+    --surface-bright: 220 30% 18%;   /* #1f2d40 */
+    --surface-container-lowest: 220 45% 5%; /* #050b14 */
+    --surface-container-low: 220 35% 11%;   /* #0f1a28 */
+    --surface-container: 218 35% 15%;       /* #141f32 (more visible cards) */
+    --surface-container-high: 218 30% 19%;  /* #1a2740 */
+    --surface-container-highest: 218 25% 23%; /* #222f44 */
 
-    /* On-surface text */
-    --on-surface: 220 35% 92%;       /* #dae3f7 */
-    --on-surface-variant: 30 22% 76%; /* #d8c3ad */
+    /* On-surface text (brighter for readability) */
+    --on-surface: 220 20% 95%;       /* #eef1f7 */
+    --on-surface-variant: 30 25% 82%; /* #e0cdb8 (warmer, brighter) */
 
-    /* Outlines */
-    --outline: 30 8% 55%;            /* #9a8d7e */
-    --outline-variant: 27 20% 27%;   /* #534434 */
+    /* Outlines (more visible) */
+    --outline: 30 12% 60%;           /* #a59686 */
+    --outline-variant: 27 18% 32%;   /* #5e4d3e */
 
     /* Primary (Warm Honey — inverted for dark) */
     --primary: 36 100% 69%;          /* #ffb95f */
@@ -130,16 +130,16 @@
     --on-error-container: 6 100% 92%; /* #ffdad6 */
 
     /* Shadcn compatibility */
-    --card: 218 43% 12%;             /* surface-container (kai-card) */
-    --card-foreground: 220 35% 92%;  /* on-surface */
-    --popover: 220 50% 7%;          /* surface (ink) */
-    --popover-foreground: 220 35% 92%;
-    --muted: 218 38% 15%;           /* surface-container-high */
-    --muted-foreground: 30 22% 76%; /* on-surface-variant */
+    --card: 218 35% 15%;             /* surface-container */
+    --card-foreground: 220 20% 95%;  /* on-surface */
+    --popover: 220 45% 9%;          /* surface */
+    --popover-foreground: 220 20% 95%;
+    --muted: 218 30% 19%;           /* surface-container-high */
+    --muted-foreground: 30 25% 82%; /* on-surface-variant */
     --accent: 36 100% 69%;          /* primary (bright honey for dark) */
     --accent-foreground: 30 100% 10%;
-    --border: 27 20% 27%;           /* outline-variant */
-    --input: 218 43% 12%;           /* surface-container */
+    --border: 27 18% 32%;           /* outline-variant */
+    --input: 218 35% 15%;           /* surface-container */
     --ring: 36 100% 69%;            /* primary */
 
     /* Inverse */

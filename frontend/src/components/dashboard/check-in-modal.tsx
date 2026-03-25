@@ -258,7 +258,7 @@ export default function CheckInModal({ isOpen, onClose, onSuccess }: CheckInModa
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full bg-primary text-surface-container-lowest font-semibold rounded-xl py-3.5 transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-primary-container text-on-primary font-semibold rounded-xl py-3.5 transition-colors hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
           data-testid="check-in-submit"
           type="button"
         >

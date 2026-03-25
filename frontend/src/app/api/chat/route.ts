@@ -78,6 +78,7 @@ export async function POST(req: NextRequest) {
     // --- Load User Context ---
     let tier: UserTier = 'free';
     let userContext: UserContext;
+    let userData: { display_name: string | null; onboarding_completed: boolean } | null = null;
 
     if (SKIP_AUTH) {
       userContext = {
@@ -94,11 +95,12 @@ export async function POST(req: NextRequest) {
         .is('deleted_at', null)
         .single();
 
-      const { data: userData } = await supabase
+      const { data: userRow } = await supabase
         .from('users')
         .select('display_name, onboarding_completed')
         .eq('id', user.id)
         .single();
+      userData = userRow;
 
       const { data: subscription } = await supabase
         .from('subscriptions')
