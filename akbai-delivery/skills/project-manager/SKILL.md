@@ -235,9 +235,13 @@ Validated in Sprint 4, this is how agent sprints execute:
 
 **Merge and test.** After all agents complete, their branches are merged and tested together. Integration issues surface here — the sprint plan should anticipate likely merge conflicts and sequence accordingly.
 
+**Live testing (mandatory — added Sprint 5).** After merge and automated tests pass, Anton runs the dev server and spends 15-30 min clicking through the app. Sprint 5 proved that live testing surfaces branding, UX, and design system violations that code review and automated tests miss entirely (17+ violations found in Sprint 5). This step is non-negotiable.
+
+**Design system compliance (mandatory — added Sprint 5).** Every agent doing UI work must read `skills/ux-designer/references/design-system.md` in addition to the feature's SKILL.md. Sprint 5 revealed that agents produce functional but visually non-compliant components when they only read SKILL.md — wrong button text colors, hardcoded hex values, missing Taglish copy. Agent prompts for UI tasks must explicitly include design-system.md and brand-context.md.
+
 **Anton's role.** Anton shifts from "developer" to "reviewer + tester + decision-maker." His sprint time is spent on:
 - Reviewing agent PRs and code changes
-- Running manual testing (especially mobile/PWA flows)
+- Running live testing of the app (15-30 min per sprint, post-merge)
 - Making decisions agents cannot make autonomously (external accounts, design choices, business logic)
 - External setup tasks (Supabase config, third-party accounts, env vars)
 

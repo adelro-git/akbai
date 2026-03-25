@@ -231,10 +231,21 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 - "Gawa ng Invoice" (not "Create Invoice")
 
 **Auth CTAs** (Login flow):
-- "Magpadala ng Code" (send OTP)
-- "Send Magic Link" (magic link variant)
+- "Magpadala ng code" (send OTP — was "Send Magic Link", fixed Sprint 5)
 - "I-verify ang Code" (verify OTP) / "Sine-verify..." (loading state)
 - "Mag-back at magpadala ulit" (back / resend)
+
+**Profile/Settings CTAs:**
+- "I-edit" (not "Edit")
+- "I-cancel" (not "Cancel")
+- "I-save" (not "Save")
+- "Mag-sign out" (not "Logout" or "Sign out")
+
+**Dashboard CTAs:**
+- "I-save ang check-in" (daily check-in submit)
+- "Sine-save..." (loading state — past tense + ellipsis)
+
+**Pattern: "I-" prefix for action verbs.** Use "I-" (Tagalog imperative prefix) + English verb for button labels. This is the most natural Taglish pattern for CTAs: "I-save", "I-scan", "I-edit", "I-cancel", "I-refresh". Exception: verbs that already sound natural in Tagalog use "Mag-" prefix: "Mag-sign out", "Magpadala".
 
 **Secondary CTAs** (ghost/outline):
 - "Edit" or "I-edit"

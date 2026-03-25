@@ -19,7 +19,7 @@ AKBai is built by a solo founder with 10–15 hours per sprint. The testing stra
 ### Layer 1: Unit Tests (Vitest)
 **Purpose:** Test pure business logic with no external dependencies.
 **Speed:** < 10ms per test. Full unit suite < 5 seconds.
-**Current count (as of Sprint 4):** 337 tests passing across 20+ files (Vitest). Sprint 4 added 129 new tests: 40 email, 43 dashboard, 46 OCR.
+**Current count (as of Sprint 5):** 405 tests passing across 26 files (Vitest), 0 failures. Sprint 5 added 68 new tests + fixed 3 pre-existing failures: 21 check-in/dashboard, 26 profile, 13 feature-flags, 8 PWA/offline. Sprint 4 added 129: 40 email, 43 dashboard, 46 OCR.
 **When to use:** Any function that takes input and returns output without side effects.
 
 **Primary targets:**

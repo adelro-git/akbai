@@ -1035,13 +1035,15 @@ ALTER TABLE public.business_profiles
 **Data classification:** Preferences (mood) + AI-generated content (kai_greeting)
 
 ```sql
--- Migration: 006_daily_check_in.sql
+-- Migration: 006_daily_check_in.sql + 007_check_in_financials.sql
 CREATE TABLE public.daily_check_in (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id),
   check_in_date DATE NOT NULL DEFAULT CURRENT_DATE,
   mood TEXT,                    -- optional: user's business mood for the day
   kai_greeting TEXT NOT NULL,   -- the personalized greeting KA generated
+  sales_amount INTEGER,         -- optional: daily sales in centavos (added Sprint 5, migration 007)
+  expenses_amount INTEGER,      -- optional: daily expenses in centavos (added Sprint 5, migration 007)
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ NULL,  -- soft delete (non-negotiable)
   UNIQUE(user_id, check_in_date)
