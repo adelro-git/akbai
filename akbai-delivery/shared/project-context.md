@@ -137,8 +137,8 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Build 2 Shell Shipped (2026-03-25)
-> Build 0 shipped (2026-03-20). Build 1 (Kilala Kita) frontend shipped (Sprint 3, 2026-03-22). Build 2 (Dashboard) shell shipped (Sprint 4, 2026-03-25). 208 tests passing. Gaps A1, A3, A4, A5, B3, E3 resolved.
+> Current: Phase 0A — Build 2 Complete (2026-03-25)
+> Build 0 shipped (2026-03-20). Build 1 (Kilala Kita) frontend shipped (Sprint 3, 2026-03-22). Build 2 (Dashboard) complete with check-in, data wiring, profile page (Sprint 5, 2026-03-25). 405 tests passing. Gaps A1, A3, A4, A5, B3, B4, E3 resolved.
 
 ### What's Built
 - **Build 0 — AI Scope Definition** (2026-03-20): `/frontend/src/lib/claude/` module
@@ -178,6 +178,15 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - OCR pipeline: `lib/ocr/` (types, schemas, prompts, parse-receipt with Haiku-first + Sonnet fallback), `/api/ocr`, spike runner — Gap E1 pipeline built, awaiting test images
   - Login page redesigned to match `screen-mockups.html` — Gap A1 (Auth) resolved
   - 8 reference files refreshed, UX alignment (touch targets, theme-color, bubble width)
+
+- **Sprint 5 — Build 2 Completion + Feature Flags + PWA + Branding** (2026-03-25):
+  - Daily Check-In: `check-in-modal.tsx`, `check-in-section.tsx`, `money.ts`, migration 007
+  - Dashboard data wiring: dynamic `getDashboardCards()`, `DashboardCard` summary prop
+  - Profile/Settings: `/profile` page, `/api/profile` (GET+PATCH), dark mode toggle — Gap B4 resolved
+  - Feature Flags: `lib/feature-flags/` (4 files) — Design Gate 6 IN PROGRESS
+  - PWA: manifest.json enhanced, sw.js v2, `/offline` page — Design Gate 5 IN PROGRESS
+  - Branding: local logos, white CTA text, light-first default, dark mode contrast, Taglish copy (22 files)
+  - 405 tests passing (68 new + 3 fixed, 0 failures)
 
 ---
 

@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-25
+> Last updated: 2026-03-25 (Sprint 5 retro)
 
 ---
 
@@ -271,6 +271,70 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **Evening consistency:** Sprint compressed into focused session + iterative feedback
 - **Recommendation:** Increase scope for Sprint 5. Multi-agent execution unlocks significantly more throughput per sprint. The bottleneck is now Anton's review/testing time, not development hours. Consider parallel sessions for independent workstreams.
 
+### Sprint 5 — 2026-03-25 to 2026-04-06
+
+**Phase:** 0A — Build 2 Completion
+**Sprint Goal:** Complete Build 2 — ship Daily Check-In UI, wire dashboard cards to real data, build Profile page, and add Feature Flag + PWA infrastructure.
+**Capacity:** 5–6 hours (Anton review/testing/decisions)
+**Context:** Second multi-agent sprint. 3 parallel streams (checkin, profile, infra) in worktree isolation. First sprint with live user testing by Anton.
+
+**Tasks:**
+
+| # | Task | Agent Size | Anton Time | Status | Notes |
+|---|------|------------|------------|--------|-------|
+| 1 | Daily Check-In Modal + Schema Extension | M | 1 hr | DONE | Migration 007 (sales/expenses centavos), CheckInModal bottom-sheet, mood emojis, peso inputs, CheckInSection CTA/summary. |
+| 2 | Dashboard Card Data Wiring | S | 0.5 hr | DONE | Dynamic getDashboardCards(), Quick Chat shows message count, BIR card reflects registration. summary prop on DashboardCard. |
+| 3 | Profile/Settings Page | M | 1.5 hr | DONE | /profile page, ProfileView, ProfileEditForm, /api/profile (GET+PATCH), ThemeToggle, sign-out, shared business-options.ts. Gap B4 resolved. |
+| 4 | Feature Flag Utility | S | 0.5 hr | DONE | lib/feature-flags/ (index, flags, admin, middleware). getFeatureFlag() fail-closed, typed FLAGS const, withFeatureFlag API helper. Design Gate 6 IN PROGRESS. |
+| 5 | PWA Manifest + Offline Fallback | S | 0.5 hr | DONE | manifest.json enhanced (start_url /dashboard, split icons, shortcuts), sw.js v2 with offline fallback, /offline page with Taglish copy. Design Gate 5 IN PROGRESS. |
+| — | Branding alignment (unplanned) | M | 1 hr | DONE | 22 files: local logos, white CTA text, light-first default, dark mode contrast, Taglish copy, non-token colors → MD3 tokens. |
+| — | Chat route bug fix (pre-existing) | S | — | DONE | userData scoping fix in route.ts, resolved 3 pre-existing test failures. |
+
+**Actual Anton time:** ~4-5 hrs (review, live testing, UX feedback, branding decisions)
+**Sprint outcome:** COMPLETE — All 5 planned tasks + 2 unplanned items done. 68 new tests + 3 fixed = 405 total, 0 failures. Build 2 functionally complete. Gaps B4, B5 (partial), B7/D9 (partial), Design Gates 5 & 6 (IN PROGRESS).
+
+**What was built:**
+- Daily Check-In: `check-in-modal.tsx`, `check-in-section.tsx`, `money.ts`, migration 007
+- Dashboard wiring: dynamic `getDashboardCards()`, `DashboardCard` summary prop
+- Profile: `profile/page.tsx`, `profile-view.tsx`, `profile-edit-form.tsx`, `theme-toggle.tsx`, `/api/profile/route.ts`, `business-options.ts`
+- Feature Flags: `lib/feature-flags/` (index, flags, admin, middleware) — 4 files
+- PWA: manifest.json enhanced, sw.js v2, `/offline` page + retry-button
+- Branding: 4 local logo assets, 18 component files updated for design system compliance
+- PostHog: 3 new events (daily_check_in_completed, profile_updated, signed_out)
+
+---
+
+## Retro Log
+
+### Sprint 5 Retro — 2026-03-25
+
+**What Went Well:**
+- Multi-agent parallel delivery continues to be a game-changer — 3 streams (checkin, profile, infra) built simultaneously in worktree isolation, merged with only 1 minor conflict (posthog/events.ts)
+- Live testing the running app surfaced real branding and UX issues that code review alone would never catch — 17+ design violations found and fixed, plus 5 actionable UX improvements captured for Sprint 6
+- Sprint scope was right-sized for Anton's capacity — 5 planned tasks at ~4 hrs Anton time with buffer, leaving room for the unplanned branding work without feeling stretched
+
+**What Didn't Go Well:**
+- Parallel agents didn't follow the design system closely enough — new Sprint 5 components (offline page, profile) used hardcoded colors instead of tokens, and ALL existing CTA buttons across the app had wrong text color (`text-on-primary-container` instead of `text-on-primary`). Required a full manual branding pass to fix 22 files. This is the biggest process gap: agents read SKILL.md but not always design-system.md deeply enough.
+
+**What We Learned:**
+- Live user testing is non-negotiable — Anton's 15 minutes of clicking through the app produced more actionable feedback than all the automated tests combined. Should be a standard sprint step, not ad-hoc.
+- Design system gaps compound across sprints — the CTA button text color was wrong since Sprint 3 (Build 1) but wasn't caught until Sprint 5 live testing. Older builds that predate the Sprint 4 "Sun-Drenched Atelier" pivot were never retroactively aligned. Future agent prompts must explicitly reference design-system.md for any UI work.
+- The Agent Size + Anton Time estimation model (Sprint 4 retro action #1) works well — Sprint 5 was the first sprint planned with it, and the estimates were accurate (4 hrs planned, ~4-5 hrs actual).
+
+**Action Items:**
+
+| # | Action | Owner | Due By | Status | Notes |
+|---|--------|-------|--------|--------|-------|
+| 1 | Add design-system.md to mandatory reading list for all agent prompts doing UI work — agents must use MD3 tokens, never hardcoded colors, and white text on primary CTA buttons | Claude (PM skill) | Sprint 6 planning | OPEN | Prevents the 22-file branding fix from recurring |
+| 2 | Add "Anton live testing" as a standard sprint step after merge — 15-30 min clicking through the running app before PR | Claude (PM skill) | Sprint 6 planning | OPEN | Surfaced 5+ UX issues and 17+ branding violations this sprint |
+| 3 | Collect 10-15 receipt images for OCR spike | Anton | Sprint 6 | OPEN | Carryover from Sprint 4 retro action #3 — still needed for Gap E1 completion |
+
+**Energy Check:**
+- **Sustainability:** Felt good — could maintain this pace
+- **Saturday block:** N/A — sprint executed in one focused session
+- **Evening consistency:** Single session + iterative feedback
+- **Recommendation:** Keep pace. Multi-agent + live testing is the right workflow. Add design system compliance to agent prompts to reduce unplanned branding work.
+
 ---
 
 ## Velocity & Patterns
@@ -284,6 +348,7 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | 3 | Build 1 + infra gaps | 12 | ~12 | 5 | 5 | YES |
 
 | 4 | Gap resolution + Build 2 shell | 13.5 (est.) | ~3-4 (Anton) | 5+2 | 7 | YES |
+| 5 | Build 2 completion + infra | 4 hrs (Anton) | ~4-5 (Anton) | 5+2 | 7 | YES |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
@@ -295,6 +360,9 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **NEW: Multi-agent parallel execution compresses 13+ hrs of dev work into minutes of agent time. The bottleneck shifts from "development hours" to "Anton review/testing/decision time."**
 - **NEW: Hour-based estimation is obsolete for agent sprints. Future sprints should estimate Agent Size (S/M/L) + Anton Time (hrs) separately.**
 - **NEW: Independent workstreams can be parallelized across separate Claude Code sessions for even higher throughput.**
+- **NEW: Live user testing after merge is essential — 15 min of clicking surfaces more issues than automated tests. Make it a standard sprint step.**
+- **NEW: Agent prompts for UI work must explicitly reference design-system.md — agents that only read SKILL.md produce functional but visually non-compliant components. The CTA text color bug persisted 2 sprints before live testing caught it.**
+- **NEW: The Agent Size + Anton Time estimation model is validated — Sprint 5 planned 4 hrs Anton time, actuals were ~4-5 hrs. Accurate enough for planning.**
 
 ---
 
@@ -308,6 +376,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Sprint 1 Retro | 2 | Create BIR knowledge base | DONE — Sprint 2 Task #1 (2026-03-21) |
 | Sprint 1 Retro | 3 | Create MSME business knowledge | DONE — Sprint 2 Task #2 (2026-03-22, expanded to 16 types + benchmarks table) |
 | Sprint 1 Retro | 4 | Populate Taglish manual | DONE — Sprint 2 Task #4 (2026-03-22, Anton reviewed and approved) |
-| Sprint 4 Retro | 1 | Recalibrate sprint estimation (Agent Size + Anton Time) | OPEN — Sprint 5 planning |
-| Sprint 4 Retro | 2 | Design parallel sprint framework for multi-session execution | OPEN — Sprint 5 planning |
-| Sprint 4 Retro | 3 | Collect 10-15 receipt images for OCR spike | OPEN — Anton, Sprint 5 |
+| Sprint 4 Retro | 1 | Recalibrate sprint estimation (Agent Size + Anton Time) | DONE — Sprint 5 used this model successfully (2026-03-25) |
+| Sprint 4 Retro | 2 | Design parallel sprint framework for multi-session execution | DONE — Sprint 5 used 3-stream parallel with worktree isolation (2026-03-25) |
+| Sprint 4 Retro | 3 | Collect 10-15 receipt images for OCR spike | OPEN — Anton, deferred to Sprint 6 |
+| Sprint 5 Retro | 1 | Add design-system.md to mandatory agent reading for UI work | OPEN — Sprint 6 planning |
+| Sprint 5 Retro | 2 | Add "Anton live testing" as standard sprint step after merge | OPEN — Sprint 6 planning |

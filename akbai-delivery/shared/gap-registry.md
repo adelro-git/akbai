@@ -28,8 +28,8 @@
 | B1 | AI loading states | IMPORTANT | Build 3 | Show animated thinking indicator + estimated wait time in Taglish. Claude API calls take 3–10s. Blank screen = user thinks app is broken. |
 | B2 | Free tier limit UX & enforcement | IMPORTANT | Build 3 | Soft limit warning at 80% usage. Hard block at 100% with upgrade CTA. Must be clear BEFORE the limit is hit, not after. |
 | B3 | Onboarding recovery / resumable Kilala Kita | IMPORTANT | Build 1 | ✅ RESOLVED 2026-03-22. Onboarding saves progress per step via `/api/onboarding` POST. GET returns current step for resume-on-return. `onboarding_step` column on `business_profiles` tracks progress. UI wizard starts from last completed step. |
-| B4 | Profile update flow | IMPORTANT | Build 3 | Users need a way to update business profile after onboarding. BIR status can change. Settings screen required. |
-| B5 | Empty states | IMPORTANT | Build 2 | Every Dashboard card and Chat history must have a Taglish empty state (e.g., "Wala pang data. Mag-upload ka ng receipt para makapagsimula."). |
+| B4 | Profile update flow | IMPORTANT | Build 3 | ✅ RESOLVED 2026-03-25. `/profile` page with ProfileView (read-only) + ProfileEditForm (inline edit). `/api/profile` GET+PATCH with Zod validation. Increments `profile_version` on business_profiles. Dark mode toggle, sign-out button. PostHog events: profile_updated, signed_out. |
+| B5 | Empty states | IMPORTANT | Build 2 | IN PROGRESS (2026-03-25). Dashboard cards now show real data when available (Quick Chat count, BIR status) and Taglish empty states when not. Resibo/Saan Napunta cards still show empty states (Build 3/4 scope). Chat welcome message exists. |
 | B6 | Push notification timing (UTC+8) | IMPORTANT | Build 4 | BIR deadline alerts must fire in PHT, not UTC. All notification schedules must be stored and triggered in Asia/Manila timezone. |
 | B7 | iOS PWA home screen install prompt | IMPORTANT | Phase 1 launch | iOS Safari does not support native PWA install banners. App must include explicit "Add to Home Screen" guide — shown in onboarding and Settings. |
 
