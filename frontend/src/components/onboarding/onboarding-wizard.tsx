@@ -145,7 +145,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
             router.push('/chat');
             router.refresh();
           }}
-          className="w-full bg-primary-container hover:bg-primary text-on-primary-container font-semibold py-3 px-4 rounded-xl transition-all"
+          className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all"
         >
           Simulan na natin!
         </button>
@@ -170,8 +170,8 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
 
       {/* Error */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
-          <p className="text-red-400 text-sm">{error}</p>
+        <div className="bg-error-container/20 border border-on-error-container/20 rounded-xl p-3">
+          <p className="text-on-error-container text-sm">{error}</p>
         </div>
       )}
 

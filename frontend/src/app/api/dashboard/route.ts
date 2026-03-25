@@ -18,26 +18,33 @@ interface DashboardCard {
   hasData: boolean;
 }
 
+interface CheckInData {
+  id: string;
+  mood: string | null;
+  kai_greeting: string;
+  check_in_date: string;
+  sales_amount: number | null;
+  expenses_amount: number | null;
+}
+
 interface DashboardResponse {
   greeting: string;
   userName: string;
   businessName: string | null;
   businessType: string | null;
-  todayCheckIn: {
-    id: string;
-    mood: string | null;
-    kai_greeting: string;
-    check_in_date: string;
-  } | null;
+  todayCheckIn: CheckInData | null;
   dashboardCards: DashboardCard[];
 }
 
 // ============================================================
-// Zod Schemas
+// Zod Schemas — Check-In with optional financial fields
+// sales_amount and expenses_amount are non-negative integers (centavos)
 // ============================================================
 
 const CheckInSchema = z.object({
   mood: z.string().max(200).optional(),
+  sales_amount: z.number().int().nonnegative().optional(),
+  expenses_amount: z.number().int().nonnegative().optional(),
 });
 
 // ============================================================
@@ -58,7 +65,7 @@ function generateGreeting(name: string): string {
 }
 
 /** Exported for testing */
-export { generateGreeting };
+export { generateGreeting, CheckInSchema };
 
 // ============================================================
 // Dashboard Cards (Build 2 — all empty state)
@@ -168,7 +175,7 @@ export async function GET() {
   const today = getManilaToday();
   const { data: todayCheckIn } = await supabase
     .from('daily_check_in')
-    .select('id, mood, kai_greeting, check_in_date')
+    .select('id, mood, kai_greeting, check_in_date, sales_amount, expenses_amount')
     .eq('user_id', userId)
     .eq('check_in_date', today)
     .is('deleted_at', null)
@@ -230,6 +237,8 @@ export async function POST(req: NextRequest) {
         check_in_date: getManilaToday(),
         mood: parsed.data.mood ?? null,
         kai_greeting: greeting,
+        sales_amount: parsed.data.sales_amount ?? null,
+        expenses_amount: parsed.data.expenses_amount ?? null,
       },
     });
   }
@@ -287,7 +296,7 @@ export async function POST(req: NextRequest) {
   const greeting = generateGreeting(userName);
   const today = getManilaToday();
 
-  // Upsert check-in (one per user per day)
+  // Upsert check-in (one per user per day) — includes financial fields
   const { data: checkIn, error: insertError } = await supabase
     .from('daily_check_in')
     .upsert(
@@ -296,10 +305,12 @@ export async function POST(req: NextRequest) {
         check_in_date: today,
         mood: parsed.data.mood ?? null,
         kai_greeting: greeting,
+        sales_amount: parsed.data.sales_amount ?? null,
+        expenses_amount: parsed.data.expenses_amount ?? null,
       },
       { onConflict: 'user_id,check_in_date' }
     )
-    .select('id, user_id, check_in_date, mood, kai_greeting')
+    .select('id, user_id, check_in_date, mood, kai_greeting, sales_amount, expenses_amount')
     .single();
 
   if (insertError) {

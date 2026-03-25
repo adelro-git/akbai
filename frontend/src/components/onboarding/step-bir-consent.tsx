@@ -55,7 +55,7 @@ export default function StepBirConsent({ onComplete, loading, firstName }: StepB
           type="button"
           onClick={() => onComplete(true)}
           disabled={loading}
-          className="py-3 px-4 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          className="py-3 px-4 rounded-xl bg-primary-container hover:bg-primary text-on-primary font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {loading ? '...' : 'Oo, sige!'}
         </button>

@@ -113,6 +113,15 @@ module.exports = {
         'ambient-lg': '0 30px 60px -5px hsl(var(--primary) / 0.08)',
         'ambient-nav': '0 -10px 40px -5px hsl(var(--primary) / 0.06)',
       },
+      keyframes: {
+        'slide-up': {
+          from: { transform: 'translateY(100%)' },
+          to: { transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        'slide-up': 'slide-up 0.3s ease-out',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

@@ -113,7 +113,7 @@ export default function ChatInterface({
         <div className="flex items-center gap-2.5">
           <div className="relative w-6 h-6 rounded-full overflow-hidden ring-1 ring-primary-container/30 flex items-center justify-center bg-primary-container/10">
             <img
-              src="https://raw.githubusercontent.com/adelro-git/akbai/main/brand/Logo%20Files/AKBai_Mark_Honey.png"
+              src="/icons/mark-honey.png"
               alt="Kai"
               className="w-5 h-5 object-contain"
             />
@@ -128,7 +128,7 @@ export default function ChatInterface({
           className="text-on-surface-variant hover:text-on-surface text-xs py-1.5 px-3 rounded-lg hover:bg-outline-variant/10 transition-colors"
           data-testid="sign-out-btn"
         >
-          Logout
+          Mag-sign out
         </button>
       </header>
 
