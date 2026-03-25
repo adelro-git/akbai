@@ -143,7 +143,7 @@ export default async function DashboardPage() {
 
   return (
     <div
-      className="min-h-dvh bg-ink pb-20"
+      className="min-h-dvh bg-background pb-20"
       data-testid="dashboard-page"
     >
       <DashboardTracker />

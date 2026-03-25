@@ -265,7 +265,7 @@ These decisions have been locked after 14 roadmap iterations, 7 ops playbook ver
 
 6. **Cloudflare Pages for deployment.** Free for first 6 months. If Emergent scaffold uses Vercel for convenience, that is acceptable — migration happens later. Do not architect around Vercel-specific features.
 
-7. **Mobile-first, dark theme default.** The primary background is Ink (#07101e). Cards are #0d1a2e. Text is white/warm off-white. Never pure black. Never cold greys. Font is Plus Jakarta Sans (Google Fonts).
+7. **Mobile-first, light theme default.** The primary background is Surface (#fdf9f2). Cards are #f1ede7. Text is #1c1c18 (on-surface). Dark mode available via user preference toggle (dark background #07101e, cards #0d1a2e). Never pure black. Never cold greys. Font is Plus Jakarta Sans (Google Fonts).
 
 8. **Shadcn/UI only.** No Material UI, no Bootstrap, no Chakra. Shadcn gives composable primitives with zero unused CSS.
 
@@ -291,7 +291,7 @@ These decisions have been locked after 14 roadmap iterations, 7 ops playbook ver
 
 Emergent should produce a working scaffold with these 6 components. Check each box before considering the session complete:
 
-- [ ] **Next.js 14 PWA shell** — App Router, TypeScript strict, Tailwind CSS, Shadcn/UI, next-pwa with basic manifest and service worker. Mobile-first layout with Ink (#07101e) background. Plus Jakarta Sans font loaded via Google Fonts.
+- [ ] **Next.js 14 PWA shell** — App Router, TypeScript strict, Tailwind CSS, Shadcn/UI, next-pwa with basic manifest and service worker. Mobile-first layout with Surface (#fdf9f2) light-first background, dark mode via class toggle. Plus Jakarta Sans font loaded via Google Fonts.
 
 - [ ] **Supabase Auth** — Email OTP / magic link signup and login. Protected routes that redirect unauthenticated users. Session management with Supabase client (browser + server helpers). No social login.
 
@@ -360,19 +360,18 @@ These are all Phase 1 builds that will be done incrementally after the scaffold 
 
 ## 8. Brand Quick Reference (for UI Implementation)
 
-### Colors
-| Role | Hex | Use |
-|------|-----|-----|
-| Background (primary) | `#07101e` | Page background |
-| Card background | `#0d1a2e` | Chat bubbles (KA), cards |
-| Card alt | `#111f36` | Alternate cards |
-| Warm Honey | `#F59E0B` | CTAs, send button, accents, KA avatar ring |
-| Warm Honey Deep | `#D97706` | Hover states, gradient end |
-| Teal | `#20C9A0` | Success states (not needed for scaffold) |
-| Error Red | `#F87171` | Error messages |
-| User bubble | `#1a2a42` (or similar dark-blue) | User message background |
-| Text primary | `#FFFFFF` | Main text |
-| Text secondary | `#94A3B8` | Timestamps, labels |
+### Colors (Light-First — "The Art of Warmth")
+| Role | Light Hex | Dark Hex | Use |
+|------|-----------|----------|-----|
+| Background (primary) | `#fdf9f2` | `#07101e` | Page background (light-first default, dark mode uses #07101e) |
+| Card background | `#f1ede7` | `#0d1a2e` | Chat bubbles (KA), cards |
+| Card alt | `#ebe8e1` | `#111f36` | Alternate cards |
+| Warm Honey | `#F59E0B` | `#F59E0B` | CTAs, send button, accents, KA avatar ring |
+| Primary action | `#855300` | `#ffb95f` | Primary CTAs, active indicators |
+| Teal / Tertiary | `#006b54` | `#43deb4` | Success states, financial data |
+| Error Red | `#F87171` | `#F87171` | Error messages |
+| Text primary | `#1c1c18` | `#e6e2db` | Main text (on-surface) |
+| Text secondary | `#534434` | `#d8c3ad` | Timestamps, labels (on-surface-variant) |
 
 ### Typography
 - **Font:** Plus Jakarta Sans (Google Fonts) — load weights 400, 500, 600, 700, 800

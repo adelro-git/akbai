@@ -35,12 +35,12 @@ export default function StepIncomeRange({
   return (
     <div className="flex flex-col gap-6">
       {/* KA bubble */}
-      <div className="bg-kai-card rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
-        <p className="text-white text-base leading-relaxed">
+      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
+        <p className="text-on-surface text-base leading-relaxed">
           Mga magkano ang monthly income ng negosyo mo,{' '}
-          <span className="text-honey font-semibold">{firstName}</span>?
+          <span className="text-primary-container font-semibold">{firstName}</span>?
         </p>
-        <p className="text-slate-400 text-xs mt-1">
+        <p className="text-on-surface-variant text-xs mt-1">
           Estimate lang — para ma-customize ang tulong ko sa&apos;yo.
         </p>
       </div>
@@ -54,12 +54,12 @@ export default function StepIncomeRange({
             onClick={() => setSelected(range.value)}
             className={`flex flex-col items-center gap-1 p-4 rounded-xl border text-center transition-all ${
               selected === range.value
-                ? 'border-honey bg-honey/10 ring-1 ring-honey'
-                : 'border-white/10 bg-kai-card-alt hover:border-white/20'
+                ? 'border-primary-container bg-primary-container/10 ring-1 ring-primary-container'
+                : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
             }`}
           >
-            <p className="text-white font-semibold text-sm">{range.label}</p>
-            <p className="text-slate-400 text-xs">{range.tagline}</p>
+            <p className="text-on-surface font-semibold text-sm">{range.label}</p>
+            <p className="text-on-surface-variant text-xs">{range.tagline}</p>
           </button>
         ))}
       </div>
@@ -68,7 +68,7 @@ export default function StepIncomeRange({
         type="button"
         onClick={handleContinue}
         disabled={loading || !selected}
-        className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-primary-container hover:bg-primary text-on-primary-container font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {loading ? 'Sine-save...' : 'Sunod'}
       </button>

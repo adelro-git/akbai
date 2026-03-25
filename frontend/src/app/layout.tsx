@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#07101e',
+  themeColor: '#fdf9f2',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -34,15 +34,29 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="tl" className={plusJakartaSans.variable}>
+    <html lang="tl" className={plusJakartaSans.variable} suppressHydrationWarning>
       <head>
         <link rel="icon" type="image/png" href="/icons/icon-192.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('akbai-theme');
+                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
       </head>
-      <body className="bg-ink text-white min-h-dvh antialiased">
+      <body className="bg-background text-foreground min-h-dvh antialiased">
         <PostHogProvider>
           {children}
         </PostHogProvider>

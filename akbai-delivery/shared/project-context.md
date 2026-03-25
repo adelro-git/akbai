@@ -163,7 +163,7 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 
 - **Sprint 3 — Build 1 Frontend + Infrastructure** (2026-03-22):
   - UTC+8 timezone enforcement: shared `@/lib/timezone` module with `toManila()`, `getManilaToday()`, `formatManilaDate()` — Gap A3 resolved (ADR-006)
-  - Kilala Kita onboarding UI: 5-step wizard (6 components), mobile-first dark theme, Taglish copy, `useRef`+`onClick` pattern — Gap B3 resolved
+  - Kilala Kita onboarding UI: 5-step wizard (6 components), mobile-first light theme (dark mode available), Taglish copy, `useRef`+`onClick` pattern — Gap B3 resolved
   - Onboarding schema: migration 005 (`onboarding_fields`), `/api/onboarding` route, Zod validation, 28 first-response templates
   - Onboarding rate-limit exemption: `checkCircuitBreaker()` `onboardingCompleted` param — Gap E3 resolved (ADR-008)
   - Sentry error monitoring: `@sentry/nextjs` client+server configs, `global-error.tsx`, source map uploads — Gap A4 resolved (ADR-007)

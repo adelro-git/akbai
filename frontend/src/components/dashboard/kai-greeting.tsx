@@ -34,25 +34,25 @@ export default function KaiGreeting({
       aria-label="KA greeting"
     >
       {/* KA bubble */}
-      <div className="bg-kai-card rounded-2xl rounded-tl-sm p-4 mb-3">
-        <p className="text-white text-base leading-relaxed" data-testid="kai-greeting-text">
+      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 mb-3">
+        <p className="text-on-surface text-base leading-relaxed" data-testid="kai-greeting-text">
           {greeting}
         </p>
       </div>
 
       {/* Business info */}
       <div className="flex items-center gap-2 px-1">
-        <div className="w-8 h-8 rounded-full bg-honey/20 flex items-center justify-center flex-shrink-0">
-          <span className="text-honey text-sm font-bold">
+        <div className="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center flex-shrink-0">
+          <span className="text-primary-container text-sm font-bold">
             {userName.charAt(0).toUpperCase()}
           </span>
         </div>
         <div className="min-w-0">
-          <p className="text-white text-sm font-semibold truncate">
+          <p className="text-on-surface text-sm font-semibold truncate">
             {businessName ?? userName}
           </p>
           {typeLabel && (
-            <p className="text-slate-400 text-xs truncate">{typeLabel}</p>
+            <p className="text-on-surface-variant text-xs truncate">{typeLabel}</p>
           )}
         </div>
       </div>

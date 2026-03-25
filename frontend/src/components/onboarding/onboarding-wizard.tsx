@@ -136,8 +136,8 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
   if (currentStep === 6 && firstMessage) {
     return (
       <div className="flex flex-col gap-6 animate-in fade-in duration-500">
-        <div className="bg-kai-card rounded-2xl rounded-tl-sm p-4">
-          <p className="text-white text-base leading-relaxed">{firstMessage}</p>
+        <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
+          <p className="text-on-surface text-base leading-relaxed">{firstMessage}</p>
         </div>
         <button
           type="button"
@@ -145,7 +145,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
             router.push('/chat');
             router.refresh();
           }}
-          className="w-full bg-honey hover:bg-honey-deep text-ink font-semibold py-3 px-4 rounded-xl transition-all"
+          className="w-full bg-primary-container hover:bg-primary text-on-primary-container font-semibold py-3 px-4 rounded-xl transition-all"
         >
           Simulan na natin!
         </button>
@@ -156,15 +156,15 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
   return (
     <div className="flex flex-col gap-6">
       {/* Progress bar */}
-      <div className="w-full h-1.5 bg-kai-card-alt rounded-full overflow-hidden">
+      <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
         <div
-          className="h-full bg-honey rounded-full transition-all duration-500 ease-out"
+          className="h-full bg-primary-container rounded-full transition-all duration-500 ease-out"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
       {/* Step counter */}
-      <p className="text-slate-500 text-xs font-medium">
+      <p className="text-outline text-xs font-medium">
         Step {Math.min(currentStep, 5)} ng 5
       </p>
 

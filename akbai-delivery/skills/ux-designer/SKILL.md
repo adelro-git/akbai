@@ -32,6 +32,7 @@ You design every screen, flow, card, chat bubble, and interaction in AKBai. The 
 - `references/taglish-manual.md` — **The authoritative Taglish do's and don'ts manual.** Curated real-world examples of natural Taglish vs awkward/wrong Taglish. This is the single source of truth for how KA speaks — when it exists, it overrides any conflicting guidance in other files. If this file is missing or empty, fall back to `taglish-copy-guide.md` and the shared `brand-context.md`.
 - `references/mobile-first.md` — PWA constraints, touch targets, card layout system, offline behavior, camera integration
 - `references/screen-mockups.html` — **7 static HTML/Tailwind prototypes** (Chat, Login, Deadline Watcher, Saan Napunta Dashboard, Main Dashboard, Kilala Kita Steps 1 & 3). Visual source of truth for color system, layout patterns, component styling, and Taglish copy in context.
+- `references/design-system.md` — **The authoritative design system specification.** Creative north star ("Sun-Drenched Atelier"), color token system, elevation rules (No-Line Rule, Tonal Layering, Ambient Shadows), component guidelines. This is the visual source of truth for how AKBai looks and feels.
 
 Read the specific reference file that matches your task. If designing an onboarding screen, start with `ux-flows.md`. If writing error messages or any user-facing copy, **always** start with `taglish-manual.md` (falling back to `taglish-copy-guide.md` if the manual isn't ready yet). If specifying layout or interactions, start with `mobile-first.md`.
 
@@ -78,10 +79,10 @@ Every Card follows this structure:
 └─────────────────────────────────┘
 ```
 
-- **Background**: Card (#0d1a2e) or Card Alt (#111f36) on Ink (#07101e)
+- **Background**: surface-container (#f1ede7 light / #0d1a2e dark) or surface-container-high (#ebe8e1 light / #111f36 dark) on surface (#fdf9f2 light / #07101e dark)
 - **Primary data**: Plus Jakarta Sans Bold 700, large enough to scan at arm's length
-- **Financial amounts**: Always teal (#20C9A0). Always ₱ + digits. Always formatted (₱18,400 not ₱18400)
-- **Status tags**: Small pill badges — Teal for success/complete, Honey (#F59E0B) for pending, Red (#F87171) for overdue/error
+- **Financial amounts**: Always tertiary (#006b54 light / #43deb4 dark). Always ₱ + digits. Always formatted (₱18,400 not ₱18400)
+- **Status tags**: Small pill badges — Teal for success/complete, primary-container (#f59e0b) for pending, Red (#F87171) for overdue/error
 - **Touch targets**: Every interactive element is minimum 44×44px
 
 ### Card Types
@@ -162,6 +163,9 @@ AKBai targets WCAG 2.1 AA compliance. This matters because the product serves us
 - **Teal on dark**: Teal Light (#20C9A0) on Card (#0d1a2e) passes AA for both normal and large text. Safe to use for financial amounts.
 - **Error red on dark**: #F87171 on #0d1a2e passes AA. Safe for error states.
 - All text on Ink (#07101e) must be at minimum #9CA3AF for body text (4.5:1 ratio).
+- **Watch Honey on cream.** primary-container (#F59E0B) on surface (#fdf9f2) fails AA for normal text. Use primary (#855300) for text on light surfaces. White text on primary-container CTAs passes AA.
+- **Tertiary on light**: tertiary (#006b54) on surface (#fdf9f2) passes AA for both normal and large text. Safe for financial amounts.
+- **on-surface-variant**: #534434 on surface (#fdf9f2) passes AA. Safe for secondary text, labels, timestamps.
 
 ### Screen Reader Labels
 - Every Card gets an `aria-label` describing its content: "Expense Card: ₱3,450, Ingredients, March 15"

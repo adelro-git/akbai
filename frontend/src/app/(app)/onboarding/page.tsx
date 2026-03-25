@@ -52,14 +52,14 @@ export default async function OnboardingPage() {
   };
 
   return (
-    <main className="min-h-dvh bg-ink flex items-start justify-center pt-safe">
+    <main className="min-h-dvh bg-background flex items-start justify-center pt-safe">
       <div className="w-full max-w-md px-5 py-8">
         {/* Logo */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white">
-            AKB<span className="text-honey">ai</span>
+          <h1 className="text-2xl font-bold text-on-surface">
+            AKB<span className="text-primary-container">ai</span>
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Kilala Kita</p>
+          <p className="text-outline text-sm mt-1">Kilala Kita</p>
         </div>
 
         <OnboardingWizard initialState={state} />

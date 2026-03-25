@@ -1,6 +1,6 @@
 # AKBai — Brand Context
 > Used by: marketing-lead, ux-designer, product-owner, ops-lead, ai-engineer
-> Last updated: March 2026 | Source: AKBai Brand Guide v1.0, Brand Kit
+> Last updated: March 25, 2026 | Source: AKBai Brand Guide v1.0, Brand Kit, "Art of Warmth" design system
 > Full brand kit location: /AKBai/AKBai Brand Kit/
 
 ---
@@ -25,22 +25,41 @@
 
 ---
 
-## Color System
+## Color System — "The Art of Warmth"
 
-| Role | Color | Hex | Usage |
-|------|-------|-----|-------|
-| Primary identity | Warm Honey Light | #F59E0B | Logo mark, wordmark "ai", CTAs, highlights, key product moments |
-| Primary identity | Warm Honey Deep | #D97706 | Gradient end, hover states |
-| Supporting / trust | Teal Light | #20C9A0 | Financial data, success confirmations, BIR compliance states |
-| Supporting / trust | Teal Cyan | #0FB8D9 | Positive alerts, trust signals |
-| Background | Ink | #07101e | Page background (dark primary) |
-| Background | Card | #0d1a2e | Card backgrounds |
-| Background | Card Alt | #111f36 | Alternate card backgrounds |
-| Error | Red | #F87171 | Error states (never use Honey or Teal for errors) |
-| Warning | Yellow | #FBBF24 | Warning states |
-| Light background | Warm off-white | #F5F0E8 | Light mode alternative (never cold greys) |
+AKBai uses a **light-first** design system ("Sun-Drenched Atelier") with dark mode preserved as a user preference toggle. Color tokens follow Material Design 3 (MD3) semantic naming.
 
-**Rules:** Logo mark = Warm Honey gradient or all-white (reversed). Primary CTA = Honey gradient fill. Financial data = Teal only. Dark backgrounds = #07101e (never pure black). Light backgrounds = #FFFFFF or #F5F0E8 (never cold greys).
+| MD3 Token | Role | Light Hex | Dark Hex | Usage |
+|-----------|------|-----------|----------|-------|
+| background / surface | Page background | #fdf9f2 | #07101e | Default app background |
+| surface-container | Card background | #f1ede7 | #0d1a2e | Chat bubbles (KA), cards, modals |
+| surface-container-high | Elevated surface | #ebe8e1 | #111f36 | Alternate cards, selected states |
+| surface-container-low | Recessed surface | #f7f3ec | #0a1422 | Input fields, inset panels |
+| surface-container-lowest | Base white | #ffffff | #030812 | Full-contrast areas, overlays |
+| surface-container-highest | Pressed / heavy surface | #e6e2db | #172740 | Active states, pressed buttons |
+| on-surface | Primary text | #1c1c18 | #e6e2db | Body copy, headings |
+| on-surface-variant | Secondary text | #534434 | #d8c3ad | Timestamps, labels, captions |
+| primary | Brand action | #855300 | #ffb95f | Primary CTAs, active indicators |
+| primary-container | Brand highlight | #f59e0b | #f59e0b | Logo mark, accents, KA avatar ring |
+| tertiary | Trust / success | #006b54 | #43deb4 | Financial data, BIR compliance states |
+| error | Error | #F87171 | #F87171 | Error states (never use Honey or Teal for errors) |
+| warning | Warning | #FBBF24 | #FBBF24 | Warning states |
+| outline-variant | Ghost border | #534434 at 20% | #d8c3ad at 20% | Subtle dividers when tonal shift alone is insufficient |
+
+**Rules:** Surface #fdf9f2 is the default (light-first). Dark mode (#07101e background) is available via user preference toggle. Logo mark = Warm Honey gradient or all-white (reversed). Primary CTA = Honey gradient fill. Financial data = Tertiary (teal) only. Never pure black backgrounds. Never cold greys. Never 1px solid borders — use background color shifts instead.
+
+> See `skills/ux-designer/references/design-system.md` for the full design system specification.
+
+---
+
+## Design Philosophy — 6 Principles
+
+1. **No-Line Rule:** No 1px solid borders anywhere in the UI. Use background color shifts between adjacent surfaces to create separation.
+2. **Tonal Layering:** Visual hierarchy is achieved via surface tone stacking (background < surface-container < surface-container-high), not drop shadows or borders.
+3. **Ambient Shadows:** When shadows are needed, use amber-tinted shadows (primary at 8% opacity, 40-60px blur radius). Never grey box-shadows.
+4. **Ghost Border Fallback:** When tonal shift alone is insufficient for separation, use outline-variant at 20% opacity as a last resort.
+5. **Glass & Gradient:** Floating nav bars and modals use 80% background opacity with 20px backdrop-blur for a glass-morphism effect.
+6. **Editorial Typography:** Display headings and key numbers use weight-800 with -0.02em letter-spacing. Numbers and financial data rendered at weight-800 convey "Art" — authority and editorial confidence.
 
 ---
 
@@ -48,24 +67,25 @@
 
 **Family:** Plus Jakarta Sans (Google Fonts, free)
 **Character:** Geometric sans-serif with warmth. Rounded terminals, open apertures.
+**Editorial authority:** Weight-800 is reserved for display headlines and key numbers/data — this conveys "Art" (confidence, editorial authority). Numbers rendered at 800 weight feel intentional, not incidental.
 
 | Weight | Usage |
 |--------|-------|
-| ExtraBold 800 | Wordmark and display headlines ONLY |
+| ExtraBold 800 | Wordmark, display headlines, key numbers/financial data |
 | Bold 700 | Section headings, card titles |
 | SemiBold 600 | Subheadings, labels, CTAs |
 | Medium 500 | Taglines, emphasized body text |
 | Regular 400 | Body copy, chat bubbles, captions |
 
-| Level | Size | Weight |
-|-------|------|--------|
-| Display | 48px | 800 |
-| H1 | 32px | 800 |
-| H2 | 24px | 700 |
-| H3 | 18px | 600 |
-| Body | 15px | 400 |
-| Chat | 14px | 400 |
-| Label | 11px | 700 |
+| Level | Size | Weight | Letter-spacing |
+|-------|------|--------|---------------|
+| Display | 48px | 800 | -0.02em |
+| H1 | 32px | 800 | -0.02em |
+| H2 | 24px | 700 | -0.02em |
+| H3 | 18px | 600 | normal |
+| Body | 15px | 400 | normal |
+| Chat | 14px | 400 | normal |
+| Label | 11px | 700 | normal |
 
 ---
 

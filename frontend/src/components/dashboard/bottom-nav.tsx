@@ -23,7 +23,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-kai-card/95 backdrop-blur-sm border-t border-white/5 z-50"
+      className="fixed bottom-0 left-0 right-0 bg-surface-container-lowest/80 backdrop-blur-[20px] shadow-ambient-nav border-t border-outline-variant/20 z-50"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       data-testid="bottom-nav"
       aria-label="Main navigation"
@@ -44,11 +44,11 @@ export default function BottomNav() {
               aria-current={isActive ? 'page' : undefined}
             >
               <Icon
-                className={`w-6 h-6 ${isActive ? 'text-honey' : 'text-slate-400'}`}
+                className={`w-6 h-6 ${isActive ? 'text-primary-container' : 'text-on-surface-variant'}`}
               />
               <span
                 className={`text-[11px] font-semibold mt-0.5 ${
-                  isActive ? 'text-honey' : 'text-slate-400'
+                  isActive ? 'text-primary-container' : 'text-on-surface-variant'
                 }`}
               >
                 {item.label}

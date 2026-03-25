@@ -43,7 +43,7 @@ export default function ChatInput({ onSend, loading }: ChatInputProps) {
 
   return (
     <div
-      className="flex-shrink-0 bg-kai-card border-t border-white/5 px-4 py-3 pb-safe"
+      className="flex-shrink-0 bg-surface-container border-t border-outline-variant/20 px-4 py-3 pb-safe"
       data-testid="chat-input-bar"
     >
       <form onSubmit={handleSubmit} className="flex items-end gap-3">
@@ -56,17 +56,17 @@ export default function ChatInput({ onSend, loading }: ChatInputProps) {
           placeholder="Mag-usap kay Kai..."
           rows={1}
           disabled={loading}
-          className="flex-1 bg-kai-card-alt border border-white/10 rounded-2xl px-4 py-2.5 text-white placeholder-slate-500 text-sm resize-none min-h-[44px] max-h-[120px] focus:border-honey/50 focus:ring-1 focus:ring-honey/30 transition-colors disabled:opacity-50"
+          className="flex-1 bg-surface-container-high border border-outline-variant/30 rounded-2xl px-4 py-2.5 text-on-surface placeholder-on-surface-variant text-sm resize-none min-h-[44px] max-h-[120px] focus:border-primary-container/50 focus:ring-1 focus:ring-primary-container/30 transition-colors disabled:opacity-50"
           data-testid="chat-text-input"
         />
         <button
           type="submit"
           disabled={!value.trim() || loading}
-          className="w-11 h-11 rounded-full bg-honey hover:bg-honey-deep flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-11 h-11 rounded-full bg-primary-container hover:bg-honey-deep flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           data-testid="chat-send-btn"
           aria-label="Send message"
         >
-          <Send size={16} className="text-ink" />
+          <Send size={16} className="text-on-primary-container" />
         </button>
       </form>
     </div>

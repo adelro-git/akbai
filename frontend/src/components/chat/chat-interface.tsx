@@ -108,10 +108,10 @@ export default function ChatInterface({
   }
 
   return (
-    <div className="flex flex-col h-dvh bg-ink" data-testid="chat-interface">
-      <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 bg-kai-card border-b border-white/5 pt-safe">
+    <div className="flex flex-col h-dvh bg-background" data-testid="chat-interface">
+      <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 bg-surface-container border-b border-outline-variant/20 pt-safe">
         <div className="flex items-center gap-2.5">
-          <div className="relative w-6 h-6 rounded-full overflow-hidden ring-1 ring-honey/30 flex items-center justify-center bg-honey/10">
+          <div className="relative w-6 h-6 rounded-full overflow-hidden ring-1 ring-primary-container/30 flex items-center justify-center bg-primary-container/10">
             <img
               src="https://raw.githubusercontent.com/adelro-git/akbai/main/brand/Logo%20Files/AKBai_Mark_Honey.png"
               alt="Kai"
@@ -119,13 +119,13 @@ export default function ChatInterface({
             />
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-white leading-tight">Kai</h1>
-            <p className="text-[10px] text-slate-400 leading-tight">AKBai Business Partner</p>
+            <h1 className="text-sm font-semibold text-on-surface leading-tight">Kai</h1>
+            <p className="text-[10px] text-on-surface-variant leading-tight">AKBai Business Partner</p>
           </div>
         </div>
         <button
           onClick={handleSignOut}
-          className="text-slate-400 hover:text-white text-xs py-1.5 px-3 rounded-lg hover:bg-white/5 transition-colors"
+          className="text-on-surface-variant hover:text-on-surface text-xs py-1.5 px-3 rounded-lg hover:bg-outline-variant/10 transition-colors"
           data-testid="sign-out-btn"
         >
           Logout
