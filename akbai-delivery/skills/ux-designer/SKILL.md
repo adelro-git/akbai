@@ -198,6 +198,20 @@ When you produce UX work, deliver it in one of these formats depending on what's
 
 ---
 
+## Known Pitfalls — Pre-Submit Checklist
+
+These are UX/design mistakes agents have made in past sprints. **Check every item before submitting your work.**
+
+| Pitfall | Rule | Sprint Learned |
+|---------|------|----------------|
+| **Hardcoded color values** | NEVER use raw hex values in components or Tailwind classes. Always use MD3 CSS variable tokens (`bg-surface`, `text-on-primary`, `bg-primary-container`). Read `references/design-system.md` for the full token map. Hardcoded colors were found in 22 files in Sprint 5. | Sprint 4, 5 |
+| **Wrong CTA text color** | Primary CTA buttons use `text-on-primary` (white on honey), NOT `text-on-primary-container`. This was wrong across the entire app for 2 sprints. | Sprint 5 |
+| **Generic copy instead of personalized** | When building onboarding, welcome tours, or first-run experiences, personalize by the user's pain point and business type. Don't show the same generic CTA to everyone — route to the feature most relevant to their stated pain (e.g., `knowing_earnings` → `/expenses`, `bir_compliance` → `/deadlines`). | Sprint 6 |
+| **design-system.md not read** | If your task involves ANY visual output, you MUST read `references/design-system.md`. This is the authoritative source for colors, elevation, typography, and component styling. Agents that skip it produce functional but visually non-compliant components. | Sprint 5 |
+| **Light-first not dark-first** | AKBai uses light theme (#fdf9f2 surface) as default since Sprint 4. Dark mode is available via toggle. Don't design dark-first. | Sprint 4 |
+
+---
+
 ## Working With Other Skills
 
 - **ai-engineer**: Owns KA's system prompt voice. If you write copy, the ai-engineer implements it in the prompt. Coordinate on tone — your copy guide defines what KA says; their prompt library defines how Claude generates it.

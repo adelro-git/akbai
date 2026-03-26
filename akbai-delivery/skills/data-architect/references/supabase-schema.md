@@ -1,6 +1,6 @@
 # AKBai — Supabase Schema Reference
 > Living document. Update this file whenever a table is created, modified, or deprecated.
-> Last updated: 2026-03-25 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
+> Last updated: 2026-03-26 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
 
 ---
 
@@ -22,8 +22,12 @@
 14. [redirect_logs](#14-redirect_logs)
 15. [business_benchmarks](#15-business_benchmarks)
 16. [daily_check_in](#16-daily_check_in)
-17. [Relationship Diagram](#17-relationship-diagram)
-18. [Index Strategy Summary](#18-index-strategy-summary)
+17. [flag_as_wrong_reports](#17-flag_as_wrong_reports)
+18. [transactions (Sprint 7 rebuild)](#18-transactions-sprint-7-rebuild)
+19. [Migration Log — Sprint 7 (010_reconciliation_prep)](#19-migration-log--sprint-7-010_reconciliation_prep)
+20. [Relationship Diagram](#20-relationship-diagram)
+21. [Index Strategy Summary](#21-index-strategy-summary)
+22. [Timezone Handling (Gap A3)](#22-timezone-handling-gap-a3)
 
 > **Migration order matters.** Tables are listed in FK dependency order — receipts before transactions (because transactions.receipt_id references receipts.id). Run migrations sequentially by number.
 
@@ -1072,11 +1076,166 @@ CREATE POLICY "daily_check_in_update_own"
 - No `updated_at` column — check-ins are essentially immutable once created (mood can be updated via the UPDATE policy, but this is rare).
 - No `business_id` FK — check-ins are per-user, not per-business. This simplifies the dashboard where KA greets the user regardless of which business is active.
 - `kai_greeting` is generated server-side by Claude (Haiku for cost efficiency) during the morning check-in flow.
-- `check_in_date` is a DATE (timezone-agnostic), representing the calendar date in PHT context. See §19 Timezone Handling.
+- `check_in_date` is a DATE (timezone-agnostic), representing the calendar date in PHT context. See §22 Timezone Handling.
 
 ---
 
-## 17. Relationship Diagram
+## 17. flag_as_wrong_reports
+
+**Purpose:** Stores user reports when KA gives a wrong or unhelpful answer. Design Gate 2 requirement — users must be able to flag any AI response.
+**Persona interaction:** All — available on every KA response card.
+**Data classification:** Feedback (message_id references ka_conversations)
+
+```sql
+-- Migration: 008_flag_as_wrong.sql
+CREATE TABLE IF NOT EXISTS public.flag_as_wrong_reports (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  message_id TEXT NOT NULL,
+  reason TEXT,
+  user_comment TEXT,
+  status TEXT NOT NULL DEFAULT 'open',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE public.flag_as_wrong_reports ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own flags"
+  ON public.flag_as_wrong_reports FOR SELECT
+  USING (auth.uid() = user_id AND deleted_at IS NULL);
+
+CREATE POLICY "Users can create flags"
+  ON public.flag_as_wrong_reports FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- Index
+CREATE INDEX idx_flag_reports_user_status
+  ON public.flag_as_wrong_reports(user_id, status)
+  WHERE deleted_at IS NULL;
+```
+
+**Notes:**
+- `message_id` is TEXT (not UUID FK) because it references the client-side message identifier, not necessarily a `ka_conversations.id`.
+- `status` tracks review workflow: 'open' → reviewed by Anton manually. No formal admin UI yet.
+- No UPDATE policy — once submitted, flags are immutable from the client side. Admin updates via service role.
+- Satisfies Design Gate 2 (gap B1): "Flag as Wrong on every AI output."
+
+---
+
+## 18. transactions (Sprint 7 rebuild)
+
+**Purpose:** Rebuilt transactions table for the Saan Napunta expenses dashboard (Build 4). Replaces the original §5 schema with centavos-based amounts and MSME-specific categories.
+**Persona interaction:** All. Core financial data — powers Dashboard, Saan Napunta, Morning Briefing.
+**Data classification:** Financial
+
+> **Note:** This migration (009) creates a new `transactions` table. The original §5 transactions schema was the planned design; this is the actual shipped implementation. Key differences: `amount` is INTEGER centavos (not NUMERIC), no `business_id`/`currency`/`merchant` columns, `source` values differ, adds `source_ref_id` for cross-table linking.
+
+```sql
+-- Migration: 009_transactions.sql
+CREATE TABLE public.transactions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+
+  -- Transaction details
+  type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
+  amount INTEGER NOT NULL CHECK (amount > 0),  -- centavos, always positive
+  category TEXT NOT NULL DEFAULT 'other',
+  description TEXT,
+  transaction_date DATE NOT NULL DEFAULT CURRENT_DATE,
+
+  -- Source tracking
+  source TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual', 'check_in', 'ocr', 'import')),
+  source_ref_id UUID,  -- nullable FK to daily_check_in.id or future receipt.id
+
+  -- Timestamps
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ NULL  -- soft delete (non-negotiable)
+);
+
+-- Indexes
+CREATE INDEX idx_transactions_user_date
+  ON public.transactions (user_id, transaction_date DESC)
+  WHERE deleted_at IS NULL;
+
+CREATE INDEX idx_transactions_user_type_category
+  ON public.transactions (user_id, type, category)
+  WHERE deleted_at IS NULL;
+
+CREATE INDEX idx_transactions_source_ref
+  ON public.transactions (source_ref_id)
+  WHERE source_ref_id IS NOT NULL AND deleted_at IS NULL;
+
+-- Updated_at auto-trigger
+CREATE OR REPLACE FUNCTION public.trg_update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER transactions_updated_at
+  BEFORE UPDATE ON public.transactions
+  FOR EACH ROW
+  EXECUTE FUNCTION public.trg_update_updated_at();
+
+-- RLS
+ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "transactions_select_own"
+  ON public.transactions FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "transactions_insert_own"
+  ON public.transactions FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "transactions_update_own"
+  ON public.transactions FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- Note: No DELETE policy — soft-delete via UPDATE (set deleted_at)
+```
+
+**Notes:**
+- `amount` is INTEGER in centavos (non-negotiable convention). Display conversion at UI layer only.
+- `source` values: 'manual' (user entry), 'check_in' (from daily check-in flow), 'ocr' (receipt scan), 'import' (future bulk import).
+- `source_ref_id` links back to the originating record (e.g., `daily_check_in.id`). Not a formal FK constraint to allow flexible cross-table linking.
+- Uses its own `trg_update_updated_at()` trigger function (separate from the bootstrap `update_updated_at()`).
+- Categories: 12 MSME-specific categories from business knowledge research. Default is 'other'.
+
+---
+
+## 19. Migration Log — Sprint 7 (010_reconciliation_prep)
+
+**Migration file:** `010_reconciliation_prep.sql`
+**Sprint:** 7 (2026-03-26)
+**Purpose:** Add reconciliation columns to `transactions` for future receipt-to-transaction matching (Build 5+ prep). No UI surfaces this yet.
+
+**Changes to `transactions` table:**
+```sql
+-- Migration: 010_reconciliation_prep.sql
+ALTER TABLE public.transactions
+  ADD COLUMN reconciliation_status TEXT NOT NULL DEFAULT 'unmatched'
+    CHECK (reconciliation_status IN ('unmatched', 'matched', 'disputed')),
+  ADD COLUMN reconciled_with_id UUID REFERENCES public.transactions(id);
+
+-- Index for finding unmatched transactions
+CREATE INDEX idx_transactions_reconciliation
+  ON public.transactions (user_id, reconciliation_status)
+  WHERE deleted_at IS NULL AND reconciliation_status != 'matched';
+```
+
+**Notes:**
+- `reconciliation_status` tracks whether a transaction has been matched against a receipt or another transaction entry.
+- `reconciled_with_id` is a self-referencing FK — links two transactions that represent the same real-world event (e.g., manual entry matched with OCR scan).
+- This is prep work only. The reconciliation UI and matching logic will be built in Build 5+.
+
+---
+
+## 20. Relationship Diagram
 
 ```
 auth.users (Supabase Auth)
@@ -1096,6 +1255,7 @@ auth.users (Supabase Auth)
     ├── 1:N ── ka_conversations
     ├── 1:1 ── subscriptions
     ├── 1:N ── daily_check_in (one per day)
+    ├── 1:N ── flag_as_wrong_reports
     └── 1:N ── audit_log (as actor)
 
 System tables (no user ownership):
@@ -1107,7 +1267,7 @@ System tables (no user ownership):
 
 ---
 
-## 18. Index Strategy Summary
+## 21. Index Strategy Summary
 
 | Table | Key Indexes | Purpose |
 |-------|------------|---------|
@@ -1126,12 +1286,14 @@ System tables (no user ownership):
 | redirect_logs | category+date | Demand analysis |
 | business_benchmarks | type+period_type+period_start (unique), type+period_start DESC | Dedup, prompt assembly lookup |
 | daily_check_in | user_id+check_in_date (unique, inline) | One check-in per user per day |
+| flag_as_wrong_reports | user_id+status | Review queue by user |
+| transactions (rebuilt) | user_id+date, user_id+type+category, source_ref_id, user_id+reconciliation_status | Dashboard, Saan Napunta, source lookup, reconciliation |
 
 All user-facing table indexes include `WHERE deleted_at IS NULL` as a partial index condition to skip soft-deleted rows.
 
 ---
 
-## 19. Timezone Handling (Gap A3)
+## 22. Timezone Handling (Gap A3)
 
 All timestamps in the database are stored as `TIMESTAMPTZ` (UTC). Conversion to Philippine Standard Time (PST/PHT, UTC+8) happens in the application layer only.
 

@@ -1,7 +1,7 @@
 # AKBai — Prompt Library
 > Versioned system prompts for all AI-powered features.
 > Read this file when writing, modifying, or debugging any system prompt.
-> Last updated: 2026-03-25 | Version: 1.0.0
+> Last updated: 2026-03-26 | Version: 1.0.0
 
 ### How Other Agents Use This File
 
@@ -458,5 +458,7 @@ Track every change to production prompts here. This powers the regression test g
 | 2026-03-15 | General Chat | 1.0.0 | Initial version | Pending — Build 0 |
 | 2026-03-15 | Classification | 1.0.0 | Initial version | Pending — Build 0 |
 | 2026-03-15 | Domain Scopes | 1.0.0 | Initial TAX, FINANCIAL, COMMUNICATION | Pending — Build 0 |
+| 2026-03-26 | Core KA Persona | 1.0.0 | Design Gate 2: Trust Recovery Pattern — disclaimer-banner, flag-button, flag-as-wrong API | Sprint 6 (2026-03-26) |
+| 2026-03-26 | All prompts | 1.0.0 | Design Gate 3: 25-case prompt regression test suite (`prompt-regression.test.ts`) — 5 groups: persona integrity, Taglish compliance, feature prompts, guardrails, integration. All deterministic, no API calls. | Sprint 6 (2026-03-26) — 25/25 pass |
 
 **Testing requirement (Design Gate):** Every prompt version change must be run against the 20–30 case Taglish regression test library before shipping to production. Record "Tested" as the date + pass count (e.g., "2026-04-01 — 28/30 pass").

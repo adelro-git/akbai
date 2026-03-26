@@ -98,6 +98,26 @@ Use the template from `references/sprint-templates.md`. Include:
 - Risks & dependencies section
 - Sprint Definition of Done (3–5 criteria that define sprint success)
 
+### Step 7b: Run `/build` After Plan Approval
+
+**MANDATORY** — After Anton approves the sprint plan and before agents start executing:
+
+1. Run `/build` to verify the codebase compiles clean
+2. If build fails, fix the issue before launching agents — agents should start from a green baseline
+3. This catches stale imports, type errors, and config drift before they compound across parallel agent work
+
+### Step 7c: Run `/test` + Playwright Before Declaring Sprint Done
+
+**MANDATORY** — After all agents complete and branches are merged, before saving to history:
+
+1. Run `/test` to verify all unit/integration tests pass post-merge (Vitest)
+2. Run `npm run test:e2e` to verify Playwright E2E tests pass (browser smoke + user journeys)
+3. If either fails, fix the failures before declaring the sprint done
+4. This catches integration issues from parallel merges and regressions agents introduced
+5. Anton's live testing (15-30 min) happens AFTER both test suites pass — automated tests gate live testing
+
+**Sprint lifecycle: Plan → Anton approves → `/build` → Agents execute → Merge → `/test` → `test:e2e` → Anton live testing → Save to history**
+
 ### Step 8: Save Sprint Plan to History
 
 **MANDATORY** — After Anton approves the sprint plan, append it to `shared/sprint-history.md`:
@@ -221,5 +241,9 @@ Include in your escalation: what the blocker is, why it matters, and the deadlin
 - [ ] Output formatted per `references/sprint-templates.md`
 - [ ] Sprint goal is one sentence
 - [ ] Definition of Done has 3–5 criteria
+- [ ] `/build` passed after plan approval (Step 7b) — green baseline before agents start
+- [ ] `/test` passed after merge (Step 7c) — all Vitest tests green before declaring done
+- [ ] `test:e2e` passed after merge (Step 7c) — all Playwright E2E tests green before declaring done
+- [ ] Anton live testing completed (15-30 min) after `/test` passes
 - [ ] Sprint plan appended to `shared/sprint-history.md` (Step 8)
 - [ ] Unresolved action items from previous retros checked and referenced
