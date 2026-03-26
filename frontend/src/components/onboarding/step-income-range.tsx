@@ -10,11 +10,11 @@ interface StepIncomeRangeProps {
   initialValue?: string | null;
 }
 
-const INCOME_RANGES: { value: IncomeRange; label: string; tagline: string }[] = [
-  { value: 'below_50k', label: 'Below ₱50K', tagline: 'Nagsisimula pa lang' },
-  { value: '50k_150k', label: '₱50K – ₱150K', tagline: 'Lumalaki na' },
-  { value: '150k_500k', label: '₱150K – ₱500K', tagline: 'Malakas na' },
-  { value: 'above_500k', label: 'Above ₱500K', tagline: 'Malaki na talaga' },
+const INCOME_RANGES: { value: IncomeRange; label: string }[] = [
+  { value: 'below_50k', label: 'Below ₱50K' },
+  { value: '50k_150k', label: '₱50K – ₱150K' },
+  { value: '150k_500k', label: '₱150K – ₱500K' },
+  { value: 'above_500k', label: 'Above ₱500K' },
 ];
 
 export default function StepIncomeRange({
@@ -59,7 +59,6 @@ export default function StepIncomeRange({
             }`}
           >
             <p className="text-on-surface font-semibold text-sm">{range.label}</p>
-            <p className="text-on-surface-variant text-xs">{range.tagline}</p>
           </button>
         ))}
       </div>

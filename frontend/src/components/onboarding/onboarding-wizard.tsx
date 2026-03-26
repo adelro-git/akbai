@@ -87,10 +87,15 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
   );
 
   const handleStep2 = useCallback(
-    async (businessType: BusinessType) => {
-      const ok = await saveStep(2, { business_type: businessType });
+    async (businessType: BusinessType, otherText?: string) => {
+      // When "Iba Pa" is selected and user specifies a custom type,
+      // store as "other:{userInput}" so downstream can display it.
+      const valueToSave = businessType === 'other' && otherText
+        ? `other:${otherText}`
+        : businessType;
+      const ok = await saveStep(2, { business_type: valueToSave });
       if (ok) {
-        setSavedData((prev) => ({ ...prev, business_type: businessType }));
+        setSavedData((prev) => ({ ...prev, business_type: valueToSave }));
         setCurrentStep(3);
       }
     },
@@ -142,7 +147,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         <button
           type="button"
           onClick={() => {
-            router.push('/chat');
+            router.push('/dashboard');
             router.refresh();
           }}
           className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all"

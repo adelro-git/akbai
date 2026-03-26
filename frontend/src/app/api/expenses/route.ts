@@ -1,0 +1,409 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
+import { getManilaToday } from '@/lib/timezone';
+import {
+  CreateTransactionSchema,
+  UpdateTransactionSchema,
+  ExpensesQuerySchema,
+} from '@/lib/expenses/schemas';
+
+// ============================================================
+// Types
+// ============================================================
+
+interface TransactionRow {
+  id: string;
+  type: string;
+  amount: number;
+  category: string;
+  description: string | null;
+  transaction_date: string;
+  source: string;
+  source_ref_id: string | null;
+  created_at: string;
+}
+
+interface CategorySummary {
+  category: string;
+  total: number;   // centavos
+  count: number;
+}
+
+interface ExpensesResponse {
+  transactions: TransactionRow[];
+  summary: {
+    total_income: number;
+    total_expenses: number;
+    net: number;
+    by_category: CategorySummary[];
+  };
+}
+
+// ============================================================
+// GET — List transactions with optional filters + aggregation
+// ============================================================
+
+export async function GET(req: NextRequest) {
+  const supabase = await createClient();
+
+  // Parse query params
+  const url = new URL(req.url);
+  const rawParams: Record<string, string> = {};
+  for (const [k, v] of url.searchParams.entries()) {
+    rawParams[k] = v;
+  }
+
+  const parsed = ExpensesQuerySchema.safeParse(rawParams);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Mali ang query parameters.' } },
+      { status: 400 }
+    );
+  }
+
+  const filters = parsed.data;
+
+  let userId: string;
+
+  if (SKIP_AUTH) {
+    userId = DEV_USER.id;
+    // Dev bypass — return empty response
+    const response: ExpensesResponse = {
+      transactions: [],
+      summary: { total_income: 0, total_expenses: 0, net: 0, by_category: [] },
+    };
+    return NextResponse.json({ success: true, data: response });
+  }
+
+  // Auth check
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json(
+      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+      { status: 401 }
+    );
+  }
+
+  userId = user.id;
+
+  // Build query
+  let query = supabase
+    .from('transactions')
+    .select('id, type, amount, category, description, transaction_date, source, source_ref_id, created_at')
+    .eq('user_id', userId)
+    .is('deleted_at', null)
+    .order('transaction_date', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  // Apply filters
+  if (filters.type) {
+    query = query.eq('type', filters.type);
+  }
+  if (filters.category) {
+    query = query.eq('category', filters.category);
+  }
+
+  // Date range: either explicit from/to or month shorthand
+  if (filters.month) {
+    const [year, month] = filters.month.split('-').map(Number);
+    const from = `${filters.month}-01`;
+    const lastDay = new Date(year, month, 0).getDate();
+    const to = `${filters.month}-${String(lastDay).padStart(2, '0')}`;
+    query = query.gte('transaction_date', from).lte('transaction_date', to);
+  } else {
+    if (filters.from) {
+      query = query.gte('transaction_date', filters.from);
+    }
+    if (filters.to) {
+      query = query.lte('transaction_date', filters.to);
+    }
+  }
+
+  const { data: transactions, error: queryError } = await query;
+
+  if (queryError) {
+    return NextResponse.json(
+      { success: false, error: { code: 'DB_ERROR', message_tl: 'Hindi makuha ang transactions. Subukan muli.' } },
+      { status: 500 }
+    );
+  }
+
+  const rows = (transactions ?? []) as TransactionRow[];
+
+  // Compute summary
+  let totalIncome = 0;
+  let totalExpenses = 0;
+  const catMap = new Map<string, { total: number; count: number }>();
+
+  for (const tx of rows) {
+    if (tx.type === 'income') {
+      totalIncome += tx.amount;
+    } else {
+      totalExpenses += tx.amount;
+    }
+
+    const existing = catMap.get(tx.category);
+    if (existing) {
+      existing.total += tx.amount;
+      existing.count += 1;
+    } else {
+      catMap.set(tx.category, { total: tx.amount, count: 1 });
+    }
+  }
+
+  const byCategory: CategorySummary[] = Array.from(catMap.entries())
+    .map(([category, { total, count }]) => ({ category, total, count }))
+    .sort((a, b) => b.total - a.total);
+
+  const response: ExpensesResponse = {
+    transactions: rows,
+    summary: {
+      total_income: totalIncome,
+      total_expenses: totalExpenses,
+      net: totalIncome - totalExpenses,
+      by_category: byCategory,
+    },
+  };
+
+  return NextResponse.json({ success: true, data: response });
+}
+
+// ============================================================
+// POST — Create a new transaction
+// ============================================================
+
+export async function POST(req: NextRequest) {
+  const supabase = await createClient();
+
+  let userId: string;
+
+  // Parse body
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Mali ang request format.' } },
+      { status: 400 }
+    );
+  }
+
+  const parsed = CreateTransactionSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'INVALID_INPUT',
+          message_tl: 'Mali ang data.',
+          details: parsed.error.flatten().fieldErrors,
+        },
+      },
+      { status: 400 }
+    );
+  }
+
+  const data = parsed.data;
+
+  if (SKIP_AUTH) {
+    userId = DEV_USER.id;
+    return NextResponse.json({
+      success: true,
+      data: {
+        id: 'dev-tx-001',
+        user_id: userId,
+        type: data.type,
+        amount: data.amount,
+        category: data.category,
+        description: data.description ?? null,
+        transaction_date: data.transaction_date ?? getManilaToday(),
+        source: data.source ?? 'manual',
+        source_ref_id: data.source_ref_id ?? null,
+        created_at: new Date().toISOString(),
+      },
+    });
+  }
+
+  // Auth check
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json(
+      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+      { status: 401 }
+    );
+  }
+
+  userId = user.id;
+
+  const { data: tx, error: insertError } = await supabase
+    .from('transactions')
+    .insert({
+      user_id: userId,
+      type: data.type,
+      amount: data.amount,
+      category: data.category,
+      description: data.description ?? null,
+      transaction_date: data.transaction_date ?? getManilaToday(),
+      source: data.source ?? 'manual',
+      source_ref_id: data.source_ref_id ?? null,
+    })
+    .select('id, type, amount, category, description, transaction_date, source, source_ref_id, created_at')
+    .single();
+
+  if (insertError) {
+    return NextResponse.json(
+      { success: false, error: { code: 'DB_ERROR', message_tl: 'Hindi ma-save. Subukan muli.' } },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ success: true, data: tx }, { status: 201 });
+}
+
+// ============================================================
+// PATCH — Update a transaction (by id in query param)
+// ============================================================
+
+export async function PATCH(req: NextRequest) {
+  const supabase = await createClient();
+
+  const url = new URL(req.url);
+  const txId = url.searchParams.get('id');
+
+  if (!txId) {
+    return NextResponse.json(
+      { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Kailangan ng transaction ID.' } },
+      { status: 400 }
+    );
+  }
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Mali ang request format.' } },
+      { status: 400 }
+    );
+  }
+
+  const parsed = UpdateTransactionSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'INVALID_INPUT',
+          message_tl: 'Mali ang data.',
+          details: parsed.error.flatten().fieldErrors,
+        },
+      },
+      { status: 400 }
+    );
+  }
+
+  if (SKIP_AUTH) {
+    return NextResponse.json({
+      success: true,
+      data: { id: txId, ...parsed.data, updated_at: new Date().toISOString() },
+    });
+  }
+
+  // Auth check
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json(
+      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+      { status: 401 }
+    );
+  }
+
+  const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  const d = parsed.data;
+  if (d.amount !== undefined) updateData.amount = d.amount;
+  if (d.category !== undefined) updateData.category = d.category;
+  if (d.description !== undefined) updateData.description = d.description;
+  if (d.transaction_date !== undefined) updateData.transaction_date = d.transaction_date;
+
+  const { data: tx, error: updateError } = await supabase
+    .from('transactions')
+    .update(updateData)
+    .eq('id', txId)
+    .eq('user_id', user.id)
+    .is('deleted_at', null)
+    .select('id, type, amount, category, description, transaction_date, source, source_ref_id, created_at')
+    .single();
+
+  if (updateError) {
+    return NextResponse.json(
+      { success: false, error: { code: 'DB_ERROR', message_tl: 'Hindi ma-update. Subukan muli.' } },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ success: true, data: tx });
+}
+
+// ============================================================
+// DELETE — Soft-delete a transaction (by id in query param)
+// ============================================================
+
+export async function DELETE(req: NextRequest) {
+  const supabase = await createClient();
+
+  const url = new URL(req.url);
+  const txId = url.searchParams.get('id');
+
+  if (!txId) {
+    return NextResponse.json(
+      { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Kailangan ng transaction ID.' } },
+      { status: 400 }
+    );
+  }
+
+  if (SKIP_AUTH) {
+    return NextResponse.json({ success: true, data: { id: txId, deleted: true } });
+  }
+
+  // Auth check
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json(
+      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+      { status: 401 }
+    );
+  }
+
+  const { error: deleteError } = await supabase
+    .from('transactions')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', txId)
+    .eq('user_id', user.id)
+    .is('deleted_at', null);
+
+  if (deleteError) {
+    return NextResponse.json(
+      { success: false, error: { code: 'DB_ERROR', message_tl: 'Hindi ma-delete. Subukan muli.' } },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ success: true, data: { id: txId, deleted: true } });
+}

@@ -320,5 +320,49 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // ── Check-in → Expenses integration (Sprint 7, Task 13) ──
+  // Create transactions from check-in financial data so they appear in Saan Napunta.
+  // Soft-delete existing check-in transactions for this check-in to avoid duplicates on re-submit.
+  if (checkIn && (parsed.data.sales_amount || parsed.data.expenses_amount)) {
+    await supabase
+      .from('transactions')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .eq('source', 'check_in')
+      .eq('source_ref_id', checkIn.id);
+
+    const txRows: Array<Record<string, unknown>> = [];
+
+    if (parsed.data.sales_amount && parsed.data.sales_amount > 0) {
+      txRows.push({
+        user_id: userId,
+        type: 'income',
+        amount: parsed.data.sales_amount,
+        category: 'check_in_sales',
+        description: `Daily check-in sales (${today})`,
+        transaction_date: today,
+        source: 'check_in',
+        source_ref_id: checkIn.id,
+      });
+    }
+
+    if (parsed.data.expenses_amount && parsed.data.expenses_amount > 0) {
+      txRows.push({
+        user_id: userId,
+        type: 'expense',
+        amount: parsed.data.expenses_amount,
+        category: 'other_expense',
+        description: `Daily check-in expenses (${today})`,
+        transaction_date: today,
+        source: 'check_in',
+        source_ref_id: checkIn.id,
+      });
+    }
+
+    if (txRows.length > 0) {
+      await supabase.from('transactions').insert(txRows);
+    }
+  }
+
   return NextResponse.json({ success: true, data: checkIn });
 }
