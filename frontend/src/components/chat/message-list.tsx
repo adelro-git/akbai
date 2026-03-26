@@ -4,19 +4,40 @@ import { RefObject, useState, useEffect, useRef, useCallback } from 'react'
 import { ChevronDown } from 'lucide-react'
 import ChatBubble from './chat-bubble'
 import type { ChatMessage } from './chat-interface'
+import { getEstimatedWait } from '@/lib/claude/loading-estimator'
+import type { KAFeature, UserTier } from '@/lib/claude/types'
 
 interface MessageListProps {
   messages: ChatMessage[]
   loading: boolean
   bottomRef: RefObject<HTMLDivElement | null>
+  feature?: KAFeature
+  tier?: UserTier
 }
+
+/** Threshold in ms after which we show the long-wait message. */
+const LONG_WAIT_MS = 5000;
 
 /** Distance from bottom (px) at which the scroll-to-bottom button appears. */
 const SCROLL_THRESHOLD = 150;
 
-export default function MessageList({ messages, loading, bottomRef }: MessageListProps) {
+export default function MessageList({ messages, loading, bottomRef, feature = 'general_chat', tier = 'free' }: MessageListProps) {
+  const [showLongWait, setShowLongWait] = useState(false)
   const [showScrollBtn, setShowScrollBtn] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!loading) {
+      setShowLongWait(false)
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setShowLongWait(true)
+    }, LONG_WAIT_MS)
+
+    return () => clearTimeout(timer)
+  }, [loading])
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current
@@ -38,6 +59,8 @@ export default function MessageList({ messages, loading, bottomRef }: MessageLis
   function scrollToBottom() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
+  const estimate = getEstimatedWait(feature, tier)
 
   return (
     <div className="relative flex-1 overflow-hidden">
@@ -65,6 +88,9 @@ export default function MessageList({ messages, loading, bottomRef }: MessageLis
                 <div className="w-1.5 h-1.5 rounded-full bg-primary-container animate-bounce [animation-delay:-0.15s]" />
                 <div className="w-1.5 h-1.5 rounded-full bg-primary-container animate-bounce" />
               </div>
+              <p className="text-xs text-on-surface-variant mt-1.5" data-testid="loading-message">
+                {showLongWait ? estimate.longWaitMessageTl : estimate.messageTl}
+              </p>
             </div>
           </div>
         )}

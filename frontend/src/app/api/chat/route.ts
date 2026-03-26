@@ -274,7 +274,22 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ success: true, data: { message: finalResponse } });
+    // --- Count today's queries for free tier warning ---
+    let queriesUsedToday = 0;
+    if (!SKIP_AUTH) {
+      const todayStart = new Date();
+      todayStart.setUTCHours(todayStart.getUTCHours() < 16 ? -8 : 16, 0, 0, 0); // UTC+8 day boundary
+      const { count } = await supabase
+        .from('ka_conversations')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('role', 'user')
+        .is('deleted_at', null)
+        .gte('created_at', todayStart.toISOString());
+      queriesUsedToday = count ?? 0;
+    }
+
+    return NextResponse.json({ success: true, data: { message: finalResponse, queriesUsedToday } });
   } catch (error: unknown) {
     console.error('Chat API error:', error instanceof Error ? error.message : error);
     console.error('Chat API stack:', error instanceof Error ? error.stack : 'no stack');
