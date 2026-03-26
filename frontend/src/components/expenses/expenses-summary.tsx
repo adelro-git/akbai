@@ -14,9 +14,9 @@ export default function ExpensesSummary({ totalIncome, totalExpenses, net }: Exp
   const isNeutral = net === 0;
 
   return (
-    <div className="bg-surface-container-low rounded-2xl p-5" data-testid="expenses-summary">
+    <div data-testid="expenses-summary">
       {/* Net amount — big number */}
-      <div className="mb-4">
+      <div className="mb-3">
         <p className="text-on-surface-variant text-xs font-semibold uppercase tracking-wider mb-1">
           Net this month
         </p>

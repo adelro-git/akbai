@@ -21,9 +21,12 @@ const NAV_ITEMS: NavItem[] = [
 export default function BottomNav() {
   const pathname = usePathname();
 
+  // Hide bottom nav on chat page — chat has its own full-screen layout with input bar
+  if (pathname === '/chat') return null;
+
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-surface-container-lowest/80 backdrop-blur-[20px] shadow-ambient-nav border-t border-outline-variant/20 z-50"
+      className="fixed bottom-0 left-0 right-0 bg-surface-container-lowest/80 backdrop-blur-[20px] shadow-ambient-nav border-t border-outline-variant/20 z-50 md:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       data-testid="bottom-nav"
       aria-label="Main navigation"

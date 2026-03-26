@@ -64,7 +64,10 @@
     "dev": "next dev -p 3000",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "browserslist": {
     "production": [
@@ -80,6 +83,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.23.0",
+    "@playwright/test": "^1.58.2",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

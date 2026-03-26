@@ -34,6 +34,7 @@ export default function AddTransactionModal({
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const categories = txType === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
@@ -42,6 +43,7 @@ export default function AddTransactionModal({
     setSelectedCategory(null);
     setIsSubmitting(false);
     setError(null);
+    setShowDatePicker(false);
     if (amountRef.current) amountRef.current.value = '';
     if (descriptionRef.current) descriptionRef.current.value = '';
     if (dateRef.current) dateRef.current.value = '';
@@ -120,7 +122,7 @@ export default function AddTransactionModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       data-testid="add-transaction-modal"
     >
       {/* Backdrop */}
@@ -130,9 +132,9 @@ export default function AddTransactionModal({
         data-testid="add-transaction-backdrop"
       />
 
-      {/* Bottom sheet */}
+      {/* Centered dialog */}
       <div
-        className="relative w-full max-w-md bg-surface-container-lowest rounded-t-2xl p-6 pb-8 max-h-[85vh] overflow-y-auto"
+        className="relative w-full max-w-md bg-surface-container-lowest rounded-2xl p-5 max-h-[85vh] overflow-y-auto"
         role="dialog"
         aria-modal="true"
         aria-label="Add transaction"
@@ -152,12 +154,12 @@ export default function AddTransactionModal({
         <h2 className="text-on-surface text-lg font-bold mb-1">
           Mag-add ng Transaction
         </h2>
-        <p className="text-on-surface-variant text-sm mb-5">
+        <p className="text-on-surface-variant text-xs mb-4">
           I-record ang gastos o kita mo
         </p>
 
         {/* Type toggle */}
-        <div className="flex gap-2 mb-5" data-testid="type-toggle">
+        <div className="flex gap-2 mb-4" data-testid="type-toggle">
           <button
             onClick={() => { setTxType('expense'); setSelectedCategory(null); }}
             className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
@@ -185,7 +187,7 @@ export default function AddTransactionModal({
         </div>
 
         {/* Amount input */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label
             htmlFor="tx-amount"
             className="block text-on-surface text-sm font-semibold mb-1.5"
@@ -211,8 +213,8 @@ export default function AddTransactionModal({
         </div>
 
         {/* Category selector */}
-        <div className="mb-4">
-          <p className="text-on-surface text-sm font-semibold mb-2">Category</p>
+        <div className="mb-3">
+          <p className="text-on-surface text-sm font-semibold mb-1.5">Category</p>
           <div className="flex flex-wrap gap-2" data-testid="category-selector">
             {categories.map((cat) => (
               <button
@@ -233,7 +235,7 @@ export default function AddTransactionModal({
         </div>
 
         {/* Description input */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label
             htmlFor="tx-description"
             className="block text-on-surface text-sm font-semibold mb-1.5"
@@ -251,18 +253,19 @@ export default function AddTransactionModal({
           />
         </div>
 
-        {/* Date input */}
-        <div className="mb-5">
+        {/* Date — defaults to today, always visible */}
+        <div className="mb-4">
           <label
             htmlFor="tx-date"
             className="block text-on-surface text-sm font-semibold mb-1.5"
           >
-            Date (default: today)
+            Petsa
           </label>
           <input
             ref={dateRef}
             id="tx-date"
             type="date"
+            defaultValue={getManilaToday()}
             className="w-full bg-surface-container-low rounded-xl px-4 py-3 text-on-surface text-sm outline-none focus:ring-2 focus:ring-primary-container"
             data-testid="tx-date"
           />

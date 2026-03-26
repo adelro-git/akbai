@@ -7,6 +7,12 @@ import {
   UpdateTransactionSchema,
   ExpensesQuerySchema,
 } from '@/lib/expenses/schemas';
+import {
+  getActiveDevTransactions,
+  addDevTransaction,
+  softDeleteDevTransaction,
+  type DevTransaction,
+} from '@/lib/dev-store';
 
 // ============================================================
 // Types
@@ -41,6 +47,37 @@ interface ExpensesResponse {
 }
 
 // ============================================================
+// Dev-mode helpers
+// ============================================================
+
+function devComputeSummary(rows: TransactionRow[]) {
+  let totalIncome = 0;
+  let totalExpenses = 0;
+  const catMap = new Map<string, { total: number; count: number }>();
+
+  for (const tx of rows) {
+    if (tx.type === 'income') {
+      totalIncome += tx.amount;
+    } else {
+      totalExpenses += tx.amount;
+    }
+    const existing = catMap.get(tx.category);
+    if (existing) {
+      existing.total += tx.amount;
+      existing.count += 1;
+    } else {
+      catMap.set(tx.category, { total: tx.amount, count: 1 });
+    }
+  }
+
+  const byCategory: CategorySummary[] = Array.from(catMap.entries())
+    .map(([category, { total, count }]) => ({ category, total, count }))
+    .sort((a, b) => b.total - a.total);
+
+  return { total_income: totalIncome, total_expenses: totalExpenses, net: totalIncome - totalExpenses, by_category: byCategory };
+}
+
+// ============================================================
 // GET — List transactions with optional filters + aggregation
 // ============================================================
 
@@ -68,11 +105,19 @@ export async function GET(req: NextRequest) {
 
   if (SKIP_AUTH) {
     userId = DEV_USER.id;
-    // Dev bypass — return empty response
-    const response: ExpensesResponse = {
-      transactions: [],
-      summary: { total_income: 0, total_expenses: 0, net: 0, by_category: [] },
-    };
+    // Dev bypass — return from shared in-memory store
+    let filtered: TransactionRow[] = getActiveDevTransactions();
+    if (filters.type) filtered = filtered.filter(tx => tx.type === filters.type);
+    if (filters.category) filtered = filtered.filter(tx => tx.category === filters.category);
+    if (filters.month) {
+      const [yr, mo] = filters.month.split('-').map(Number);
+      const from = `${filters.month}-01`;
+      const lastDay = new Date(yr, mo, 0).getDate();
+      const to = `${filters.month}-${String(lastDay).padStart(2, '0')}`;
+      filtered = filtered.filter(tx => tx.transaction_date >= from && tx.transaction_date <= to);
+    }
+    filtered.sort((a, b) => b.transaction_date.localeCompare(a.transaction_date) || b.created_at.localeCompare(a.created_at));
+    const response: ExpensesResponse = { transactions: filtered, summary: devComputeSummary(filtered) };
     return NextResponse.json({ success: true, data: response });
   }
 
@@ -212,21 +257,16 @@ export async function POST(req: NextRequest) {
 
   if (SKIP_AUTH) {
     userId = DEV_USER.id;
-    return NextResponse.json({
-      success: true,
-      data: {
-        id: 'dev-tx-001',
-        user_id: userId,
-        type: data.type,
-        amount: data.amount,
-        category: data.category,
-        description: data.description ?? null,
-        transaction_date: data.transaction_date ?? getManilaToday(),
-        source: data.source ?? 'manual',
-        source_ref_id: data.source_ref_id ?? null,
-        created_at: new Date().toISOString(),
-      },
+    const newTx = addDevTransaction({
+      type: data.type,
+      amount: data.amount,
+      category: data.category,
+      description: data.description ?? null,
+      transaction_date: data.transaction_date ?? getManilaToday(),
+      source: data.source ?? 'manual',
+      source_ref_id: data.source_ref_id ?? null,
     });
+    return NextResponse.json({ success: true, data: newTx }, { status: 201 });
   }
 
   // Auth check
@@ -312,10 +352,17 @@ export async function PATCH(req: NextRequest) {
   }
 
   if (SKIP_AUTH) {
-    return NextResponse.json({
-      success: true,
-      data: { id: txId, ...parsed.data, updated_at: new Date().toISOString() },
-    });
+    const all = getActiveDevTransactions();
+    const tx = all.find(t => t.id === txId);
+    if (!tx) {
+      return NextResponse.json({ success: false, error: { code: 'NOT_FOUND', message_tl: 'Hindi makita.' } }, { status: 404 });
+    }
+    const d = parsed.data;
+    if (d.amount !== undefined) tx.amount = d.amount;
+    if (d.category !== undefined) tx.category = d.category;
+    if (d.description !== undefined) tx.description = d.description;
+    if (d.transaction_date !== undefined) tx.transaction_date = d.transaction_date;
+    return NextResponse.json({ success: true, data: tx });
   }
 
   // Auth check
@@ -375,6 +422,7 @@ export async function DELETE(req: NextRequest) {
   }
 
   if (SKIP_AUTH) {
+    softDeleteDevTransaction(txId);
     return NextResponse.json({ success: true, data: { id: txId, deleted: true } });
   }
 

@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * Category Chart — horizontal bar chart showing expense breakdown by category.
- * No external chart library — pure CSS bars with design system tokens.
- * Numbers displayed with weight-800 per design system spec.
+ * Category Chart — stacked bar showing expense breakdown as % of total gastos.
+ * Single bar with colored segments + legend below.
+ * No external chart library — pure CSS. Zero bundle cost.
  */
 
 import { centavosToPeso } from '@/lib/utils/money';
-import { getCategoryDef, type CategoryDef } from '@/lib/expenses/categories';
+import { getCategoryDef } from '@/lib/expenses/categories';
 
 interface CategoryData {
   category: string;
@@ -19,8 +19,8 @@ interface CategoryChartProps {
   data: CategoryData[];
 }
 
-// Chart bar colors — cycling through design system tokens
-const BAR_COLORS = [
+// Segment colors — design system tokens
+const SEGMENT_COLORS = [
   'bg-primary-container',
   'bg-tertiary-container',
   'bg-secondary-container',
@@ -28,48 +28,76 @@ const BAR_COLORS = [
   'bg-tertiary',
   'bg-secondary',
   'bg-outline',
-  'bg-primary-container/60',
-  'bg-tertiary-container/60',
+  'bg-primary-fixed-dim',
+  'bg-tertiary/60',
   'bg-outline-variant',
 ];
 
 export default function CategoryChart({ data }: CategoryChartProps) {
   if (data.length === 0) return null;
 
-  const maxAmount = Math.max(...data.map((d) => d.total));
+  const grandTotal = data.reduce((sum, d) => sum + d.total, 0);
+  if (grandTotal === 0) return null;
+
+  // Compute percentages
+  const segments = data.map((item, idx) => {
+    const pct = Math.round((item.total / grandTotal) * 100);
+    return {
+      ...item,
+      percentage: pct,
+      color: SEGMENT_COLORS[idx % SEGMENT_COLORS.length],
+      label: getCategoryDef(item.category)?.label ?? item.category,
+    };
+  });
+
+  // Fix rounding so segments sum to 100%
+  const pctSum = segments.reduce((s, seg) => s + seg.percentage, 0);
+  if (pctSum !== 100 && segments.length > 0) {
+    segments[0].percentage += 100 - pctSum;
+  }
 
   return (
-    <div className="space-y-3" data-testid="category-chart">
-      {data.map((item, idx) => {
-        const catDef = getCategoryDef(item.category);
-        const label = catDef?.label ?? item.category;
-        const barWidth = maxAmount > 0 ? Math.max((item.total / maxAmount) * 100, 4) : 0;
-        const barColor = BAR_COLORS[idx % BAR_COLORS.length];
+    <div data-testid="category-chart">
+      {/* Stacked bar */}
+      <div
+        className="flex h-5 rounded-full overflow-hidden bg-surface-container-high"
+        role="img"
+        aria-label="Expense breakdown by category"
+      >
+        {segments.map((seg) => (
+          <div
+            key={seg.category}
+            className={`${seg.color} transition-all duration-300`}
+            style={{ width: `${seg.percentage}%`, minWidth: seg.percentage > 0 ? '4px' : '0' }}
+            title={`${seg.label}: ${seg.percentage}%`}
+            data-testid={`segment-${seg.category}`}
+          />
+        ))}
+      </div>
 
-        return (
-          <div key={item.category} data-testid={`category-row-${item.category}`}>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-on-surface text-xs font-semibold truncate mr-2">
-                {label}
+      {/* Legend */}
+      <div className="mt-3 space-y-2">
+        {segments.map((seg) => (
+          <div
+            key={seg.category}
+            className="flex items-center justify-between"
+            data-testid={`category-row-${seg.category}`}
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className={`w-2.5 h-2.5 rounded-full ${seg.color} flex-shrink-0`} />
+              <span className="text-on-surface text-xs font-semibold truncate">
+                {seg.label}
               </span>
-              <span className="text-on-surface text-xs font-extrabold whitespace-nowrap">
-                {centavosToPeso(item.total)}
+              <span className="text-on-surface-variant text-[10px]">
+                {seg.percentage}%
               </span>
             </div>
-            <div className="h-2.5 bg-surface-container-high rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${barColor} transition-all duration-300`}
-                style={{ width: `${barWidth}%` }}
-                role="meter"
-                aria-valuenow={item.total}
-                aria-valuemin={0}
-                aria-valuemax={maxAmount}
-                aria-label={`${label}: ${centavosToPeso(item.total)}`}
-              />
-            </div>
+            <span className="text-on-surface text-xs font-extrabold whitespace-nowrap ml-2">
+              {centavosToPeso(seg.total)}
+            </span>
           </div>
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 }

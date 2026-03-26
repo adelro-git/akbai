@@ -108,6 +108,7 @@ export default async function DashboardPage() {
   let userName = 'Boss';
   let businessName: string | null = null;
   let businessType: string | null = null;
+  let primaryPain: string | null = null;
 
   // --- Data for dashboard cards ---
   let conversationCount = 0;
@@ -125,10 +126,25 @@ export default async function DashboardPage() {
   } | null = null;
 
   if (SKIP_AUTH) {
-    userId = DEV_USER.id;
-    userName = 'Boss';
-    businessName = 'Dev Business';
-    businessType = 'food_baking';
+    // Dev bypass — fetch from API to get dev-store persisted data
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+    try {
+      const devRes = await fetch(`${baseUrl}/api/dashboard`, { cache: 'no-store' });
+      const devJson = await devRes.json();
+      if (devJson.success) {
+        const d = devJson.data;
+        userId = DEV_USER.id;
+        userName = d.userName ?? 'Boss';
+        businessName = d.businessName ?? 'Dev Business';
+        businessType = d.businessType ?? 'food_baking';
+        todayCheckIn = d.todayCheckIn ?? null;
+      }
+    } catch {
+      userId = DEV_USER.id;
+      userName = 'Boss';
+      businessName = 'Dev Business';
+      businessType = 'food_baking';
+    }
   } else {
     const { data } = await supabase.auth.getUser();
     const user = data.user;
@@ -148,7 +164,7 @@ export default async function DashboardPage() {
     // Fetch business profile (includes bir_registered for card wiring)
     const { data: profile } = await supabase
       .from('business_profiles')
-      .select('business_name, business_type, bir_registered')
+      .select('business_name, business_type, bir_registered, primary_pain')
       .eq('user_id', userId)
       .is('deleted_at', null)
       .single();
@@ -156,6 +172,7 @@ export default async function DashboardPage() {
     businessName = profile?.business_name ?? null;
     businessType = profile?.business_type ?? null;
     birRegistered = profile?.bir_registered === true;
+    primaryPain = profile?.primary_pain ?? null;
 
     // --- Fetch today's check-in (now captured and used) ---
     const today = getManilaToday();
@@ -201,11 +218,11 @@ export default async function DashboardPage() {
 
   return (
     <div
-      className="min-h-dvh bg-background pb-20"
+      className="min-h-dvh bg-background pb-20 md:pb-6"
       data-testid="dashboard-page"
     >
       <DashboardTracker />
-      <WelcomeTour />
+      <WelcomeTour primaryPain={primaryPain} firstName={userName} />
 
       {/* KA Greeting */}
       <KaiGreeting
