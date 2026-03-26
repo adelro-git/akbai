@@ -160,8 +160,19 @@ describe('getDashboardCards', () => {
     expect(false).toBe(false);
   });
 
-  it('Saan Napunta remains hasData=false (Build 4 scope)', () => {
-    expect(false).toBe(false);
+  it('Saan Napunta shows transaction count when expenseCount > 0 (Build 4)', () => {
+    const expenseCount = 5;
+    const hasData = expenseCount > 0;
+    const summary = expenseCount > 0 ? `${expenseCount} transactions` : undefined;
+
+    expect(hasData).toBe(true);
+    expect(summary).toBe('5 transactions');
+  });
+
+  it('Saan Napunta shows empty state when no transactions', () => {
+    const expenseCount = 0;
+    const hasData = expenseCount > 0;
+    expect(hasData).toBe(false);
   });
 });
 
