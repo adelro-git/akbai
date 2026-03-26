@@ -335,6 +335,56 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **Evening consistency:** Single session + iterative feedback
 - **Recommendation:** Keep pace. Multi-agent + live testing is the right workflow. Add design system compliance to agent prompts to reduce unplanned branding work.
 
+### Sprint 6 — 2026-03-26
+
+**Phase:** 0A — Post-Build 2 Quality
+**Sprint Goal:** Close Design Gates 2 and 3, fix UX gaps B1/B2/D6, and polish the first-run experience.
+**Capacity:** 5 hours (Anton review/testing/decisions)
+**Context:** First dual-sprint plan (Sprint 6+7 planned together). 3 parallel streams via worktree isolation. Sprint 7 expenses work also landed via parallel session.
+
+**Tasks:**
+
+| # | Task | Agent Size | Anton Time | Status | Notes |
+|---|------|------------|------------|--------|-------|
+| 1 | Flag-as-wrong + trust recovery (Design Gate 2) | M | S (0.5hr) | DONE | Stream A: migration 008, /api/flag-as-wrong, disclaimer-banner, flag-button. 30 tests |
+| 2 | Prompt regression tests — 25 cases (Design Gate 3) | M | S (0.5hr) | DONE | Stream B: 25 deterministic prompt regression tests. Design Gate 3 closed |
+| 3 | AI loading estimate (Gap B1) | S | XS | DONE | Stream B: loading-estimator.ts, Taglish wait text, 5s long-wait update. 7 tests |
+| 4 | Free tier limit warning (Gap B2) | S | XS | DONE | Stream B: free-tier-banner.tsx, queriesUsedToday in chat API. 11 tests |
+| 5 | Session expiry UX (Gap D6) | S | S (0.5hr) | DONE | Stream C: session-expiry-modal, session-watcher hook, SessionGuard in layout |
+| 6 | First-run polish (Sprint 5 deferred) | M | S (0.5hr) | DONE | Stream C: login logo w-56 mark-honey, Iba pa text field, income labels cleaned, welcome tour on dashboard |
+| 7 | Chat UX improvements | S | XS | DONE | Stream C: local avatar, timestamps (UTC+8), scroll-to-bottom FAB |
+| 8 | Anton live testing | — | M (1hr) | PENDING | All code merged, 559 tests passing. Awaiting Anton review |
+
+**Parallel Streams:**
+- **Stream A** (`claude/sprint6-trust`): Task 1 — Design Gate 2
+- **Stream B** (`claude/sprint6-prompts`): Tasks 2, 3, 4 — Design Gate 3 + UX gaps
+- **Stream C** (`claude/sprint6-ux`): Tasks 5, 6, 7 — Session expiry + polish + chat improvements
+- **Merge order:** A → C → B. 2 merge conflicts resolved (chat-bubble.tsx, message-list.tsx, chat-interface.tsx)
+
+**What was built:**
+- Design Gate 2: `disclaimer-banner.tsx`, `flag-button.tsx`, `/api/flag-as-wrong/route.ts`, migration 008 (flag_as_wrong_reports)
+- Design Gate 3: `prompt-regression.test.ts` (25 tests across 5 groups)
+- Gap B1: `loading-estimator.ts`, Taglish wait estimate in message-list
+- Gap B2: `free-tier-banner.tsx`, queriesUsedToday in chat API response
+- Gap D6: `session-expiry-modal.tsx`, `session-watcher.ts`, `session-guard.tsx`
+- First-run: welcome-tour.tsx, Iba pa text field, income label cleanup, login logo upgrade
+- Chat: local avatar, formatTimestamp (UTC+8), scroll-to-bottom FAB
+- **Bonus (from parallel Sprint 7 session):** Expenses backend + UI (Build 4), migrations 009-010
+
+**Actual Anton hours:** TBD — pending live testing
+**Sprint outcome:** CODE COMPLETE — awaiting Anton live testing. 559 tests passing (154 new).
+
+### Sprint 7 — 2026-03-26
+
+**Phase:** 0A — Build 4
+**Sprint Goal:** Ship the Saan Napunta expenses dashboard with category breakdown, manual entry, and check-in integration.
+**Capacity:** 5 hours (Anton review/testing/decisions)
+**Context:** Ran in parallel with Sprint 6 via separate session. Build 4 proceeds without Build 3 — uses check-in + manual entry data.
+
+**Tasks:** Completed via parallel session. Includes: transactions table (migration 009), reconciliation prep (migration 010), expenses API (CRUD + aggregation), expenses page UI, category chart, add-transaction modal, check-in integration.
+
+**Sprint outcome:** CODE COMPLETE — merged with Sprint 6. Awaiting Anton live testing.
+
 ---
 
 ## Velocity & Patterns
@@ -349,6 +399,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 | 4 | Gap resolution + Build 2 shell | 13.5 (est.) | ~3-4 (Anton) | 5+2 | 7 | YES |
 | 5 | Build 2 completion + infra | 4 hrs (Anton) | ~4-5 (Anton) | 5+2 | 7 | YES |
+| 6 | Design Gates + UX quality | 4 hrs (Anton) | TBD | 7+1 | 7 | TBD |
+| 7 | Build 4 (Expenses) | 4 hrs (Anton) | TBD | ~6 | ~6 | TBD |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
@@ -378,6 +430,6 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Sprint 1 Retro | 4 | Populate Taglish manual | DONE — Sprint 2 Task #4 (2026-03-22, Anton reviewed and approved) |
 | Sprint 4 Retro | 1 | Recalibrate sprint estimation (Agent Size + Anton Time) | DONE — Sprint 5 used this model successfully (2026-03-25) |
 | Sprint 4 Retro | 2 | Design parallel sprint framework for multi-session execution | DONE — Sprint 5 used 3-stream parallel with worktree isolation (2026-03-25) |
-| Sprint 4 Retro | 3 | Collect 10-15 receipt images for OCR spike | OPEN — Anton, deferred to Sprint 6 |
-| Sprint 5 Retro | 1 | Add design-system.md to mandatory agent reading for UI work | OPEN — Sprint 6 planning |
-| Sprint 5 Retro | 2 | Add "Anton live testing" as standard sprint step after merge | OPEN — Sprint 6 planning |
+| Sprint 4 Retro | 3 | Collect 10-15 receipt images for OCR spike | OPEN — Anton, Build 3 deprioritized. Deferred until Anton has images |
+| Sprint 5 Retro | 1 | Add design-system.md to mandatory agent reading for UI work | DONE — Sprint 6 (2026-03-26). All UI agent prompts include MUST READ design-system.md |
+| Sprint 5 Retro | 2 | Add "Anton live testing" as standard sprint step after merge | DONE — Sprint 6 (2026-03-26). Tasks 8/15 are explicit live testing steps |

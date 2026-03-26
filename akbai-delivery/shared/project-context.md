@@ -137,8 +137,8 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Build 2 Complete (2026-03-25)
-> Build 0 shipped (2026-03-20). Build 1 (Kilala Kita) frontend shipped (Sprint 3, 2026-03-22). Build 2 (Dashboard) complete with check-in, data wiring, profile page (Sprint 5, 2026-03-25). 405 tests passing. Gaps A1, A3, A4, A5, B3, B4, E3 resolved.
+> Current: Phase 0A — Build 4 Complete (2026-03-26)
+> Build 0 shipped (2026-03-20). Build 1 frontend (Sprint 3, 2026-03-22). Build 2 complete (Sprint 5, 2026-03-25). Sprint 6: Design Gates 2 & 3 closed, UX gaps B1/B2/D6 resolved, first-run polish. Sprint 7: Build 4 (Saan Napunta/Expenses) shipped. 559 tests passing. All 8 Design Gates resolved. Gaps A1, A3, A4, A5, B1, B2, B3, B4, D6, E3 resolved.
 
 ### What's Built
 - **Build 0 — AI Scope Definition** (2026-03-20): `/frontend/src/lib/claude/` module
@@ -187,6 +187,24 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - PWA: manifest.json enhanced, sw.js v2, `/offline` page — Design Gate 5 IN PROGRESS
   - Branding: local logos, white CTA text, light-first default, dark mode contrast, Taglish copy (22 files)
   - 405 tests passing (68 new + 3 fixed, 0 failures)
+
+- **Sprint 6 — Design Gate Closure + UX Quality** (2026-03-26):
+  - Design Gate 2: `disclaimer-banner.tsx`, `flag-button.tsx`, `/api/flag-as-wrong`, migration 008 (flag_as_wrong_reports)
+  - Design Gate 3: 25-case prompt regression test suite (`prompt-regression.test.ts`)
+  - Gap B1: `loading-estimator.ts` + Taglish wait estimate in chat loading
+  - Gap B2: `free-tier-banner.tsx` + `queriesUsedToday` in chat API
+  - Gap D6: `session-expiry-modal.tsx`, `session-watcher.ts`, `session-guard.tsx` in layout
+  - First-run: welcome tour, Iba pa text field, income labels cleaned, login logo upgrade
+  - Chat: local avatar, timestamps (UTC+8), scroll-to-bottom FAB
+  - All 8 Design Gates now resolved
+
+- **Sprint 7 — Build 4 (Saan Napunta / Expenses)** (2026-03-26):
+  - Transactions table (migration 009), reconciliation prep (migration 010)
+  - Expense categories with Taglish labels (`lib/expenses/`)
+  - `/api/expenses` CRUD + aggregation, `/expenses` page UI
+  - Category chart, transaction list, add-transaction modal, month picker
+  - Check-in → expenses integration
+  - 559 tests passing (154 new)
 
 ---
 
