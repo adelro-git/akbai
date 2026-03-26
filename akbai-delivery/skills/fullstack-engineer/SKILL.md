@@ -318,6 +318,23 @@ Since Sprint 4, features are built by multiple agents working in parallel worktr
 - Your tests must pass independently — do not depend on changes from other agents
 - Pre-existing test failures are excluded from your responsibility
 
+## Known Pitfalls — Pre-Submit Checklist
+
+These are mistakes agents have made in past sprints. **Check every item before submitting your work.** Each one caused a live testing fix cycle that wasted Anton's time.
+
+| Pitfall | Rule | Sprint Learned |
+|---------|------|----------------|
+| **React 19 controlled inputs** | Use `useRef` + `onClick` for form inputs, NOT `onChange` / `onSubmit`. React 19 has a known bug where controlled inputs lose state mid-typing. This is documented in CLAUDE.md — read it. | Sprint 5, 6 |
+| **Hardcoded colors** | NEVER use hex values (`#fdf9f2`, `#F59E0B`, etc.) in components. Always use MD3 CSS variables via Tailwind tokens (`bg-surface`, `text-on-primary`, `bg-primary-container`). Read `skills/ux-designer/references/design-system.md` for the full token list. | Sprint 4, 5 |
+| **CTA button text color** | Primary CTA buttons use `text-on-primary` (white), NOT `text-on-primary-container`. This was wrong across the entire app for 2 sprints before live testing caught it. | Sprint 5 |
+| **Taglish personalization depth** | When building features that reference the user's business type or pain point, personalize the content — don't use generic copy. Check `kilala-kita-context.md` for pain-point-specific templates and routes. | Sprint 6 |
+| **Design system mandatory reading** | If your task involves ANY UI work, you MUST read `skills/ux-designer/references/design-system.md` in addition to your task's SKILL.md. Agents that skip this produce functional but visually non-compliant components. | Sprint 5 |
+| **Bottom nav visibility** | Bottom nav should be hidden on pages where it overlaps with input fields (e.g., `/chat`). Check whether your page has a fixed-bottom input before including BottomNav. | Sprint 6 |
+
+**If you're unsure whether a pattern applies, check CLAUDE.md first.** The non-negotiable rules there override any assumption.
+
+---
+
 ## What Not to Do
 
 These are patterns that will cause real problems in AKBai's context:

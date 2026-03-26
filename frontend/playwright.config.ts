@@ -37,11 +37,14 @@ export default defineConfig({
     },
   ],
 
-  // Auto-start dev server for local runs
+  // Auto-start dev server for local runs with dev-auth bypass
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
+    env: {
+      NEXT_PUBLIC_SKIP_AUTH: 'true',
+    },
   },
 });

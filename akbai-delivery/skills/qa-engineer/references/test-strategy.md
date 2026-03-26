@@ -1,6 +1,6 @@
 # AKBai — Test Strategy
 > Used by: qa-engineer, fullstack-engineer, devops-engineer, ai-engineer
-> Last updated: 2026-03-25 | Source: Tech Stack, Gap Registry, all engineering skill specs
+> Last updated: 2026-03-26 | Source: Tech Stack, Gap Registry, all engineering skill specs
 
 ---
 
@@ -19,7 +19,7 @@ AKBai is built by a solo founder with 10–15 hours per sprint. The testing stra
 ### Layer 1: Unit Tests (Vitest)
 **Purpose:** Test pure business logic with no external dependencies.
 **Speed:** < 10ms per test. Full unit suite < 5 seconds.
-**Current count (as of Sprint 5):** 405 tests passing across 26 files (Vitest), 0 failures. Sprint 5 added 68 new tests + fixed 3 pre-existing failures: 21 check-in/dashboard, 26 profile, 13 feature-flags, 8 PWA/offline. Sprint 4 added 129: 40 email, 43 dashboard, 46 OCR.
+**Current count (as of Sprint 6+7):** 559 tests passing across 26+ files (Vitest), 0 failures. Sprint 6 added 25-case prompt regression test suite (`prompt-regression.test.ts`, Design Gate 3) covering 5 groups: persona integrity, Taglish compliance, feature prompts, guardrails, integration — all deterministic, no API calls. Sprint 5 added 68 new tests + fixed 3 pre-existing failures: 21 check-in/dashboard, 26 profile, 13 feature-flags, 8 PWA/offline. Sprint 4 added 129: 40 email, 43 dashboard, 46 OCR.
 **When to use:** Any function that takes input and returns output without side effects.
 
 **Primary targets:**

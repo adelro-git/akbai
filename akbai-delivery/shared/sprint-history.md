@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-25 (Sprint 5 retro)
+> Last updated: 2026-03-26 (Sprint 6+7 retro)
 
 ---
 
@@ -353,7 +353,7 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | 5 | Session expiry UX (Gap D6) | S | S (0.5hr) | DONE | Stream C: session-expiry-modal, session-watcher hook, SessionGuard in layout |
 | 6 | First-run polish (Sprint 5 deferred) | M | S (0.5hr) | DONE | Stream C: login logo w-56 mark-honey, Iba pa text field, income labels cleaned, welcome tour on dashboard |
 | 7 | Chat UX improvements | S | XS | DONE | Stream C: local avatar, timestamps (UTC+8), scroll-to-bottom FAB |
-| 8 | Anton live testing | — | M (1hr) | PENDING | All code merged, 559 tests passing. Awaiting Anton review |
+| 8 | Anton live testing | — | M (1hr) | DONE | Live testing completed. Fixes: logo drop-shadow, chat input useRef, welcome tour personalization, bottom nav on /chat |
 
 **Parallel Streams:**
 - **Stream A** (`claude/sprint6-trust`): Task 1 — Design Gate 2
@@ -371,8 +371,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - Chat: local avatar, formatTimestamp (UTC+8), scroll-to-bottom FAB
 - **Bonus (from parallel Sprint 7 session):** Expenses backend + UI (Build 4), migrations 009-010
 
-**Actual Anton hours:** TBD — pending live testing
-**Sprint outcome:** CODE COMPLETE — awaiting Anton live testing. 559 tests passing (154 new).
+**Actual Anton hours:** ~4 hrs (review, live testing across parallel sessions, UX fixes)
+**Sprint outcome:** COMPLETE — All 8 tasks done (7 code + 1 live testing). 559 tests passing (154 new). Design Gates 2 & 3 closed. Gaps B1, B2, D6 resolved. All 8 Design Gates now resolved.
 
 ### Sprint 7 — 2026-03-26
 
@@ -383,7 +383,39 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 **Tasks:** Completed via parallel session. Includes: transactions table (migration 009), reconciliation prep (migration 010), expenses API (CRUD + aggregation), expenses page UI, category chart, add-transaction modal, check-in integration.
 
-**Sprint outcome:** CODE COMPLETE — merged with Sprint 6. Awaiting Anton live testing.
+**Sprint outcome:** COMPLETE — merged with Sprint 6. Live tested by Anton. Build 4 (Saan Napunta / Expenses) shipped.
+
+### Sprint 6+7 Retro — 2026-03-26
+
+**What Went Well:**
+- Parallel dual-sprint execution worked — Sprint 6 (Design Gates + UX) and Sprint 7 (Build 4 Expenses) ran simultaneously in separate sessions. Anton could test different functionalities side by side, helping prioritize and allocate testing time.
+- All 8 Design Gates now closed — Design Gates 2 (Trust Recovery) and 3 (Prompt Regression) resolved. No remaining design gates blocking Phase 1.
+- Significant gap resolution — B1, B2, D6 resolved this sprint. Combined with prior sprints, 15 of 32 gaps now resolved (A1, A3, A4, A5, B1, B2, B3, B4, D6, E3, F1, F2, F3, F4 + D1 downgraded).
+- 7-sprint compound effect is visible — from zero to 559 tests, 10 migrations, 5 builds complete (0-2, 4), full plugin system, all design gates closed.
+
+**What Didn't Go Well:**
+- Agents still violated documented patterns — `chat-input.tsx` was built with `onChange` instead of `useRef+onClick`, despite React 19 fix being a non-negotiable rule in CLAUDE.md. Welcome tour shipped without pain-point personalization. Both required live testing fix cycles.
+- Live testing still catches preventable bugs — logo visibility (drop-shadow), bottom nav overlapping chat input on `/chat`, generic welcome tour CTA all surfaced only when Anton clicked through the app.
+- No automated build/test gate in sprint workflow — Anton has to manually remember to run `/test` after each sprint. Bugs slip through without an enforced step.
+
+**What We Learned:**
+- Agent "gotchas" need a dedicated section in skill files — the React 19 `useRef+onClick` rule is in CLAUDE.md but agents still miss it. Known pitfalls should be explicitly listed in fullstack-engineer and ux-designer SKILL.md files as a pre-submit checklist.
+- Build + test should be mandatory sprint workflow steps — `/build` when plan is approved (catch compile errors early), `/test` before declaring done (catch regressions). Enforce in sprint SKILL.md, not left to memory.
+- Dual-sprint parallel model is the new standard — running independent sprints (quality + feature) in parallel sessions is more efficient than sequential. Plan sprints in pairs when workstreams are independent.
+
+**Action Items:**
+
+| # | Action | Owner | Due By | Status | Notes |
+|---|--------|-------|--------|--------|-------|
+| 1 | Update sprint SKILL.md: add mandatory `/build` after plan approval and `/test` before declaring sprint done | Claude (PM skill) | Sprint 8 planning | DONE | Steps 7b + 7c added to sprint SKILL.md, checklist updated |
+| 2 | Add "Known Pitfalls" section to fullstack-engineer and ux-designer SKILL.md (React 19 useRef, MD3 tokens, personalization depth) | Claude (PM skill) | Sprint 8 planning | DONE | 6 pitfalls (fullstack), 5 pitfalls (ux-designer) |
+| 3 | Collect 10-15 receipt images for OCR spike (Gap E1) | Anton | Sprint 8 | OPEN | Carryover from Sprint 4/5 — pipeline ready, needs test data |
+
+**Energy Check:**
+- **Sustainability:** Felt good — could maintain this pace
+- **Saturday block:** N/A — dual-sprint compressed into parallel sessions
+- **Evening consistency:** Focused sessions + iterative feedback
+- **Recommendation:** Keep pace. Dual-sprint parallel execution is validated and sustainable. Add build/test enforcement and agent pitfall checklists to reduce fix cycles.
 
 ---
 
@@ -399,8 +431,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 | 4 | Gap resolution + Build 2 shell | 13.5 (est.) | ~3-4 (Anton) | 5+2 | 7 | YES |
 | 5 | Build 2 completion + infra | 4 hrs (Anton) | ~4-5 (Anton) | 5+2 | 7 | YES |
-| 6 | Design Gates + UX quality | 4 hrs (Anton) | TBD | 7+1 | 7 | TBD |
-| 7 | Build 4 (Expenses) | 4 hrs (Anton) | TBD | ~6 | ~6 | TBD |
+| 6 | Design Gates + UX quality | 4 hrs (Anton) | ~4 (Anton) | 7+1 | 8 | YES |
+| 7 | Build 4 (Expenses) | 4 hrs (Anton) | (parallel w/6) | ~6 | ~6 | YES |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
@@ -415,6 +447,9 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **NEW: Live user testing after merge is essential — 15 min of clicking surfaces more issues than automated tests. Make it a standard sprint step.**
 - **NEW: Agent prompts for UI work must explicitly reference design-system.md — agents that only read SKILL.md produce functional but visually non-compliant components. The CTA text color bug persisted 2 sprints before live testing caught it.**
 - **NEW: The Agent Size + Anton Time estimation model is validated — Sprint 5 planned 4 hrs Anton time, actuals were ~4-5 hrs. Accurate enough for planning.**
+- **NEW (Sprint 6+7): Dual-sprint parallel execution works — independent workstreams (quality + feature) can run as separate sprints in parallel sessions. Plan sprints in pairs when workstreams don't share files.**
+- **NEW (Sprint 6+7): Agents still violate documented patterns (React 19 useRef, personalization depth). Need "Known Pitfalls" sections in skill files as pre-submit checklists.**
+- **NEW (Sprint 6+7): Build + test must be mandatory sprint workflow steps — `/build` after plan approval, `/test` before declaring done. Prevents "forgot to test" regressions.**
 
 ---
 
@@ -433,3 +468,6 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Sprint 4 Retro | 3 | Collect 10-15 receipt images for OCR spike | OPEN — Anton, Build 3 deprioritized. Deferred until Anton has images |
 | Sprint 5 Retro | 1 | Add design-system.md to mandatory agent reading for UI work | DONE — Sprint 6 (2026-03-26). All UI agent prompts include MUST READ design-system.md |
 | Sprint 5 Retro | 2 | Add "Anton live testing" as standard sprint step after merge | DONE — Sprint 6 (2026-03-26). Tasks 8/15 are explicit live testing steps |
+| Sprint 6+7 Retro | 1 | Update sprint SKILL.md: mandatory `/build` after plan approval, `/test` before declaring done | DONE — Updated 2026-03-26. Steps 7b, 7c added to sprint SKILL.md workflow + checklist |
+| Sprint 6+7 Retro | 2 | Add "Known Pitfalls" section to fullstack-engineer + ux-designer SKILL.md | DONE — Updated 2026-03-26. 6 pitfalls in fullstack-engineer, 5 in ux-designer |
+| Sprint 6+7 Retro | 3 | Collect 10-15 receipt images for OCR spike (Gap E1) | OPEN — Carryover from Sprint 4/5. Anton, deferred until images available |
