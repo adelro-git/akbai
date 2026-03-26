@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-009
-> Last updated: 2026-03-24
+> Current highest: ADR-010
+> Last updated: 2026-03-26
 
 ---
 
@@ -18,6 +18,7 @@
 | ADR-007 | Sentry error monitoring with @sentry/nextjs | Accepted | 2026-03-22 |
 | ADR-008 | Onboarding rate-limit exemption (Gap E3) | Accepted | 2026-03-22 |
 | ADR-009 | PostHog for product analytics (Gap A5) | Accepted | 2026-03-24 |
+| ADR-010 | Saan Napunta expenses dashboard (Build 4) | Accepted | 2026-03-26 |
 
 ---
 
@@ -334,3 +335,39 @@ Use PostHog Cloud (free tier, 1M events/month) with a dual-client architecture:
 - Resolves Gap A5 — Analytics baseline (PostHog)
 
 **Review Trigger:** If PostHog event volume approaches 1M/month (unlikely before Phase 2), evaluate paid tier or self-hosting. When session recording is needed for UX research, enable PostHog's built-in recorder instead of adding a separate tool.
+
+---
+
+## ADR-010: Saan Napunta Expenses Dashboard (Build 4)
+
+**Status:** Accepted
+**Date:** 2026-03-26
+
+**Context:**
+Filipino MSMEs track expenses in notebooks or not at all. AKBai's "Saan Napunta?" feature gives users visibility into spending by category with monthly insights. Build 4 — the first financial data surface beyond the daily check-in. Needs: manual expense/income entry, check-in data integration, category breakdown visualization, and future OCR receipt reconciliation prep.
+
+**Decision:**
+1. **`transactions` table** (migration 008): TEXT columns for `type`, `category`, `source` with Zod validation at application layer. 10 expense categories + 3 income categories based on MSME research.
+2. **`/api/expenses` route**: Full CRUD (GET with monthly aggregation, POST, PATCH, DELETE soft-delete). Single response returns paginated list + summary.
+3. **CSS-only category chart**: Horizontal bars with percentage widths — zero bundle cost.
+4. **Check-in → expenses integration**: Dashboard POST creates transactions from check-in financial data with `source: 'check_in'`. Soft-deletes previous check-in transactions on re-submit.
+5. **Reconciliation prep** (migration 009): `reconciliation_status` + `reconciled_with_id` columns for future OCR matching.
+
+**Alternatives Considered:**
+- **Chart.js/Recharts:** 30-100KB bundle for one bar chart. CSS bars suffice. Rejected.
+- **Postgres ENUMs:** Painful to extend via migrations. TEXT + Zod is more flexible. Rejected.
+- **Separate income/expense tables:** UNION queries needed. Single table with type discriminator is simpler. Rejected.
+
+**Consequences:**
+- Users see spending breakdown by category at a glance
+- Check-in data flows into transactions automatically
+- Reconciliation schema ready for future OCR matching
+- 52+ tests across schemas, categories, API, UI logic
+- Dashboard Saan Napunta card now data-driven
+- 2 new PostHog events: `expense_added`, `expense_deleted`
+
+**Related Gaps:**
+- Addresses Gap B5 (Saan Napunta empty state now shows real data)
+- Prep for Gap E1 (reconciliation schema for OCR receipt matching)
+
+**Review Trigger:** When OCR receipt scanning is functional (Gap E1), implement reconciliation UI using `reconciliation_status` and `reconciled_with_id` columns.

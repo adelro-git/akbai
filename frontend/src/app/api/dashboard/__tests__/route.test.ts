@@ -359,6 +359,71 @@ describe('generateGreeting', () => {
 });
 
 // ============================================================
+// Tests: Check-in → Expenses integration (Sprint 7, Task 13)
+// ============================================================
+
+describe('POST /api/dashboard — check-in creates transactions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockFromChains = {};
+    mockHour = 9;
+    mockGetUser = vi.fn().mockResolvedValue({
+      data: { user: mockUser },
+      error: null,
+    });
+  });
+
+  it('creates transactions when check-in includes sales and expenses', async () => {
+    const usersChain = mockChain();
+    usersChain.single.mockResolvedValue({ data: { display_name: 'Maria' }, error: null });
+    mockFromChains['users'] = usersChain;
+
+    const checkInChain = mockChain();
+    checkInChain.single.mockResolvedValue({
+      data: {
+        id: 'checkin-fin-001', user_id: mockUser.id, check_in_date: '2026-03-24',
+        mood: 'okay', kai_greeting: 'Magandang umaga!',
+        sales_amount: 50000, expenses_amount: 15000,
+      },
+      error: null,
+    });
+    mockFromChains['daily_check_in'] = checkInChain;
+
+    const txChain = mockChain();
+    mockFromChains['transactions'] = txChain;
+
+    const res = await POST(makeRequest({ mood: 'okay', sales_amount: 50000, expenses_amount: 15000 }));
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(txChain.update).toHaveBeenCalled(); // soft-delete old
+    expect(txChain.insert).toHaveBeenCalled(); // insert new
+  });
+
+  it('does NOT create transactions when no financial data', async () => {
+    const usersChain = mockChain();
+    usersChain.single.mockResolvedValue({ data: { display_name: 'Maria' }, error: null });
+    mockFromChains['users'] = usersChain;
+
+    const checkInChain = mockChain();
+    checkInChain.single.mockResolvedValue({
+      data: {
+        id: 'checkin-nofin', user_id: mockUser.id, check_in_date: '2026-03-24',
+        mood: 'okay', kai_greeting: 'Magandang umaga!',
+        sales_amount: null, expenses_amount: null,
+      },
+      error: null,
+    });
+    mockFromChains['daily_check_in'] = checkInChain;
+
+    const res = await POST(makeRequest({ mood: 'okay' }));
+    expect(res.status).toBe(200);
+    expect(mockFromChains['transactions']).toBeUndefined();
+  });
+});
+
+// ============================================================
 // Helpers
 // ============================================================
 
