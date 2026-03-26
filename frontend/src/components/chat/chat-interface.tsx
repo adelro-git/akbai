@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
 import MessageList from './message-list'
 import ChatInput from './chat-input'
+import DisclaimerBanner from './disclaimer-banner'
 
 export type ChatMessage = {
   id: string
@@ -131,6 +132,8 @@ export default function ChatInterface({
           Mag-sign out
         </button>
       </header>
+
+      <DisclaimerBanner />
 
       <MessageList messages={messages} loading={loading} bottomRef={bottomRef} />
 
