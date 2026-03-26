@@ -55,9 +55,18 @@ export const OnboardingStep1Schema = z.object({
   display_name: z.string().trim().min(1, 'Kailangan ng pangalan.').max(100),
 });
 
+/**
+ * Business type accepts either a known enum value or a custom "other:{text}"
+ * string (2-100 chars after the "other:" prefix) for the "Iba Pa" option.
+ */
+const OtherBusinessTypeString = z.string().regex(
+  /^other:.{2,100}$/,
+  'Custom business type must be "other:" followed by 2-100 characters.'
+);
+
 export const OnboardingStep2Schema = z.object({
   step: z.literal(2),
-  business_type: BusinessTypeEnum,
+  business_type: z.union([BusinessTypeEnum, OtherBusinessTypeString]),
 });
 
 export const OnboardingStep3Schema = z.object({

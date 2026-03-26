@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { BusinessType } from '@/lib/kilala-kita/schemas';
 
 interface StepBusinessTypeProps {
-  onComplete: (businessType: BusinessType) => void;
+  onComplete: (businessType: BusinessType, otherText?: string) => void;
   loading: boolean;
   firstName: string;
   initialValue?: string | null;
@@ -49,14 +49,45 @@ export default function StepBusinessType({
   firstName,
   initialValue,
 }: StepBusinessTypeProps) {
+  // Parse initial value: if starts with "other:", pre-fill the text field
+  const parsedInitial = initialValue?.startsWith('other:')
+    ? 'other'
+    : (initialValue as BusinessType | null);
+  const parsedOtherText = initialValue?.startsWith('other:')
+    ? initialValue.slice(6)
+    : '';
+
   const [selected, setSelected] = useState<BusinessType | null>(
-    (initialValue as BusinessType) ?? null
+    parsedInitial ?? null
   );
+  const otherInputRef = useRef<HTMLInputElement>(null);
+  const [otherText, setOtherText] = useState(parsedOtherText);
+  const [otherError, setOtherError] = useState<string | null>(null);
+
+  const isOtherSelected = selected === 'other';
+  const otherTextValid = otherText.trim().length >= 2 && otherText.trim().length <= 100;
 
   const handleContinue = () => {
     if (!selected) return;
-    onComplete(selected);
+
+    if (isOtherSelected) {
+      const trimmed = otherText.trim();
+      if (trimmed.length < 2) {
+        setOtherError('Kailangan ng at least 2 characters.');
+        return;
+      }
+      if (trimmed.length > 100) {
+        setOtherError('Maximum 100 characters lang.');
+        return;
+      }
+      setOtherError(null);
+      onComplete(selected, trimmed);
+    } else {
+      onComplete(selected);
+    }
   };
+
+  const canContinue = selected !== null && (!isOtherSelected || otherTextValid);
 
   return (
     <div className="flex flex-col gap-6">
@@ -90,10 +121,41 @@ export default function StepBusinessType({
         ))}
       </div>
 
+      {/* "Iba pa" text input — shown when "other" is selected */}
+      {isOtherSelected && (
+        <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+          <label
+            htmlFor="other-business-type"
+            className="text-on-surface-variant text-xs font-medium"
+          >
+            Anong klaseng negosyo?
+          </label>
+          <input
+            id="other-business-type"
+            ref={otherInputRef}
+            type="text"
+            value={otherText}
+            onChange={(e) => {
+              setOtherText(e.target.value);
+              setOtherError(null);
+            }}
+            placeholder="e.g. Pet grooming, Laundry shop"
+            maxLength={100}
+            className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface placeholder-on-surface-variant text-sm focus:border-primary-container/50 focus:ring-1 focus:ring-primary-container/30 transition-colors min-h-[44px]"
+            data-testid="other-business-type-input"
+          />
+          {otherError && (
+            <p className="text-destructive text-xs" data-testid="other-business-type-error">
+              {otherError}
+            </p>
+          )}
+        </div>
+      )}
+
       <button
         type="button"
         onClick={handleContinue}
-        disabled={loading || !selected}
+        disabled={loading || !canContinue}
         className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {loading ? 'Sine-save...' : 'Sunod'}

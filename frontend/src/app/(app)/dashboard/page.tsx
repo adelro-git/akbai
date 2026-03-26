@@ -7,6 +7,7 @@ import DashboardTracker from '@/components/dashboard/dashboard-tracker';
 import KaiGreeting from '@/components/dashboard/kai-greeting';
 import DashboardCard from '@/components/dashboard/dashboard-card';
 import CheckInSection from '@/components/dashboard/check-in-section';
+import WelcomeTour from '@/components/onboarding/welcome-tour';
 
 export const metadata: Metadata = {
   title: 'Dashboard — AKBai',
@@ -87,8 +88,11 @@ function getDashboardCards(data: DashboardData): CardDef[] {
       description: 'Expenses at gastos mo',
       href: '/expenses',
       icon: 'wallet',
-      emptyState: 'Wala pang data. Upload receipts muna!',
-      hasData: false, // Build 4 scope
+      emptyState: 'I-record ang gastos mo para makita dito!',
+      hasData: data.expenseCount > 0,
+      summary: data.expenseCount > 0
+        ? `${data.expenseCount} transactions`
+        : undefined,
     },
   ];
 }
@@ -105,9 +109,10 @@ export default async function DashboardPage() {
   let businessName: string | null = null;
   let businessType: string | null = null;
 
-  // --- Data for dashboard cards (Task 2) ---
+  // --- Data for dashboard cards ---
   let conversationCount = 0;
   let birRegistered = false;
+  let expenseCount = 0;
 
   // --- Check-in data (Task 1) ---
   let todayCheckIn: {
@@ -172,10 +177,27 @@ export default async function DashboardPage() {
       .is('deleted_at', null);
 
     conversationCount = count ?? 0;
+
+    // --- Fetch this month's transaction count for Saan Napunta card (Sprint 7) ---
+    const currentMonth = today.slice(0, 7); // YYYY-MM
+    const monthStart = `${currentMonth}-01`;
+    const [y, m] = currentMonth.split('-').map(Number);
+    const lastDay = new Date(y, m, 0).getDate();
+    const monthEnd = `${currentMonth}-${String(lastDay).padStart(2, '0')}`;
+
+    const { count: txCount } = await supabase
+      .from('transactions')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .gte('transaction_date', monthStart)
+      .lte('transaction_date', monthEnd);
+
+    expenseCount = txCount ?? 0;
   }
 
   const greeting = generateGreeting(userName);
-  const dashboardCards = getDashboardCards({ conversationCount, birRegistered });
+  const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount });
 
   return (
     <div
@@ -183,6 +205,7 @@ export default async function DashboardPage() {
       data-testid="dashboard-page"
     >
       <DashboardTracker />
+      <WelcomeTour />
 
       {/* KA Greeting */}
       <KaiGreeting
