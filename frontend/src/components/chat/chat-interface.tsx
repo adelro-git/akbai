@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { markSignOutAsUserInitiated } from '@/lib/supabase/session-watcher'
 import Image from 'next/image'
 import MessageList from './message-list'
 import ChatInput from './chat-input'
@@ -102,6 +103,7 @@ export default function ChatInterface({
   }
 
   async function handleSignOut() {
+    markSignOutAsUserInitiated()
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()

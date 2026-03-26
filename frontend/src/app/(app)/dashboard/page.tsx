@@ -47,6 +47,7 @@ interface CardDef {
 interface DashboardData {
   conversationCount: number;
   birRegistered: boolean;
+  expenseCount: number;
 }
 
 function getDashboardCards(data: DashboardData): CardDef[] {

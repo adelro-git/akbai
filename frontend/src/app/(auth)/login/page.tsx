@@ -17,16 +17,16 @@ export default function LoginPage() {
         <header className="flex flex-col items-center text-center space-y-8">
           <div className="relative">
             <div className="absolute inset-0 bg-primary-container/10 blur-2xl rounded-full" />
-            <div className="relative z-10 w-40 h-40">
+            <div className="relative z-10 w-56 h-56">
               <Image
-                src="/icons/logo-primary.png"
+                src="/icons/mark-honey.png"
                 alt="AKBai"
                 fill
                 className="object-contain dark:hidden"
                 priority
               />
               <Image
-                src="/icons/logo-primary-dark.png"
+                src="/icons/mark-honey.png"
                 alt="AKBai"
                 fill
                 className="object-contain hidden dark:block"
