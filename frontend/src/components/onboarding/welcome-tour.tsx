@@ -1,69 +1,164 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Receipt, Bell, MessageCircle, Camera } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Receipt, Bell, MessageCircle, BarChart3 } from 'lucide-react';
 
 const TOUR_STORAGE_KEY = 'akbai_tour_seen';
 
-interface FeatureCard {
+interface FeatureHighlight {
   icon: React.ReactNode;
   title: string;
   description: string;
+  href: string;
 }
 
-const FEATURE_CARDS: FeatureCard[] = [
-  {
-    icon: <Receipt size={24} className="text-primary" />,
-    title: 'Track expenses',
-    description: 'I-log ang mga gastos mo at alamin kung saan napupunta ang pera.',
+/**
+ * Map each pain point to a prioritized feature to lead them to,
+ * plus supporting features they should also know about.
+ */
+const PAIN_TO_FEATURES: Record<string, { primary: FeatureHighlight; supporting: FeatureHighlight[] }> = {
+  receipt_tracking: {
+    primary: {
+      icon: <Receipt size={28} className="text-primary" />,
+      title: 'Track ang gastos mo',
+      description: 'I-record ang expenses mo araw-araw sa check-in o manual entry — para lagi mong alam saan napupunta ang pera.',
+      href: '/expenses',
+    },
+    supporting: [
+      {
+        icon: <BarChart3 size={20} className="text-primary" />,
+        title: 'Saan Napunta?',
+        description: 'Category breakdown ng gastos mo.',
+        href: '/expenses',
+      },
+      {
+        icon: <MessageCircle size={20} className="text-primary" />,
+        title: 'Kausapin si Kai',
+        description: 'Tanungin si Kai tungkol sa negosyo mo.',
+        href: '/chat',
+      },
+    ],
   },
-  {
-    icon: <Bell size={24} className="text-primary" />,
-    title: 'Get BIR reminders',
-    description: 'Hindi mo na makakalimutan ang mga tax deadline mo.',
+  bir_compliance: {
+    primary: {
+      icon: <Bell size={28} className="text-primary" />,
+      title: 'Hindi mo na makakalimutan ang BIR',
+      description: 'Si Kai ang mag-re-remind sa lahat ng tax deadlines mo — para walang penalty.',
+      href: '/chat',
+    },
+    supporting: [
+      {
+        icon: <MessageCircle size={20} className="text-primary" />,
+        title: 'Tanungin si Kai',
+        description: 'I-ask ang BIR questions mo kay Kai.',
+        href: '/chat',
+      },
+      {
+        icon: <Receipt size={20} className="text-primary" />,
+        title: 'Track expenses',
+        description: 'Para ready ka sa tax filing.',
+        href: '/expenses',
+      },
+    ],
   },
-  {
-    icon: <MessageCircle size={24} className="text-primary" />,
-    title: 'Chat with Kai',
-    description: 'May tanong ka sa negosyo? Si Kai ang kaakbay mo.',
+  customer_messages: {
+    primary: {
+      icon: <MessageCircle size={28} className="text-primary" />,
+      title: 'Si Kai ang katuwang mo sa messages',
+      description: 'Pa-draft kay Kai ang replies sa customers mo — professional at Taglish.',
+      href: '/chat',
+    },
+    supporting: [
+      {
+        icon: <Receipt size={20} className="text-primary" />,
+        title: 'Track expenses',
+        description: 'I-log ang gastos habang busy ka.',
+        href: '/expenses',
+      },
+      {
+        icon: <Bell size={20} className="text-primary" />,
+        title: 'BIR reminders',
+        description: 'Auto reminders para sa deadlines.',
+        href: '/chat',
+      },
+    ],
   },
-  {
-    icon: <Camera size={24} className="text-primary" />,
-    title: 'Scan receipts',
-    description: 'I-scan lang ang resibo — automatic na ang pag-log.',
+  knowing_earnings: {
+    primary: {
+      icon: <BarChart3 size={28} className="text-primary" />,
+      title: 'Alamin kung kumikita ka',
+      description: 'I-check-in ang sales at gastos mo araw-araw — sa expenses mo makikita ang buong picture.',
+      href: '/expenses',
+    },
+    supporting: [
+      {
+        icon: <Receipt size={20} className="text-primary" />,
+        title: 'Saan Napunta?',
+        description: 'Detailed breakdown ng expenses.',
+        href: '/expenses',
+      },
+      {
+        icon: <MessageCircle size={20} className="text-primary" />,
+        title: 'Kausapin si Kai',
+        description: 'Tanungin kung magkano ang net mo.',
+        href: '/chat',
+      },
+    ],
   },
-];
+};
+
+const DEFAULT_FEATURES = PAIN_TO_FEATURES['knowing_earnings'];
+
+interface WelcomeTourProps {
+  primaryPain?: string | null;
+  firstName?: string;
+}
 
 /**
- * Post-onboarding welcome tour modal.
- * Shows on first visit to dashboard after completing onboarding.
- * Dismissed state is saved to localStorage.
+ * Post-onboarding welcome tour — personalized based on pain point.
+ * Shows the most relevant feature first with a CTA to go there directly.
  */
-export default function WelcomeTour() {
+export default function WelcomeTour({ primaryPain, firstName }: WelcomeTourProps) {
+  const router = useRouter();
   const [visible, setVisible] = useState(false);
 
+  const features = (primaryPain && PAIN_TO_FEATURES[primaryPain]) || DEFAULT_FEATURES;
+
   useEffect(() => {
-    // Only show if tour hasn't been seen yet
     try {
       const seen = localStorage.getItem(TOUR_STORAGE_KEY);
       if (!seen) {
         setVisible(true);
       }
     } catch {
-      // localStorage unavailable — skip tour
+      // localStorage unavailable
     }
   }, []);
 
-  function handleDismiss() {
+  function handleGo() {
+    try {
+      localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+    } catch {
+      // best-effort
+    }
+    // Navigate first — keep modal visible as a loading state so dashboard doesn't flash
+    router.push(features.primary.href);
+    router.refresh();
+  }
+
+  function handleSkip() {
     setVisible(false);
     try {
       localStorage.setItem(TOUR_STORAGE_KEY, 'true');
     } catch {
-      // Silently fail — best-effort
+      // best-effort
     }
   }
 
   if (!visible) return null;
+
+  const greeting = firstName ? `Handa ka na, ${firstName}!` : 'Handa ka na!';
 
   return (
     <div
@@ -73,42 +168,62 @@ export default function WelcomeTour() {
       aria-modal="true"
       aria-label="Welcome tour"
     >
-      <div className="bg-surface rounded-2xl p-6 mx-4 max-w-md w-full shadow-ambient-lg flex flex-col gap-6">
+      <div className="bg-surface rounded-2xl p-6 mx-4 max-w-md w-full shadow-ambient-lg flex flex-col gap-5">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h2 className="text-xl font-bold text-on-surface">
-            Handa ka na!
-          </h2>
+          <h2 className="text-xl font-bold text-on-surface">{greeting}</h2>
           <p className="text-on-surface-variant text-sm leading-relaxed">
-            Eto ang mga magagawa mo sa AKBai:
+            Base sa sinabi mo, eto ang pinakamakakatulong sa&apos;yo:
           </p>
         </div>
 
-        {/* Feature cards */}
-        <div className="grid grid-cols-2 gap-3" data-testid="welcome-tour-features">
-          {FEATURE_CARDS.map((card) => (
+        {/* Primary feature — highlighted */}
+        <div
+          className="bg-primary-container/10 border border-primary-container/20 rounded-xl p-5 flex flex-col gap-3"
+          data-testid="welcome-tour-primary"
+        >
+          <div className="w-12 h-12 rounded-full bg-primary-container/15 flex items-center justify-center">
+            {features.primary.icon}
+          </div>
+          <p className="text-on-surface font-bold text-base">{features.primary.title}</p>
+          <p className="text-on-surface-variant text-sm leading-relaxed">{features.primary.description}</p>
+        </div>
+
+        {/* Supporting features */}
+        <div className="flex gap-3" data-testid="welcome-tour-supporting">
+          {features.supporting.map((feat) => (
             <div
-              key={card.title}
-              className="bg-surface-container-low rounded-xl p-4 flex flex-col gap-2"
+              key={feat.title}
+              className="flex-1 bg-surface-container-low rounded-xl p-3 flex flex-col gap-1.5"
             >
-              <div className="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
-                {card.icon}
+              <div className="w-8 h-8 rounded-full bg-primary-container/10 flex items-center justify-center">
+                {feat.icon}
               </div>
-              <p className="text-on-surface font-semibold text-sm">{card.title}</p>
-              <p className="text-on-surface-variant text-xs leading-relaxed">{card.description}</p>
+              <p className="text-on-surface font-semibold text-xs">{feat.title}</p>
+              <p className="text-on-surface-variant text-[11px] leading-relaxed">{feat.description}</p>
             </div>
           ))}
         </div>
 
-        {/* CTA */}
-        <button
-          type="button"
-          onClick={handleDismiss}
-          className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all min-h-[44px]"
-          data-testid="welcome-tour-dismiss-btn"
-        >
-          Tara, simulan na natin!
-        </button>
+        {/* CTAs */}
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={handleGo}
+            className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all min-h-[44px]"
+            data-testid="welcome-tour-go-btn"
+          >
+            Tara, subukan na natin!
+          </button>
+          <button
+            type="button"
+            onClick={handleSkip}
+            className="w-full text-on-surface-variant hover:text-on-surface text-sm py-2 transition-colors"
+            data-testid="welcome-tour-skip-btn"
+          >
+            Explore ko muna
+          </button>
+        </div>
       </div>
     </div>
   );

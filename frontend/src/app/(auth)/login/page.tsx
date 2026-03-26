@@ -18,18 +18,19 @@ export default function LoginPage() {
           <div className="relative">
             <div className="absolute inset-0 bg-primary-container/10 blur-2xl rounded-full" />
             <div className="relative z-10 w-56 h-56">
+              {/* Gray circle layer — visible through the white parts of mark-honey */}
               <Image
-                src="/icons/mark-honey.png"
-                alt="AKBai"
+                src="/icons/mark-on-light.png"
+                alt=""
                 fill
-                className="object-contain dark:hidden"
-                priority
+                className="object-contain opacity-30 dark:opacity-0"
+                aria-hidden="true"
               />
               <Image
                 src="/icons/mark-honey.png"
                 alt="AKBai"
                 fill
-                className="object-contain hidden dark:block"
+                className="object-contain"
                 priority
               />
             </div>
