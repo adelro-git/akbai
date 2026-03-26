@@ -3,9 +3,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { markSignOutAsUserInitiated } from '@/lib/supabase/session-watcher'
 import Image from 'next/image'
 import MessageList from './message-list'
 import ChatInput from './chat-input'
+import DisclaimerBanner from './disclaimer-banner'
+import FreeTierBanner from './free-tier-banner'
 
 export type ChatMessage = {
   id: string
@@ -37,6 +40,7 @@ export default function ChatInterface({
     initialMessages.length > 0 ? initialMessages : [WELCOME_MSG]
   )
   const [loading, setLoading] = useState(false)
+  const [queriesUsed, setQueriesUsed] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -73,6 +77,12 @@ export default function ChatInterface({
           created_at: new Date().toISOString(),
         }
         setMessages((prev) => [...prev, kaiMsg])
+        // Track queries used — prefer API response count, fall back to local increment
+        if (typeof data.data.queriesUsedToday === 'number') {
+          setQueriesUsed(data.data.queriesUsedToday)
+        } else {
+          setQueriesUsed((prev) => prev + 1)
+        }
       } else {
         setMessages((prev) => [
           ...prev,
@@ -102,6 +112,7 @@ export default function ChatInterface({
   }
 
   async function handleSignOut() {
+    markSignOutAsUserInitiated()
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()
@@ -132,7 +143,11 @@ export default function ChatInterface({
         </button>
       </header>
 
+      <DisclaimerBanner />
+
       <MessageList messages={messages} loading={loading} bottomRef={bottomRef} />
+
+      <FreeTierBanner queriesUsed={queriesUsed} tier="free" />
 
       <ChatInput onSend={handleSend} loading={loading} />
     </div>

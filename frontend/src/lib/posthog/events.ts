@@ -16,6 +16,8 @@ const EVENTS = {
   DAILY_CHECK_IN_COMPLETED: 'daily_check_in_completed',
   PROFILE_UPDATED: 'profile_updated',
   SIGNED_OUT: 'signed_out',
+  EXPENSE_ADDED: 'expense_added',
+  EXPENSE_DELETED: 'expense_deleted',
 } as const
 
 type EventName = (typeof EVENTS)[keyof typeof EVENTS]
@@ -65,4 +67,14 @@ export function trackProfileUpdated(): void {
 /** Track when user signs out */
 export function trackSignedOut(): void {
   capture(EVENTS.SIGNED_OUT)
+}
+
+/** Track when user adds a manual expense/income transaction */
+export function trackExpenseAdded(type: string, category: string): void {
+  capture(EVENTS.EXPENSE_ADDED, { type, category })
+}
+
+/** Track when user deletes a transaction */
+export function trackExpenseDeleted(): void {
+  capture(EVENTS.EXPENSE_DELETED)
 }

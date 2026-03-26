@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
 import { Send } from 'lucide-react'
 import { trackChatMessageSent } from '@/lib/posthog/events'
 
@@ -10,16 +10,15 @@ interface ChatInputProps {
 }
 
 export default function ChatInput({ onSend, loading }: ChatInputProps) {
-  const [value, setValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!value.trim() || loading) return
-    onSend(value.trim())
+  function handleSend() {
+    const text = textareaRef.current?.value?.trim()
+    if (!text || loading) return
+    onSend(text)
     trackChatMessageSent()
-    setValue('')
     if (textareaRef.current) {
+      textareaRef.current.value = ''
       textareaRef.current.style.height = 'auto'
     }
   }
@@ -27,7 +26,7 @@ export default function ChatInput({ onSend, loading }: ChatInputProps) {
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(e as unknown as React.FormEvent)
+      handleSend()
     }
   }
 
@@ -46,11 +45,9 @@ export default function ChatInput({ onSend, loading }: ChatInputProps) {
       className="flex-shrink-0 bg-surface-container border-t border-outline-variant/20 px-4 py-3 pb-safe"
       data-testid="chat-input-bar"
     >
-      <form onSubmit={handleSubmit} className="flex items-end gap-3">
+      <div className="flex items-end gap-3">
         <textarea
           ref={textareaRef}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
           placeholder="Mag-usap kay Kai..."
@@ -60,15 +57,16 @@ export default function ChatInput({ onSend, loading }: ChatInputProps) {
           data-testid="chat-text-input"
         />
         <button
-          type="submit"
-          disabled={!value.trim() || loading}
+          type="button"
+          onClick={handleSend}
+          disabled={loading}
           className="w-11 h-11 rounded-full bg-primary-container hover:bg-primary flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           data-testid="chat-send-btn"
           aria-label="Send message"
         >
           <Send size={16} className="text-on-primary" />
         </button>
-      </form>
+      </div>
     </div>
   )
 }

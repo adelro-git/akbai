@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { toManila, getManilaToday } from '@/lib/timezone';
+import { addDevTransaction, softDeleteDevTransactionsByRef, setDevCheckIn, getDevCheckIn } from '@/lib/dev-store';
 
 // ============================================================
 // Types
@@ -45,6 +46,7 @@ const CheckInSchema = z.object({
   mood: z.string().max(200).optional(),
   sales_amount: z.number().int().nonnegative().optional(),
   expenses_amount: z.number().int().nonnegative().optional(),
+  expense_category: z.string().min(1).optional(),
 });
 
 // ============================================================
@@ -125,14 +127,15 @@ export async function GET() {
   if (SKIP_AUTH) {
     userId = DEV_USER.id;
 
-    // Dev bypass — return mock dashboard data
+    // Dev bypass — return mock dashboard data with persisted check-in
     const greeting = generateGreeting('Boss');
+    const devCheckIn = getDevCheckIn();
     const response: DashboardResponse = {
       greeting,
       userName: 'Boss',
       businessName: 'Dev Business',
       businessType: 'food_baking',
-      todayCheckIn: null,
+      todayCheckIn: devCheckIn,
       dashboardCards: getDashboardCards(),
     };
 
@@ -227,19 +230,55 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Dev bypass — return mock success
+    // Dev bypass — return mock success + create transactions in shared dev store
     const greeting = generateGreeting('Boss');
+    const today = getManilaToday();
+    const checkinId = 'dev-checkin-001';
+
+    // Create transactions from check-in financial data (shared dev store)
+    if (parsed.data.sales_amount || parsed.data.expenses_amount) {
+      softDeleteDevTransactionsByRef(checkinId);
+
+      if (parsed.data.sales_amount && parsed.data.sales_amount > 0) {
+        addDevTransaction({
+          type: 'income',
+          amount: parsed.data.sales_amount,
+          category: 'check_in_sales',
+          description: `Daily check-in sales (${today})`,
+          transaction_date: today,
+          source: 'check_in',
+          source_ref_id: checkinId,
+        });
+      }
+
+      if (parsed.data.expenses_amount && parsed.data.expenses_amount > 0) {
+        addDevTransaction({
+          type: 'expense',
+          amount: parsed.data.expenses_amount,
+          category: parsed.data.expense_category ?? 'other_expense',
+          description: `Daily check-in gastos (${today})`,
+          transaction_date: today,
+          source: 'check_in',
+          source_ref_id: checkinId,
+        });
+      }
+    }
+
+    const checkInData = {
+      id: checkinId,
+      mood: parsed.data.mood ?? null,
+      kai_greeting: greeting,
+      check_in_date: today,
+      sales_amount: parsed.data.sales_amount ?? null,
+      expenses_amount: parsed.data.expenses_amount ?? null,
+    };
+
+    // Persist in dev store so GET returns it
+    setDevCheckIn(checkInData);
+
     return NextResponse.json({
       success: true,
-      data: {
-        id: 'dev-checkin-001',
-        user_id: userId,
-        check_in_date: getManilaToday(),
-        mood: parsed.data.mood ?? null,
-        kai_greeting: greeting,
-        sales_amount: parsed.data.sales_amount ?? null,
-        expenses_amount: parsed.data.expenses_amount ?? null,
-      },
+      data: { ...checkInData, user_id: userId },
     });
   }
 
@@ -318,6 +357,50 @@ export async function POST(req: NextRequest) {
       { success: false, error: { code: 'DB_ERROR', message_tl: 'Hindi ma-save ang check-in. Subukan muli.' } },
       { status: 500 }
     );
+  }
+
+  // ── Check-in → Expenses integration (Sprint 7, Task 13) ──
+  // Create transactions from check-in financial data so they appear in Saan Napunta.
+  // Soft-delete existing check-in transactions for this check-in to avoid duplicates on re-submit.
+  if (checkIn && (parsed.data.sales_amount || parsed.data.expenses_amount)) {
+    await supabase
+      .from('transactions')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .eq('source', 'check_in')
+      .eq('source_ref_id', checkIn.id);
+
+    const txRows: Array<Record<string, unknown>> = [];
+
+    if (parsed.data.sales_amount && parsed.data.sales_amount > 0) {
+      txRows.push({
+        user_id: userId,
+        type: 'income',
+        amount: parsed.data.sales_amount,
+        category: 'check_in_sales',
+        description: `Daily check-in sales (${today})`,
+        transaction_date: today,
+        source: 'check_in',
+        source_ref_id: checkIn.id,
+      });
+    }
+
+    if (parsed.data.expenses_amount && parsed.data.expenses_amount > 0) {
+      txRows.push({
+        user_id: userId,
+        type: 'expense',
+        amount: parsed.data.expenses_amount,
+        category: parsed.data.expense_category ?? 'other_expense',
+        description: `Daily check-in gastos (${today})`,
+        transaction_date: today,
+        source: 'check_in',
+        source_ref_id: checkIn.id,
+      });
+    }
+
+    if (txRows.length > 0) {
+      await supabase.from('transactions').insert(txRows);
+    }
   }
 
   return NextResponse.json({ success: true, data: checkIn });

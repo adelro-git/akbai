@@ -93,15 +93,30 @@ function setupSupabaseFromMock(overrides?: {
     }
     if (table === 'ka_conversations') {
       return {
-        select: () => ({
-          eq: () => ({
-            is: () => ({
-              order: () => ({
-                limit: () => Promise.resolve({ data: [], error: null }),
+        select: (_cols?: string, opts?: { count?: string; head?: boolean }) => {
+          // Count query for queriesUsedToday (head: true)
+          if (opts?.head) {
+            return {
+              eq: () => ({
+                eq: () => ({
+                  is: () => ({
+                    gte: () => Promise.resolve({ count: 1, error: null }),
+                  }),
+                }),
+              }),
+            };
+          }
+          // History query (order + limit)
+          return {
+            eq: () => ({
+              is: () => ({
+                order: () => ({
+                  limit: () => Promise.resolve({ data: [], error: null }),
+                }),
               }),
             }),
-          }),
-        }),
+          };
+        },
         insert: vi.fn().mockResolvedValue({ error: null }),
       };
     }

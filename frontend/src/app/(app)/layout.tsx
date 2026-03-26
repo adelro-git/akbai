@@ -1,6 +1,8 @@
 import BottomNav from '@/components/dashboard/bottom-nav';
+import SidebarNav from '@/components/dashboard/sidebar-nav';
+import SessionGuard from '@/components/auth/session-guard';
 
-// (app) layout: auth guard is handled inline in each page for Next.js 16 compatibility
+// (app) layout: sidebar on desktop, bottom nav on mobile
 export default function AppGroupLayout({
   children,
 }: {
@@ -8,7 +10,11 @@ export default function AppGroupLayout({
 }) {
   return (
     <>
-      {children}
+      <SessionGuard />
+      <SidebarNav />
+      <div className="md:ml-56">
+        {children}
+      </div>
       <BottomNav />
     </>
   );

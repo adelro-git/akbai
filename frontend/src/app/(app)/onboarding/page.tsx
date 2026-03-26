@@ -28,9 +28,9 @@ export default async function OnboardingPage() {
     .eq('id', user.id)
     .single();
 
-  // Already completed — go to chat
+  // Already completed — go to dashboard
   if (userData?.onboarding_completed) {
-    redirect('/chat');
+    redirect('/dashboard');
   }
 
   // Fetch business profile if exists
