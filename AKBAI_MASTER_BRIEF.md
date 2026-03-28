@@ -220,32 +220,31 @@ RESEND_API_KEY=              # Stub empty
 
 ---
 
-## 5. Skill Files — Which to Activate for Which Build Task
+## 5. Agent Teams — How Builds Execute
 
-The akbai-delivery plugin at `/AKBai/akbai-delivery/` has 12 role-based skills. Here is which skill maps to which build task:
+The akbai-delivery plugin has 12 role-based skills in `akbai-delivery/skills/` and 12 matching agent definitions in `.claude/agents/`. Builds use **agent teams** — the PM lead spawns teammates who work in parallel and communicate via shared task lists.
 
-| Build Task | Primary Skill | Supporting Skills |
-|-----------|---------------|-------------------|
-| **Emergent scaffold** (this session) | fullstack-engineer | solutions-architect, devops-engineer |
-| Build 0: AI Scope & System Prompt | ai-engineer | solutions-architect, product-owner |
-| Build 1: Kilala Kita (onboarding) | ux-designer | fullstack-engineer, data-architect |
-| Build 2: Dashboard | fullstack-engineer | ux-designer, data-architect |
-| Build 3: Resibo Scanner | ai-engineer | fullstack-engineer, qa-engineer |
-| Build 4: Saan Napunta (expenses) | fullstack-engineer | data-architect, ux-designer |
-| Build 5: Ang Umaga Mo (morning brief) | ai-engineer | fullstack-engineer, ops-lead |
-| Build 6: Deadline Watcher | fullstack-engineer | data-architect, security-compliance |
-| Build 7: Reply Drafter | ai-engineer | fullstack-engineer, ux-designer |
-| Build 8: Costing + Invoices | fullstack-engineer | data-architect, ux-designer |
-| Database schema design | data-architect | security-compliance, solutions-architect |
-| RLS & data privacy audit | security-compliance | data-architect |
-| Deployment & CI/CD | devops-engineer | fullstack-engineer |
-| Sprint planning & gap tracking | project-manager | product-owner |
-| Feature prioritization & Sense Check | product-owner | project-manager, marketing-lead |
-| GTM & waitlist | marketing-lead | product-owner, ux-designer |
-| Testing & prompt regression | qa-engineer | ai-engineer |
-| Operations setup | ops-lead | devops-engineer, project-manager |
+**How it works:** Run `/build [feature]` and the PM automatically selects the right teammates:
 
-Each skill has a SKILL.md file in `/AKBai/akbai-delivery/skills/[skill-name]/SKILL.md`. Read the relevant SKILL.md before starting any build task.
+| Build Task | Agent Team Composition |
+|-----------|----------------------|
+| Build 5: Ang Umaga Mo (morning brief) | po + architect + ai + engineer + qa |
+| Build 6: Deadline Watcher | po + architect + data + engineer + ux + qa |
+| Build 7: Reply Drafter | po + architect + ai + engineer + marketing + qa |
+| Build 8: Costing + Invoices | po + architect + data + engineer + ux + qa |
+| Database schema design | architect + data + security |
+| RLS & data privacy audit | security + data + qa |
+| Deployment & CI/CD | devops + qa + security + ops |
+| Sprint planning | PM lead + po + stream workers + qa |
+
+**PM decision checklist (which agents to include):**
+1. Touches UI? → `build-ux` | 2. New feature? → `build-po` | 3. New tables? → `build-data`
+4. Claude API? → `build-ai` | 5. Taglish copy? → `build-marketing` | 6. Auth/PII? → `review-security`
+7. Always: `build-architect` + `build-engineer` + `build-qa`
+
+S-features (bug fixes, config) skip teams and run sequentially. For the full usage guide, see `akbai-delivery/shared/agent-teams-guide.md`.
+
+Each skill has a SKILL.md file in `akbai-delivery/skills/[skill-name]/SKILL.md`. Agent definitions are in `.claude/agents/`.
 
 ---
 

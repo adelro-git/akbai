@@ -34,6 +34,7 @@ Then read the solutions-architect references:
 2. Check `project-context.md` §5 (Core MVP Features Build 0–8) to confirm this is a planned feature.
 3. Confirm the current phase allows this feature (e.g., don't build Build 3 features during Phase 0).
 4. If out of scope: show the user the official Build order and ask which feature they actually want.
+5. **If `po` (product-owner) is on the team:** Wait for scope approval message from `po` before proceeding to Step 3. The `po` validates tier allocation, MCTD score, and acceptance criteria. Incorporate their scope guidance into the ADR.
 
 ### Step 2: Read Architecture References
 1. Check `references/architecture-decisions.md` for any existing ADRs about this feature (avoid duplicates).
@@ -94,7 +95,9 @@ Key decisions from ADR:
   - [Relevant architectural decision that affects schema, e.g., "conversation_domain column for future multi-domain expansion"]
 ```
 
-Wait for data-architect to return:
+**If running in a team:** Use SendMessage to deliver the handoff inputs above to the `data` teammate. Also message `ux` (if present) with UI pattern decisions for this feature (Chat+Card / Card-only / Form, key screens). Mark your ADR task complete in the shared task list.
+
+**If running sequentially:** Wait for data-architect to return:
 - Migration SQL file(s) in format: `YYYYMMDDHHMMSS_description.sql`
 - RLS policy definitions per table
 - Seed data (if applicable, e.g., bir_deadlines lookup table)
@@ -394,7 +397,9 @@ Claude API calls involved: [Haiku Vision, Sonnet reasoning, etc.]
 RLS policies to verify: [e.g., "Users cannot access other users' receipts"]
 ```
 
-Wait for qa-engineer to return test files (Jest + Playwright) ready to run.
+**If running in a team:** Use SendMessage to deliver the test inputs above to the `qa` teammate. Mark your test handoff task complete in the shared task list.
+
+**If running sequentially:** Wait for qa-engineer to return test files (Jest + Playwright) ready to run.
 
 ### Step 8: Compile & Output Deliverables
 

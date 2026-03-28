@@ -2,7 +2,7 @@
 
 ## What Is AKBai
 Mobile-first PWA AI business partner for Filipino MSMEs. Solo founder (Anton), 10–15 hrs/sprint.
-Current phase: 0A — Scaffold complete, Build 0 next.
+Current phase: 0A — Build 4 complete, Build 5 next. 559 tests passing.
 
 ## Master Brief
 For full product context, read: `AKBAI_MASTER_BRIEF.md` (root)
@@ -16,14 +16,47 @@ These files ground every skill and command:
 - `akbai-delivery/shared/glossary.md` — Product, business, technical, Taglish terms
 - `akbai-delivery/shared/brand-context.md` — Brand identity, voice pillars, colors, typography
 
-## Skill System
+## Skill System & Agent Teams
 12 role-based skills in `akbai-delivery/skills/`. Each has a SKILL.md with role context,
-decision trees, and reference files. 15 slash commands are wired via `.claude/commands/`.
+decision trees, and reference files. 16 slash commands are wired via `.claude/commands/`.
+12 agent definitions in `.claude/agents/` map each skill to a reusable agent for team workflows.
 
 When a slash command is invoked, the command file tells you which SKILL.md files to read.
 Follow the workflow defined in the command's SKILL.md.
 
-### Skill Routing Table
+### Agent Teams (primary execution model — Sprint 8+)
+For M/L features, `/build` spawns an **agent team** — multiple Claude Code instances
+coordinated by the PM lead. The PM selects teammates from the roster based on the task.
+For full usage guide, see: `akbai-delivery/shared/agent-teams-guide.md`
+
+**Team size:** 4-5 teammates + PM lead (max 6). S-features run sequentially (no team).
+
+**PM decision checklist (which agents to include):**
+1. Does it touch UI? → `build-ux`
+2. Is it a NEW feature? → `build-po`
+3. New tables? → `build-data`
+4. Claude API/prompts? → `build-ai`
+5. Significant Taglish copy? → `build-marketing`
+6. Auth/payments/PII? → `review-security`
+7. Always: `build-architect` + `build-engineer` + `build-qa`
+
+### Agent Roster
+| Agent | Skill | Role |
+|-------|-------|------|
+| `build-architect` | solutions-architect | ADRs, API design (core) |
+| `build-data` | data-architect | Schema, migrations, RLS |
+| `build-engineer` | fullstack-engineer | Implementation (core) |
+| `build-qa` | qa-engineer | Testing (core) |
+| `build-ux` | ux-designer | UI/design system review |
+| `build-po` | product-owner | Scope validation, MCTD scoring |
+| `build-ai` | ai-engineer | System prompts, KA persona |
+| `build-marketing` | marketing-lead | Taglish copy, brand pillars |
+| `review-security` | security-compliance | RLS audit, NPC, auth |
+| `deploy-devops` | devops-engineer | CI/CD, deployment |
+| `deploy-ops` | ops-lead | Operational readiness |
+| `team-lead` | project-manager | Team orchestrator |
+
+### Skill Routing Table (for slash commands)
 | Skill | Path | Triggers |
 |-------|------|----------|
 | project-manager | skills/project-manager/ | sprint, plan, backlog, status, priorities, phase gates |
@@ -125,6 +158,7 @@ main        ← stable milestones (merge via PR after sprint/build completion)
 - Shared context: `/home/user/akbai/akbai-delivery/shared/`
 - Skills: `/home/user/akbai/akbai-delivery/skills/`
 - Commands: `/home/user/akbai/.claude/commands/`
+- Agents: `/home/user/akbai/.claude/agents/`
 - Migrations: `/home/user/akbai/frontend/supabase/migrations/`
 - Master brief: `/home/user/akbai/AKBAI_MASTER_BRIEF.md`
-- Handover: `/home/user/akbai/HANDOVER.md`
+- Agent teams guide: `/home/user/akbai/akbai-delivery/shared/agent-teams-guide.md`
