@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-26 (Sprint 6+7 retro)
+> Last updated: 2026-03-28 (Sprint 8+9 plans)
 
 ---
 
@@ -385,6 +385,68 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 **Sprint outcome:** COMPLETE — merged with Sprint 6. Live tested by Anton. Build 4 (Saan Napunta / Expenses) shipped.
 
+### Sprint 8 — 2026-03-28
+
+**Phase:** 0A — Build 5
+**Sprint Goal:** Ship the Morning Briefing card, weekly reconciliation prompt, and monthly summary so KA proactively surfaces yesterday's business health every morning.
+**Capacity:** 3.5 hrs Anton Time (review/testing/decisions)
+
+**Tasks:**
+
+| # | Task | Agent Size | Anton Time | Status | Notes |
+|---|------|-----------|------------|--------|-------|
+| 1 | Morning Briefing data aggregation lib | M | XS | PLANNED | `lib/morning-briefing/aggregate.ts` + `types.ts` |
+| 2 | Morning Briefing API route | M | S (0.5hr) | PLANNED | `/api/morning-briefing` — Claude call, day cache, feature/tier/time gates |
+| 3 | Morning Briefing Card component | M | S (0.5hr) | PLANNED | Dashboard card, Pro+ only, 5AM-12PM Manila |
+| 4 | Weekly Reconciliation API + component | M | S (0.5hr) | PLANNED | `/api/reconciliation/weekly` — missing check-in days |
+| 5 | Monthly Reconciliation API + component | M | S (0.5hr) | PLANNED | `/api/reconciliation/monthly` — month-end summary |
+| 6 | Dashboard integration (all new cards) | S | S (0.5hr) | PLANNED | Wire briefing + recon cards into dashboard page |
+| 7 | Tests (40+ new) | M | XS | PLANNED | Aggregation, API, component tests |
+| 8 | Anton live testing | -- | M (1hr) | PLANNED | Morning/afternoon, transactions, Taglish, mobile |
+
+**Parallel Streams:**
+- **Stream A** (`claude/sprint8-briefing`): Tasks 1, 2, 3 — Morning Briefing
+- **Stream B** (`claude/sprint8-recon`): Tasks 4, 5 — Reconciliation
+- **Sequential:** Tasks 6, 7 after A+B merge
+
+**Key decisions:** Morning briefing cached 1x/day (one Claude call/user/day). No share button on monthly summary (deferred). Uses static BIR knowledge base for deadline alerts (Build 6 adds dynamic table).
+
+**Actual Anton hours:** TBD — updated during retro
+**Sprint outcome:** IN PROGRESS
+
+### Sprint 9 — 2026-03-28
+
+**Phase:** 0A — Builds 6 + 7
+**Sprint Goal:** Ship the BIR Deadline Watcher with generated deadlines from profile data, and the Reply Drafter for customer message drafting.
+**Capacity:** 4 hrs Anton Time (review/testing/decisions)
+
+**Tasks:**
+
+| # | Task | Agent Size | Anton Time | Status | Notes |
+|---|------|-----------|------------|--------|-------|
+| 1 | Migration 011: `bir_deadlines` + `bir_tax_type` | M | XS | PLANNED | New table + column on business_profiles |
+| 2 | BIR deadline generation logic | M | S (0.5hr) | PLANNED | `lib/deadlines/generate.ts` — tax type → form deadlines |
+| 3 | Deadlines API (`/api/deadlines`) | M | XS | PLANNED | GET/POST/PATCH with color coding |
+| 4 | Deadline Watcher page + components | L | S (0.5hr) | PLANNED | `/deadlines` page, list, cards, mark-as-filed modal |
+| 5 | BIR tax type selector on Profile | S | XS | PLANNED | Dropdown on profile, triggers deadline generation |
+| 6 | In-app deadline notification tracking | S | XS | PLANNED | 7/3/1-day boolean tracking, in-app only |
+| 7 | Reply Drafter API (`/api/reply-draft`) | M | XS | PLANNED | Claude generates 1-2 reply options |
+| 8 | Reply Drafter page + components | M | S (0.5hr) | PLANNED | Input + reply options + copy button |
+| 9 | Reply Drafter guardrails | S | XS | PLANNED | No impersonation, no unauthorized commitments |
+| 10 | Dashboard cards + feature flags | S | XS | PLANNED | DEADLINE_WATCHER_ENABLED, REPLY_DRAFTER_ENABLED |
+| 11 | Tests (50+ new) | M | XS | PLANNED | Build 6 (30-40) + Build 7 (20-30) tests |
+| 12 | Anton live testing | -- | L (1.5hr) | PLANNED | Both features, mobile, Taglish, real messages |
+
+**Parallel Streams:**
+- **Stream A** (`claude/sprint9-deadlines`): Tasks 1-6 — Deadline Watcher (Build 6)
+- **Stream B** (`claude/sprint9-replies`): Tasks 7-9 — Reply Drafter (Build 7)
+- **Sequential:** Tasks 10, 11 after A+B merge
+
+**Key decisions:** BIR tax type collected via Profile page (not onboarding change). `bir_deadlines` references `auth.users(id)` not `businesses(id)` (table doesn't exist yet). Push notifications deferred — in-app only.
+
+**Actual Anton hours:** TBD — updated during retro
+**Sprint outcome:** IN PROGRESS
+
 ### Sprint 6+7 Retro — 2026-03-26
 
 **What Went Well:**
@@ -433,6 +495,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | 5 | Build 2 completion + infra | 4 hrs (Anton) | ~4-5 (Anton) | 5+2 | 7 | YES |
 | 6 | Design Gates + UX quality | 4 hrs (Anton) | ~4 (Anton) | 7+1 | 8 | YES |
 | 7 | Build 4 (Expenses) | 4 hrs (Anton) | (parallel w/6) | ~6 | ~6 | YES |
+| 8 | Build 5 (Morning Briefing + Recon) | 3.5 hrs (Anton) | TBD | 8 | TBD | TBD |
+| 9 | Build 6 (Deadlines) + Build 7 (Reply Drafter) | 4 hrs (Anton) | TBD | 12 | TBD | TBD |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
