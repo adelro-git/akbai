@@ -397,17 +397,18 @@ Done when: Errors from client and server captured in Sentry with source maps.
 |---|------|-----------|------------|--------|-------|
 | 1 | Morning Briefing data aggregation lib | M | XS | PLANNED | `lib/morning-briefing/aggregate.ts` + `types.ts` |
 | 2 | Morning Briefing API route | M | S (0.5hr) | PLANNED | `/api/morning-briefing` — Claude call, day cache, feature/tier/time gates |
-| 3 | Morning Briefing Card component | M | S (0.5hr) | PLANNED | Dashboard card, Pro+ only, 5AM-12PM Manila |
-| 4 | Weekly Reconciliation API + component | M | S (0.5hr) | PLANNED | `/api/reconciliation/weekly` — missing check-in days |
-| 5 | Monthly Reconciliation API + component | M | S (0.5hr) | PLANNED | `/api/reconciliation/monthly` — month-end summary |
-| 6 | Dashboard integration (all new cards) | S | S (0.5hr) | PLANNED | Wire briefing + recon cards into dashboard page |
-| 7 | Tests (40+ new) | M | XS | PLANNED | Aggregation, API, component tests |
-| 8 | Anton live testing | -- | M (1hr) | PLANNED | Morning/afternoon, transactions, Taglish, mobile |
+| 3 | Morning Briefing Card + dashboard wiring | M | S (0.5hr) | PLANNED | Card component + add to dashboard page, Pro+ only, 5AM-12PM Manila |
+| 4 | Weekly Reconciliation API + component | M | S (0.5hr) | PLANNED | `/api/reconciliation/weekly` — missing check-in days + dashboard card |
+| 5 | Monthly Reconciliation API + component | M | S (0.5hr) | PLANNED | `/api/reconciliation/monthly` — month-end summary + dashboard card |
+| 6 | Tests (40+ new) | M | XS | PLANNED | Aggregation, API, component tests |
+| 7 | Anton live testing | -- | M (1hr) | PLANNED | Morning/afternoon, transactions, Taglish, mobile |
 
 **Parallel Streams:**
-- **Stream A** (`claude/sprint8-briefing`): Tasks 1, 2, 3 — Morning Briefing
-- **Stream B** (`claude/sprint8-recon`): Tasks 4, 5 — Reconciliation
-- **Sequential:** Tasks 6, 7 after A+B merge
+- **Stream A** (`claude/sprint8-briefing`): Tasks 1, 2, 3 — Morning Briefing (includes own dashboard wiring)
+- **Stream B** (`claude/sprint8-recon`): Tasks 4, 5 — Reconciliation (includes own dashboard wiring)
+- **Post-merge:** Task 6 (tests), Task 7 (live testing)
+
+**No cross-sprint dependencies.** Sprint 8 only touches: `lib/morning-briefing/`, `api/morning-briefing/`, `api/reconciliation/`, `components/dashboard/morning-*`, `components/dashboard/weekly-*`, `components/dashboard/monthly-*`, and adds cards to `dashboard/page.tsx`. Sprint 9 touches completely different files.
 
 **Key decisions:** Morning briefing cached 1x/day (one Claude call/user/day). No share button on monthly summary (deferred). Uses static BIR knowledge base for deadline alerts (Build 6 adds dynamic table).
 
@@ -427,20 +428,21 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | 1 | Migration 011: `bir_deadlines` + `bir_tax_type` | M | XS | PLANNED | New table + column on business_profiles |
 | 2 | BIR deadline generation logic | M | S (0.5hr) | PLANNED | `lib/deadlines/generate.ts` — tax type → form deadlines |
 | 3 | Deadlines API (`/api/deadlines`) | M | XS | PLANNED | GET/POST/PATCH with color coding |
-| 4 | Deadline Watcher page + components | L | S (0.5hr) | PLANNED | `/deadlines` page, list, cards, mark-as-filed modal |
+| 4 | Deadline Watcher page + dashboard card + flag | L | S (0.5hr) | PLANNED | `/deadlines` page, components, dashboard card, `DEADLINE_WATCHER_ENABLED` |
 | 5 | BIR tax type selector on Profile | S | XS | PLANNED | Dropdown on profile, triggers deadline generation |
 | 6 | In-app deadline notification tracking | S | XS | PLANNED | 7/3/1-day boolean tracking, in-app only |
 | 7 | Reply Drafter API (`/api/reply-draft`) | M | XS | PLANNED | Claude generates 1-2 reply options |
-| 8 | Reply Drafter page + components | M | S (0.5hr) | PLANNED | Input + reply options + copy button |
+| 8 | Reply Drafter page + dashboard card + flag | M | S (0.5hr) | PLANNED | `/reply-drafter` page, components, dashboard card, `REPLY_DRAFTER_ENABLED` |
 | 9 | Reply Drafter guardrails | S | XS | PLANNED | No impersonation, no unauthorized commitments |
-| 10 | Dashboard cards + feature flags | S | XS | PLANNED | DEADLINE_WATCHER_ENABLED, REPLY_DRAFTER_ENABLED |
-| 11 | Tests (50+ new) | M | XS | PLANNED | Build 6 (30-40) + Build 7 (20-30) tests |
-| 12 | Anton live testing | -- | L (1.5hr) | PLANNED | Both features, mobile, Taglish, real messages |
+| 10 | Tests (50+ new) | M | XS | PLANNED | Build 6 (30-40) + Build 7 (20-30) tests |
+| 11 | Anton live testing | -- | L (1.5hr) | PLANNED | Both features, mobile, Taglish, real messages |
 
 **Parallel Streams:**
-- **Stream A** (`claude/sprint9-deadlines`): Tasks 1-6 — Deadline Watcher (Build 6)
-- **Stream B** (`claude/sprint9-replies`): Tasks 7-9 — Reply Drafter (Build 7)
-- **Sequential:** Tasks 10, 11 after A+B merge
+- **Stream A** (`claude/sprint9-deadlines`): Tasks 1-6 — Deadline Watcher (Build 6, includes own dashboard card + feature flag)
+- **Stream B** (`claude/sprint9-replies`): Tasks 7-9 — Reply Drafter (Build 7, includes own dashboard card + feature flag)
+- **Post-merge:** Task 10 (tests), Task 11 (live testing)
+
+**No cross-sprint dependencies.** Sprint 9 only touches: `supabase/migrations/011_*`, `lib/deadlines/`, `api/deadlines/`, `app/(app)/deadlines/`, `components/deadlines/`, `api/reply-draft/`, `app/(app)/reply-drafter/`, `components/reply-drafter/`, `lib/reply-drafter/`, and adds cards to `dashboard/page.tsx`. Dashboard card additions are additive (different card slots) — merge conflicts between Sprint 8 and 9 are trivial to resolve.
 
 **Key decisions:** BIR tax type collected via Profile page (not onboarding change). `bir_deadlines` references `auth.users(id)` not `businesses(id)` (table doesn't exist yet). Push notifications deferred — in-app only.
 
