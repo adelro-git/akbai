@@ -145,6 +145,18 @@ Doesn't wait to be asked. Sends the morning briefing, flags the approaching dead
 - "Run your business. We'll handle the rest." — Paid ads, email subjects
 - "Katuwang mo sa hustle." — Social media, app store
 
+**Validated campaign hooks (from market sentiment research, March 2026):**
+These hooks use language and pain points confirmed by real Reddit/Facebook/TikTok sentiment:
+
+| Hook | Pain Point | Why It Works |
+|------|-----------|-------------|
+| "Hindi na nakakatakot ang BIR deadline." | BIR anxiety | "Nakakatakot" is the exact word MSMEs use on TikTok/FB |
+| "Alam mo na ba kung kumikita ka?" | Cash flow blindness | Echoes real quote: "hindi ko alam kung kumikita ba o hindi" |
+| "Snap mo lang, tracked na." | Manual receipt tracking | Contrast to FB groups asking "Excel pa rin?" |
+| "₱399/month vs ₱11,800/month sa accountant." | Cost | Real pricing from Reddit (₱5K filing + ₱5K bookkeeping + ₱1.8K encoding) |
+| "Si KA na ang sasagot — ikaw na lang mag-send." | DM overload | BigSeller confirms chat management is "clearest pain point" for PH sellers |
+| "99.5% ng businesses sa Pilipinas, MSME. Deserve nila ng AI partner." | Aspiration | BCG/DTI data — emotionally resonant scale stat |
+
 ---
 
 ## Competitive Positioning Statement

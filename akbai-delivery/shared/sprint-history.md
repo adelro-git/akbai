@@ -395,13 +395,13 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 | # | Task | Agent Size | Anton Time | Status | Notes |
 |---|------|-----------|------------|--------|-------|
-| 1 | Morning Briefing data aggregation lib | M | XS | PLANNED | `lib/morning-briefing/aggregate.ts` + `types.ts` |
-| 2 | Morning Briefing API route | M | S (0.5hr) | PLANNED | `/api/morning-briefing` — Claude call, day cache, feature/tier/time gates |
-| 3 | Morning Briefing Card + dashboard wiring | M | S (0.5hr) | PLANNED | Card component + add to dashboard page, Pro+ only, 5AM-12PM Manila |
+| 1 | Morning Briefing data aggregation lib | M | XS | DONE | `lib/morning-briefing/aggregate.ts` + `types.ts` + `index.ts`. Queries yesterday's transactions, cash position, BIR deadlines, week trends. |
+| 2 | Morning Briefing API route | M | S (0.5hr) | DONE | GET `/api/morning-briefing` — auth → flag → tier → cache → time gate (5AM-12PM) → Claude → cache write. ADR-011. |
+| 3 | Morning Briefing Card + dashboard wiring | M | S (0.5hr) | DONE | `morning-briefing-card.tsx` — loading/available/upgrade/unavailable/error states. UX reviewed (7 fixes applied). |
 | 4 | Weekly Reconciliation API + component | M | S (0.5hr) | PLANNED | `/api/reconciliation/weekly` — missing check-in days + dashboard card |
 | 5 | Monthly Reconciliation API + component | M | S (0.5hr) | PLANNED | `/api/reconciliation/monthly` — month-end summary + dashboard card |
-| 6 | Tests (40+ new) | M | XS | PLANNED | Aggregation, API, component tests |
-| 7 | Anton live testing | -- | M (1hr) | PLANNED | Morning/afternoon, transactions, Taglish, mobile |
+| 6 | Tests (40+ new) | M | XS | DONE (Stream A) | 38 new tests: aggregation (14), API route (11), component (13). 761/761 total passing. |
+| 7 | Anton live testing | -- | M (1hr) | IN PROGRESS | Stream A ready for testing. |
 
 **Parallel Streams:**
 - **Stream A** (`claude/sprint8-briefing`): Tasks 1, 2, 3 — Morning Briefing (includes own dashboard wiring)
@@ -410,7 +410,7 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 **No cross-sprint dependencies.** Sprint 8 only touches: `lib/morning-briefing/`, `api/morning-briefing/`, `api/reconciliation/`, `components/dashboard/morning-*`, `components/dashboard/weekly-*`, `components/dashboard/monthly-*`, and adds cards to `dashboard/page.tsx`. Sprint 9 touches completely different files.
 
-**Key decisions:** Morning briefing cached 1x/day (one Claude call/user/day). No share button on monthly summary (deferred). Uses static BIR knowledge base for deadline alerts (Build 6 adds dynamic table).
+**Key decisions:** Morning briefing cached 1x/day via `daily_check_in.briefing_content` (ADR-011). Prompt v1.1.0 with structured `[BRIEFING_DATA]` JSON injection. Migration 012 adds cache columns. No share button on monthly summary (deferred). Uses static BIR knowledge base for deadline alerts (Build 6 adds dynamic table).
 
 **Actual Anton hours:** TBD — updated during retro
 **Sprint outcome:** IN PROGRESS
@@ -425,17 +425,17 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 | # | Task | Agent Size | Anton Time | Status | Notes |
 |---|------|-----------|------------|--------|-------|
-| 1 | Migration 011: `bir_deadlines` + `bir_tax_type` | M | XS | PLANNED | New table + column on business_profiles |
-| 2 | BIR deadline generation logic | M | S (0.5hr) | PLANNED | `lib/deadlines/generate.ts` — tax type → form deadlines |
-| 3 | Deadlines API (`/api/deadlines`) | M | XS | PLANNED | GET/POST/PATCH with color coding |
-| 4 | Deadline Watcher page + dashboard card + flag | L | S (0.5hr) | PLANNED | `/deadlines` page, components, dashboard card, `DEADLINE_WATCHER_ENABLED` |
-| 5 | BIR tax type selector on Profile | S | XS | PLANNED | Dropdown on profile, triggers deadline generation |
-| 6 | In-app deadline notification tracking | S | XS | PLANNED | 7/3/1-day boolean tracking, in-app only |
-| 7 | Reply Drafter API (`/api/reply-draft`) | M | XS | PLANNED | Claude generates 1-2 reply options |
-| 8 | Reply Drafter page + dashboard card + flag | M | S (0.5hr) | PLANNED | `/reply-drafter` page, components, dashboard card, `REPLY_DRAFTER_ENABLED` |
-| 9 | Reply Drafter guardrails | S | XS | PLANNED | No impersonation, no unauthorized commitments |
-| 10 | Tests (50+ new) | M | XS | PLANNED | Build 6 (30-40) + Build 7 (20-30) tests |
-| 11 | Anton live testing | -- | L (1.5hr) | PLANNED | Both features, mobile, Taglish, real messages |
+| 1 | Migration 011: `bir_deadlines` + `bir_tax_type` | M | XS | DONE | Table with RLS, indexes, unique constraint; `bir_tax_type` on business_profiles |
+| 2 | BIR deadline generation logic | M | S (0.5hr) | DONE | `lib/deadlines/` — types, constants (6 BIR forms), generate, schemas, notifications |
+| 3 | Deadlines API (`/api/deadlines`) | M | XS | DONE | GET (list + urgency color), POST (generate + upsert), PATCH (mark filed) |
+| 4 | Deadline Watcher page + dashboard card + flag | L | S (0.5hr) | DONE | `/deadlines` page, 3 components, enhanced dashboard card, `DEADLINE_WATCHER_ENABLED` |
+| 5 | BIR tax type selector on Profile | S | XS | DONE | 5 tax types, triggers deadline generation on save |
+| 6 | In-app deadline notification tracking | S | XS | DONE | 7/3/1-day window logic, `getUpcomingNotifications()` |
+| 7 | Reply Drafter API (`/api/reply-draft`) | M | XS | DONE | Claude Haiku call, circuit breaker, spend tracking, guardrails |
+| 8 | Reply Drafter page + dashboard card + flag | M | S (0.5hr) | DONE | `/reply-drafter` page, 3 components, useRef pattern, copy-to-clipboard |
+| 9 | Reply Drafter guardrails | S | XS | DONE | Input validation + output safety (impersonation, commitments, financial advice) |
+| 10 | Tests (50+ new) | M | XS | DONE | 202 new tests (73 deadlines + 104 reply drafter + 25 morning briefing). 761 total, 0 failures |
+| 11 | Anton live testing | -- | L (1.5hr) | IN PROGRESS | Both features, mobile, Taglish, real messages |
 
 **Parallel Streams:**
 - **Stream A** (`claude/sprint9-deadlines`): Tasks 1-6 — Deadline Watcher (Build 6, includes own dashboard card + feature flag)
@@ -446,8 +446,13 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 **Key decisions:** BIR tax type collected via Profile page (not onboarding change). `bir_deadlines` references `auth.users(id)` not `businesses(id)` (table doesn't exist yet). Push notifications deferred — in-app only.
 
-**Actual Anton hours:** TBD — updated during retro
-**Sprint outcome:** IN PROGRESS
+**What was built:**
+- **Build 6 — BIR Deadline Watcher:** Migration 011 (`bir_deadlines` table + `bir_tax_type` column), `lib/deadlines/` (types, constants, generate, schemas, notifications — 6 files), `/api/deadlines` (GET/POST/PATCH), `/deadlines` page, 3 deadline components, profile tax type selector (5 BIR tax types), enhanced dashboard card with next deadline + overdue count, `DEADLINE_WATCHER_ENABLED` flag
+- **Build 7 — Reply Drafter:** `lib/reply-drafter/` (types, schemas, prompt, guardrails — 5 files), `/api/reply-draft` (Claude Haiku with circuit breaker + spend tracking), `/reply-drafter` page, 3 reply components (input, card, results), copy-to-clipboard, output guardrails (no impersonation/commitments/financial advice), `REPLY_DRAFTER_ENABLED` flag
+- **Sprint 8 partial (Morning Briefing):** Migration 012 (`morning_briefing_cache`), `lib/morning-briefing/`, `/api/morning-briefing`, morning briefing card component (also landed via parallel agent work)
+
+**Actual Anton hours:** TBD — live testing in progress
+**Sprint outcome:** IN PROGRESS — awaiting Anton live testing
 
 ### Sprint 6+7 Retro — 2026-03-26
 

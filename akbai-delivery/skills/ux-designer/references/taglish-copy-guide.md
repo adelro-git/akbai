@@ -329,6 +329,35 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 
 ---
 
+## Real-World Taglish Expressions (from market sentiment research, March 2026)
+
+These expressions were found in real Reddit, Facebook, and TikTok posts by Filipino MSMEs. Use them as reference for natural Taglish tone — this is how the target market actually talks about their pain points.
+
+### BIR/Tax Expressions (fear-driven, emotional)
+| Expression | Context | Source |
+|-----------|---------|--------|
+| "nahihirapan sa monthly BIR filing" | Business owners describing recurring struggle | Facebook (KPC Tax) |
+| "nakakatakot na karanasan" | Describing BIR audit/penalty fear | TikTok (@izaestinopo) |
+| "nalilito sa tax filing" | Confusion about which forms to file | TikTok (@ec_taxph) |
+| "hindi ko alam kung kumikita ba o hindi" | Cash-flow blindness — literal persona quote | Reddit (r/Philippines) |
+| "struggle with all the paperworks" | Child posting about their mom's small business | Reddit (r/taxPH) |
+
+### Business/Hustle Expressions (aspiration, grit)
+| Expression | Context | Source |
+|-----------|---------|--------|
+| "negosyante" | How business owners self-identify | Facebook groups |
+| "katulong sa negosyo" | Desired helper/tool framing | FB group outreach |
+| "from hustle to real business" | Aspiration — validated by BCG data | BCG report language |
+| "kaya mo 'to!" | Encouragement — natural KA tone | Common FB group language |
+
+### Usage Notes
+- "Nahihirapan" (struggling) is the most common verb for BIR-related pain — use in empathy-first copy
+- "Nakakatakot" (scary) is the emotional peak — use sparingly, in relief-framing: "Hindi na nakakatakot"
+- "Negosyante" is how they self-identify — never use "entrepreneur" or "business owner" in Taglish contexts
+- "Hindi ko alam" (I don't know) is the cash-flow blindness admission — the Maria Moment directly answers this
+
+---
+
 ## 12. Dashboard Microcopy
 
 > Added Sprint 4 (2026-03-25). Patterns used on the main dashboard shell.

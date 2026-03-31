@@ -53,6 +53,7 @@ export function assembleSystemPrompt(input: PromptAssemblyInput): string {
     business_type: input.userContext?.businessType ?? 'business',
     tier: input.userContext?.tier ?? 'free',
     bir_status: input.userContext?.birRegistered ? 'BIR-registered' : 'Not yet BIR-registered',
+    briefing_data_json: input.dataContext ?? '{}',
   };
   layers.push(interpolate(FEATURE_PROMPTS[input.feature], templateVars));
 

@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-010
-> Last updated: 2026-03-26
+> Current highest: ADR-011
+> Last updated: 2026-03-28
 
 ---
 
@@ -19,6 +19,7 @@
 | ADR-008 | Onboarding rate-limit exemption (Gap E3) | Accepted | 2026-03-22 |
 | ADR-009 | PostHog for product analytics (Gap A5) | Accepted | 2026-03-24 |
 | ADR-010 | Saan Napunta expenses dashboard (Build 4) | Accepted | 2026-03-26 |
+| ADR-011 | Ang Umaga Mo morning briefing (Build 5) | Accepted | 2026-03-28 |
 
 ---
 
@@ -371,3 +372,103 @@ Filipino MSMEs track expenses in notebooks or not at all. AKBai's "Saan Napunta?
 - Prep for Gap E1 (reconciliation schema for OCR receipt matching)
 
 **Review Trigger:** When OCR receipt scanning is functional (Gap E1), implement reconciliation UI using `reconciliation_status` and `reconciled_with_id` columns.
+
+---
+
+## ADR-011: Ang Umaga Mo Morning Briefing (Build 5)
+
+**Status:** Accepted
+**Date:** 2026-03-28
+
+**Context:**
+Build 5 adds "Ang Umaga Mo" -- a proactive morning briefing card on the dashboard that summarizes yesterday's transactions, current cash position, and upcoming BIR deadlines. This is the first feature where KA speaks *first* (proactive AI, not reactive chatbot). The briefing requires a Claude Sonnet call with aggregated financial context, but the content is static for the day -- a user checking the dashboard 5 times should not trigger 5 API calls. The feature is Pro+ only (free tier sees an upgrade CTA). The constraint is no new Supabase tables.
+
+**Decision:**
+Five linked decisions covering caching, time gating, tier gating, data flow, and component structure.
+
+### 1. Caching: Extend `daily_check_in` with a `briefing_content` column
+
+Add a nullable `briefing_content TEXT` column to the existing `daily_check_in` table (new migration). The morning briefing API route checks for an existing `daily_check_in` row for today where `briefing_content IS NOT NULL`. If found, return the cached content (zero Claude calls). If not found, aggregate data, call Claude Sonnet, then upsert the row with `briefing_content` set.
+
+This gives exactly one Claude call per user per day. The cache key is the natural `(user_id, check_in_date)` unique constraint already on `daily_check_in`. If the user has not checked in yet today, a row is created with `mood = NULL` and `kai_greeting` set to a default -- the check-in POST later upserts over it without clearing `briefing_content`.
+
+### 2. Time gating: 5AM-12PM Manila window, server-side enforcement
+
+The `/api/morning-briefing` route uses `toManila()` from `@/lib/timezone` to get the current Manila hour. If the hour is outside 5-11 (inclusive, meaning 5:00 AM through 11:59 AM), the route returns a 200 with `{ available: false, reason: 'outside_window' }` and a Taglish message ("Bukas ulit, Boss! Ang Umaga Mo is available 5AM-12PM."). The dashboard card reads this and shows an appropriate state.
+
+This is a soft gate -- the briefing is *generated* only during the window, but a cached briefing from this morning is still *served* outside the window. The time check only blocks the Claude API call, not reads from cache.
+
+### 3. Tier gating: Pro+ only, free tier sees upgrade CTA
+
+The route checks the user's subscription tier (same pattern as `/api/chat/route.ts` -- query `subscriptions` table). Free tier gets a 200 response with `{ available: false, reason: 'tier_required', requiredTier: 'pro' }`. The dashboard card renders an upgrade CTA with Taglish copy ("I-upgrade sa Pro para makita ang Umaga Mo!"). Feature flag `MORNING_BRIEFING_ENABLED` (already defined in `flags.ts`) provides a kill switch.
+
+### 4. Data flow: aggregate -> Claude -> cache -> serve
+
+```
+GET /api/morning-briefing
+  |-> Auth check (Supabase cookie)
+  |-> Feature flag check (MORNING_BRIEFING_ENABLED)
+  |-> Tier check (Pro+ required)
+  |-> Cache check (daily_check_in.briefing_content for today)
+  |   |-> HIT: return cached content (no Claude call)
+  |   |-> MISS:
+  |       |-> Time window check (5AM-12PM Manila)
+  |       |-> Aggregate context:
+  |       |     - Yesterday's transactions (from `transactions` table)
+  |       |     - Current cash position (sum of all non-deleted transactions)
+  |       |     - BIR deadlines next 7 days (hardcoded Phase 0 calendar)
+  |       |-> Assemble system prompt (morning_briefing feature)
+  |       |-> Claude Sonnet call (max_tokens: 1024)
+  |       |-> Output guardrails (BIR disclaimer, output filtering)
+  |       |-> Upsert to daily_check_in.briefing_content
+  |       |-> Record spend (circuit breaker)
+  |       |-> Return briefing
+```
+
+The route is GET (idempotent, cacheable) not POST, because the client is reading a briefing, not creating one. The Claude call is a side effect of a cache miss, but the response is deterministic for the day.
+
+### 5. Component structure
+
+```
+frontend/src/
+  lib/morning-briefing/
+    aggregate.ts       -- Fetches and computes summary stats from transactions + deadlines
+    types.ts           -- BriefingContext, BriefingResponse, AggregatedData types
+  app/api/morning-briefing/
+    route.ts           -- GET handler (auth, tier, cache, aggregate, Claude, cache write)
+  app/(app)/(features)/dashboard/
+    components/
+      MorningBriefingCard.tsx  -- Client component: fetch, loading/empty/error/upgrade states
+```
+
+The aggregation logic lives in `lib/` (testable in isolation). The API route orchestrates. The card is a client component (needs `useState` for loading states and `useEffect` for fetch-on-mount).
+
+**Alternatives Considered:**
+
+- **New `morning_briefings` table:** Cleaner separation but violates the "no new tables" constraint. The `daily_check_in` extension is pragmatic -- one column addition vs a full table with RLS policies, indexes, and migration. If briefing complexity grows (versioning, A/B testing), a dedicated table can be extracted later.
+
+- **In-memory cache (Map) instead of DB:** Resets on every Vercel cold start. A user's first dashboard visit after a cold start would always trigger a Claude call. With ~20 cold starts/day on Vercel's free tier, this could mean 20 calls/user/day instead of 1. DB caching is the only reliable option.
+
+- **Redis/Vercel KV:** Adds an external dependency and billing relationship for a simple key-value lookup that Postgres handles fine. Over-engineered for Phase 0.
+
+- **POST route instead of GET:** Semantically wrong -- the client is requesting a briefing, not creating a resource. GET allows browser and CDN caching headers in the future. The Claude call on cache miss is an implementation detail, not a client-visible side effect.
+
+- **Generate briefing via cron job (e.g., Supabase pg_cron at 5AM):** Would pre-generate for all Pro users. But at Phase 0 scale (<50 users), the complexity of cron setup, batch processing, and failure handling is not justified. Lazy generation on first visit is simpler and only generates for users who actually open the app.
+
+- **Always serve cached briefing (no time window):** The time window exists to set user expectations -- "Ang Umaga Mo" is a morning ritual, not an all-day feature. Without the window, users might expect fresh briefings at 8PM. The window also naturally limits Claude API calls to morning hours.
+
+**Consequences:**
+
+- One Claude Sonnet call per Pro+ user per day -- cost-efficient, predictable spend
+- `daily_check_in` table gains a `briefing_content` column -- minimal schema change, no new RLS policies needed (existing policies cover it)
+- Morning briefing and daily check-in share a row -- the check-in upsert must preserve `briefing_content` (use column-specific upsert, not full row replace)
+- Free tier users see the card with an upgrade CTA -- drives Pro conversion
+- Feature flag provides instant kill switch if costs spike
+- Aggregation logic is reusable for future features (weekly/monthly reports)
+- Time window means users outside 5AM-12PM see a "come back tomorrow" state -- acceptable for Phase 0, can be relaxed later
+- BIR deadlines are hardcoded for Phase 0 (no dynamic deadline table yet) -- sufficient for MVP, aligns with existing gap registry
+
+**Related Gaps:**
+- Offline UX (Gap registry item 5): cached briefing_content enables offline display of this morning's briefing
+
+**Review Trigger:** If briefing content needs versioning (A/B testing prompt variants) or if the `daily_check_in` table becomes overloaded with unrelated columns, extract to a dedicated `morning_briefings` table. Also revisit when BIR deadline data moves from hardcoded to a dynamic table (Build 6).

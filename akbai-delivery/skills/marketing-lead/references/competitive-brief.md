@@ -124,6 +124,36 @@ These are the framings to use in public-facing content. They focus entirely on A
 
 ---
 
+## Market Validation Data (March 2026)
+
+Real-world data that strengthens every competitive angle. Use these in content to add authority.
+
+### BCG "Heart of Hustle" Report (July 2025, n=3,098 MSMEs with DTI)
+- **99.5%** of PH businesses are MSMEs, employing **60%+** of the workforce
+- **77%** want to increase digital tool usage — but **only 16%** use any today
+- **74%** say their business "isn't big enough" for digital tools (perception barrier, not reality)
+- **64%** started a business for family financial independence
+- **73%** expect stronger results next year (optimism despite adversity)
+- Accounting software shows the **largest gap** between current usage and future demand
+- BCG's own four MSME archetypes (manufacturers, retailers, sari-sari, food) map directly to AKBai's personas
+
+### Competitive Signal — CPA Building Same Product
+A CPA posted on r/BusinessPH: "I'm doing research for **a software/digital product to make filing easier for small businesses** to comply with BIR requirements." This confirms the gap is real and visible to industry insiders. AKBai's moat: 5-pillar coverage (not just BIR), Taglish-native, AI-first (not form-first), proactive (not reactive).
+
+### Real Pricing Comparison (from Reddit r/taxPH)
+- Accounting firm: ₱5,000 tax filing + ₱5,000 bookkeeping + ₱1,800 receipt encoding = **₱11,800/month**
+- AKBai Pro: **₱399/month** — 97% cheaper
+- This is a public-facing-safe comparison: "compared to what most accounting firms charge"
+
+### CPA Australia Survey (May 2025)
+- Filipino SMEs **lag regional counterparts** in digital adoption
+- **69% of SMEs that invested in technology reported improved profitability** (vs 56% regional average)
+- Use this stat to counter the "too small for tools" objection
+
+Full research with Reddit/Facebook/TikTok quotes: `shared/market-sentiment-research.md`
+
+---
+
 ## Rules for Competitive Content
 
 1. **Never name competitors in public-facing content.** Use "compared to what's on the market," "most existing tools," "the alternatives out there," etc. The competitive-brief details are for your strategic brain, not for publishing.
