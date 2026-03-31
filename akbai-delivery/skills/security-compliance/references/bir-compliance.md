@@ -1,6 +1,6 @@
 # BIR Compliance & Legal Boundaries — AKBai
 > Used by: security-compliance, ai-engineer, product-owner, fullstack-engineer
-> Last updated: March 2026 | Source: Roadmap v14, Project Context §9, Brand Context (KA persona rules)
+> Last updated: 2026-03-31 | Source: Roadmap v14, Project Context §9, Brand Context (KA persona rules)
 > This document defines what AKBai CAN and CANNOT do regarding BIR/tax-related features.
 
 ---
@@ -46,6 +46,9 @@ These features are legally safe because they present factual information without
 | **BIR form identification** | Tells user which BIR form to file based on their business type | Public information from BIR website (Revenue Memorandum Circulars) |
 | **VAT threshold monitoring** | Alerts user when gross receipts approach ₱3M threshold | Factual threshold from NIRC. Alert only, no recommendation. |
 | **Morning Briefing (BIR section)** | Includes upcoming BIR deadlines in Ang Umaga Mo card | Summary of existing tracked deadlines |
+| **EWT rate display** | Shows EWT withholding rates (2%, 5%, 10%, 1%) based on income type classification | Public data from RR 2-98 as amended. Rate schedule, not advice. |
+| **Form 2307 explanation** | Explains what a 2307 is, who issues it, and how to claim the tax credit | Factual description of a BIR form and its purpose |
+| **PSIC-based classification display** | Shows user's PSIC code from COR and the corresponding EWT rate category | Factual mapping from public BIR classification data |
 
 ---
 
@@ -63,6 +66,8 @@ These are explicitly out of scope. If KA is asked to do any of these, it must de
 | Advise on tax penalties or amnesty | Professional advice | "May tax amnesty program ang BIR, pero kumonsulta muna sa CPA bago mag-apply." |
 | Recommend timing of asset purchases for tax benefit | Tax planning = tax advice | Redirect to CPA. |
 | Advise on business structure for tax optimization | Professional advice | "Kung gusto mong malaman kung mas ok ba ang sole proprietorship o corporation tax-wise, ang CPA mo po ang best na kausapin." |
+| Determine if a specific engagement is contractor vs professional for EWT | Requires professional judgment on classification | "Depende po ito sa BIR registration at PSIC code. Kumonsulta sa CPA para sa tamang withholding rate." |
+| Advise whether withholding was applied correctly | Tax compliance assessment | "Hindi po ako makapag-verify kung tama ang withholding. I-check mo sa CPA mo ang 2307 na natanggap mo." |
 
 ---
 
@@ -283,6 +288,9 @@ Some user questions fall in a gray area. Here's how to handle them:
 | "Mas ok ba 8% flat tax o graduated?" | ⛔ Advice — redirect | Cannot recommend tax regime, redirect to CPA |
 | "Bakit ganito kalaki ang tax ko?" | ⚠️ Gray area | Can explain the computation steps, but not advise on reducing it. Add disclaimer. |
 | "May tax amnesty ba ngayon?" | ⚠️ Gray area | Can confirm existence of publicly announced programs, but cannot advise on eligibility or application. Redirect to CPA. |
+| "Magkano ang withholding tax sa client ko?" | ⚠️ Gray area | Can show the EWT rate schedule (2%/5%/10%) and explain contractor vs professional distinction. Can note user's PSIC code if known. But cannot determine which rate definitively applies to a specific engagement — redirect to CPA for classification. Add disclaimer. |
+| "Kailangan ko ba mag-issue ng 2307?" | ⚠️ Gray area | Can explain when a business becomes a withholding agent (when paying for services). Cannot advise whether a specific payment requires withholding — redirect to CPA. Add disclaimer. |
+| "Tama ba ang 2307 na binigay sa akin?" | ⛔ Advice — redirect | Cannot verify correctness of withholding. Redirect to CPA. |
 
 ### Escalation Principle
 When in doubt: **show the data, don't interpret it.** KA can always display numbers, dates, and form names. KA can never say "you should" or "I recommend" regarding tax matters. If a response starts veering into "you should," stop and redirect to CPA.

@@ -1,7 +1,7 @@
 # AKBai — BIR Knowledge Base
 > Used by: ai-engineer, security-compliance, fullstack-engineer (Build 6 Deadline Watcher)
 > Source: BIR.gov.ph public data, TRAIN Law (RA 10963), RMC 20-2026
-> Last verified: 2026-03-22 | Tax year: 2025–2026 rules
+> Last verified: 2026-03-31 | Tax year: 2025–2026 rules
 > **⚠️ DISCLAIMER: This file is reference material for KA's domain knowledge. All tax-related outputs to users MUST include the BIR disclaimer: "Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo."**
 
 ---
@@ -30,6 +30,7 @@
 | **2550M** | Monthly VAT Declaration | Quarterly 2550Q is now the **mandatory default** since January 1, 2023 (per RMC 5-2023); monthly 2550M remains an **optional additional filing** with no penalty for switching (clarified by RMC 52-2023) | Monthly (optional) |
 | **1702Q** | Quarterly Income Tax Return (Corporations) | Corporations | Q1, Q2, Q3 |
 | **1702** | Annual Income Tax Return (Corporations) | Corporations | Annually |
+| **2307** | Certificate of Creditable Tax Withheld at Source | Issued by **payer** (withholding agent) to **payee** (income earner) to document EWT withheld | Per transaction or monthly — payee attaches to quarterly/annual ITR as tax credit |
 
 ### Key Rule: 8% Flat Tax Exempts from 2551Q
 If a non-VAT individual taxpayer opts for 8% flat tax, they are **exempt** from filing BIR Form 2551Q (percentage tax). The 8% rate replaces both graduated income tax AND 3% percentage tax.
@@ -170,6 +171,43 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 | Percentage tax (2551Q) | **3%** of gross sales/receipts |
 | Who pays | Non-VAT taxpayers using graduated rates (NOT 8% flat) |
 
+### E. Expanded Withholding Tax (EWT) — BIR Form 2307
+
+**What is EWT?** The payer (client/customer/platform) withholds a percentage of the payment and remits it to BIR on behalf of the payee (income earner). The payee receives a **BIR Form 2307** (Certificate of Creditable Tax Withheld at Source) as proof. The withheld amount is a **tax credit** — deducted from the payee's income tax due on their quarterly/annual ITR.
+
+**EWT Rates (RR 2-98 as amended):**
+
+| Income Type | EWT Rate | Classification | Examples |
+|------------|----------|----------------|----------|
+| Professional fees (PRC-regulated profession, gross ≤ ₱3M) | **5%** | Individual practicing a profession regulated by PRC | CPAs, lawyers, architects, engineers, doctors, dentists |
+| Professional fees (PRC-regulated profession, gross > ₱3M) | **10%** | Individual practicing a profession regulated by PRC, exceeding ₱3M gross | Same as above but higher-earning |
+| Contractor/subcontractor income | **2%** | Business services, non-PRC-regulated | Interior design firms (PSIC 82990), construction, cleaning services, IT contractors, marketing agencies |
+| Platform seller withholding (e-marketplace) | **1%** | Electronic marketplace operators withholding on sellers (per RR 16-2023) | Shopee, Lazada withholding on seller payouts |
+
+**Key distinctions for KA:**
+- **Professional vs contractor** is determined by whether the profession is **PRC-regulated** (Professional Regulation Commission), NOT by the nature of the work. Interior design is NOT PRC-regulated — it's classified as business services (typically PSIC 82990), so the 2% rate applies.
+- **PSIC code** (Philippine Standard Industrial Classification) on the COR is the authoritative indicator of business classification for withholding purposes.
+- The **payer** (client) is the withholding agent — they're responsible for remitting and issuing the 2307.
+- The **payee** (service provider) claims the withheld amount as a tax credit on their ITR.
+
+**How EWT credits work:**
+```
+Example: Maria hires a freelance photographer (business service, 2% EWT)
+Payment: ₱50,000
+EWT withheld: ₱50,000 × 2% = ₱1,000
+Photographer receives: ₱49,000 + BIR Form 2307
+Photographer claims ₱1,000 as tax credit on their 1701Q/1701A
+```
+
+**Platform seller context (Jose persona):**
+Shopee/Lazada withhold **1%** EWT on seller payouts (per RR 16-2023). The platform issues 2307 certificates — usually downloadable from the seller dashboard. Jose should:
+1. Download 2307 certificates from platform seller center
+2. Track total EWT withheld per quarter
+3. Claim as tax credit on 1701Q quarterly and 1701A annual filings
+
+**When is a business the withholding agent?**
+A business becomes a withholding agent when it pays for professional services or contractor work. Key trigger: if your business pays another individual or company for services, you may need to withhold EWT and issue a 2307. This is common but often missed by MSMEs.
+
 ---
 
 ## 4. VAT Threshold Rules
@@ -210,6 +248,7 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 - **Not knowing which form to file** — confused between 1701Q and 2551Q. Doesn't know she might be eligible for 8% flat tax.
 - **Not separating personal and business expenses** — uses one GCash for everything. KA's expense tracking helps here.
 - **Approaching VAT threshold unknowingly** — if Maria's baking business grows past ₱250K/month consistently, she may cross ₱3M annual. KA should monitor and alert.
+- **Not issuing 2307 when paying subcontractors** — if Maria hires a freelance delivery driver or food photographer, she may be required to withhold EWT and issue a 2307. Most MSMEs don't know they can be withholding agents.
 
 ### Jose (Online Seller — Shopee/Lazada)
 - **Miscalculating VAT on platform sales** — Shopee/Lazada already withhold expanded withholding tax (EWT). Jose may not know this counts toward his tax. Can lead to double-counting or under-reporting.
@@ -217,12 +256,14 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 - **Late filing of 2550Q** — quarterly VAT return due on the 25th. If VAT-registered, missing this means 25% surcharge + interest.
 - **Confusing gross sales with net sales** — Shopee shows gross, but after commissions and fees, actual income is lower. BIR taxes on gross receipts, not net profit.
 - **Not declaring COD payments** — Cash-on-delivery payments may not show in GCash/bank. Still taxable income.
+- **Not downloading 2307 certificates from platform** — Shopee/Lazada issue 2307s for the 1% EWT they withhold. These are usually in the Seller Center Finance section. Jose needs to download and attach these to quarterly/annual ITR to claim the tax credit. Missing 2307s = overpaying tax.
 
 ### Ana (Freelance Creative — ₱25K–₱80K/month)
 - **Thinking 8% flat tax allows deductions** — it does NOT. 8% is on gross income (minus ₱250K). No itemized deductions, no OSD. If Ana has high expenses, graduated rates + itemized deductions might actually be cheaper.
 - **Not knowing quarterly filing schedule** — thinks "annual return" means she only files once a year. 1701Q is due Q1-Q3 even on 8% flat.
 - **Not filing when income is low** — BIR requires quarterly filing **regardless of income** as long as you're registered. Zero-income quarters still need filing.
 - **Mixed income confusion** — if Ana has a part-time job + freelance, the ₱250K reduction on 8% doesn't apply to the freelance side (it's applied to compensation income instead).
+- **Not collecting 2307 from clients** — when Ana's clients withhold EWT (5% if PRC-regulated profession, 2% if contractor), they should issue a 2307. Ana needs to collect these and claim as tax credits. Many freelancers don't ask for 2307s and end up double-paying.
 
 ### Andoy (Sari-Sari / Micro-Retail — ₱500–₱3,000/day)
 - **Not being registered at all** — many sari-sari stores operate informally. BIR registration is required for any business earning income. KA should gently guide toward formalization, not guilt.
@@ -244,7 +285,9 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 | **SI** | "Sales Invoice" | Document for sale of goods (vs. OR for services) | Required for VAT-registered sellers. |
 | **VAT** | "VAT" (used as-is) | Value Added Tax — 12% on gross sales when registered | Triggered when gross > ₱3M/year. Jose persona's primary concern. |
 | **Percentage Tax** | "percentage tax" or "3%" | 3% tax on gross for non-VAT graduated-rate taxpayers | Not applicable if using 8% flat tax option. |
-| **EWT** | "withholding tax" | Expanded Withholding Tax — withheld by payer and remitted to BIR | Platform sellers (Shopee/Lazada) may have EWT withheld. Counts as tax credit. |
+| **EWT** | "withholding tax" | Expanded Withholding Tax — withheld by payer and remitted to BIR | Rates: 2% (contractors), 5% (professionals ≤ ₱3M), 10% (professionals > ₱3M), 1% (e-marketplace). Withheld amount = tax credit on ITR. See §3E. |
+| **2307** | "2307" or "withholding certificate" | BIR Form 2307 — Certificate of Creditable Tax Withheld at Source | Issued by payer to payee as proof of EWT withheld. Payee attaches to ITR to claim tax credit. |
+| **PSIC** | "PSIC code" | Philippine Standard Industrial Classification — industry code on COR | Determines business classification for EWT rate purposes. E.g., 82990 = Other Business Support Services (2% EWT). |
 | **RDO** | "RDO ko" | Revenue District Office — local BIR office where taxpayer is registered | Transfer of RDO needed if business moves to a different city. |
 | **ITR** | "ITR" | Income Tax Return — generic term for 1701Q/1701A/1701/1702Q/1702 | KA uses the specific form number, not just "ITR." |
 | **OSD** | "OSD" | Optional Standard Deduction — 40% of gross sales as deduction | Alternative to tracking every single receipt. Good suggestion for Maria/Andoy. |

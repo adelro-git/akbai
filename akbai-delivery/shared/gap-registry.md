@@ -1,7 +1,7 @@
 # AKBai — Pre-Launch Gap Registry
 > Used by: project-manager, solutions-architect, fullstack-engineer, devops-engineer, security-compliance
 > Last updated: 2026-03-25 | Source: Roadmap v14, Operations Playbook v7
-> 32 total gaps across 6 categories. 10 CRITICAL items remain (A1, A5 resolved this sprint; D1 downgraded to IMPORTANT).
+> 33 total gaps across 6 categories. 10 CRITICAL items remain (A1, A5 resolved this sprint; D1 downgraded to IMPORTANT). E4 (EWT/2307) added 2026-03-31.
 
 ---
 
@@ -73,6 +73,7 @@
 | E1 | Resibo OCR technical spike | **CRITICAL** | Phase 0A — Build 0 | IN PROGRESS (2026-03-24). OCR pipeline code + test harness built: `frontend/src/lib/ocr/` (types, Zod schemas, Filipino receipt prompt, parse-receipt with Haiku-first + Sonnet fallback, cost helpers). API route at `/api/ocr`. 46 unit tests passing. Spike runner script ready at `__tests__/spike-runner.ts`. **AWAITING**: Anton to provide 10-15 real Filipino receipt images, then run spike with `ANTHROPIC_API_KEY=xxx npx tsx src/lib/ocr/__tests__/spike-runner.ts`. Must hit 85%+ field accuracy. |
 | E2 | Meta API dummy webhook submission | IMPORTANT | Phase 0A — This week | Meta App Review takes 1–3+ months. Submit a simple Next.js endpoint returning 200 OK as the webhook now. Decouples Phase 2 DM Connect from bureaucratic wait. Ping endpoint monthly to keep approval active. Effort: 1 hour. |
 | E3 | Onboarding rate-limit exemption | **CRITICAL** | Build 1 — Architecture | ✅ RESOLVED 2026-03-22. `checkCircuitBreaker()` accepts optional `onboardingCompleted` param. When `false`, free tier 10-query limit is bypassed. Chat route passes `users.onboarding_completed` to circuit breaker. Safe default: `undefined` still enforces limit. 3 tests. ADR-008. |
+| E4 | EWT/2307 knowledge base & withholding tax coverage | MEDIUM | Build 5–6 | IN PROGRESS (2026-03-31). BIR knowledge base had no EWT rate table, no Form 2307 reference, no contractor-vs-professional classification. Real COR test (PSIC 82990 interior design) exposed the gap. §3E added to bir-knowledge-base.md with EWT rates (2%/5%/10%/1%), 2307 flow, PSIC classification. Still needed: PSIC code field on `business_profiles` schema (Phase 2+), COR Vision auto-extraction during onboarding (Phase 2+), EWT credit tracking in expense module. |
 
 ---
 
@@ -96,9 +97,9 @@
 | B — UX Gaps | 0 | 7 | 0 | 7 |
 | C — Business Logic | 0 | 2 | 1 | 3 |
 | D — Operational (Playbook) | 2 | 7 | 2 | 11 |
-| E — Pre-Build Checklist (v14) | 2 | 1 | 0 | 3 |
+| E — Pre-Build Checklist (v14) | 2 | 1 | 0 | 4 |
 | F — Security Audit (Mar 2026) | 1 | 2 | 0 | 3 |
-| **TOTAL** | **10** | **19** | **3** | **32** |
+| **TOTAL** | **10** | **19** | **3** | **33** |
 
 **Rule:** All CRITICAL gaps are hard gates. No Phase 1 build proceeds until these are resolved.
 
