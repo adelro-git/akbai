@@ -6,6 +6,7 @@ import {
   Wallet,
   Calendar,
   MessageCircle,
+  MessageSquare,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -14,6 +15,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   wallet: Wallet,
   calendar: Calendar,
   'message-circle': MessageCircle,
+  'message-square': MessageSquare,
 };
 
 interface DashboardCardProps {

@@ -295,7 +295,49 @@ Anong email mo para ma-set up kita?
 
 ---
 
-## 8. FB Group Admin Partnership Scripts
+## 8. Validated Content Hooks (from market sentiment research, March 2026)
+
+These hooks are derived from real Reddit, Facebook, and TikTok conversations. They use the exact language and emotional triggers the target market uses.
+
+### Hook Bank — Ready to Use in FB Posts, Reels, Ads
+
+**Fear → Relief (BIR Compliance)**
+- "Hindi na nakakatakot ang BIR deadline." — Uses the exact word ("nakakatakot") found on TikTok
+- "BIR deadline in 3 days? Relax — may katuwang ka na." — Addresses the 7/3/1-day anxiety window
+- "20 BIR deadlines per year. Isa lang ang ma-miss, 25% surcharge agad." — Fear-with-facts hook
+- "Penalty-free since 2026." — Aspirational, forward-looking
+
+**Ignorance → Clarity (Cash Flow)**
+- "Alam mo na ba kung kumikita ka?" — Echoes real Reddit quote: "hindi ko alam kung kumikita ba o hindi"
+- "Kumikita ka pala. ₱18,400 ang net mo this month." — The Maria Moment, verbatim
+- "Hindi kailangan ng accountant para malaman ang numbers mo." — Counters the ₱11,800/mo accountant cost
+
+**Manual → Automatic (Receipt Tracking)**
+- "Snap mo lang, tracked na." — Simple, action-oriented
+- "Goodbye Excel. Goodbye notebook. Hello KA." — Addresses the FB group question "Excel pa rin?"
+- "₱399/month vs ₱11,800/month sa accountant." — Real pricing from Reddit
+
+**Overwhelmed → Handled (DM Management)**
+- "Si KA na ang sasagot — ikaw na lang mag-send." — Direct value prop for Reply Drafter
+- "100 messages today? Let KA help you reply." — Scale of the problem
+
+**Aspiration (BCG-validated)**
+- "From hustle to real business." — Already a brand pillar, now BCG-confirmed
+- "99.5% ng businesses sa Pilipinas, MSME. Deserve nila ng AI partner." — BCG/DTI stat
+- "Hindi ka nag-iisa sa negosyo mo." — Brand promise, reinforced by BCG's "aspiration economy" findings
+
+### Data Points for Authority Content
+Use these stats in SEO articles, FB value posts, and email nurture:
+- 77% of MSMEs want digital tools, only 16% use any (BCG 2025)
+- 69% of SMEs that invested in tech saw improved profitability (CPA Australia 2025)
+- 64% of MSMEs started a business for family financial independence (BCG 2025)
+- 74% say their business is "not big enough" for digital tools — perception vs reality (BCG 2025)
+
+Full research: `shared/market-sentiment-research.md`
+
+---
+
+## 9. FB Group Admin Partnership Scripts
 
 Target: Admins of Negosyante PH, Online Sellers PH, Freelancers PH, and similar groups (50K-500K members each).
 

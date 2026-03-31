@@ -15,6 +15,8 @@ export const FLAGS = {
   OCR_ENABLED: 'ocr_enabled',
   MORNING_BRIEFING_ENABLED: 'morning_briefing_enabled',
   DARK_MODE_ENABLED: 'dark_mode_enabled',
+  DEADLINE_WATCHER_ENABLED: 'deadline_watcher_enabled',
+  REPLY_DRAFTER_ENABLED: 'reply_drafter_enabled',
 } as const satisfies Record<string, string>;
 
 /** Union type of all known flag key names */

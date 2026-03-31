@@ -17,6 +17,7 @@ export default async function ProfilePage() {
   let businessType: string | null = null;
   let incomeRange: string | null = null;
   let birRegistered = false;
+  let birTaxType: string | null = null;
   let profileVersion = 1;
 
   if (SKIP_AUTH) {
@@ -46,7 +47,7 @@ export default async function ProfilePage() {
     // Fetch business profile
     const { data: profile } = await supabase
       .from('business_profiles')
-      .select('business_name, business_type, income_range, bir_registered, profile_version')
+      .select('business_name, business_type, income_range, bir_registered, bir_tax_type, profile_version')
       .eq('user_id', user.id)
       .is('deleted_at', null)
       .single();
@@ -55,6 +56,7 @@ export default async function ProfilePage() {
     businessType = profile?.business_type ?? null;
     incomeRange = profile?.income_range ?? null;
     birRegistered = profile?.bir_registered ?? false;
+    birTaxType = profile?.bir_tax_type ?? null;
     profileVersion = profile?.profile_version ?? 1;
   }
 
@@ -70,6 +72,7 @@ export default async function ProfilePage() {
         businessType={businessType}
         incomeRange={incomeRange}
         birRegistered={birRegistered}
+        birTaxType={birTaxType}
         profileVersion={profileVersion}
       />
     </div>

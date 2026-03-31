@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { BusinessTypeEnum, IncomeRangeEnum } from '@/lib/kilala-kita/schemas';
+import { BIR_TAX_TYPES } from '@/lib/deadlines/types';
 
 // ============================================================
 // Zod Schemas
@@ -15,6 +16,7 @@ export const ProfilePatchSchema = z
     business_type: BusinessTypeEnum.optional(),
     income_range: IncomeRangeEnum.optional(),
     bir_registered: z.boolean().optional(),
+    bir_tax_type: z.enum(BIR_TAX_TYPES).optional(),
   })
   .refine(
     (data) =>
@@ -22,7 +24,8 @@ export const ProfilePatchSchema = z
       data.business_name !== undefined ||
       data.business_type !== undefined ||
       data.income_range !== undefined ||
-      data.bir_registered !== undefined,
+      data.bir_registered !== undefined ||
+      data.bir_tax_type !== undefined,
     { message: 'Walang data na i-update.' }
   );
 
@@ -35,6 +38,7 @@ export interface ProfileData {
   business_type: string | null;
   income_range: string | null;
   bir_registered: boolean;
+  bir_tax_type: string | null;
   profile_version: number;
 }
 
@@ -59,6 +63,7 @@ export async function GET() {
       business_type: 'food_baking',
       income_range: 'below_50k',
       bir_registered: false,
+      bir_tax_type: null,
       profile_version: 1,
     };
 
@@ -91,7 +96,7 @@ export async function GET() {
   // Fetch business profile
   const { data: profile } = await supabase
     .from('business_profiles')
-    .select('business_name, business_type, income_range, bir_registered, profile_version')
+    .select('business_name, business_type, income_range, bir_registered, bir_tax_type, profile_version')
     .eq('user_id', userId)
     .is('deleted_at', null)
     .single();
@@ -103,6 +108,7 @@ export async function GET() {
     business_type: profile?.business_type ?? null,
     income_range: profile?.income_range ?? null,
     bir_registered: profile?.bir_registered ?? false,
+    bir_tax_type: profile?.bir_tax_type ?? null,
     profile_version: profile?.profile_version ?? 1,
   };
 
@@ -155,6 +161,7 @@ export async function PATCH(req: NextRequest) {
       business_type: parsed.data.business_type ?? 'food_baking',
       income_range: parsed.data.income_range ?? 'below_50k',
       bir_registered: parsed.data.bir_registered ?? false,
+      bir_tax_type: parsed.data.bir_tax_type ?? null,
       profile_version: 2,
     };
 
@@ -225,12 +232,14 @@ export async function PATCH(req: NextRequest) {
     business_type: string;
     income_range: string;
     bir_registered: boolean;
+    bir_tax_type: string;
   }> = {};
 
   if (data.business_name !== undefined) businessFields.business_name = data.business_name;
   if (data.business_type !== undefined) businessFields.business_type = data.business_type;
   if (data.income_range !== undefined) businessFields.income_range = data.income_range;
   if (data.bir_registered !== undefined) businessFields.bir_registered = data.bir_registered;
+  if (data.bir_tax_type !== undefined) businessFields.bir_tax_type = data.bir_tax_type;
 
   if (Object.keys(businessFields).length > 0) {
     // Get current profile_version
@@ -272,7 +281,7 @@ export async function PATCH(req: NextRequest) {
 
   const { data: updatedProfile } = await supabase
     .from('business_profiles')
-    .select('business_name, business_type, income_range, bir_registered, profile_version')
+    .select('business_name, business_type, income_range, bir_registered, bir_tax_type, profile_version')
     .eq('user_id', userId)
     .is('deleted_at', null)
     .single();
@@ -284,6 +293,7 @@ export async function PATCH(req: NextRequest) {
     business_type: updatedProfile?.business_type ?? null,
     income_range: updatedProfile?.income_range ?? null,
     bir_registered: updatedProfile?.bir_registered ?? false,
+    bir_tax_type: updatedProfile?.bir_tax_type ?? null,
     profile_version: updatedProfile?.profile_version ?? 1,
   };
 

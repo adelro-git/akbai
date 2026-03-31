@@ -25,6 +25,13 @@ AKBai is NOT a chatbot. It is a proactive AI business partner — "KA" (Katuwang
 - Cash flow visibility is near-zero — owners don't know if they're profitable
 - Customer communications (DMs, follow-ups) consume hours daily
 
+**Market validation (March 2026):** All four pain points confirmed by real-world sentiment research:
+- **BCG "Heart of Hustle" (July 2025, n=3,098 MSMEs with DTI):** 77% want digital tools, only 16% use any. 74% say "business not big enough" for tools. MSMEs represent 99.5% of PH businesses, 60%+ of workforce.
+- **Reddit/Facebook sentiment:** BIR anxiety is visceral — users describe "anxiety disorder," fear of "incarceration," ₱1K/year penalties for missed filings. Real Taglish expressions: "nakakatakot," "nahihirapan," "nalilito."
+- **CPA Australia (May 2025):** Filipino SMEs lag regional peers in digital adoption. 69% of those who invested in tech saw improved profitability (vs 56% regional avg).
+- **Competitor signal:** A CPA on r/BusinessPH is actively researching "a software/digital product to make filing easier" — confirms the gap.
+- Full research: `shared/market-sentiment-research.md`
+
 **Primary persona: Maria** — home-based food seller, 35–45 years old, earns ₱80K–₱250K/month, active on Facebook and Shopee, comfortable with GCash, afraid of BIR, manages everything on her phone. The "Maria Moment" is when she opens AKBai and sees "Kumikita ka. ₱18,400 ang net mo this month" — something true about her business she didn't know, in her language, before it's too late to act on it.
 
 **Full persona set:**

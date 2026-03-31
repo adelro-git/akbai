@@ -133,7 +133,7 @@ describe('Group 3: Feature Prompt Correctness', () => {
       feature: 'morning_briefing',
       userContext: null,
     });
-    expect(prompt).toContain('[FEATURE: ANG_UMAGA_MO]');
+    expect(prompt).toContain('[FEATURE: ANG_UMAGA_MO v1.1.0]');
     expect(prompt).toContain('GREETING');
     expect(prompt).toContain('YESTERDAY SUMMARY');
   });

@@ -8,6 +8,7 @@ import KaiGreeting from '@/components/dashboard/kai-greeting';
 import DashboardCard from '@/components/dashboard/dashboard-card';
 import CheckInSection from '@/components/dashboard/check-in-section';
 import WelcomeTour from '@/components/onboarding/welcome-tour';
+import MorningBriefingCard from '@/components/dashboard/morning-briefing-card';
 
 export const metadata: Metadata = {
   title: 'Dashboard — AKBai',
@@ -49,6 +50,8 @@ interface DashboardData {
   conversationCount: number;
   birRegistered: boolean;
   expenseCount: number;
+  nextDeadlineDate: string | null;
+  overdueCount: number;
 }
 
 function getDashboardCards(data: DashboardData): CardDef[] {
@@ -70,8 +73,14 @@ function getDashboardCards(data: DashboardData): CardDef[] {
       href: '/deadlines',
       icon: 'calendar',
       emptyState: 'Wala pang tax calendar. I-setup natin!',
-      hasData: data.birRegistered,
-      summary: data.birRegistered ? 'BIR: Registered' : undefined,
+      hasData: data.birRegistered || data.nextDeadlineDate !== null,
+      summary: data.overdueCount > 0
+        ? `${data.overdueCount} overdue!`
+        : data.nextDeadlineDate
+          ? `Next: ${data.nextDeadlineDate}`
+          : data.birRegistered
+            ? 'BIR: Registered'
+            : undefined,
     },
     {
       id: 'resibo-scanner',
@@ -94,6 +103,15 @@ function getDashboardCards(data: DashboardData): CardDef[] {
         ? `${data.expenseCount} transactions`
         : undefined,
     },
+    {
+      id: 'reply-drafter',
+      title: 'Reply Drafter',
+      description: 'Draft reply sa customer mo',
+      href: '/reply-drafter',
+      icon: 'message-square',
+      emptyState: 'I-draft ni Kai ang reply mo',
+      hasData: true,
+    },
   ];
 }
 
@@ -114,6 +132,8 @@ export default async function DashboardPage() {
   let conversationCount = 0;
   let birRegistered = false;
   let expenseCount = 0;
+  let nextDeadlineDate: string | null = null;
+  let overdueCount = 0;
 
   // --- Check-in data (Task 1) ---
   let todayCheckIn: {
@@ -211,10 +231,37 @@ export default async function DashboardPage() {
       .lte('transaction_date', monthEnd);
 
     expenseCount = txCount ?? 0;
+
+    // --- Fetch deadline summary for BIR Deadlines card (Build 6) ---
+    const { data: nextDeadline } = await supabase
+      .from('bir_deadlines')
+      .select('due_date')
+      .eq('user_id', userId)
+      .eq('status', 'upcoming')
+      .is('deleted_at', null)
+      .gte('due_date', today)
+      .order('due_date', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (nextDeadline?.due_date) {
+      const d = new Date(nextDeadline.due_date + 'T00:00:00');
+      nextDeadlineDate = d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
+    }
+
+    const { count: odCount } = await supabase
+      .from('bir_deadlines')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('status', 'upcoming')
+      .is('deleted_at', null)
+      .lt('due_date', today);
+
+    overdueCount = odCount ?? 0;
   }
 
   const greeting = generateGreeting(userName);
-  const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount });
+  const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount });
 
   return (
     <div
@@ -231,6 +278,9 @@ export default async function DashboardPage() {
         businessName={businessName}
         businessType={businessType}
       />
+
+      {/* Morning Briefing — prominently placed above check-in (Build 5) */}
+      <MorningBriefingCard />
 
       {/* Daily Check-In CTA or Summary */}
       <CheckInSection todayCheckIn={todayCheckIn} />

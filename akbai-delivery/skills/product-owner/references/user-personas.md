@@ -126,6 +126,27 @@
 
 ---
 
+## BCG Archetype Mapping (validated March 2026)
+
+The BCG "Heart of Hustle" report (July 2025, n=3,098 MSMEs with DTI) identified four MSME segments that map directly to AKBai's personas:
+
+| BCG Segment | AKBai Persona | BCG Quote | Key Validation |
+|------------|---------------|-----------|----------------|
+| Food service owners | **Maria** | "Find alignment between love for food and need to earn a living" | Passion-driven but cash-flow blind |
+| Retailers | **Jose** | "Most opportunistic, addressing gaps in the market" | Multi-channel, margin-sensitive |
+| Sari-sari store owners | **Andoy** | "Put up shop out of necessity" | Dreams of "financial freedom, peace of mind, and to be present with my family" |
+| Manufacturers | Future expansion | "Passion meets production" — craft-driven, wants to scale | 54% cite passion, 44% have >₱1M assets |
+
+**Real user voices that validate each persona:**
+- **Maria pain (Reddit):** "I've seen her struggle with all the paperworks and processes she needs to do to comply with BIR" — a child posting about their mom's small business
+- **Jose pain (BigSeller):** "Managing customer messages across Shopee, Lazada, Facebook, Instagram is one of the clearest pain points Filipino sellers face today"
+- **Ana pain (Reddit):** "Very depressing to see it can reach 8k for the penalties" — freelancer on missed tax filings
+- **Andoy pain (BCG):** "To grow my business to a point where I can hire people without worrying about if I can pay them — because I know the income can support it."
+
+Full research with all quotes and sources: `shared/market-sentiment-research.md`
+
+---
+
 ## Persona Priority for Phase 1
 
 | Priority | Persona | Why |

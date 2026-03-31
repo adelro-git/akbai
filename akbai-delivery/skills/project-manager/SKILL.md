@@ -223,13 +223,13 @@ When producing sprint plans or backlogs, include a confidence indicator:
 
 ## Multi-Agent Execution Model
 
-Validated in Sprint 4, this is how agent sprints execute:
+Validated in Sprint 4 (worktree isolation), upgraded in Sprint 8 (agent teams).
 
-**Parallel task assignment.** Sprint tasks are assigned to parallel agents, each running in its own git worktree. This means multiple tasks execute simultaneously — a full sprint's dev work can complete in minutes rather than hours.
+**Primary model: Agent Teams (Sprint 8+).** The PM spawns coordinated teammates who communicate via shared task lists and direct messaging. Teammates can share findings, challenge each other's work, and hand off artifacts mid-execution. See the "Agent Team Execution Model" section below for the full roster, decision checklist, and communication protocols. See `shared/agent-teams-guide.md` for Anton's usage guide.
 
-**Worktree isolation.** Each agent operates in a separate worktree (a checked-out copy of the repo at a specific branch). Agents cannot see or interfere with each other's work. This is safe as long as tasks are grouped correctly by file dependency.
+**Legacy model: Worktree Isolation (Sprint 4-7).** For fully independent tasks with no mid-execution communication needed, worktree-isolated agents remain available. Each agent operates in a separate worktree and cannot see others' work.
 
-**File dependency grouping.** When planning a sprint, group tasks into parallel streams. No two agents in the same stream should modify the same files. If two tasks touch the same file, they must run sequentially or be combined into one task. Flag file overlaps explicitly in the sprint plan.
+**File dependency grouping (applies to both models).** When planning a sprint, group tasks into parallel streams. No two agents in the same stream should modify the same files. If two tasks touch the same file, they must run sequentially or be combined into one task. Flag file overlaps explicitly in the sprint plan.
 
 **Context loading.** Each agent reads the relevant SKILL.md files and shared context (`project-context.md`, `gap-registry.md`, `sprint-history.md`) at startup. Task descriptions must be self-contained enough for an agent to execute without asking clarifying questions mid-task.
 
@@ -246,3 +246,57 @@ Validated in Sprint 4, this is how agent sprints execute:
 - External setup tasks (Supabase config, third-party accounts, env vars)
 
 **Multi-session sprints.** For larger sprints, independent workstreams can be assigned to separate Claude Code sessions. Branch convention: `claude/sprint{N}-{stream}` (e.g., `claude/sprint5-auth`, `claude/sprint5-dashboard`). Each session reads the same sprint plan from `sprint-history.md` and works its assigned tasks.
+
+## Agent Team Execution Model (experimental — added Sprint 8)
+
+When a task benefits from coordinated parallel work (teammates need to communicate, share findings, or hand off artifacts mid-execution), use Claude Code's **agent teams** feature instead of independent worktree-isolated agents.
+
+**When to use agent teams vs. worktree agents:**
+- **Agent teams:** teammates need to share findings, challenge each other's work, hand off artifacts, or review each other's output mid-execution
+- **Worktree agents:** tasks are fully independent with no mid-execution communication needed
+
+**Role Roster (12 agents in `.claude/agents/`, select per task):**
+
+| Role | Agent Name | Trigger Condition |
+|------|-----------|------------------|
+| Solutions Architect | `build-architect` | ALL builds (core) |
+| Data Architect | `build-data` | New/changed tables or RLS |
+| Fullstack Engineer | `build-engineer` | ALL builds (core) |
+| QA Engineer | `build-qa` | ALL builds (core) |
+| UX Designer | `build-ux` | Any UI work (mandatory — Sprint 5 proved 17+ violations slip past engineers) |
+| Product Owner | `build-po` | New features (scope + tier + acceptance criteria validation) |
+| AI Engineer | `build-ai` | Claude API, system prompts, OCR, KA persona |
+| Security & Compliance | `review-security` | Auth, payments, PII, RLS changes |
+| DevOps Engineer | `deploy-devops` | Deploy, CI/CD, monitoring |
+| Ops Lead | `deploy-ops` | Post-build readiness, deploy verification |
+| Marketing Lead | `build-marketing` | Content-heavy Taglish features |
+| Team Lead (PM) | `team-lead` | ALWAYS the team lead |
+
+**Decision checklist for PM (target 4-5 teammates, max 6):**
+1. Does it touch UI? → `build-ux`
+2. Is it a NEW feature (not a fix)? → `build-po`
+3. New tables? → `build-data`
+4. Claude API/prompts? → `build-ai`
+5. Significant Taglish copy? → `build-marketing`
+6. Auth/payments/PII? → `review-security`
+7. Always: `build-architect` + `build-engineer` + `build-qa`
+
+**Communication rules:**
+1. PM is the hub — cross-concern coordination goes through PM
+2. Tightly coupled pairs message directly: architect ↔ data, engineer ↔ qa, engineer ↔ ux
+3. Never broadcast — all messages point-to-point
+4. Send file paths + summaries, not full content
+5. Short-lived roles (po, marketing) go idle after their phase completes
+
+**File conflict avoidance:**
+- Each teammate receives a file boundary declaration at spawn
+- No two teammates modify the same file concurrently
+- If a teammate needs a file outside its boundary, it messages PM to coordinate
+
+**Quality gates (PM enforces sequentially):**
+1. `po` approves scope before architect finalizes ADR
+2. ADR approved before data starts schema
+3. Schema has RLS + soft-delete before engineer starts
+4. `ux` approves UI before qa runs final tests
+5. All tests green before declaring done
+6. Anton live testing (15-30 min) after automated tests pass

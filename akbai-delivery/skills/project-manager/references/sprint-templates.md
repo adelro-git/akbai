@@ -1,7 +1,8 @@
 # AKBai — Sprint Templates
 > For project-manager skill — use these templates for formal sprint outputs
 
-> **Updated Sprint 4:** Templates now use Agent Size + Anton Time estimation model. Multi-agent parallel execution compresses dev work; Anton's review/testing time is the real constraint.
+> **Updated Sprint 4:** Templates now use Agent Size + Anton Time estimation model.
+> **Updated Sprint 8:** Agent teams replace worktree-isolated agents as the primary execution model. The PM spawns coordinated teammates who communicate via shared task lists. See `shared/agent-teams-guide.md` for full usage guide.
 
 ---
 

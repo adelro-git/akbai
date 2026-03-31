@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { User, Building2, Settings, LogOut, ChevronLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { BUSINESS_TYPE_LABELS, INCOME_RANGE_LABELS } from '@/lib/constants/business-options';
+import { BIR_TAX_TYPE_LABELS, type BirTaxType } from '@/lib/deadlines/types';
 import { trackSignedOut } from '@/lib/posthog/events';
 import ProfileEditForm from './profile-edit-form';
 import ThemeToggle from './theme-toggle';
@@ -16,6 +17,7 @@ interface ProfileViewProps {
   businessType: string | null;
   incomeRange: string | null;
   birRegistered: boolean;
+  birTaxType: string | null;
   profileVersion: number;
 }
 
@@ -26,6 +28,7 @@ export default function ProfileView({
   businessType,
   incomeRange,
   birRegistered,
+  birTaxType,
   profileVersion,
 }: ProfileViewProps) {
   const router = useRouter();
@@ -39,6 +42,7 @@ export default function ProfileView({
     businessType,
     incomeRange,
     birRegistered,
+    birTaxType,
     profileVersion,
   });
 
@@ -60,6 +64,7 @@ export default function ProfileView({
     business_type: string | null;
     income_range: string | null;
     bir_registered: boolean;
+    bir_tax_type: string | null;
     profile_version: number;
   }) => {
     setLocalData({
@@ -68,6 +73,7 @@ export default function ProfileView({
       businessType: updated.business_type,
       incomeRange: updated.income_range,
       birRegistered: updated.bir_registered,
+      birTaxType: updated.bir_tax_type,
       profileVersion: updated.profile_version,
     });
     setEditing(false);
@@ -154,6 +160,7 @@ export default function ProfileView({
               businessType={localData.businessType}
               incomeRange={localData.incomeRange}
               birRegistered={localData.birRegistered}
+              birTaxType={localData.birTaxType}
               onSave={handleSaveSuccess}
               onCancel={() => setEditing(false)}
             />
@@ -183,6 +190,16 @@ export default function ProfileView({
                   {localData.birRegistered ? 'Oo' : 'Hindi'}
                 </p>
               </div>
+              {localData.birRegistered && (
+                <div>
+                  <p className="text-xs text-on-surface-variant">BIR Tax Type</p>
+                  <p className="text-sm font-medium text-on-surface" data-testid="bir-tax-type">
+                    {localData.birTaxType
+                      ? BIR_TAX_TYPE_LABELS[localData.birTaxType as BirTaxType] ?? localData.birTaxType
+                      : 'Hindi pa na-set'}
+                  </p>
+                </div>
+              )}
               <p className="text-[10px] text-on-surface-variant mt-1">
                 Profile v{localData.profileVersion}
               </p>

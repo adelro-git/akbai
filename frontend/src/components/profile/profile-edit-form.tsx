@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { BUSINESS_TYPES, INCOME_RANGES } from '@/lib/constants/business-options';
+import { BIR_TAX_TYPES, BIR_TAX_TYPE_LABELS, type BirTaxType } from '@/lib/deadlines/types';
 import { trackProfileUpdated } from '@/lib/posthog/events';
 
 interface ProfileEditFormProps {
@@ -10,12 +11,14 @@ interface ProfileEditFormProps {
   businessType: string | null;
   incomeRange: string | null;
   birRegistered: boolean;
+  birTaxType: string | null;
   onSave: (updated: {
     display_name: string | null;
     business_name: string | null;
     business_type: string | null;
     income_range: string | null;
     bir_registered: boolean;
+    bir_tax_type: string | null;
     profile_version: number;
   }) => void;
   onCancel: () => void;
@@ -27,6 +30,7 @@ export default function ProfileEditForm({
   businessType,
   incomeRange,
   birRegistered,
+  birTaxType,
   onSave,
   onCancel,
 }: ProfileEditFormProps) {
@@ -36,6 +40,7 @@ export default function ProfileEditForm({
   const [selectedType, setSelectedType] = useState(businessType ?? '');
   const [selectedRange, setSelectedRange] = useState(incomeRange ?? '');
   const [birToggle, setBirToggle] = useState(birRegistered);
+  const [selectedTaxType, setSelectedTaxType] = useState(birTaxType ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,6 +73,9 @@ export default function ProfileEditForm({
     if (birToggle !== birRegistered) {
       payload.bir_registered = birToggle;
     }
+    if (selectedTaxType && selectedTaxType !== birTaxType) {
+      payload.bir_tax_type = selectedTaxType;
+    }
 
     // Nothing changed
     if (Object.keys(payload).length === 0) {
@@ -92,12 +100,26 @@ export default function ProfileEditForm({
 
       trackProfileUpdated();
 
+      // If tax type changed, trigger deadline generation
+      if (selectedTaxType && selectedTaxType !== birTaxType) {
+        try {
+          await fetch('/api/deadlines', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tax_type: selectedTaxType }),
+          });
+        } catch {
+          // Non-blocking — deadlines can be generated later
+        }
+      }
+
       onSave({
         display_name: json.data.display_name,
         business_name: json.data.business_name,
         business_type: json.data.business_type,
         income_range: json.data.income_range,
         bir_registered: json.data.bir_registered,
+        bir_tax_type: json.data.bir_tax_type ?? selectedTaxType || null,
         profile_version: json.data.profile_version,
       });
     } catch {
@@ -191,6 +213,32 @@ export default function ProfileEditForm({
           ))}
         </div>
       </div>
+
+      {/* BIR Tax Type selector */}
+      {birToggle && (
+        <div data-testid="bir-tax-type-section">
+          <p className="text-xs text-on-surface-variant mb-2">BIR Tax Type mo</p>
+          <div className="grid gap-2">
+            {BIR_TAX_TYPES.map((taxType) => (
+              <button
+                key={taxType}
+                type="button"
+                onClick={() => setSelectedTaxType(taxType)}
+                className={`flex items-center w-full text-left px-3 py-2.5 rounded-xl border transition-all text-sm ${
+                  selectedTaxType === taxType
+                    ? 'border-primary-container bg-primary-container/10 ring-1 ring-primary-container'
+                    : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
+                }`}
+                data-testid={`tax-type-${taxType}`}
+              >
+                <span className="text-on-surface font-medium">
+                  {BIR_TAX_TYPE_LABELS[taxType as BirTaxType]}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* BIR registered toggle */}
       <div className="flex items-center justify-between">

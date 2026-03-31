@@ -28,6 +28,8 @@ export interface PromptAssemblyInput {
   feature: KAFeature;
   scopes?: DomainScope[];
   userContext: UserContext | null;
+  /** Optional JSON string with feature-specific data (e.g., morning briefing context) */
+  dataContext?: string;
 }
 
 /** User profile data injected into the prompt at runtime. */
