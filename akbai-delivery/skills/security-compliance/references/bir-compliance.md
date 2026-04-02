@@ -1,6 +1,6 @@
 # BIR Compliance & Legal Boundaries — AKBai
 > Used by: security-compliance, ai-engineer, product-owner, fullstack-engineer
-> Last updated: 2026-03-31 | Source: Roadmap v14, Project Context §9, Brand Context (KA persona rules)
+> Last updated: 2026-04-02 | Source: Roadmap v14, Project Context §9, Brand Context (KA persona rules)
 > This document defines what AKBai CAN and CANNOT do regarding BIR/tax-related features.
 
 ---
@@ -191,6 +191,8 @@ BIR requires that Official Receipts (OR) carry sequentially numbered receipt num
 | 7.4 | Document decision and legal basis | ⬜ | Add to Key Decisions Log in SKILL.md |
 
 **Current recommendation:** Ship Invoice Cards WITHOUT OR numbering in Phase 1. Label outputs as "Billing Statement" or "Unofficial Receipt." Pursue BIR CAS accreditation in Phase 2 if user demand warrants it.
+
+**CAS Accreditation Update (April 2026):** BIR's ORUS system now handles registration updates, but CAS accreditation rules have not changed. No new RMCs or IRRs in 2026 have modified the CAS requirements. The recommendation to ship Invoice Cards WITHOUT OR numbering in Phase 1 remains valid. BIR's increased audit activity (RMC 8-2026) makes premature OR number generation riskier — better to wait for legal clarity.
 
 ---
 

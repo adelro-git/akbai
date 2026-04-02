@@ -1,7 +1,7 @@
 # AKBai — MSME Business Knowledge Base
 > Used by: ai-engineer, product-owner, ux-designer, marketing-lead
 > Source: Market Research v1.1, Philippine MSME data, AKBai persona research
-> Last updated: 2026-03-22
+> Last updated: 2026-04-02
 > **This file is reference material for KA's business domain knowledge. It feeds into system prompt assembly and personalization logic but is not loaded at runtime directly.**
 
 ---
@@ -85,14 +85,34 @@ Buy ingredients (cash out) → Cook/Bake → Package → Deliver → Collect pay
 | Business model | Inventory-based (buy wholesale, sell retail) or dropship |
 | Employees | Solo or 1–2 assistants (packing, shipping) |
 
-### Platform Fee Structures
+### Platform Fee Structures (Updated April 2026)
 
-| Platform | Commission | Other Fees | Settlement |
-|----------|-----------|------------|------------|
-| Shopee | 2.5–6.5% (category-dependent) | Transaction fee 2.24%, shipping subsidy varies | 3–7 days after delivery confirmation |
-| Lazada | 2–8% (category-dependent) | Payment fee 1–2%, shipping varies | 7–14 days after delivery |
-| TikTok Shop | 1–5% (promotional rates change) | Payment processing ~2% | 7–15 days |
-| Facebook Marketplace | 0% (direct) | No fees for direct transactions | Immediate (GCash/bank) |
+| Platform | Commission | Transaction Fee | Shipping Fee | Other Fees | Total Effective Deduction | Settlement |
+|----------|-----------|----------------|-------------|------------|--------------------------|------------|
+| Shopee (Marketplace) | 1–6% (category-based) | 2.24% | 5.6% (capped ₱100/item) | Programs: MDV 4%, BIR CWT 0.5% | **10–18%** (mandatory + programs) | 3–7 days after delivery |
+| Shopee (Mall) | 6–11% | 2.24% | 4.48% | Programs: MDV 4%, BIR CWT 0.5% | **13–20%** | 3–7 days after delivery |
+| Lazada (Marketplace) | 4–8% (after +3% increase, Feb 2026) | ~2.24% | Varies | Processing: 2% | **8–13%** | 7–14 days after delivery |
+| Lazada (LazMall) | ~14%+ (after +3% increase, Feb 2026) | ~2.24% | Varies | Processing: 2% | **18–21%** | 7–14 days after delivery |
+| TikTok Shop | Category-based | 2.24% | 5–5.5% (capped ₱100) | ₱3/order processing | **12–16%** | 7–15 days |
+| Facebook Marketplace | 0% (direct) | 0% | None (seller arranges) | None | **0%** | Immediate (GCash/bank) |
+
+**Key changes since 2025:**
+- Shopee added sustainability fee (₱5/order), pre-order service fee (2%), and SPayLater surcharge (+3–6% on installment orders)
+- Lazada implemented a uniform +3% commission increase (Feb 9, 2026) for both Marketplace and LazMall
+- TikTok Shop added ₱3/order processing fee for local sellers
+- New Marketplace sellers on Shopee and TikTok Shop get **90-day commission exemption**
+- Shopee's "total deduction" complaints in seller communities cite 20–26% — this includes voluntary program fees (MDV, Coins Cashback, Live Xtra) on top of mandatory fees
+
+**Shopee Mandatory Fee Breakdown (example: ₱1,000 sale, Fashion category):**
+| Component | Amount | % |
+|-----------|--------|---|
+| Commission (~4%) | ₱40 | 4.0% |
+| Transaction fee | ₱22.40 | 2.24% |
+| Shipping fee (5.6%, capped) | ₱44.80 | 4.48% |
+| **Mandatory subtotal** | **₱107.20** | **~10.7%** |
+| + MDV program (4%) | ₱40 | 4.0% |
+| + Sustainability fee | ₱5 | 0.5% |
+| **Total with programs** | **₱152.20** | **~15.2%** |
 
 ### Revenue Patterns
 - **Campaign spikes**: 9.9, 10.10, 11.11, 12.12 — can be 3–10x normal daily sales
@@ -122,7 +142,7 @@ Customer confirms delivery → Platform settlement (cash in, 3–14 days later)
 | Tools | Barcode scanner, label printer, inventory management |
 
 ### Common Financial Blind Spots
-1. **Not tracking actual platform fees** — commission + transaction fee + shipping subsidy clawback can total 10–15% of gross
+1. **Not tracking actual platform fees** — commission + transaction fee + shipping fee + program fees can total **10–20%+ of gross** (Shopee mandatory alone is ~10–13%; with programs, 15–18%+). One seller calculated: "If you sell 100 orders a day at ₱5/order processing fee, that's ₱15,000/month gone"
 2. **Not accounting for returns/refunds** — 3–10% return rate directly reduces effective revenue
 3. **Confusing gross sales with actual income** — platform shows ₱500K gross but after fees, shipping, COGS, actual profit may be ₱75K–₱150K
 4. **COD payments not tracked** — cash collected by riders, may not reconcile to platform dashboard
@@ -158,7 +178,7 @@ Customer confirms delivery → Platform settlement (cash in, 3–14 days later)
 - **Retainer vs project**: Retainers (₱15K–₱40K/month per client) provide stability; project-based is higher ceiling but unpredictable
 - **Invoice delays**: Net 15 or Net 30 standard, but ~40% of clients pay late (Net 45–60 in practice)
 - **Currency mix**: International clients pay in USD/EUR; local clients in PHP — FX adds complexity
-- **Platform fees**: Upwork takes 10% (first $500 per client), then 5%. Fiverr takes 20%.
+- **Platform fees**: Upwork charges a flat ~10% service fee (restructured May 2025, replacing the old tiered 20%/10%/5% system). Fiverr takes 20%. OnlineJobs.ph charges 0% to freelancers (employer-paid subscription model).
 
 ### Common Rate Structures
 
@@ -254,15 +274,20 @@ Buy wholesale inventory (cash out) → Stock shelves → Sell retail daily (cash
 
 ## 5. Common Across All Filipino MSMEs
 
-### GCash as Financial Infrastructure
+### GCash as Financial Infrastructure (Updated April 2026)
 | Fact | Detail |
 |------|--------|
-| Daily transaction limit | ₱100,000 (fully verified) |
-| Incoming limit | ₱100,000/day |
-| Balance limit | ₱500,000 |
-| Cash-in fees | Free via bank transfer, ₱2–₱25 via OTC/7-Eleven |
-| Cash-out fees | ₱15 flat (to bank), free to own linked bank |
-| Business use | Most MSMEs use personal GCash for business — no GCash for Business separation |
+| Users | 94 million (as of 2026); IPO expected H2 2026 |
+| Basic account wallet limit | ₱50,000 |
+| Fully Verified wallet limit | ₱100,000 |
+| Fully Verified + linked bank limit | **₱500,000** |
+| Daily outgoing limit (Fully Verified) | ₱100,000 |
+| Monthly incoming limit | ₱100,000 |
+| Cash-in fees | Free via bank transfer; ₱2–₱25 via OTC/7-Eleven |
+| Cash-out fees | ₱15 flat (to bank); free to own linked bank |
+| Business account | GCash for Business: Starter/Standard/Advanced packages. Requires DTI/SEC registration. In-store QR + Webpay. Role-based access (Owner/Finance/Cashier). |
+| Business use reality | Most MSMEs still use **personal** GCash for business — no separation of personal/business funds |
+| New features (2026) | Tap to Pay (NFC, Mastercard), ADB $30M MSME credit program |
 
 ### Facebook as Primary Sales Channel
 - **DM-based ordering**: Customer sees post → sends DM → negotiates → pays via GCash → seller ships/delivers
@@ -270,6 +295,23 @@ Buy wholesale inventory (cash out) → Stock shelves → Sell retail daily (cash
 - **Customer communication volume**: 20–100+ DMs/day during peak for active sellers
 - **Live selling**: Growing channel — Facebook Live + comment-based ordering
 - **Groups**: Local buy-and-sell groups, food groups, community groups
+
+### Social Commerce Landscape (2026)
+- **Market size:** USD 28.4 billion (2025), projected USD 96.4 billion by 2034 (14.54% CAGR)
+- **56% of Filipinos** shop online every single week, often directly through social platforms
+- **TikTok Shop:** 30,780 Philippine shops (11.64% of global total); 200%+ sales growth for sellers in 2025
+- **Live selling:** PHP 180 billion in sales, projected PHP 420 billion by 2027. Described as a "national pastime"
+- **Facebook** remains dominant for DM-based selling + Facebook Live; TikTok fastest-growing
+- **Affiliate commerce:** Creator affiliate programs grew 87% in H1 2024
+- **Mobile-first:** 78.52% of e-commerce sales generated on smartphones
+- **Digital payments:** 57.4% of retail transactions are now cashless (exceeded BSP target)
+
+### Maya/PayMaya for Business (2026)
+- **Flexi Loan:** Up to ₱2M revolving credit for businesses
+- **Short-Term Business Loan:** Up to ₱350K, payable up to 90 days
+- **SPARK! partnership** (April 2026): Supporting women micro-entrepreneurs with payments, savings, and credit
+- **Digital credit scoring** using personal financial behavior data
+- IPO also anticipated for 2026 (alongside GCash)
 
 ### Seasonal Patterns (Philippine Market)
 
@@ -291,6 +333,27 @@ Buy wholesale inventory (cash out) → Stock shelves → Sell retail daily (cash
 4. **BIR procrastination** — knows deadlines exist, puts off filing until penalty notices arrive
 5. **No emergency fund** — one slow month or equipment breakdown = crisis
 6. **Undervaluing own time** — especially freelancers and food sellers who work 12+ hour days
+
+### Community Voice: What MSMEs Are Actually Saying (April 2026)
+> Sourced from Reddit (r/taxPH, r/BusinessPH, r/buhaydigital, r/phinvest) and Facebook seller/freelancer groups.
+
+**Top pain by persona:**
+- **Ana (Freelancer):** "There is a lot of concerns here and my anxiety disorder doesn't help. My main worry are penalties/incarceration." — BIR filing confusion and penalty fear dominate. 8% vs graduated decision confuses almost everyone.
+- **Jose (Online Seller):** "Commission fee almost 24-25% now. Almost 1/4 of your price goes to Shopee." — Platform fee rage is real. Sellers report "walang kita" (no profit) after all deductions.
+- **Maria (Food Business):** "My Mom has a small business and I've seen her struggle with all the paperworks and processes she needs to do to comply with BIR." — Multi-agency registration maze is the #1 barrier.
+- **Andoy (Sari-Sari):** Smallest digital footprint but largest offline market. Handwritten notebooks for customer credit. People buying ₱100–₱500 Excel GCash tracker templates on Facebook — confirming willingness to pay for simple tracking tools.
+
+**What they're asking for (feature demand signals):**
+1. Simple tax calculator for freelancers (8% vs graduated) — HIGH demand
+2. BIR deadline reminder system — HIGH demand
+3. Receipt/invoice recording for online sellers — HIGH demand
+4. Platform fee calculator ("true profit after Shopee/Lazada fees") — HIGH demand
+5. Simple bookkeeping for non-accountants — HIGH demand
+6. GCash transaction tracker for business — MEDIUM demand
+7. BIR registration step-by-step guide — HIGH demand
+
+**Tools currently being recommended in communities:**
+Manager.io (free), Google Sheets (default), Wave (free), Taxumo, JuanTax, Oojeema. No existing tool combines tax guidance + bookkeeping + BIR compliance in Taglish with a proactive AI voice.
 
 ### Digital Literacy Profile
 | Skill | Level | Notes |
@@ -727,9 +790,21 @@ Phase 3 expands further based on `other` type descriptions collected from users 
 
 ## Sources
 
-- [DTI MSME Statistics 2024](https://www.dti.gov.ph/negosyo/msme-statistics/)
+- [DTI MSME Statistics 2024](https://www.dti.gov.ph/negosyo/msme-statistics/) — 1,236,908 MSMEs (99.63% of all businesses), 62.4% of employment, ~36-40% of GDP
 - [Shopee Seller Fees Philippines](https://seller.shopee.ph/edu/article/421)
 - [Lazada Seller Commission Rates](https://pages.lazada.com.ph/wow/gcp/route/lazada/ph/upr_1000345_lazada/channel/ph/upr-router/ph)
 - AKBai Market Research v1.1
 - AKBai Operations Playbook v7
 - Philippine Statistics Authority — 2023 MSME Survey
+
+### Sources added April 2026
+- [Cloud Ecommerce: Shopee Fees Guide 2026](https://www.cloudecommerce.com/blog/complete-shopee-fees-guide-2026-commission-payment-and-hidden-costs-for-philippine-sellers/)
+- [BigSeller: Shopee PH 2026 Seller Program Fees](https://www.bigseller.com/blog/articleDetails/4259/shopee-philippines-2026-seller-program-service-fees-adjustment.htm)
+- [BigSeller: Lazada PH Commission 2026](https://www.bigseller.com/blog/articleDetails/4211/commission-fees-for-selling-on-lazada-philippines-2026.htm)
+- [TikTok Shop Academy PH](https://seller-ph.tiktok.com/university/essay?knowledge_id=2675772847064834)
+- [IMARC: Philippines Social Commerce Market](https://www.imarcgroup.com/philippines-social-commerce-market)
+- [Trabahong Online: Freelancer Salary Guide PH 2026](https://trabahongonline.com/en/salary)
+- [Upwork Help: Freelancer Service Fee](https://support.upwork.com/hc/en-us/articles/211062538)
+- [GCash Help: Account Limits](https://help.gcash.com/hc/en-us/articles/360021112894)
+- [Maya Business](https://www.maya.ph/business)
+- [Meltwater: Social Media Statistics PH 2026](https://www.meltwater.com/en/blog/social-media-statistics-philippines)

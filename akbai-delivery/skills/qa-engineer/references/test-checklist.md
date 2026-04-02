@@ -44,6 +44,16 @@ Each feature section lists the specific test scenarios required. The scenario co
 | 1.16 | Dec 31 deadline + Jan 1 holiday → Jan 2 | Unit | 📝 | — |
 | 1.17 | Notification sequence: 7d, 3d, 1d before each deadline | Unit | 📝 | — |
 
+**2026 Deadline Rollover Test Fixtures (from bir-knowledge-base.md §2):**
+Use these verified dates for scenarios 1.2–1.5:
+- April 25 (Saturday) → **April 27 (Monday)** — 2551Q, 2550Q (Q1)
+- July 25 (Saturday) → **July 27 (Monday)** — 2551Q, 2550Q (Q2)
+- August 15 (Saturday) → **August 17 (Monday)** — 1701Q (Q2)
+- October 25 (Sunday) → **October 26 (Monday)** — 2551Q, 2550Q (Q3)
+- November 15 (Sunday) → **November 16 (Monday)** — 1701Q (Q3)
+
+Full 2026 holiday list (Proclamation No. 1006) is in `akbai-delivery/skills/ai-engineer/references/bir-knowledge-base.md` §2.
+
 **Cross-skill dependency:** Data architect provides `bir_deadlines` table schema. AI engineer provides deadline-related system prompt scope. Solutions architect's ADR on timezone handling must be followed.
 
 ---

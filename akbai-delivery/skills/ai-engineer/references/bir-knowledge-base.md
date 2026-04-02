@@ -1,7 +1,7 @@
 # AKBai — BIR Knowledge Base
 > Used by: ai-engineer, security-compliance, fullstack-engineer (Build 6 Deadline Watcher)
 > Source: BIR.gov.ph public data, TRAIN Law (RA 10963), RMC 20-2026
-> Last verified: 2026-03-31 | Tax year: 2025–2026 rules
+> Last verified: 2026-04-02 | Tax year: 2025–2026 rules
 > **⚠️ DISCLAIMER: This file is reference material for KA's domain knowledge. All tax-related outputs to users MUST include the BIR disclaimer: "Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo."**
 
 ---
@@ -38,7 +38,7 @@ If a non-VAT individual taxpayer opts for 8% flat tax, they are **exempt** from 
 ### Key Rule: Form 1701-MS (Micro/Small Taxpayers — RMC 20-2026)
 RMC 20-2026 allows micro and small taxpayers to use **Form 1701-MS** (a simplified annual return) regardless of what their COR says. EOPT definitions: **micro** = gross sales < ₱3M; **small** = gross sales ₱3M to < ₱20M.
 
-**⚠️ Electronic filing gap (practitioner-reported, not officially confirmed on bir.gov.ph):** As of March 2026, multiple tax practitioners report that 1701-MS is not yet available in eBIRForms or eFPS. The reported workaround is to file 1701 or 1701A electronically instead, with no penalty for micro/small taxpayers who do so. KA should guide users toward electronic filing via 1701A, but note this is based on practitioner guidance — users should verify with their RDO if uncertain.
+**⚠️ Electronic filing gap (confirmed as of April 2026):** BIR Form 1701-MS is NOT available in eBIRForms (v7.9.5.0) or eFPS. Per Deloitte Tax@Hand (Mar 19, 2026) and BIR RDO advisories, the form must be downloaded manually from bir.gov.ph. The workaround per RMC 20-2026: micro and small individual taxpayers can file using 1701 or 1701A electronically with no penalty, regardless of what their COR says. They are NOT required to update their COR to include 1701-MS. KA should guide users toward electronic filing via 1701A.
 
 ---
 
@@ -90,15 +90,17 @@ Same pattern as 2551Q — due on the 25th of the month after the quarter closes.
 | **January** | Q4 percentage tax / Q4 VAT return, Annual compliance (bind books by Jan 15) | 2551Q, 2550Q |
 | **February** | — | (No major deadlines) |
 | **March** | — | (No major deadlines) |
-| **April** | Annual ITR + Q1 percentage tax / Q1 VAT return | 1701A/1701, 2551Q, 2550Q |
+| **April** | Annual ITR (Apr 15) + Q1 percentage tax / Q1 VAT return (Apr 27*) | 1701A/1701, 2551Q, 2550Q |
 | **May** | Q1 quarterly income tax | 1701Q |
 | **June** | — | (No major deadlines) |
-| **July** | Q2 percentage tax / Q2 VAT return | 2551Q, 2550Q |
-| **August** | Q2 quarterly income tax | 1701Q |
+| **July** | Q2 percentage tax / Q2 VAT return (Jul 27*) | 2551Q, 2550Q |
+| **August** | Q2 quarterly income tax (Aug 17*) | 1701Q |
 | **September** | — | (No major deadlines) |
-| **October** | Q3 percentage tax / Q3 VAT return | 2551Q, 2550Q |
-| **November** | Q3 quarterly income tax | 1701Q |
+| **October** | Q3 percentage tax / Q3 VAT return (Oct 26*) | 2551Q, 2550Q |
+| **November** | Q3 quarterly income tax (Nov 16*) | 1701Q |
 | **December** | — | (Year-end prep: organize records for annual filing) |
+
+*Adjusted from original date due to weekend; see §2 Deadline Adjustments above.
 
 ### Deadline Rules
 - If deadline falls on a **weekend or holiday**, it moves to the **next business day**
@@ -106,6 +108,55 @@ Same pattern as 2551Q — due on the 25th of the month after the quarter closes.
 - Payment and filing happen on the **same deadline** (file and pay together)
 - Late filing penalties: **25% surcharge** (or 10% for micro/small under EOPT Act; **50% if willful neglect or fraud** regardless of size) + **12% annual interest** per TRAIN Law (or 6% for micro/small under EOPT Act) + compromise penalty
 - **Note:** BIR's penalties page (bir.gov.ph/penalties) still shows 20% interest (pre-TRAIN). The 12% rate (double the 6% BSP legal interest) is the legally current rate per Sec. 249 as amended by RA 10963. KA should cite the TRAIN Law rate but note the discrepancy if users question it.
+
+### 2026 Deadline Adjustments (Weekend/Holiday Rollover)
+
+Several 2026 deadlines fall on weekends and automatically move to the next business day:
+
+| Original Deadline | Day | Adjusted To | Form(s) |
+|------------------|-----|------------|---------|
+| April 15 | Wednesday | **No change** | 1701A, 1701 (Annual ITR) |
+| April 25 | Saturday | **April 27 (Monday)** | 2551Q, 2550Q (Q1) |
+| May 15 | Friday | **No change** | 1701Q (Q1) |
+| July 25 | Saturday | **July 27 (Monday)** | 2551Q, 2550Q (Q2) |
+| August 15 | Saturday | **August 17 (Monday)** | 1701Q (Q2) |
+| October 25 | Sunday | **October 26 (Monday)** | 2551Q, 2550Q (Q3) |
+| November 15 | Sunday | **November 16 (Monday)** | 1701Q (Q3) |
+| January 25, 2027 | Monday | **No change** | 2551Q, 2550Q (Q4 2026) |
+
+### 2026 Philippine Public Holidays (Proclamation No. 1006)
+> Used by Build 6 (Deadline Watcher) for rollover logic and test fixtures.
+
+**Regular Holidays:**
+| Date | Day | Holiday |
+|------|-----|---------|
+| January 1 | Thursday | New Year's Day |
+| March 20 | Friday | Eid'l Fitr (Proclamation 1189) |
+| April 2 | Thursday | Maundy Thursday |
+| April 3 | Friday | Good Friday |
+| April 9 | Thursday | Araw ng Kagitingan |
+| May 1 | Friday | Labor Day |
+| June 12 | Friday | Independence Day |
+| August 31 | Monday | National Heroes Day |
+| November 30 | Monday | Bonifacio Day |
+| December 25 | Friday | Christmas Day |
+| December 30 | Wednesday | Rizal Day |
+
+**Special Non-Working Holidays:**
+| Date | Day | Holiday |
+|------|-----|---------|
+| February 17 | Tuesday | Chinese New Year |
+| April 4 | Saturday | Black Saturday |
+| August 21 | Friday | Ninoy Aquino Day |
+| November 1 | Sunday | All Saints' Day |
+| November 2 | Monday | All Souls' Day |
+| December 8 | Tuesday | Feast of the Immaculate Conception |
+| December 24 | Thursday | Christmas Eve |
+| December 31 | Thursday | Last Day of the Year |
+
+**Special Working Day:** February 25 (Wednesday) — EDSA People Power Revolution Anniversary
+
+**Eid'l Adha:** Date not yet proclaimed (expected ~June 7, 2026 based on Islamic calendar).
 
 ### Push Notification Sequence (Build 6 — Deadline Watcher)
 For each deadline, KA sends reminders at:
@@ -298,6 +349,29 @@ A business becomes a withholding agent when it pays for professional services or
 
 ---
 
+## 6b. 2026 Regulatory Updates
+
+### BIR Audit Resumption (RMC 8-2026, RMO 1-2026)
+BIR lifted the nationwide suspension of tax audits effective early 2026. Key rules:
+- Only **one electronic Letter of Authority (eLA)** per taxpayer per taxable year
+- Consolidation of pending eLAs began March 4, 2026 (RMC 14-2026)
+- MSMEs should expect increased audit activity in 2026
+- KA should NOT advise on audits but can note: "Paalala: mas active ang BIR sa tax audits ngayong 2026. I-organize mo ang records mo."
+
+### Cross-Border Services (RMC 24-2026)
+Clarifies that cross-border services are NOT automatically taxable in the Philippines. BIR revenue officers must prove 4 elements before assessing tax. Relevant for **Ana persona** (freelancers with foreign clients) — reduces anxiety about foreign-sourced income.
+
+### ORUS Books of Accounts (RMC 4-2026)
+All taxpayers must register books of accounts via BIR's Online Registration and Update System (ORUS). Manual registration at RDO is only allowed when ORUS is down (must show error screenshot). Deadlines were extended in January 2026 due to system issues.
+
+### eBIRForms v7.9.5.0
+Current version as of April 2026. Supports all forms for CY 2025 AITR filing. Available at bir.gov.ph/ebirforms. Form 1701-MS is NOT included — see §1 note.
+
+### BIR Withholding Tax Calculator
+BIR now has an official withholding tax calculator at bir.gov.ph/wtcalculator. KA can reference this when users ask about EWT computation.
+
+---
+
 ## 7. How This File Connects to the Codebase
 
 ### Current (Reference)
@@ -344,3 +418,12 @@ A business becomes a withholding agent when it pays for professional services or
 - [2026 BIR Annual Compliance Checklist](https://www.aureadalaw.com/post/2026-bir-annual-compliance-checklist-philippines-inventory-list-loose-leaf-alphalist-and-itr-d)
 - [BIR Compliance Philippines 2026 Guide](https://philippinehubpartners.com/bir-tax-compliance-philippines-2026-guide/)
 - [CloudCFO: RR 29-2025 De Minimis Benefits Update](https://cloudcfo.ph/blog/ph-tax-update-2026-rr-29-2025-de-minimis-benefits/) — updated employee benefit limits effective Jan 2026
+
+### New sources added April 2026
+- [Deloitte Tax@Hand: AITR Filing Guidelines CY 2025](https://www.taxathand.com/article/41066/Philippines/2026/Annual-income-tax-return-filing-and-payment-guidelines-for-calendar-year-2025-issued)
+- [Triple-i Consulting 2026 Tax Calendar](https://www.tripleiconsulting.com/2026-tax-calendar-for-bir-compliance-philippines/)
+- [Reyes Tacandong & Co. RMC Summaries](https://www.reyestacandong.com/)
+- [IGD & Associates BIR Circular Analysis](https://igd-associates.com/)
+- [BIR Withholding Tax Calculator](https://www.bir.gov.ph/wtcalculator)
+- [CloudCFO: BIR Audit Resumption](https://cloudcfo.ph/blog/bir-audit-resumption-and-new-rules/)
+- [RMC 24-2026 Analysis (Reyes Tacandong)](https://www.reyestacandong.com/rmc-no-24-2026/)

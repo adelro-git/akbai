@@ -237,18 +237,16 @@ These are the 20 annual BIR deadlines. Plan content 2 weeks before each deadline
 
 | Deadline | Form | Who Files | Content Window |
 |----------|------|-----------|----------------|
-| Jan 31 | 0605 (Annual Registration) | All registered businesses | Jan 15-30 |
-| Feb 25 | 2551Q (Q4 Percentage Tax) | Non-VAT businesses | Feb 10-24 |
-| Mar 31 | Annual ITR (1701/1702) | All businesses | Mar 15-30 |
-| Apr 15 | 1701Q (Q1 Income Tax) | Self-employed/professionals | Apr 1-14 |
-| Apr 25 | 2550Q (Q1 VAT) | VAT-registered | Apr 10-24 |
-| May 25 | 2551Q (Q1 Percentage Tax) | Non-VAT businesses | May 10-24 |
-| Jul 25 | 2550Q (Q2 VAT) | VAT-registered | Jul 10-24 |
-| Aug 15 | 1701Q (Q2 Income Tax) | Self-employed/professionals | Aug 1-14 |
-| Aug 25 | 2551Q (Q2 Percentage Tax) | Non-VAT businesses | Aug 10-24 |
-| Oct 25 | 2550Q (Q3 VAT) | VAT-registered | Oct 10-24 |
-| Nov 15 | 1701Q (Q3 Income Tax) | Self-employed/professionals | Nov 1-14 |
-| Nov 25 | 2551Q (Q3 Percentage Tax) | Non-VAT businesses | Nov 10-24 |
+| **Jan 25** | 2551Q (Q4 Percentage Tax) / 2550Q (Q4 VAT) | Non-VAT / VAT businesses | Jan 10-24 |
+| **Apr 15** | Annual ITR (1701A/1701) | All self-employed / sole proprietors | Mar 30 - Apr 14 |
+| **Apr 25** | 2551Q (Q1 Percentage Tax) / 2550Q (Q1 VAT) | Non-VAT / VAT businesses | Apr 10-24 |
+| **May 15** | 1701Q (Q1 Income Tax) | Self-employed/professionals | May 1-14 |
+| **Jul 25** | 2551Q (Q2 Percentage Tax) / 2550Q (Q2 VAT) | Non-VAT / VAT businesses | Jul 10-24 |
+| **Aug 15** | 1701Q (Q2 Income Tax) | Self-employed/professionals | Aug 1-14 |
+| **Oct 25** | 2551Q (Q3 Percentage Tax) / 2550Q (Q3 VAT) | Non-VAT / VAT businesses | Oct 10-24 |
+| **Nov 15** | 1701Q (Q3 Income Tax) | Self-employed/professionals | Nov 1-14 |
+
+> **Note:** Cross-referenced with `bir-knowledge-base.md` §2 (authoritative source). The ₱500 annual registration fee (Form 0605) was abolished under EOPT Act (Jan 2024). For 2026-specific weekend-adjusted dates, see `bir-knowledge-base.md` §2 Deadline Adjustments.
 
 **Content strategy around deadlines:**
 - T-14 days: Publish SEO blog article ("Paano mag-file ng [form]")
