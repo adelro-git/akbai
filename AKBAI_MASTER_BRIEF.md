@@ -14,7 +14,7 @@ business logic, pillar features, or AI reasoning layers.
 **BUILD THIS:**
 - Next.js 14 PWA shell, mobile-first
 - User auth (signup, login, sessions via Supabase Auth magic link / email OTP)
-- Basic Taglish chat interface UI shell (text input, message bubbles, KA persona styling)
+- Basic Taglish chat interface UI shell (text input, message bubbles, Kai persona styling)
 - Database schema (users, ka_conversations, business_profiles — with RLS on every table)
 - One working Claude Sonnet 4 API endpoint at /api/chat (server-side only, no client API key exposure)
 - Vercel deployment config (or Cloudflare Pages — see Section 4 for canonical choice)
@@ -36,7 +36,7 @@ business logic, pillar features, or AI reasoning layers.
 
 ## 1. Product Summary
 
-AKBai — "Katuwang ng Negosyo Mo" (Your Business Partner) — is a mobile-first Progressive Web App that serves as an AI business partner for Filipino micro, small, and medium enterprises (MSMEs). The product targets 1.1 million digitally-active Filipino business owners whose primary pain points are manual receipt tracking, BIR (Bureau of Internal Revenue) compliance anxiety, zero cash-flow visibility, and hours lost to customer DM management. AKBai is not a chatbot. Its AI persona, "KA" (short for Katuwang — partner), speaks first, proactively surfaces business insights, and communicates in natural Taglish (Filipino-English code-switching).
+AKBai — "Katuwang ng Negosyo Mo" (Your Business Partner) — is a mobile-first Progressive Web App that serves as an AI business partner for Filipino micro, small, and medium enterprises (MSMEs). The product targets 1.1 million digitally-active Filipino business owners whose primary pain points are manual receipt tracking, BIR (Bureau of Internal Revenue) compliance anxiety, zero cash-flow visibility, and hours lost to customer DM management. AKBai is not a chatbot. Its AI persona, "Kai" (short for Katuwang — partner), speaks first, proactively surfaces business insights, and communicates in natural Taglish (Filipino-English code-switching).
 
 The product is built by a solo founder (Anton del Rosario) working evenings and weekends alongside a day job at Globe Telecom. Sprint capacity is 10–15 hours per two-week sprint. The monetization model uses three tiers: Free (₱0, Haiku-only, 10 queries/day), Pro (₱399/month, 50 receipt scans, full Sonnet access), and Business (₱899/month, 80 scans, multi-seat). Unit economics are strong: Pro LTV of ₱9,975, blended CAC of ₱110, LTV/CAC ratio of 91x, with break-even projected at Month 7 and Year 1 net profit target of ₱110,303.
 
@@ -129,9 +129,9 @@ The Emergent scaffold is a prerequisite for this sequence. After Emergent delive
 | 2 | Dashboard | Business health at a glance (cash, trends, deadlines, tasks) | Build 1 |
 | 3 | Resibo Scanner | Camera → Claude Haiku Vision → structured expense card (₱0.16/scan) | Build 2 |
 | 4 | Saan Napunta | Expense dashboard with categorized spend and cash flow | Build 3 |
-| 5 | Ang Umaga Mo | Morning Briefing — proactive daily summary from KA | Build 4 |
+| 5 | Ang Umaga Mo | Morning Briefing — proactive daily summary from Kai | Build 4 |
 | 6 | Deadline Watcher | BIR compliance calendar with push notification sequence | Build 5 |
-| 7 | Reply Drafter | KA drafts customer DM replies (manual copy-paste in Phase 1) | Build 5 |
+| 7 | Reply Drafter | Kai drafts customer DM replies (manual copy-paste in Phase 1) | Build 5 |
 | 8 | Costing + Invoice Cards | Margin calculator + invoice creation/tracking/PDF export | Build 5 |
 
 ### Phase Milestones
@@ -174,9 +174,9 @@ export async function POST(req: Request) {
   // 1. Authenticate user via Supabase session
   // 2. Extract message from request body
   // 3. Fetch user's conversation history from ka_conversations table
-  // 4. Assemble system prompt (KA persona + user context)
+  // 4. Assemble system prompt (Kai persona + user context)
   // 5. Call Claude Sonnet 4 API (claude-sonnet-4-6)
-  // 6. Store both user message and KA response in ka_conversations
+  // 6. Store both user message and Kai response in ka_conversations
   // 7. Return response to client
 }
 ```
@@ -207,7 +207,7 @@ RESEND_API_KEY=              # Stub empty
   (auth)/              # Auth routes (login, signup)
   (app)/               # Authenticated app shell
     dashboard/         # Home tab (empty placeholder for now)
-    chat/              # Chat interface with KA
+    chat/              # Chat interface with Kai
   api/
     chat/route.ts      # Claude Sonnet 4 API endpoint ← THE KEY DELIVERABLE
 /components/
@@ -254,7 +254,7 @@ These decisions have been locked after 14 roadmap iterations, 7 ops playbook ver
 
 1. **Taglish is the product language.** All user-facing text is natural Filipino-English code-switching. Not fully English. Not fully Tagalog. This is how the target market communicates.
 
-2. **KA speaks first.** The AI is proactive, not reactive. It sends the morning briefing before being asked. It flags the BIR deadline before the user remembers. This is the core product differentiator.
+2. **Kai speaks first.** The AI is proactive, not reactive. It sends the morning briefing before being asked. It flags the BIR deadline before the user remembers. This is the core product differentiator.
 
 3. **Claude API, not OpenAI.** The AI brain is Claude (Sonnet 4 for reasoning, Haiku for lightweight tasks). This was chosen for response quality on Filipino business context and structured output reliability.
 
@@ -278,7 +278,7 @@ These decisions have been locked after 14 roadmap iterations, 7 ops playbook ver
 
 13. **Brand colors are locked.** Primary: Warm Honey (#F59E0B → #D97706 gradient). Supporting: Teal (#20C9A0, #0FB8D9). Error: Red (#F87171). See Section 8 for full color system.
 
-14. **The persona name is "Kai" (not "KA" in UI).** KA is the internal name for the AI persona. User-facing, it is "Kai" — the smart ate/kuya who always has your back.
+14. **The persona name is "Kai."** The AI persona is named "Kai" — the smart ate/kuya who always has your back.
 
 15. **All Claude API calls are server-side only.** The Anthropic API key is never exposed to the client. All calls go through Next.js API routes.
 
@@ -301,9 +301,9 @@ Emergent should produce a working scaffold with these 6 components. Check each b
   > **Note:** The table name is `ka_conversations` (not `conversations`). Use this name consistently across all code.
 
 - [ ] **Chat interface UI** — Mobile-optimized chat screen with:
-  - Message bubble list (user messages right-aligned, KA messages left-aligned)
+  - Message bubble list (user messages right-aligned, Kai messages left-aligned)
   - Text input bar with send button (fixed to bottom, above keyboard on mobile)
-  - KA avatar/icon on assistant messages (use AKBai_Mark_Honey.png or brand color placeholder)
+  - Kai avatar/icon on assistant messages (use AKBai_Mark_Honey.png or brand color placeholder)
   - Loading state while waiting for Claude response (animated indicator, not blank)
   - Brand styling: Ink background, Warm Honey accents, Plus Jakarta Sans, rounded cards
 
@@ -311,10 +311,10 @@ Emergent should produce a working scaffold with these 6 components. Check each b
   1. Authenticates the request via Supabase session
   2. Reads the user's message from the request body
   3. Fetches last 20 messages from `ka_conversations` for context
-  4. Calls Claude Sonnet 4 (`claude-sonnet-4-6`) via `@anthropic-ai/sdk` with a basic KA system prompt
-  5. Stores both user message and KA response in `ka_conversations`
-  6. Returns the KA response to the client
-  - Basic KA system prompt to use:
+  4. Calls Claude Sonnet 4 (`claude-sonnet-4-6`) via `@anthropic-ai/sdk` with a basic Kai system prompt
+  5. Stores both user message and Kai response in `ka_conversations`
+  6. Returns the Kai response to the client
+  - Basic Kai system prompt to use:
     ```
     You are Kai, the AI business partner inside AKBai. You speak in natural Taglish
     (Filipino-English mix). You are warm, competent, and proactive. Use "po" naturally.
@@ -363,9 +363,9 @@ These are all Phase 1 builds that will be done incrementally after the scaffold 
 | Role | Light Hex | Dark Hex | Use |
 |------|-----------|----------|-----|
 | Background (primary) | `#fdf9f2` | `#07101e` | Page background (light-first default, dark mode uses #07101e) |
-| Card background | `#f1ede7` | `#0d1a2e` | Chat bubbles (KA), cards |
+| Card background | `#f1ede7` | `#0d1a2e` | Chat bubbles (Kai), cards |
 | Card alt | `#ebe8e1` | `#111f36` | Alternate cards |
-| Warm Honey | `#F59E0B` | `#F59E0B` | CTAs, send button, accents, KA avatar ring |
+| Warm Honey | `#F59E0B` | `#F59E0B` | CTAs, send button, accents, Kai avatar ring |
 | Primary action | `#855300` | `#ffb95f` | Primary CTAs, active indicators |
 | Teal / Tertiary | `#006b54` | `#43deb4` | Success states, financial data |
 | Error Red | `#F87171` | `#F87171` | Error messages |
@@ -381,7 +381,7 @@ These are all Phase 1 builds that will be done incrementally after the scaffold 
 ### Logo
 - PWA manifest icon: `AKBai_Icon_512.png` from `/brand/Logo Files/`
 - Chat header: `AKBai_Logo_Primary_OnDark.png` or stacked variant
-- KA avatar: `AKBai_Mark_Honey.png` (small, in chat message row)
+- Kai avatar: `AKBai_Mark_Honey.png` (small, in chat message row)
 
 ---
 

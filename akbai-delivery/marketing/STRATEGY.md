@@ -191,7 +191,7 @@ These hooks use real language from Reddit, Facebook, and TikTok sentiment resear
 | "Alam mo na ba kung kumikita ka?" | Cash flow blindness | Real Reddit quote: "hindi ko alam kung kumikita ba o hindi" |
 | "Snap mo lang, tracked na." | Manual receipt tracking | FB groups asking "Excel pa rin?" |
 | "₱399/month vs ₱11,800/month sa accountant." | Cost | Real pricing from Reddit (₱5K filing + ₱5K bookkeeping + ₱1.8K encoding) |
-| "Si KA na ang sasagot -- ikaw na lang mag-send." | DM overload | BigSeller confirms chat management is "clearest pain point" |
+| "Si Kai na ang sasagot -- ikaw na lang mag-send." | DM overload | BigSeller confirms chat management is "clearest pain point" |
 | "99.5% ng businesses sa Pilipinas, MSME. Deserve nila ng AI partner." | Aspiration | BCG/DTI data |
 
 ---

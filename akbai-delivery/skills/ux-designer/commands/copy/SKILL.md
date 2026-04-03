@@ -15,10 +15,10 @@ Generate Taglish UI copy for chat bubbles, buttons, notifications, error message
 ## Before Starting
 
 Read these shared context files:
-- `/AKBai/akbai-delivery/shared/brand-context.md` — Voice pillars, tone calibration by context, KA says/never says
+- `/AKBai/akbai-delivery/shared/brand-context.md` — Voice pillars, tone calibration by context, Kai says/never says
 - `/AKBai/akbai-delivery/shared/glossary.md` — Taglish terms, product names (Resibo Scanner, Saan Napunta, etc.)
 - `/AKBai/akbai-delivery/shared/project-context.md` — Personas (Maria, Jose, Ana, Andoy), BIR disclaimer requirement
-- `../references/taglish-manual.md` — **Authoritative source** for how KA speaks. Real-world Taglish examples. Use this first.
+- `../references/taglish-manual.md` — **Authoritative source** for how Kai speaks. Real-world Taglish examples. Use this first.
 - `../references/taglish-copy-guide.md` — Fallback if manual not available. Tone patterns and do/don't examples.
 
 Also read: `/AKBai/akbai-delivery/skills/ux-designer/SKILL.md` (Chat + Card patterns, microcopy constraints).
@@ -39,7 +39,7 @@ Ask or infer:
 
 1. **First:** `taglish-manual.md` — Look for examples matching your use case. If found, follow the pattern exactly.
 2. **Fallback:** `taglish-copy-guide.md` — Use tone calibration table + do/don't examples.
-3. **Last resort:** `brand-context.md` §8 Voice Examples — Study KA says/never says.
+3. **Last resort:** `brand-context.md` §8 Voice Examples — Study Kai says/never says.
 
 ### 3. Generate 2–3 Copy Variants
 
@@ -111,7 +111,7 @@ For each variant, provide:
 
 ✓ **Max 2 lines per chat bubble**
   - One long sentence or two short sentences, not three
-  - Reason: Mobile screen real estate, readability, KA feels conversational
+  - Reason: Mobile screen real estate, readability, Kai feels conversational
 
 ✓ **No corporate filler**
   - ✗ "Certainly!" / "As an AI..." / "I'd be happy to..." / "I understand you want..." / "Please find attached..."
@@ -129,9 +129,9 @@ For each variant, provide:
     - ✗ "This might be confusing, but..." (underestimates)
     - ✓ "Receipt scan: ₱3,450 sa flour. OK na ba?" (trusts her judgment)
 
-✓ **Consistency with KA brand**
-  - Does it match the KA Says examples in brand-context.md?
-  - Does it avoid the KA Never Says?
+✓ **Consistency with Kai brand**
+  - Does it match the Kai Says examples in brand-context.md?
+  - Does it avoid the Kai Never Says?
 
 ### 6. Check Persona Appropriateness
 
@@ -194,7 +194,7 @@ Present copy variants in a table structure for clarity:
 
 ### Example 1: Receipt Scan Confirmation (Maria, home baker)
 
-**Context:** User just scanned a receipt for flour. KA shows the parsed data and asks for confirmation before saving.
+**Context:** User just scanned a receipt for flour. Kai shows the parsed data and asks for confirmation before saving.
 
 ```markdown
 ## Receipt Scan — Ingredient Expense
@@ -241,7 +241,7 @@ Present copy variants in a table structure for clarity:
 
 ### Example 3: Error State (Receipt Not Clear Enough)
 
-**Context:** User tried to scan a receipt but the image is too blurry. KA can't parse it and asks for a manual entry.
+**Context:** User tried to scan a receipt but the image is too blurry. Kai can't parse it and asks for a manual entry.
 
 ```markdown
 ## Receipt Scan — Failed OCR

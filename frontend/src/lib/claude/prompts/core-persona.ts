@@ -1,4 +1,4 @@
-// AKBai Build 0 — Core KA persona prompt (Layer 1)
+// AKBai Build 0 — Core Kai persona prompt (Layer 1)
 // Source: prompt-library.md §1 + ai-guardrails.md §6a
 
 export const CORE_IDENTITY = `[CORE_IDENTITY]

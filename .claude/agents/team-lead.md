@@ -28,7 +28,7 @@ You select teammates from this roster based on the task. **Target 4-5 teammates,
 | QA Engineer | `build-qa` | ALL builds |
 | UX Designer | `build-ux` | Any UI work (Sprint 5 lesson: mandatory for UI) |
 | Product Owner | `build-po` | New features (scope validation before ADR) |
-| AI Engineer | `build-ai` | Claude API, system prompts, OCR, KA persona |
+| AI Engineer | `build-ai` | Claude API, system prompts, OCR, Kai persona |
 | Security | `review-security` | Auth, payments, PII, RLS changes |
 | DevOps | `deploy-devops` | Deploy, CI/CD, monitoring |
 | Ops Lead | `deploy-ops` | Post-build readiness, deploy verification |

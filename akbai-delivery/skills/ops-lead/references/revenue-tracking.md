@@ -106,7 +106,7 @@ When a user churns, classify the reason:
 
 | Type | Signal | Action |
 |------|--------|--------|
-| **Payment failure** | Xendit webhook: payment_failed | Auto-retry via Xendit. 3-day grace period. Send KA push notification. If still failed → Resend winback email sequence (7-day). |
+| **Payment failure** | Xendit webhook: payment_failed | Auto-retry via Xendit. 3-day grace period. Send Kai push notification. If still failed → Resend winback email sequence (7-day). |
 | **Voluntary cancel** | User explicitly cancels | Trigger exit survey. Log reason. If >3 users cite same reason → product issue. |
 | **Ghosting** | No login for 14+ days, subscription lapses | Send "Miss na kita" re-engagement via Resend. If no response in 7 days → count as churned. |
 | **Downgrade** | Business → Pro, or Pro → Free | Not technically churn but worth tracking. Exit survey: "What feature did you stop needing?" |
@@ -125,7 +125,7 @@ When a user churns, classify the reason:
 ```
 Day 0: Payment fails
   → Xendit auto-retries
-  → KA sends in-app notification: "May issue sa payment mo — check mo lang yung GCash mo"
+  → Kai sends in-app notification: "May issue sa payment mo — check mo lang yung GCash mo"
 
 Day 1: Still failed
   → Resend email: "Hi [Name], parang hindi natuloy yung payment mo. No worries — naka-grace period ka pa. I-update mo lang yung payment method mo para tuloy-tuloy ang AKBai mo."
@@ -145,7 +145,7 @@ Day 30: Final winback
 
 ## 4. Flag-as-Wrong Review Process
 
-The Flag-as-Wrong button is on every KA output card. When a user taps it, the flagged interaction goes into a review queue. This is one of AKBai's most important feedback loops — it's how KA gets smarter.
+The Flag-as-Wrong button is on every Kai output card. When a user taps it, the flagged interaction goes into a review queue. This is one of AKBai's most important feedback loops — it's how Kai gets smarter.
 
 ### Flag Review Workflow
 
@@ -155,31 +155,31 @@ Step 1: Log the flag
   → User can optionally add a note ("Mali yung amount" or "Wrong deadline")
 
 Step 2: Pull full context
-  → The specific KA output that was flagged
+  → The specific Kai output that was flagged
   → The user's input that triggered it
   → The system prompt state at the time (which scopes were active)
   → User's business profile (type, BIR registration, tier)
   → Recent conversation history (last 5 messages for context)
 
 Step 3: Determine root cause
-  → PROMPT ISSUE: The system prompt didn't give KA enough context or gave wrong guidance
-     Example: KA cited a BIR deadline that's correct for sole proprietors but wrong for this user's corporation
+  → PROMPT ISSUE: The system prompt didn't give Kai enough context or gave wrong guidance
+     Example: Kai cited a BIR deadline that's correct for sole proprietors but wrong for this user's corporation
      Fix: Update the relevant scope section in the system prompt
   → DATA ISSUE: The user's data was incorrect, incomplete, or stale
-     Example: KA calculated expenses using a receipt that was already deleted
+     Example: Kai calculated expenses using a receipt that was already deleted
      Fix: Data pipeline fix (check soft-delete handling, cache invalidation)
   → MODEL LIMITATION: Claude produced a hallucination or reasoning error despite correct prompt and data
-     Example: KA made up a BIR rule that doesn't exist
+     Example: Kai made up a BIR rule that doesn't exist
      Fix: Add guardrails, explicit disclaimers, or structured output constraints
-  → USER MISUNDERSTANDING: KA was actually correct, but the user expected something different
+  → USER MISUNDERSTANDING: Kai was actually correct, but the user expected something different
      Example: User flagged a correct tax calculation because they didn't realize VAT was included
-     Fix: Improve KA's explanation (show work, add context)
+     Fix: Improve Kai's explanation (show work, add context)
 
 Step 4: Apply the fix
   → For prompt issues: Update system prompt, test with existing Taglish test library
   → For data issues: Fix the data pipeline, verify with affected user's data
   → For model limitations: Add regression test, consider structured output or guardrails
-  → For user misunderstanding: Improve KA's output formatting or add explanatory context
+  → For user misunderstanding: Improve Kai's output formatting or add explanatory context
 
 Step 5: Regression test
   → Add a test case to the Taglish test library (20–30 cases, run on every prompt update)

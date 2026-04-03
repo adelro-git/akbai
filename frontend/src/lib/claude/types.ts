@@ -3,7 +3,7 @@
 /** User subscription tier. Build 0 defaults all users to 'free'. */
 export type UserTier = 'free' | 'pro' | 'business';
 
-/** Features that KA can serve. Each maps to a prompt block + model routing rule. */
+/** Features that Kai can serve. Each maps to a prompt block + model routing rule. */
 export type KAFeature =
   | 'general_chat'
   | 'resibo_scanner'

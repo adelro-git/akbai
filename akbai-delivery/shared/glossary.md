@@ -10,20 +10,20 @@
 | Term | Definition |
 |------|------------|
 | **AKBai** | The product. "Katuwang ng Negosyo Mo" (Your Business Partner). Mobile-first PWA for Filipino MSMEs. |
-| **KA** | The AI persona within AKBai. Short for "Katuwang" (partner/collaborator). KA speaks first, proactively. |
-| **Katuwang** | Filipino: "partner" or "collaborator." The core positioning — KA is a business partner, not a chatbot. |
-| **Kilala Kita** | "I Know You" — the 5-step onboarding flow. Sets business type, income range, primary pain. Powers all KA personalization. Must complete before accessing any feature. |
-| **Ang Umaga Mo** | "Your Morning" — the Morning Briefing card. KA proactively summarizes yesterday's income, today's BIR deadlines, cash position. Pro/Business tier. |
+| **Kai** | The AI persona within AKBai. Named after "Katuwang" (partner/collaborator). Kai speaks first, proactively. |
+| **Katuwang** | Filipino: "partner" or "collaborator." The core positioning — Kai is a business partner, not a chatbot. |
+| **Kilala Kita** | "I Know You" — the 5-step onboarding flow. Sets business type, income range, primary pain. Powers all Kai personalization. Must complete before accessing any feature. |
+| **Ang Umaga Mo** | "Your Morning" — the Morning Briefing card. Kai proactively summarizes yesterday's income, today's BIR deadlines, cash position. Pro/Business tier. |
 | **Resibo Scanner** | Receipt scanning feature. Camera → Claude Haiku Vision → structured expense card. Cost: ₱0.16/scan. Pro/Business tier exclusive. |
 | **Saan Napunta** | "Where Did It Go" — the Expense Dashboard. Categorized spend, monthly trends, cash flow visibility. |
 | **Deadline Watcher** | BIR compliance calendar. Deadlines by business type. 7/3/1-day notification sequence (Pro/Business). Free tier gets 1 reminder per filing only. |
 | **Invoice Cards** | Create, send, track invoices. PDF export. Pro/Business feature. |
 | **Costing Cards** | Ingredient costing, margin calculator for food sellers and bakers. Pro/Business feature. |
-| **Reply Drafter** | KA drafts customer DM replies. Phase 1: manual copy-paste. Phase 2: Meta Messenger API. |
+| **Reply Drafter** | Kai drafts customer DM replies. Phase 1: manual copy-paste. Phase 2: Meta Messenger API. |
 | **Maria Moment** | The target first-value moment: user opens AKBai and sees something true about their business they didn't know before. E.g., "Kumikita ka. ₱18,400 ang net mo this month." |
 | **Flag as Wrong** | One-tap action on every AI output card. Sends output + user context to a review log. Hard pre-launch gate — must ship with Phase 1. |
 | **Sense Check Gate** | Month 6 Go/No-Go checkpoint based on 8 signals. Gate between Phase 1 and Phase 2. Three outcomes: GREEN (proceed), YELLOW (2–4 weeks more), RED (return to user interviews). |
-| **Trust Recovery Pattern** | Pre-designed KA response pattern for when KA gets something wrong. Taglish format: acknowledge → take responsibility → explain → offer next step. Design gate. |
+| **Trust Recovery Pattern** | Pre-designed Kai response pattern for when Kai gets something wrong. Taglish format: acknowledge → take responsibility → explain → offer next step. Design gate. |
 | **Circuit Breaker** | Daily Claude API spend cap tracked in Supabase (daily_api_spend table). Hard cap ~$5/day initially. Returns graceful degradation response, not error. |
 | **Concierge GCash** | Manual GCash collection fallback for first 20–50 users if Xendit KYC is still pending at launch. |
 | **Build 0** | AI Scope Definition & System Prompt Architecture. HARD GATE before Build 1. Defines in-scope/out-of-scope boundaries, financial disclaimer, domain-expandable prompt structure. New in Roadmap v13. |
@@ -80,15 +80,15 @@
 
 | Term | Usage in AKBai |
 |------|---------------|
-| **Taglish** | Filipino-English code-switching. KA's natural voice. Not a stylistic choice — it's how target users actually communicate. |
-| **Po** | Filipino honorific (respect marker). KA uses it naturally — not every sentence, but when appropriate. Always on BIR topics. |
-| **Kumikita** | "Earning / profitable." E.g., "Kumikita ka." — KA's way of saying you're profitable. |
+| **Taglish** | Filipino-English code-switching. Kai's natural voice. Not a stylistic choice — it's how target users actually communicate. |
+| **Po** | Filipino honorific (respect marker). Kai uses it naturally — not every sentence, but when appropriate. Always on BIR topics. |
+| **Kumikita** | "Earning / profitable." E.g., "Kumikita ka." — Kai's way of saying you're profitable. |
 | **Magkano** | "How much." Common in transaction entry prompts. |
-| **Kita** | "Earnings / income." Used in KA financial summaries. |
+| **Kita** | "Earnings / income." Used in Kai financial summaries. |
 | **Gastos** | "Expenses." Used in Saan Napunta expense dashboard. |
 | **Negosyo** | "Business." Core product vocabulary. |
-| **Kababayan** | "Fellow Filipino / compatriot." KA's relationship with users — like a brilliant kababayan colleague. |
-| **Pasensya na** | "I'm sorry / please forgive me." Used in KA trust recovery responses. |
+| **Kababayan** | "Fellow Filipino / compatriot." Kai's relationship with users — like a brilliant kababayan colleague. |
+| **Pasensya na** | "I'm sorry / please forgive me." Used in Kai trust recovery responses. |
 
 ---
 
@@ -101,14 +101,14 @@
 | **Audit columns** | created_at and updated_at on every table. Auto-updated via trigger. |
 | **Service role key** | Supabase server-side secret. Never in client-side code. Never in NEXT_PUBLIC_ env vars. Only in API routes and Edge Functions. |
 | **Edge Functions** | Supabase Deno runtime. AKBai uses them for webhooks only (Xendit payment events, future WhatsApp). All other logic in Next.js API routes. |
-| **User-scoped system prompt** | Claude API calls assembled server-side: (1) Core KA Persona, (2) User Context (fetched by auth.uid()), (3) Conversation History (per user only), (4) Current Message. Never assembled on client. |
+| **User-scoped system prompt** | Claude API calls assembled server-side: (1) Core Kai Persona, (2) User Context (fetched by auth.uid()), (3) Conversation History (per user only), (4) Current Message. Never assembled on client. |
 | **Profile versioning** | Business profile increments profile_version on update. Triggers: 10+ transactions, repeated BIR questions, voice usage patterns, revenue crossing a band threshold. |
 | **4-Layer data isolation** | RLS (database) + user-scoped system prompt (AI) + conversation isolation (session) + profile versioning (continuous). All four required before production launch. |
 | **Feature flags** | Boolean column in Supabase users table. Enables 10% rollouts, beta access tiers, instant kill switches. Must be in place before Phase 1 ships any feature. |
 | **daily_api_spend** | Supabase table tracking daily Claude API spend per user/global. Powers the circuit breaker. Hard cap: ~$5/day initial, increases with revenue. |
 | **Webhook idempotency** | Xendit webhooks can fire twice on retry. Payment handler must deduplicate by payment_id before processing. Hard gate before Build 4 ships. |
 | **Haiku routing** | Free tier users and lightweight tasks (OCR, classification, quick Q&A) routed to claude-haiku-4-5. Cost optimization — Haiku is significantly cheaper than Sonnet. |
-| **Sonnet routing** | Pro/Business tier users get claude-sonnet-4-6 for KA reasoning, morning briefing, reply drafting, and complex analysis. |
+| **Sonnet routing** | Pro/Business tier users get claude-sonnet-4-6 for Kai reasoning, morning briefing, reply drafting, and complex analysis. |
 | **PWA** | Progressive Web App. AKBai's deployment model. No App Store listing — installed via "Add to Home Screen." next-pwa for offline support. |
 | **App Router** | Next.js 14 routing paradigm. Server Components by default. 'use client' only when needed. Feature folders: /app/(features)/[feature-name]/. |
 

@@ -1,8 +1,8 @@
 # AKBai — Filipino Text Vernacular Reference
 > Used by: ai-engineer, ux-designer, qa-engineer
-> Purpose: Document how Filipino MSME users actually type in chat so KA can understand them.
+> Purpose: Document how Filipino MSME users actually type in chat so Kai can understand them.
 > Last updated: 2026-03-22
-> **KA understands text shortcuts but NEVER mirrors them. KA always responds in proper Taglish.**
+> **Kai understands text shortcuts but NEVER mirrors them. Kai always responds in proper Taglish.**
 
 ---
 
@@ -142,7 +142,7 @@ The most common Filipino texting pattern — drop vowels to type faster.
 
 ## 5. Jejemon / Jejenese Patterns
 
-> Rare in MSME business context but KA should not break if encountered.
+> Rare in MSME business context but Kai should not break if encountered.
 
 ### Letter Substitutions
 | Pattern | Example | Meaning |
@@ -164,7 +164,7 @@ The most common Filipino texting pattern — drop vowels to type faster.
 - "jEjEjE" = laughter
 - Alternating caps: "hElLo Po"
 
-**KA response:** Treat as normal input. Understand intent, respond in proper Taglish. Never mock or comment on the style.
+**Kai response:** Treat as normal input. Understand intent, respond in proper Taglish. Never mock or comment on the style.
 
 ---
 
@@ -246,16 +246,16 @@ These show how patterns stack in actual user messages:
 
 ---
 
-## 9. KA Input Understanding Rules
+## 9. Kai Input Understanding Rules
 
-### How KA handles text shortcuts in conversation:
+### How Kai handles text shortcuts in conversation:
 
-1. **Understand but don't mirror** — KA reads "mgkno po" and responds "₱3,450 po ang price." Never respond in text speak.
+1. **Understand but don't mirror** — Kai reads "mgkno po" and responds "₱3,450 po ang price." Never respond in text speak.
 2. **Never correct spelling** — No "Did you mean...?" for text shortcuts. Treat as normal.
-3. **Match formality, not format** — If user texts casually ("G lang"), KA responds warmly but in proper Taglish.
+3. **Match formality, not format** — If user texts casually ("G lang"), Kai responds warmly but in proper Taglish.
 4. **Business terms stay English** — "HM", "COD", "SF", "avail" are standard marketplace vocabulary. Don't expand them.
 5. **Emotional particles are tone cues** — "huhu" = frustrated (be gentle), "HAHAHA" = happy (be celebratory), "grabe" = strong reaction (acknowledge it).
-6. **Po signals respect expectation** — If user uses "po", KA should use "po" back. If user doesn't, KA can be more casual.
+6. **Po signals respect expectation** — If user uses "po", Kai should use "po" back. If user doesn't, Kai can be more casual.
 7. **Jejemon is not mockable** — If someone types "eOw pHo", understand it and respond normally. No judgment.
 8. **Address terms signal relationship** — "boss" = transactional, "ate/kuya" = respectful, "mars/bes" = friendly. Match the energy.
 9. **GCash phrases are action cues** — "sent na po" = user thinks they paid, verify. "pa-check" = waiting for confirmation.

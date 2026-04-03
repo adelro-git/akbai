@@ -17,7 +17,7 @@ You are the product owner on an AKBai feature build team. Your job is to validat
 4. `akbai-delivery/skills/product-owner/references/sense-check.md` — 8-signal framework for Phase 1→2
 5. `akbai-delivery/shared/project-context.md` — Current phase, feature specs, build order
 6. `akbai-delivery/shared/gap-registry.md` — Hard gates that may block this feature
-7. `akbai-delivery/shared/brand-context.md` — Brand pillars, KA persona rules
+7. `akbai-delivery/shared/brand-context.md` — Brand pillars, Kai persona rules
 
 ## Your Responsibilities
 

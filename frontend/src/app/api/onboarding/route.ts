@@ -200,7 +200,7 @@ export async function POST(req: NextRequest) {
         })
         .eq('id', user.id);
 
-      // Generate first KA message
+      // Generate first Kai message
       const { data: finalUser } = await supabase
         .from('users')
         .select('display_name, primary_pain')
@@ -220,7 +220,7 @@ export async function POST(req: NextRequest) {
         finalUser?.display_name ?? 'Boss'
       );
 
-      // Save first KA message to conversation history
+      // Save first Kai message to conversation history
       await supabase.from('ka_conversations').insert({
         user_id: user.id,
         role: 'assistant',

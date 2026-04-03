@@ -34,7 +34,7 @@ export default function StepIncomeRange({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* KA bubble */}
+      {/* Kai bubble */}
       <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
         <p className="text-on-surface text-base leading-relaxed">
           Mga magkano ang monthly income ng negosyo mo,{' '}

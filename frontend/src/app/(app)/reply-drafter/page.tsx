@@ -3,7 +3,7 @@
 /**
  * Reply Drafter Page (Build 7)
  *
- * Users paste a customer message and KA (Kai) generates 2 reply options.
+ * Users paste a customer message and Kai generates 2 reply options.
  * Phase 1: manual copy-paste into Messenger/Viber/WhatsApp.
  *
  * Mobile-first layout following the expenses page pattern.

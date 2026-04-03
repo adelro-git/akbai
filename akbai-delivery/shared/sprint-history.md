@@ -47,7 +47,7 @@
 ### Sprint 2 — 2026-03-21 to 2026-04-04
 
 **Phase:** 0A — Build 0 Complete, Pre-Build 1 Knowledge Foundation
-**Sprint Goal:** Create the 4 KA domain knowledge files so Build 1 (Kilala Kita) can deliver the "Maria Moment."
+**Sprint Goal:** Create the 4 Kai domain knowledge files so Build 1 (Kilala Kita) can deliver the "Maria Moment."
 **Capacity:** 12 hours
 
 **Tasks:**
@@ -111,15 +111,15 @@ Why: Build 1 data layer — onboarding needs tables for business profiles and re
 Done when: Onboarding data saves step-by-step, resumes on return, all tests pass.
 
 **Task 3: Kilala Kita Onboarding UI — 5-Step Flow (L — 4 hrs)**
-Why: Build 1 frontend — user's first experience with KA. Must deliver the "Maria Moment."
+Why: Build 1 frontend — user's first experience with Kai. Must deliver the "Maria Moment."
 - [ ] Create `/app/(features)/onboarding/` route with step-based state machine
 - [ ] Build Step 1: Business type selector (16-type taxonomy from `msme-business-knowledge.md`)
 - [ ] Build Step 2: Income range selector
 - [ ] Build Step 3: Primary pain selector
 - [ ] Build Step 4: BIR consent + data privacy acknowledgment
-- [ ] Build Step 5: KA first response — personalized greeting from `kilala-kita-context.md` templates
+- [ ] Build Step 5: Kai first response — personalized greeting from `kilala-kita-context.md` templates
 - [ ] Wire to Task 2 API — save progress on each step, resume on return (Gap B3)
-Done when: User completes all 5 steps, sees personalized KA greeting, can resume mid-flow.
+Done when: User completes all 5 steps, sees personalized Kai greeting, can resume mid-flow.
 Depends on: Task 2
 
 **Task 4: Onboarding Rate-Limit Exemption (S — 1.5 hrs)**
@@ -186,13 +186,13 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 **What Didn't Go Well:**
 - No `.env.local.example` — new sessions can't set up dev environment without asking
-- Domain knowledge for KA is missing — scopes have boundaries but no actual BIR/business data
+- Domain knowledge for Kai is missing — scopes have boundaries but no actual BIR/business data
 - Taglish manual is 100% placeholder (all 10 sections say "Awaiting entries")
 - Sprint plan wasn't saved anywhere persistent — had to reconstruct context from git history
 
 **What We Learned:**
 - Build 0 scope was right-sized for a sprint — the "ship one hard gate" pattern works
-- KA has rules but no knowledge — boundary rules without domain data means Build 1 will produce an empty-feeling AI
+- Kai has rules but no knowledge — boundary rules without domain data means Build 1 will produce an empty-feeling AI
 - Context persistence between sessions is a real gap — need a living document for sprint/retro history (this file!)
 
 **Action Items:**
@@ -217,7 +217,7 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - Shipped all 6 tasks — 100% completion rate, all Sprint 1 retro actions resolved
 - Context/knowledge files were highly productive: BIR KB (282 lines), MSME KB (735 lines, expanded from 4 to 16 business types), Kilala Kita (28 templates), Taglish manual (all 10 sections)
 - Task 2 expansion (4→16 types + benchmarks migration) added clear value without blowing capacity
-- TAX_SCOPE enrichment wired domain knowledge directly into the runtime — KA now has real BIR data, not just boundaries
+- TAX_SCOPE enrichment wired domain knowledge directly into the runtime — Kai now has real BIR data, not just boundaries
 
 **What Didn't Go Well:**
 - No significant blockers this sprint — clean execution throughout
@@ -388,7 +388,7 @@ Done when: Errors from client and server captured in Sentry with source maps.
 ### Sprint 8 — 2026-03-28
 
 **Phase:** 0A — Build 5
-**Sprint Goal:** Ship the Morning Briefing card, weekly reconciliation prompt, and monthly summary so KA proactively surfaces yesterday's business health every morning.
+**Sprint Goal:** Ship the Morning Briefing card, weekly reconciliation prompt, and monthly summary so Kai proactively surfaces yesterday's business health every morning.
 **Capacity:** 3.5 hrs Anton Time (review/testing/decisions)
 
 **Tasks:**
@@ -495,7 +495,7 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Sprint | Goal | Hours Plan | Hours Actual | Tasks Plan | Tasks Done | Hit Goal? |
 |--------|------|-----------|-------------|-----------|-----------|-----------|
 | 1 | Ship Build 0 | 10–15 | ~14 | 5 | 5 | YES |
-| 2 | KA domain knowledge files | 12 | ~11 | 6 | 6 | YES |
+| 2 | Kai domain knowledge files | 12 | ~11 | 6 | 6 | YES |
 | 3 | Build 1 + infra gaps | 12 | ~12 | 5 | 5 | YES |
 
 | 4 | Gap resolution + Build 2 shell | 13.5 (est.) | ~3-4 (Anton) | 5+2 | 7 | YES |

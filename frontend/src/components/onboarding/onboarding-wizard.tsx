@@ -58,7 +58,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
           return false;
         }
 
-        // Step 5 returns the first KA message
+        // Step 5 returns the first Kai message
         if (json.data?.completed && json.data?.firstMessage) {
           setFirstMessage(json.data.firstMessage);
         }
@@ -137,7 +137,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
 
   const progressPct = Math.min(((currentStep - 1) / 5) * 100, 100);
 
-  // Step 6: Show first KA message then redirect
+  // Step 6: Show first Kai message then redirect
   if (currentStep === 6 && firstMessage) {
     return (
       <div className="flex flex-col gap-6 animate-in fade-in duration-500">

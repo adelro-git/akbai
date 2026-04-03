@@ -2,7 +2,7 @@
  * Reply Drafter — Type definitions (Build 7)
  *
  * Types for the reply drafting feature. Users paste a customer message
- * and KA generates 2 Taglish reply options for copy-paste into
+ * and Kai generates 2 Taglish reply options for copy-paste into
  * Messenger/Viber/WhatsApp. Phase 1: manual copy-paste only.
  */
 

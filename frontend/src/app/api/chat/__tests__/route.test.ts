@@ -190,7 +190,7 @@ describe('POST /api/chat', () => {
   });
 
   // --- Happy Path ---
-  it('returns 200 with KA response for valid request', async () => {
+  it('returns 200 with Kai response for valid request', async () => {
     const req = createRequest({ message: 'Magkano ang sales ko ngayong linggo?' });
     const res = await POST(req as any);
     const json = await res.json();

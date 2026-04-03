@@ -124,7 +124,7 @@ These hooks use real language from Reddit, Facebook, and TikTok. They tested wel
 | "20 BIR deadlines per year. Isa lang ang ma-miss, 25% surcharge agad." | Fear-with-facts |
 | "99.5% ng businesses sa Pilipinas, MSME. Deserve nila ng AI partner." | Aspirational |
 | "Hindi ka nag-iisa sa negosyo mo." | Brand promise |
-| "Si KA na ang sasagot -- ikaw na lang mag-send." | DM overload relief |
+| "Si Kai na ang sasagot -- ikaw na lang mag-send." | DM overload relief |
 | "Goodbye Excel. Goodbye notebook. Hello Kai." | Manual → automatic |
 
 ---

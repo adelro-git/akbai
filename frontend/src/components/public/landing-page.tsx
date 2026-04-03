@@ -98,13 +98,13 @@ const painPoints = [
     icon: IconBIR,
     title: 'Nakakatakot ang BIR?',
     description:
-      'Hindi ka nagiisa. Maraming MSME owners ang stressed sa deadlines, penalties, at forms. Si KA, alam ang BIR calendar mo — para hindi ka ma-late.',
+      'Hindi ka nagiisa. Maraming MSME owners ang stressed sa deadlines, penalties, at forms. Si Kai, alam ang BIR calendar mo — para hindi ka ma-late.',
   },
   {
     icon: IconCashFlow,
     title: 'Hindi mo alam kung kumikita ka?',
     description:
-      'Busy ka sa negosyo pero di mo alam kung tumutubo ba talaga. KA tracks your cash flow daily — para laging clear ang picture.',
+      'Busy ka sa negosyo pero di mo alam kung tumutubo ba talaga. Kai tracks your cash flow daily — para laging clear ang picture.',
   },
   {
     icon: IconReceipt,
@@ -123,8 +123,8 @@ const steps = [
   },
   {
     step: '2',
-    title: 'KA Speaks First',
-    description: 'Every morning, morning briefing ka ni KA — deadlines, reminders, at insights na relevant sa negosyo mo.',
+    title: 'Kai Speaks First',
+    description: 'Every morning, morning briefing ka ni Kai — deadlines, reminders, at insights na relevant sa negosyo mo.',
   },
   {
     step: '3',
@@ -152,7 +152,7 @@ const pillars = [
   {
     icon: IconComms,
     title: 'Customer Comms',
-    tagline: 'Reply sa DM, Draft ni KA',
+    tagline: 'Reply sa DM, Draft ni Kai',
     description: 'AI-drafted replies sa customer messages. Ikaw na lang mag-review at send.',
     accent: 'from-primary-container/10 to-transparent',
   },
@@ -160,13 +160,13 @@ const pillars = [
     icon: IconOps,
     title: 'Daily Operations',
     tagline: 'Ang Umaga Mo, Organized',
-    description: 'Morning briefing, daily check-in, weekly reconciliation — automated by KA.',
+    description: 'Morning briefing, daily check-in, weekly reconciliation — automated by Kai.',
     accent: 'from-tertiary/10 to-transparent',
   },
   {
     icon: IconTasks,
     title: 'Task Management',
-    tagline: 'Alam ni KA ang Priorities Mo',
+    tagline: 'Alam ni Kai ang Priorities Mo',
     description: 'Proactive task surfacing at deadline-aware scheduling. Hindi ka makakalimot.',
     accent: 'from-primary-container/10 to-transparent',
   },
@@ -178,21 +178,21 @@ const tiers = [
     name: 'Free',
     price: 0,
     period: '/month',
-    features: ['Basic expense tracking', '10 KA queries/day', 'BIR deadline reminders', 'Morning briefing'],
+    features: ['Basic expense tracking', '10 Kai queries/day', 'BIR deadline reminders', 'Morning briefing'],
     highlighted: false,
   },
   {
     name: 'Pro',
     price: 39900,
     period: '/month',
-    features: ['Lahat ng Free features', '50 receipt scans/month', 'Unlimited KA queries', 'Cash flow insights', 'Tax estimate reports'],
+    features: ['Lahat ng Free features', '50 receipt scans/month', 'Unlimited Kai queries', 'Cash flow insights', 'Tax estimate reports'],
     highlighted: true,
   },
   {
     name: 'Business',
     price: 89900,
     period: '/month',
-    features: ['Lahat ng Pro features', 'Multi-seat (up to 3 users)', 'Priority support', 'Custom KA training', 'Advanced analytics'],
+    features: ['Lahat ng Pro features', 'Multi-seat (up to 3 users)', 'Priority support', 'Custom Kai training', 'Advanced analytics'],
     highlighted: false,
   },
 ] as const
@@ -488,7 +488,7 @@ export default function LandingPage() {
               className="text-2xl font-extrabold tracking-tight text-on-surface sm:text-3xl md:text-4xl"
               style={{ letterSpacing: '-0.02em' }}
             >
-              Paano gumagana si KA?
+              Paano gumagana si Kai?
             </h2>
           </div>
 

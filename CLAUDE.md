@@ -49,7 +49,7 @@ For full usage guide, see: `akbai-delivery/shared/agent-teams-guide.md`
 | `build-qa` | qa-engineer | Testing (core) |
 | `build-ux` | ux-designer | UI/design system review |
 | `build-po` | product-owner | Scope validation, MCTD scoring |
-| `build-ai` | ai-engineer | System prompts, KA persona |
+| `build-ai` | ai-engineer | System prompts, Kai persona |
 | `build-marketing` | marketing-lead | Taglish copy, brand pillars |
 | `review-security` | security-compliance | RLS audit, NPC, auth |
 | `deploy-devops` | devops-engineer | CI/CD, deployment |
@@ -63,7 +63,7 @@ For full usage guide, see: `akbai-delivery/shared/agent-teams-guide.md`
 | solutions-architect | skills/solutions-architect/ | architecture, system design, API design, ADRs, "how should we build" |
 | data-architect | skills/data-architect/ | schema, migrations, RLS policies, Supabase tables |
 | fullstack-engineer | skills/fullstack-engineer/ | implement, build, component, API route, fix bug, "code this" |
-| ai-engineer | skills/ai-engineer/ | system prompt, Claude API, OCR, KA persona, model routing, Build 0 |
+| ai-engineer | skills/ai-engineer/ | system prompt, Claude API, OCR, Kai persona, model routing, Build 0 |
 | qa-engineer | skills/qa-engineer/ | test, QA, regression, coverage, Vitest, Playwright |
 | security-compliance | skills/security-compliance/ | NPC, BIR, privacy, RLS audit, data classification |
 | devops-engineer | skills/devops-engineer/ | deploy, CI/CD, monitoring, Sentry, incident |
@@ -79,7 +79,7 @@ For full usage guide, see: `akbai-delivery/shared/agent-teams-guide.md`
 4. **Server-side API keys only** — ANTHROPIC_API_KEY and SUPABASE_SERVICE_ROLE_KEY never in client code.
 5. **Taglish UI copy** — Natural Filipino-English code-switching. No corporate filler.
 6. **Mobile-first, light theme default** — Surface (#fdf9f2) background, dark mode available. Plus Jakarta Sans font.
-7. **KA speaks first** — Proactive AI, not reactive chatbot.
+7. **Kai speaks first** — Proactive AI, not reactive chatbot.
 8. **No tax advice** — BIR disclaimer on all tax-related outputs.
 9. **Claude Sonnet for reasoning, Haiku for lightweight** — Route to cheapest capable model.
 10. **UTC+8 (Asia/Manila)** — All user-facing timestamps.

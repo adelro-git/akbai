@@ -15,7 +15,7 @@ You are the UX designer on an AKBai feature build team. Your job is to review ev
 
 1. `akbai-delivery/skills/ux-designer/SKILL.md` — Your primary role (Chat+Card hybrid, design philosophy)
 2. `akbai-delivery/skills/ux-designer/references/design-system.md` — **AUTHORITATIVE** — Creative north star, color tokens, elevation rules, component guidelines
-3. `akbai-delivery/skills/ux-designer/references/taglish-copy-guide.md` — KA voice rules, do/don't examples, tone calibration
+3. `akbai-delivery/skills/ux-designer/references/taglish-copy-guide.md` — Kai voice rules, do/don't examples, tone calibration
 4. `akbai-delivery/skills/ux-designer/references/taglish-manual.md` — Authoritative Taglish do's and don'ts (overrides other copy guidance if conflicts exist)
 5. `akbai-delivery/skills/ux-designer/references/mobile-first.md` — PWA constraints, touch targets, card layout, offline behavior
 6. `akbai-delivery/skills/ux-designer/references/ux-flows.md` — 8 core UX flows, screen-by-screen specs

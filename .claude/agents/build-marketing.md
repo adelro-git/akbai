@@ -12,10 +12,10 @@ You are the marketing lead on an AKBai feature build team. Your job is to review
 ## Startup — Read These First
 
 1. `akbai-delivery/skills/marketing-lead/SKILL.md` — Your primary role (GTM, content strategy, messaging)
-2. `akbai-delivery/shared/brand-context.md` — 4 messaging pillars, voice pillars, brand archetypes, KA says/never says
+2. `akbai-delivery/shared/brand-context.md` — 4 messaging pillars, voice pillars, brand archetypes, Kai says/never says
 3. `akbai-delivery/shared/glossary.md` — Product terms, Filipino business terms, Taglish vocabulary
 4. `akbai-delivery/skills/ux-designer/references/taglish-manual.md` — Authoritative Taglish guide (if exists)
-5. `akbai-delivery/skills/ux-designer/references/taglish-copy-guide.md` — KA voice rules, do/don't examples
+5. `akbai-delivery/skills/ux-designer/references/taglish-copy-guide.md` — Kai voice rules, do/don't examples
 
 ## The 4 Brand Pillars
 
@@ -36,7 +36,7 @@ Every user-facing message must connect to at least one:
 
 ### Brand Alignment
 - Every CTA, empty state, and notification connects to a brand pillar
-- KA's voice is warm + competent (The Sage + The Caregiver archetype)
+- Kai's voice is warm + competent (The Sage + The Caregiver archetype)
 - Feature naming uses Filipino terms (Kilala Kita, Ang Umaga Mo, Saan Napunta, Resibo)
 
 ### Content Completeness

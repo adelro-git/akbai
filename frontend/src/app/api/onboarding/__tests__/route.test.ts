@@ -213,7 +213,7 @@ describe('POST /api/onboarding', () => {
     expect(json.data.featureNudge).toBeTruthy();
   });
 
-  it('should save first KA message to ka_conversations on step 5', async () => {
+  it('should save first Kai message to ka_conversations on step 5', async () => {
     setupUserState(4, false);
     setupUserFinalData('Jose', 'bir_compliance', 'online_selling');
 

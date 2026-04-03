@@ -12,7 +12,7 @@
 **Stage:** Pre-launch / Phase 0 (as of March 2026)
 **Founder:** Anton del Rosario (solo founder, day job at Globe Telecom)
 
-AKBai is NOT a chatbot. It is a proactive AI business partner — "KA" (Katuwang) — that surfaces insights, tracks finances, monitors BIR deadlines, and drafts customer communications for Filipino micro and small business owners. KA speaks first. KA acts like a brilliant kababayan colleague, not a corporate tool.
+AKBai is NOT a chatbot. It is a proactive AI business partner — "Kai" (from Katuwang — partner) — that surfaces insights, tracks finances, monitors BIR deadlines, and drafts customer communications for Filipino micro and small business owners. Kai speaks first. Kai acts like a brilliant kababayan colleague, not a corporate tool.
 
 ---
 
@@ -48,7 +48,7 @@ AKBai is NOT a chatbot. It is a proactive AI business partner — "KA" (Katuwang
 
 **Frontend:** Next.js 16 App Router, TypeScript (strict), Tailwind CSS + Shadcn/UI, TanStack Query + Persister (offline-first caching), mobile-first PWA
 **Database:** Supabase — Postgres, Auth, Storage, Realtime, Edge Functions
-**AI:** Claude API — Haiku (OCR, classification, free tier), Sonnet (KA reasoning, Pro/Business tier)
+**AI:** Claude API — Haiku (OCR, classification, free tier), Sonnet (Kai reasoning, Pro/Business tier)
 **Payments:** Xendit — subscription billing, GCash as primary payment method
 **Deploy:** Vercel (Phase 1 primary, free tier) → Cloudflare Pages (Month 7+ cost optimization, $5/mo)
 **Email:** Resend (transactional — winback sequences, BIR deadline reminders, payment notifications)
@@ -83,13 +83,13 @@ AKBai is NOT a chatbot. It is a proactive AI business partner — "KA" (Katuwang
 Build order (Build 0 → Build 8):
 
 0. **Build 0: AI Scope Definition & System Prompt Architecture** — HARD GATE before Build 1. Defines in-scope/out-of-scope boundaries, financial disclaimer, Taglish tone, domain-expandable prompt structure with modular scope sections. See Post-Implementation Vision v1 for Phase 4+ expansion.
-1. **Kilala Kita** — 5-step hybrid onboarding. Sets business type, income range, primary pain, BIR consent, data bootstrap. Powers all KA personalization.
+1. **Kilala Kita** — 5-step hybrid onboarding. Sets business type, income range, primary pain, BIR consent, data bootstrap. Powers all Kai personalization.
 2. **Dashboard** — Business health at a glance. Cash position, sales trends, BIR deadlines, task list. Home tab of PWA.
 3. **Resibo Scanner** — Camera → Claude Haiku Vision → structured expense card. Cost: ₱0.16/scan.
 4. **Saan Napunta** — Expense dashboard. Categorized spend, monthly trends, cash flow visibility.
-5. **Ang Umaga Mo** — Morning Briefing card. KA proactively summarizes yesterday's income, today's BIR deadlines, cash position.
+5. **Ang Umaga Mo** — Morning Briefing card. Kai proactively summarizes yesterday's income, today's BIR deadlines, cash position.
 6. **Deadline Watcher** — BIR compliance calendar. Deadlines by business type. Push notifications (7/3/1-day sequence for Pro).
-7. **Reply Drafter** — KA drafts customer DM replies. Phase 1: manual copy-paste. Phase 2: Meta Messenger API.
+7. **Reply Drafter** — Kai drafts customer DM replies. Phase 1: manual copy-paste. Phase 2: Meta Messenger API.
 8. **Costing Cards + Invoice Cards** — Margin calculator + invoice creation/tracking/PDF export.
 
 **Also included in builds (not separate builds):**
@@ -110,7 +110,7 @@ Build order (Build 0 → Build 8):
 
 ### Phase 0B — Demand Validation (Weeks 4–10)
 - 100+ waitlist signups (zero paid ads)
-- Brand identity complete (KA visual system)
+- Brand identity complete (Kai visual system)
 - 5–6 SEO Taglish articles published
 - 10 founder interviews completed
 - Gate: 100 waitlist signups
@@ -230,9 +230,9 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 
 ---
 
-## 8. KA Persona — Communication Rules
+## 8. Kai Persona — Communication Rules
 
-KA is AKBai's AI personality. **Internal/documentation name: "KA". User-facing name: "Kai"** (the smart ate/kuya who always has your back). Use "Kai" in all UI copy, chat headers, and user-visible text. Use "KA" in code, docs, and internal references.
+Kai is AKBai's AI personality — the smart ate/kuya who always has your back. Named after "Katuwang" (partner/collaborator).
 
 Every user-facing output must follow these rules:
 

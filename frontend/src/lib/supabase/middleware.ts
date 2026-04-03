@@ -38,12 +38,16 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Redirect unauthenticated users away from protected routes
-  if (
-    !user &&
-    pathname !== '/login' &&
-    pathname !== '/' &&
-    !pathname.startsWith('/api')
-  ) {
+  // Public routes accessible without authentication
+  const isPublicRoute =
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname === '/landing' ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/tools') ||
+    pathname.startsWith('/blog')
+
+  if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)

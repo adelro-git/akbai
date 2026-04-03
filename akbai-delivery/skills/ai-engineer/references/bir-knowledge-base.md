@@ -2,7 +2,7 @@
 > Used by: ai-engineer, security-compliance, fullstack-engineer (Build 6 Deadline Watcher)
 > Source: BIR.gov.ph public data, TRAIN Law (RA 10963), RMC 20-2026
 > Last verified: 2026-04-02 | Tax year: 2025–2026 rules
-> **⚠️ DISCLAIMER: This file is reference material for KA's domain knowledge. All tax-related outputs to users MUST include the BIR disclaimer: "Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo."**
+> **⚠️ DISCLAIMER: This file is reference material for Kai's domain knowledge. All tax-related outputs to users MUST include the BIR disclaimer: "Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo."**
 
 ---
 
@@ -18,7 +18,7 @@
 | Sole proprietor (VAT-registered) | Jose (if >₱3M) | Graduated rates + VAT | 1701Q, 1701A, 2550Q | Quarterly ITR, Annual ITR, Quarterly VAT |
 | Corporation | (Phase 3+) | Corporate rates | 1702Q, 1702, 2551Q | Quarterly ITR, Annual ITR, Quarterly percentage tax |
 
-### Form Descriptions (KA should know these)
+### Form Descriptions (Kai should know these)
 
 | Form | Full Name | Who Files | Frequency |
 |------|-----------|-----------|-----------|
@@ -38,7 +38,7 @@ If a non-VAT individual taxpayer opts for 8% flat tax, they are **exempt** from 
 ### Key Rule: Form 1701-MS (Micro/Small Taxpayers — RMC 20-2026)
 RMC 20-2026 allows micro and small taxpayers to use **Form 1701-MS** (a simplified annual return) regardless of what their COR says. EOPT definitions: **micro** = gross sales < ₱3M; **small** = gross sales ₱3M to < ₱20M.
 
-**⚠️ Electronic filing gap (confirmed as of April 2026):** BIR Form 1701-MS is NOT available in eBIRForms (v7.9.5.0) or eFPS. Per Deloitte Tax@Hand (Mar 19, 2026) and BIR RDO advisories, the form must be downloaded manually from bir.gov.ph. The workaround per RMC 20-2026: micro and small individual taxpayers can file using 1701 or 1701A electronically with no penalty, regardless of what their COR says. They are NOT required to update their COR to include 1701-MS. KA should guide users toward electronic filing via 1701A.
+**⚠️ Electronic filing gap (confirmed as of April 2026):** BIR Form 1701-MS is NOT available in eBIRForms (v7.9.5.0) or eFPS. Per Deloitte Tax@Hand (Mar 19, 2026) and BIR RDO advisories, the form must be downloaded manually from bir.gov.ph. The workaround per RMC 20-2026: micro and small individual taxpayers can file using 1701 or 1701A electronically with no penalty, regardless of what their COR says. They are NOT required to update their COR to include 1701-MS. Kai should guide users toward electronic filing via 1701A.
 
 ---
 
@@ -54,7 +54,7 @@ Filed Q1–Q3 only. No Q4 quarterly — the annual return covers the full year.
 | Q3 | July – September | **November 15** |
 
 ### How Quarterly Income Tax (1701Q) Is Computed
-Quarterly income tax is computed on **cumulative year-to-date income**, not just the quarter's income. Tax paid in prior quarters is credited against the current quarter's liability. Example: if Q1 tax due = ₱10,000 and Q2 cumulative tax due = ₱25,000, the Q2 payment = ₱25,000 − ₱10,000 = ₱15,000. This is a common confusion point for MSMEs — KA should explain this clearly.
+Quarterly income tax is computed on **cumulative year-to-date income**, not just the quarter's income. Tax paid in prior quarters is credited against the current quarter's liability. Example: if Q1 tax due = ₱10,000 and Q2 cumulative tax due = ₱25,000, the Q2 payment = ₱25,000 − ₱10,000 = ₱15,000. This is a common confusion point for MSMEs — Kai should explain this clearly.
 
 ### Annual Income Tax (1701A / 1701 / 1702)
 
@@ -107,7 +107,7 @@ Same pattern as 2551Q — due on the 25th of the month after the quarter closes.
 - BIR may issue **extensions via RMC** (Revenue Memorandum Circular) — check BIR.gov.ph
 - Payment and filing happen on the **same deadline** (file and pay together)
 - Late filing penalties: **25% surcharge** (or 10% for micro/small under EOPT Act; **50% if willful neglect or fraud** regardless of size) + **12% annual interest** per TRAIN Law (or 6% for micro/small under EOPT Act) + compromise penalty
-- **Note:** BIR's penalties page (bir.gov.ph/penalties) still shows 20% interest (pre-TRAIN). The 12% rate (double the 6% BSP legal interest) is the legally current rate per Sec. 249 as amended by RA 10963. KA should cite the TRAIN Law rate but note the discrepancy if users question it.
+- **Note:** BIR's penalties page (bir.gov.ph/penalties) still shows 20% interest (pre-TRAIN). The 12% rate (double the 6% BSP legal interest) is the legally current rate per Sec. 249 as amended by RA 10963. Kai should cite the TRAIN Law rate but note the discrepancy if users question it.
 
 ### 2026 Deadline Adjustments (Weekend/Holiday Rollover)
 
@@ -159,7 +159,7 @@ Several 2026 deadlines fall on weekends and automatically move to the next busin
 **Eid'l Adha:** Date not yet proclaimed (expected ~June 7, 2026 based on Islamic calendar).
 
 ### Push Notification Sequence (Build 6 — Deadline Watcher)
-For each deadline, KA sends reminders at:
+For each deadline, Kai sends reminders at:
 - **7 days before** — "Heads up: [form] is due on [date]. Handa ka na ba?"
 - **3 days before** — "3 days na lang para sa [form]. Kailangan mo ng tulong sa computation?"
 - **1 day before** — "Bukas na ang deadline ng [form]! File na para walang penalty."
@@ -235,7 +235,7 @@ Tax = (₱1,200,000 − ₱250,000) × 8% = ₱76,000
 | Contractor/subcontractor income | **2%** | Business services, non-PRC-regulated | Interior design firms (PSIC 82990), construction, cleaning services, IT contractors, marketing agencies |
 | Platform seller withholding (e-marketplace) | **1%** | Electronic marketplace operators withholding on sellers (per RR 16-2023) | Shopee, Lazada withholding on seller payouts |
 
-**Key distinctions for KA:**
+**Key distinctions for Kai:**
 - **Professional vs contractor** is determined by whether the profession is **PRC-regulated** (Professional Regulation Commission), NOT by the nature of the work. Interior design is NOT PRC-regulated — it's classified as business services (typically PSIC 82990), so the 2% rate applies.
 - **PSIC code** (Philippine Standard Industrial Classification) on the COR is the authoritative indicator of business classification for withholding purposes.
 - The **payer** (client) is the withholding agent — they're responsible for remitting and issuing the 2307.
@@ -270,20 +270,20 @@ A business becomes a withholding agent when it pays for professional services or
 | ≤ ₱3,000,000 | Non-VAT | Can choose 8% flat OR graduated rates + 3% percentage tax |
 | > ₱3,000,000 | **Mandatory VAT registration** | Must register as VAT, charge 12% output VAT, file 2550Q quarterly |
 
-### When KA Should Alert Users (Build 6 Integration)
+### When Kai Should Alert Users (Build 6 Integration)
 - **At ₱2,400,000 (80% of threshold):** "Malapit ka na sa ₱3M VAT threshold. Kung lumampas ka, kailangan mo ng VAT registration. Magkonsulta sa CPA para sa best approach."
 - **At ₱2,700,000 (90%):** Stronger warning with CPA referral
 - **At ₱3,000,000+:** "Lampas ka na sa ₱3M. Legally, kailangan mo ng VAT registration sa BIR. Kumonsulta agad sa CPA."
 
-### VAT Registration Process (for KA awareness — NOT advice)
+### VAT Registration Process (for Kai awareness — NOT advice)
 1. File BIR Form 1905 (update registration)
 2. Get updated COR reflecting VAT registration
 3. Start charging 12% VAT on all sales
 4. File 2550Q quarterly (instead of 2551Q)
 
-**Note:** The ₱500 annual registration fee (Form 0605) was **abolished effective January 22, 2024** under the EOPT Act (RA 11976). KA should NOT remind users to pay this fee.
+**Note:** The ₱500 annual registration fee (Form 0605) was **abolished effective January 22, 2024** under the EOPT Act (RA 11976). Kai should NOT remind users to pay this fee.
 
-### Key VAT Facts for KA
+### Key VAT Facts for Kai
 - VAT is **on top of** the selling price (not included unless explicitly stated)
 - Input VAT (VAT paid on purchases) can be **credited** against output VAT
 - Net VAT payable = Output VAT − Input VAT
@@ -294,11 +294,11 @@ A business becomes a withholding agent when it pays for professional services or
 ## 5. Common BIR Mistakes by Persona
 
 ### Maria (Home Baker / Food Seller — ₱80K–₱250K/month)
-- **Forgetting quarterly deadlines** — focused on daily operations, BIR deadlines sneak up. KA's Deadline Watcher (Build 6) directly solves this.
-- **Not keeping receipts for purchases** — buys ingredients in palengke (wet market) without OR. Makes it hard to claim itemized deductions. KA can suggest OSD (40% flat deduction) as alternative.
+- **Forgetting quarterly deadlines** — focused on daily operations, BIR deadlines sneak up. Kai's Deadline Watcher (Build 6) directly solves this.
+- **Not keeping receipts for purchases** — buys ingredients in palengke (wet market) without OR. Makes it hard to claim itemized deductions. Kai can suggest OSD (40% flat deduction) as alternative.
 - **Not knowing which form to file** — confused between 1701Q and 2551Q. Doesn't know she might be eligible for 8% flat tax.
-- **Not separating personal and business expenses** — uses one GCash for everything. KA's expense tracking helps here.
-- **Approaching VAT threshold unknowingly** — if Maria's baking business grows past ₱250K/month consistently, she may cross ₱3M annual. KA should monitor and alert.
+- **Not separating personal and business expenses** — uses one GCash for everything. Kai's expense tracking helps here.
+- **Approaching VAT threshold unknowingly** — if Maria's baking business grows past ₱250K/month consistently, she may cross ₱3M annual. Kai should monitor and alert.
 - **Not issuing 2307 when paying subcontractors** — if Maria hires a freelance delivery driver or food photographer, she may be required to withhold EWT and issue a 2307. Most MSMEs don't know they can be withholding agents.
 
 ### Jose (Online Seller — Shopee/Lazada)
@@ -317,7 +317,7 @@ A business becomes a withholding agent when it pays for professional services or
 - **Not collecting 2307 from clients** — when Ana's clients withhold EWT (5% if PRC-regulated profession, 2% if contractor), they should issue a 2307. Ana needs to collect these and claim as tax credits. Many freelancers don't ask for 2307s and end up double-paying.
 
 ### Andoy (Sari-Sari / Micro-Retail — ₱500–₱3,000/day)
-- **Not being registered at all** — many sari-sari stores operate informally. BIR registration is required for any business earning income. KA should gently guide toward formalization, not guilt.
+- **Not being registered at all** — many sari-sari stores operate informally. BIR registration is required for any business earning income. Kai should gently guide toward formalization, not guilt.
 - **Mixing personal and business income** — all money goes into one pocket or one GCash wallet. No separation means no visibility into actual business profit.
 - **Not knowing about the 8% option** — if Andoy's annual gross is under ₱3M (likely for most sari-sari), 8% flat is the simplest path. One form (1701Q quarterly + 1701A annual), no percentage tax.
 - **Cash basis means no paper trail** — customers pay cash, suppliers paid cash. Andoy may not have receipts for either side. Makes compliance very difficult without help.
@@ -328,10 +328,10 @@ A business becomes a withholding agent when it pays for professional services or
 
 > Cross-referenced with `shared/glossary.md`. This section adds deeper tax context.
 
-| Term | Filipino Usage | English Definition | KA Context |
+| Term | Filipino Usage | English Definition | Kai Context |
 |------|---------------|-------------------|------------|
-| **TIN** | "TIN number ko" | Taxpayer Identification Number — unique 9-12 digit ID | Required for all BIR transactions. KA can store but never display full TIN. |
-| **COR** | "Certificate of Registration" | BIR Certificate of Registration — proves business is BIR-registered | Must be displayed in place of business. COR is one-time. The ₱500 annual registration fee was **abolished** under EOPT Act (Jan 2024) — KA should NOT remind users to pay it. |
+| **TIN** | "TIN number ko" | Taxpayer Identification Number — unique 9-12 digit ID | Required for all BIR transactions. Kai can store but never display full TIN. |
+| **COR** | "Certificate of Registration" | BIR Certificate of Registration — proves business is BIR-registered | Must be displayed in place of business. COR is one-time. The ₱500 annual registration fee was **abolished** under EOPT Act (Jan 2024) — Kai should NOT remind users to pay it. |
 | **OR** | "Oficial Resibo" / "Official Receipt" | BIR-registered sequentially-numbered receipt for services | AKBai needs BIR legal sign-off before generating OR numbers (Gap D3). |
 | **SI** | "Sales Invoice" | Document for sale of goods (vs. OR for services) | Required for VAT-registered sellers. |
 | **VAT** | "VAT" (used as-is) | Value Added Tax — 12% on gross sales when registered | Triggered when gross > ₱3M/year. Jose persona's primary concern. |
@@ -340,10 +340,10 @@ A business becomes a withholding agent when it pays for professional services or
 | **2307** | "2307" or "withholding certificate" | BIR Form 2307 — Certificate of Creditable Tax Withheld at Source | Issued by payer to payee as proof of EWT withheld. Payee attaches to ITR to claim tax credit. |
 | **PSIC** | "PSIC code" | Philippine Standard Industrial Classification — industry code on COR | Determines business classification for EWT rate purposes. E.g., 82990 = Other Business Support Services (2% EWT). |
 | **RDO** | "RDO ko" | Revenue District Office — local BIR office where taxpayer is registered | Transfer of RDO needed if business moves to a different city. |
-| **ITR** | "ITR" | Income Tax Return — generic term for 1701Q/1701A/1701/1702Q/1702 | KA uses the specific form number, not just "ITR." |
+| **ITR** | "ITR" | Income Tax Return — generic term for 1701Q/1701A/1701/1702Q/1702 | Kai uses the specific form number, not just "ITR." |
 | **OSD** | "OSD" | Optional Standard Deduction — 40% of gross sales as deduction | Alternative to tracking every single receipt. Good suggestion for Maria/Andoy. |
 | **TRAIN Law** | "TRAIN" | Tax Reform for Acceleration and Inclusion (RA 10963) | Basis for current tax brackets. Took effect in 2018, latest brackets from 2023 onwards. |
-| **RMC** | "RMC" | Revenue Memorandum Circular — BIR guidance on specific tax rules | Can change deadlines, forms, or interpretation. KA should note when rules are based on specific RMCs. |
+| **RMC** | "RMC" | Revenue Memorandum Circular — BIR guidance on specific tax rules | Can change deadlines, forms, or interpretation. Kai should note when rules are based on specific RMCs. |
 | **eFPS** | "eFPS" | Electronic Filing and Payment System — online filing via BIR portal | Required for some taxpayers. Most MSMEs can use eBIRForms instead. |
 | **eBIRForms** | "eBIRForms" | BIR's offline filing software — download, fill, submit | More common for individual taxpayers and small businesses. |
 
@@ -356,7 +356,7 @@ BIR lifted the nationwide suspension of tax audits effective early 2026. Key rul
 - Only **one electronic Letter of Authority (eLA)** per taxpayer per taxable year
 - Consolidation of pending eLAs began March 4, 2026 (RMC 14-2026)
 - MSMEs should expect increased audit activity in 2026
-- KA should NOT advise on audits but can note: "Paalala: mas active ang BIR sa tax audits ngayong 2026. I-organize mo ang records mo."
+- Kai should NOT advise on audits but can note: "Paalala: mas active ang BIR sa tax audits ngayong 2026. I-organize mo ang records mo."
 
 ### Cross-Border Services (RMC 24-2026)
 Clarifies that cross-border services are NOT automatically taxable in the Philippines. BIR revenue officers must prove 4 elements before assessing tax. Relevant for **Ana persona** (freelancers with foreign clients) — reduces anxiety about foreign-sourced income.
@@ -368,7 +368,7 @@ All taxpayers must register books of accounts via BIR's Online Registration and 
 Current version as of April 2026. Supports all forms for CY 2025 AITR filing. Available at bir.gov.ph/ebirforms. Form 1701-MS is NOT included — see §1 note.
 
 ### BIR Withholding Tax Calculator
-BIR now has an official withholding tax calculator at bir.gov.ph/wtcalculator. KA can reference this when users ask about EWT computation.
+BIR now has an official withholding tax calculator at bir.gov.ph/wtcalculator. Kai can reference this when users ask about EWT computation.
 
 ---
 
@@ -381,7 +381,7 @@ BIR now has an official withholding tax calculator at bir.gov.ph/wtcalculator. K
 
 ### Build 1 Integration
 - Forms-by-business-type mapping (§1) → injected into `business-context.ts` Layer 2.5 (see design spec in `context_update.md`)
-- KA can infer: "Maria is a food seller → she likely needs 1701Q quarterly and 1701A annually"
+- Kai can infer: "Maria is a food seller → she likely needs 1701Q quarterly and 1701A annually"
 
 ### Build 6 Integration (Deadline Watcher)
 - Deadline calendar (§2) → stored in `bir_deadlines` Supabase table or constants file
@@ -389,7 +389,7 @@ BIR now has an official withholding tax calculator at bir.gov.ph/wtcalculator. K
 - VAT threshold alerts (§4) → triggered by cumulative gross income tracking
 
 ### Regression Testing
-- 5 test cases to verify KA uses correct forms:
+- 5 test cases to verify Kai uses correct forms:
   1. Maria (food seller, non-VAT) → mentions 1701Q, 1701A, possibly 2551Q
   2. Jose (online seller, VAT) → mentions 1701Q, 1701A, 2550Q
   3. Ana (freelancer, 8% flat) → mentions 1701Q, 1701A, does NOT mention 2551Q
