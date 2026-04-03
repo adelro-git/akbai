@@ -208,4 +208,22 @@
   .shadow-ambient-lg {
     box-shadow: 0 30px 60px -5px hsl(var(--primary) / 0.08);
   }
+
+  /* Landing page fade-in animation (CSS-only, no heavy libs) */
+  .landing-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: landingFadeIn 0.6s ease-out forwards;
+  }
+
+  .landing-fade-in:nth-child(1) { animation-delay: 0.1s; }
+  .landing-fade-in:nth-child(2) { animation-delay: 0.2s; }
+  .landing-fade-in:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes landingFadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

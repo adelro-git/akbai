@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /chat
+Disallow: /dashboard
+Disallow: /expenses
+Disallow: /profile
+Disallow: /onboarding
+Sitemap: https://akbai.vercel.app/sitemap.xml

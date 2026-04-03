@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import LandingPage from '@/components/public/landing-page'
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -7,11 +8,12 @@ export default async function HomePage() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Unauthenticated visitors see the public landing page
   if (!user) {
-    redirect('/login')
+    return <LandingPage />
   }
 
-  // Check onboarding status
+  // Authenticated users: check onboarding status
   const { data: userData } = await supabase
     .from('users')
     .select('onboarding_completed')
