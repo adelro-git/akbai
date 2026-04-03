@@ -219,11 +219,111 @@
   .landing-fade-in:nth-child(1) { animation-delay: 0.1s; }
   .landing-fade-in:nth-child(2) { animation-delay: 0.2s; }
   .landing-fade-in:nth-child(3) { animation-delay: 0.3s; }
+  .landing-fade-in:nth-child(4) { animation-delay: 0.4s; }
+  .landing-fade-in:nth-child(5) { animation-delay: 0.5s; }
 
   @keyframes landingFadeIn {
     to {
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* ─── Landing page: Floating / decorative element animations ─── */
+  .landing-float {
+    animation: landingFloat 6s ease-in-out infinite;
+  }
+
+  .landing-float-delayed {
+    animation: landingFloat 6s ease-in-out 2s infinite;
+  }
+
+  .landing-float-slow {
+    animation: landingFloat 8s ease-in-out 1s infinite;
+  }
+
+  @keyframes landingFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+  }
+
+  /* Gentle pulse for decorative dots */
+  .landing-pulse {
+    animation: landingPulse 4s ease-in-out infinite;
+  }
+
+  @keyframes landingPulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+  }
+
+  /* ─── Landing page: Gradient text utility ─── */
+  .text-gradient-honey {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ─── Landing page: Scroll-triggered reveal (uses IntersectionObserver) ─── */
+  .landing-reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+
+  .landing-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Staggered children for reveal groups */
+  .landing-reveal-stagger > .landing-reveal:nth-child(1) { transition-delay: 0.05s; }
+  .landing-reveal-stagger > .landing-reveal:nth-child(2) { transition-delay: 0.15s; }
+  .landing-reveal-stagger > .landing-reveal:nth-child(3) { transition-delay: 0.25s; }
+  .landing-reveal-stagger > .landing-reveal:nth-child(4) { transition-delay: 0.35s; }
+  .landing-reveal-stagger > .landing-reveal:nth-child(5) { transition-delay: 0.45s; }
+
+  /* ─── Landing page: Horizontal scroll snap (mobile feature cards) ─── */
+  .landing-scroll-snap {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .landing-scroll-snap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .landing-scroll-snap-item {
+    scroll-snap-align: center;
+    flex-shrink: 0;
+  }
+
+  /* ─── Landing page: Dotted connector line (for steps) ─── */
+  .landing-dotted-line {
+    background-image: repeating-linear-gradient(
+      to right,
+      hsl(var(--primary-container) / 0.3) 0px,
+      hsl(var(--primary-container) / 0.3) 4px,
+      transparent 4px,
+      transparent 12px
+    );
+    height: 2px;
+  }
+
+  /* ─── Landing page: Social proof badge float effect ─── */
+  .landing-badge {
+    backdrop-filter: blur(12px);
+    background: hsl(var(--surface-container-lowest) / 0.9);
+  }
+
+  /* ─── Landing page: Section label (editorial small caps) ─── */
+  .landing-section-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: hsl(var(--primary-container));
   }
 }
