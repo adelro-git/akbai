@@ -15,9 +15,9 @@ AKBai uses two types of visual assets:
 |-----------|------|
 | **Style** | Flat vector illustration, clean lines, no gradients/3D, minimal shading |
 | **Backgrounds** | Cream (#fdf9f2) with soft amber (#f59e0b) swoosh/arc decorative elements |
-| **Characters** | Filipino MSME owners — warm brown skin tones, wearing aprons/work clothes, friendly expressions |
-| **Color palette** | Cream bg, honey/amber accents, teal for financial data, dark navy for clothing |
-| **KA character** | Golden "C" mark with smiley face — floating companion |
+| **Characters** | Filipino MSME owners — diverse ages (20s-50s), body types (petite to stocky to plump), skin tones (light kayumanggi to deep morena/moreno). Clothing varies by persona: house dress, sando + button-up, casual t-shirt, polo shirt, baker's apron. See [gemini-prompt-library.md](gemini-prompt-library.md) §Persona Archetypes for 6 named character templates. |
+| **Color palette** | Cream bg, honey/amber accents, teal for financial data. Character clothing varies per persona — NOT all navy aprons. |
+| **Kai mascot** | Yin-yang inspired circular mark — amber/gold left half embracing silver/grey right half, warm cream face at center with squinted happy eyes and curved smile, soft golden glow. Reflects "akbay" (arm around shoulder). Floating companion in scenes. |
 | **UI elements** | App screens, data cards, charts floating in scene (not framed) |
 | **Narrative** | Before/after — stressed with receipts vs. organized with AKBai |
 | **Decorative** | Potted tropical plants, Manila skyline silhouettes, hanging lamps, sari-sari store elements |
@@ -39,8 +39,10 @@ AKBai uses two types of visual assets:
 ### Hardcoded Colors (used in SVGs where theming isn't needed)
 | Purpose | Hex | Usage |
 |---------|-----|-------|
-| KA body gold | #f59e0b | KA expression components |
-| KA shading | #d97706 | KA expression depth |
+| Kai mascot amber/gold | #f59e0b | Kai mascot left half, warm accent |
+| Kai mascot shading | #d97706 | Kai mascot depth/shadow on gold half |
+| Kai mascot silver | #c0c0c0 | Kai mascot right half |
+| Kai face cream | #fdf5e6 | Kai mascot center face |
 | Amber accent | #f59e0b | Decorative swooshes |
 | Terracotta pot | #c2703e | Plant pots |
 | Warm red (error) | #F87171 | Error status icon |
@@ -50,22 +52,29 @@ AKBai uses two types of visual assets:
 
 ## AI Image Generation — Prompt Template
 
-Base prompt for all AI-generated illustrations (Midjourney/DALL-E):
+> **Full prompt library:** See [gemini-prompt-library.md](gemini-prompt-library.md) for ready-to-use prompts for all 15 TO GENERATE images + 6 marketing extras.
+
+Base prompt for all AI-generated illustrations (Gemini Nano Banana style):
 
 ```
 Flat vector illustration style, clean lines, no gradients, minimal shading.
-Warm cream background (#fdf9f2). Filipino business owner characters with
-warm brown skin tones, wearing [SPECIFIC CLOTHING]. Honey amber (#f59e0b)
-and teal (#006b54) accent colors. Decorative amber swoosh curves in
-background. Soft city skyline silhouette. Potted tropical plants.
+Warm cream background (#fdf9f2). Honey amber (#f59e0b) and teal (#006b54)
+accent colors. Decorative amber swoosh curves in background. Soft city
+skyline silhouette. Potted tropical plants.
+A cute yin-yang shaped mascot character — circular form with an amber/gold
+left half and silver/grey right half embracing each other, a warm cream
+smiling face at the center with squinted happy eyes, soft golden glow behind it.
+[PERSONA DESCRIPTION — use a named persona from gemini-prompt-library.md.
+Specify age, build, skin tone, hair, and clothing. Do NOT default to
+"white shirt + navy apron" for every character.]
 [SPECIFIC SCENE DESCRIPTION]. Modern, optimistic, culturally authentic
 Filipino MSME context. No text in image.
 ```
 
 ### Rules
 1. **No text in images** — AI-generated text has artifacts. Add text as HTML/CSS overlays.
-2. **Consistent characters** — Same proportions, clothing palette (dark aprons, white shirts, navy pants).
-3. **KA mark** — Include golden "C" smiley as floating companion where appropriate.
+2. **Diverse characters** — Use the 6 named persona archetypes (Nena, Jose, Maya, Ben, Tita Rosa, Kuya Rico) from the prompt library. Vary age, build, skin tone, and clothing. Never default to "white shirt + navy apron" for everyone.
+3. **Kai mascot** — Include the yin-yang style mascot (amber/gold + silver/grey halves embracing a warm smiling face) as floating companion where appropriate.
 4. **Aspect ratios:** Hero 16:9, Empty states 4:3, Onboarding 1:1 or 4:3.
 5. **Export at 2x** — Hero: 1200x675px, Empty states: 600x450px, Onboarding: 600x600px.
 6. **Format: WebP** at 80% quality.
