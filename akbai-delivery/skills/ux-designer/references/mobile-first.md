@@ -77,7 +77,7 @@ AKBai is a Progressive Web App — not a native app. This has specific implicati
 
 ## 3. Card Layout System
 
-Cards are the primary data container in AKBai. They sit in a vertical scroll alongside KA's chat bubbles.
+Cards are the primary data container in AKBai. They sit in a vertical scroll alongside Kai's chat bubbles.
 
 ### Card Structure
 
@@ -118,18 +118,18 @@ Cards are the primary data container in AKBai. They sit in a vertical scroll alo
 
 ### Card + Chat Bubble Interleaving
 
-The main content area alternates between KA chat bubbles and Cards:
+The main content area alternates between Kai chat bubbles and Cards:
 
 ```
-[KA bubble: "Good morning, Maria!"]
+[Kai bubble: "Good morning, Maria!"]
     12px gap
 [Morning Briefing Card]
     12px gap
-[KA bubble: "May isang deadline this week."]
+[Kai bubble: "May isang deadline this week."]
     12px gap
 [Deadline Card]
     12px gap
-[KA bubble: "At eto ang gastos mo kahapon."]
+[Kai bubble: "At eto ang gastos mo kahapon."]
     12px gap
 [Expense Card]
 [Expense Card]
@@ -180,7 +180,7 @@ Fixed at viewport bottom. 4 items maximum (Fitts's Law — fewer targets = faste
 | Tab | Icon | Label | Destination |
 |-----|------|-------|-------------|
 | Home | 🏠 | Home | Morning Briefing (Ang Umaga Mo) |
-| Chat | 💬 | Chat | KA conversation thread |
+| Chat | 💬 | Chat | Kai conversation thread |
 | Scan | 📷 | Scan | Resibo Scanner camera |
 | More | ⋯ | More | Settings, Saan Napunta, Deadline Watcher, Invoices, Costing |
 
@@ -248,7 +248,7 @@ The receipt scanner is the most interaction-heavy feature. It must feel instant 
 |------|----------|-------------|
 | Tap capture | 0ms | Button press animation (scale down 0.95x) |
 | Camera freeze | ~100ms | Image frozen, button becomes disabled |
-| Upload + OCR | 2–4s | KA typing indicator below image: "Bina-basa ko ang resibo mo..." |
+| Upload + OCR | 2–4s | Kai typing indicator below image: "Bina-basa ko ang resibo mo..." |
 | Result display | 0ms after OCR | Camera view slides up, Expense Card slides in below |
 
 ### Camera Permissions
@@ -275,7 +275,7 @@ This pre-permission screen improves grant rates because users understand the why
 
 ### Multi-Receipt Batch
 
-After scanning one receipt, KA asks: "May iba pa bang resibo? [📷 Scan another] [Done]"
+After scanning one receipt, Kai asks: "May iba pa bang resibo? [📷 Scan another] [Done]"
 
 This enables batch scanning (common use case: Maria has 5 receipts from a Puregold run).
 
@@ -296,7 +296,7 @@ AKBai users include Maria packing orders in a bodega with intermittent LTE, and 
 | Costing Cards | Viewable and editable | Persisted cache + local queue |
 | Resibo Scanner | ❌ Requires internet (Haiku Vision API) | — |
 | Reply Drafter | ❌ Requires internet (Sonnet API) | — |
-| KA Chat | ❌ New queries require internet | — |
+| Kai Chat | ❌ New queries require internet | — |
 
 ### Offline UI Indicators
 
@@ -318,9 +318,9 @@ AKBai users include Maria packing orders in a bodega with intermittent LTE, and 
 ### Features That Need Internet
 
 When a user tries to use Resibo Scanner or Reply Drafter offline:
-KA bubble: "Kailangan ko ng internet para ma-[scan ang resibo / draft ang reply]. I-try mo ulit pag may connection."
+Kai bubble: "Kailangan ko ng internet para ma-[scan ang resibo / draft ang reply]. I-try mo ulit pag may connection."
 
-No error screen. No blocking modal. Just a KA message explaining the situation with warmth.
+No error screen. No blocking modal. Just a Kai message explaining the situation with warmth.
 
 ### Cache Strategy
 
@@ -340,7 +340,7 @@ Never show a blank screen while data loads. Use skeleton screens that mirror the
 - **Shape**: Match the content shape. Card skeletons are card-shaped. Text lines are 16px-high rounded rectangles.
 - **Animation**: Gentle pulse (opacity 0.3 → 0.6 → 0.3), 1.5s cycle, ease-in-out. Respect `prefers-reduced-motion` — no animation, show static grey.
 - **Color**: surface-container-high on surface background (subtle contrast, not distracting)
-- **Duration**: If loading takes >3 seconds, add KA typing indicator: "Saglit lang..."
+- **Duration**: If loading takes >3 seconds, add Kai typing indicator: "Saglit lang..."
 
 ### Skeleton Patterns
 

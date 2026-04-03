@@ -14,7 +14,7 @@ This is designed to be done on a phone screen. No logins to complex dashboards. 
 |---|-------|------|-----------------|------|
 | 1 | Errors | Sentry (mobile app or email digest) | New unresolved errors in last 24h. Focus on: P0 crashes, payment-related errors, data integrity issues. | 1 min |
 | 2 | Uptime | UptimeRobot (mobile app or SMS alerts) | Any downtime events. Check: main app, API endpoints, Xendit webhook endpoint. | 30 sec |
-| 3 | Support queue | Messenger / email inbox | New messages from users. Quickly classify: can KA handle it (Tier 1), or does Anton need to respond (Tier 2/3)? | 1.5 min |
+| 3 | Support queue | Messenger / email inbox | New messages from users. Quickly classify: can Kai handle it (Tier 1), or does Anton need to respond (Tier 2/3)? | 1.5 min |
 | 4 | Payment alerts | Xendit dashboard or email notifications | Failed payments, subscription changes, new signups. | 1 min |
 | 5 | Flag queue | Admin view or Supabase dashboard | New flag-as-wrong submissions since last check. Note count only — detailed review happens in evening. | 30 sec |
 

@@ -53,10 +53,11 @@ venv/
 *credentials.json*
 *.pem
 
-# Claude local config (keep commands/, hooks/, and settings tracked)
+# Claude local config (keep commands/, hooks/, agents/, and settings tracked)
 .claude/*
 !.claude/commands/
 !.claude/hooks/
+!.claude/agents/
 !.claude/settings.json
 
 # Archive/large files

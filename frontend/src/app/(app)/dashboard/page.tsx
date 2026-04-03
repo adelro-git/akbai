@@ -271,7 +271,7 @@ export default async function DashboardPage() {
       <DashboardTracker />
       <WelcomeTour primaryPain={primaryPain} firstName={userName} />
 
-      {/* KA Greeting */}
+      {/* Kai Greeting */}
       <KaiGreeting
         greeting={greeting}
         userName={userName}

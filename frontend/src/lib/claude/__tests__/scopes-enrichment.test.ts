@@ -5,12 +5,12 @@ import { assembleSystemPrompt } from '../assemble';
  * Sprint 2 Task 5 — Integration test prompts
  *
  * Verifies that the enriched TAX_SCOPE contains the domain knowledge
- * needed for KA to give substantive, persona-aware BIR guidance.
+ * needed for Kai to give substantive, persona-aware BIR guidance.
  *
  * Test cases from sprint-2-plan.md:
- * 1. Maria asks about BIR deadlines → KA should mention 1701Q
- * 2. Jose asks about profit → KA should mention platform fees
- * 3. Ana asks about tax → KA should mention 8% flat tax
+ * 1. Maria asks about BIR deadlines → Kai should mention 1701Q
+ * 2. Jose asks about profit → Kai should mention platform fees
+ * 3. Ana asks about tax → Kai should mention 8% flat tax
  */
 describe('TAX_SCOPE enrichment — persona-aware BIR knowledge', () => {
   const taxPrompt = assembleSystemPrompt({
@@ -20,7 +20,7 @@ describe('TAX_SCOPE enrichment — persona-aware BIR knowledge', () => {
   });
 
   it('Test 1: Maria (food/baking) — system prompt contains 1701Q deadline knowledge', () => {
-    // Maria asks about BIR deadlines → KA should have 1701Q context
+    // Maria asks about BIR deadlines → Kai should have 1701Q context
     expect(taxPrompt).toContain('1701Q');
     expect(taxPrompt).toContain('May 15');
     expect(taxPrompt).toContain('Aug 15');
@@ -31,7 +31,7 @@ describe('TAX_SCOPE enrichment — persona-aware BIR knowledge', () => {
   });
 
   it('Test 2: Jose (online seller) — system prompt contains platform fee awareness', () => {
-    // Jose asks about profit → KA should know about platform fee confusion
+    // Jose asks about profit → Kai should know about platform fee confusion
     expect(taxPrompt).toContain('Jose');
     expect(taxPrompt).toContain('platform fees');
     expect(taxPrompt).toContain('gross');
@@ -40,7 +40,7 @@ describe('TAX_SCOPE enrichment — persona-aware BIR knowledge', () => {
   });
 
   it('Test 3: Ana (freelancer) — system prompt contains 8% flat tax rules', () => {
-    // Ana asks about tax → KA should mention 8% flat tax specifics
+    // Ana asks about tax → Kai should mention 8% flat tax specifics
     expect(taxPrompt).toContain('Ana');
     expect(taxPrompt).toContain('8% flat');
     expect(taxPrompt).toContain('EXEMPT from 2551Q');

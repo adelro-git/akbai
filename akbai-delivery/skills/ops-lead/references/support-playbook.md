@@ -7,7 +7,7 @@
 ## Table of Contents
 
 1. Tier Overview
-2. Tier 1 — KA Auto-Response
+2. Tier 1 — Kai Auto-Response
 3. Tier 2 — Manual Response (<24hr SLA)
 4. Tier 3 — Escalation (<4hr SLA)
 5. Trust Recovery Patterns
@@ -20,14 +20,14 @@
 
 | Tier | Handler | SLA | Examples |
 |------|---------|-----|----------|
-| Tier 1 | KA (automated) | Instant | "How do I scan a receipt?", "When is my BIR deadline?", "How do I upgrade?" |
-| Tier 2 | Anton (manual) | <24 hours | Account access issues, billing disputes, feature bugs, unclear KA responses |
+| Tier 1 | Kai (automated) | Instant | "How do I scan a receipt?", "When is my BIR deadline?", "How do I upgrade?" |
+| Tier 2 | Anton (manual) | <24 hours | Account access issues, billing disputes, feature bugs, unclear Kai responses |
 | Tier 3 | Anton (drop everything) | <4 hours | Data breach / suspected breach, NPC complaint, legal threat, payment system compromise |
 
 **Escalation triggers from Tier 1 → Tier 2:**
-- KA responds but user replies with "that's wrong" or "Flag as Wrong"
+- Kai responds but user replies with "that's wrong" or "Flag as Wrong"
 - User explicitly asks to talk to a human
-- KA cannot classify the query (out-of-scope redirect)
+- Kai cannot classify the query (out-of-scope redirect)
 - Same user sends 3+ messages in <5 minutes (frustration signal)
 
 **Escalation triggers from Tier 2 → Tier 3:**
@@ -38,13 +38,13 @@
 
 ---
 
-## 2. Tier 1 — KA Auto-Response
+## 2. Tier 1 — Kai Auto-Response
 
-KA handles these categories automatically. The ops-lead role here is to monitor that KA's auto-responses are accurate and to update them when they drift.
+Kai handles these categories automatically. The ops-lead role here is to monitor that Kai's auto-responses are accurate and to update them when they drift.
 
 ### Common Tier 1 Categories
 
-| Category | Example Query | KA Response Pattern |
+| Category | Example Query | Kai Response Pattern |
 |----------|--------------|-------------------|
 | How-to | "Paano mag-scan ng receipt?" | Step-by-step guide, with screenshot links if available |
 | BIR deadlines | "Kailan ang deadline ko?" | Pull from bir_deadlines table, personalized to user's business type |
@@ -52,13 +52,13 @@ KA handles these categories automatically. The ops-lead role here is to monitor 
 | Feature discovery | "Ano ang kaya ng AKBai?" | Feature list relevant to user's tier |
 | Status check | "Tama ba yung expenses ko?" | Pull from transactions table, summarize with confirmation prompt |
 
-### KA Auto-Response Quality Checks
+### Kai Auto-Response Quality Checks
 
 Every 2 weeks (during a Saturday build session), review a random sample of 10 Tier 1 conversations:
-- Were KA's responses accurate?
+- Were Kai's responses accurate?
 - Did any conversations escalate to Tier 2 unnecessarily?
 - Did any conversations fail to escalate when they should have?
-- Update KA's system prompt or knowledge base if patterns emerge.
+- Update Kai's system prompt or knowledge base if patterns emerge.
 
 ---
 
@@ -69,15 +69,15 @@ These require Anton's direct involvement. The goal is to batch-handle during eve
 ### Tier 2 Response Workflow
 
 ```
-1. Read the full conversation thread (KA history + user messages)
+1. Read the full conversation thread (Kai history + user messages)
 2. Classify the issue:
    a. Account / access issue → Check Supabase Auth, verify user state
    b. Billing dispute → Check Xendit transaction history, compare to subscriptions table
    c. Feature bug → Reproduce if possible, log in Sentry/GitHub Issues
-   d. KA accuracy complaint → Route to flag-as-wrong pipeline
+   d. Kai accuracy complaint → Route to flag-as-wrong pipeline
    e. Feature request → Log, acknowledge, don't promise a timeline
 
-3. Respond in Taglish, warm tone (KA voice, not corporate):
+3. Respond in Taglish, warm tone (Kai voice, not corporate):
    - Acknowledge the issue specifically
    - Explain what you found or did
    - Give a concrete next step or resolution
@@ -98,8 +98,8 @@ These require Anton's direct involvement. The goal is to batch-handle during eve
 **Feature bug:**
 > "Hi [Name], salamat sa pag-report! Na-reproduce ko na yung issue — [brief description of what's happening]. Fix namin ito sa next update. [Workaround if available]. Update kita pagka-fix!"
 
-**KA got something wrong:**
-> "Hi [Name], tama ka — mali yung sinabi ni KA doon. [Correct information]. Na-flag ko na ito para ma-improve yung accuracy ni KA. Salamat sa pag-report — nakakatulong ito nang malaki!"
+**Kai got something wrong:**
+> "Hi [Name], tama ka — mali yung sinabi ni Kai doon. [Correct information]. Na-flag ko na ito para ma-improve yung accuracy ni Kai. Salamat sa pag-report — nakakatulong ito nang malaki!"
 
 **Feature request:**
 > "Hi [Name], magandang idea! Na-note ko na yung request mo for [feature]. Hindi ko ma-promise kung kailan, pero nasa radar na namin. Salamat sa suggestion!"
@@ -161,19 +161,19 @@ Tier 3 issues are the only reason to interrupt Globe work hours. These are exist
 
 ## 5. Trust Recovery Patterns
 
-When KA gets something wrong or the product has an issue, trust recovery follows the AKBai Trust Recovery Pattern (a design gate from the roadmap):
+When Kai gets something wrong or the product has an issue, trust recovery follows the AKBai Trust Recovery Pattern (a design gate from the roadmap):
 
 ### The 4-Step Trust Recovery
 
 1. **Acknowledge clearly** — Don't minimize. Name what went wrong specifically.
-2. **Take responsibility** — "Mali yung calculation ni KA" not "There was an error."
+2. **Take responsibility** — "Mali yung calculation ni Kai" not "There was an error."
 3. **Explain what happened** — Brief, honest. Users don't need a technical deep-dive, but they deserve to know why.
 4. **Offer a concrete next step** — What you're doing to fix it, what the user should do now.
 
 ### Trust Recovery Templates
 
-**KA gave wrong financial data:**
-> "Pasensya na, [Name] — mali yung computation ni KA sa [specific item]. Ang tama ay [correct info]. Na-fix ko na sa records mo. Moving forward, double-check muna natin lagi ang financial data — KA is a tool, hindi accountant. Salamat sa pag-flag!"
+**Kai gave wrong financial data:**
+> "Pasensya na, [Name] — mali yung computation ni Kai sa [specific item]. Ang tama ay [correct info]. Na-fix ko na sa records mo. Moving forward, double-check muna natin lagi ang financial data — Kai is a tool, hindi accountant. Salamat sa pag-flag!"
 
 **App downtime:**
 > "May technical issue kami kanina — [duration] ang downtime. Naka-back up na ang lahat — walang data na nawala. Inaayos na namin para hindi maulit. Pasensya na sa abala!"
@@ -247,7 +247,7 @@ Hour 48–72: Submit NPC notification
 
 - **Primary channel:** Facebook Messenger (where target users already are)
 - **Secondary:** Email (for formal/billing issues)
-- **In-app:** Flag-as-Wrong button on every KA output card
+- **In-app:** Flag-as-Wrong button on every Kai output card
 - **No ticketing system yet.** At <50 users, a spreadsheet tracker is sufficient. Use Supabase table or Google Sheet.
 
 ### Phase 2 (50–200 users)
@@ -259,7 +259,7 @@ Hour 48–72: Submit NPC notification
 ### Response Time Expectations (Set with Users)
 
 Don't promise instant responses — set honest expectations:
-- In-app KA: Instant
+- In-app Kai: Instant
 - Messenger/WhatsApp: "Sumasagot kami within 24 hours, mas mabilis usually"
 - Email: "Within 48 hours for non-urgent items"
 - Make it clear: if it's urgent (data concern), say so in the message and it gets priority

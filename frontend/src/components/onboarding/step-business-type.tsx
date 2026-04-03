@@ -91,7 +91,7 @@ export default function StepBusinessType({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* KA bubble */}
+      {/* Kai bubble */}
       <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
         <p className="text-on-surface text-base leading-relaxed">
           Nice to meet you, <span className="text-primary-container font-semibold">{firstName}</span>! Ano ang

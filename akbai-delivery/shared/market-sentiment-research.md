@@ -183,7 +183,7 @@ The "Maria Moment" — when she opens AKBai and sees "Kumikita ka. ₱18,400 ang
 > Source: https://www.instagram.com/p/DWOGbNujv5N/
 
 ### Marketing Angle
-Sellers are drowning in DMs across 3-5 platforms simultaneously. AKBai's Reply Drafter directly solves this. Campaign hook: **"Si KA na ang sasagot — ikaw na lang mag-send."**
+Sellers are drowning in DMs across 3-5 platforms simultaneously. AKBai's Reply Drafter directly solves this. Campaign hook: **"Si Kai na ang sasagot — ikaw na lang mag-send."**
 
 ---
 
@@ -258,7 +258,7 @@ Based on real sentiment, here are validated campaign angles:
 
 ### Fear → Relief (BIR Compliance)
 - **"Hindi na nakakatakot ang BIR deadline."** (BIR deadlines aren't scary anymore.)
-- **"BIR deadline in 3 days? Relax — KA got you."**
+- **"BIR deadline in 3 days? Relax — Kai got you."**
 - **"Penalty-free since 2026."** (aspirational)
 
 ### Ignorance → Clarity (Cash Flow)
@@ -268,12 +268,12 @@ Based on real sentiment, here are validated campaign angles:
 
 ### Manual → Automatic (Receipt Tracking)
 - **"Snap mo lang, tracked na."** (Just snap it, it's tracked.)
-- **"Goodbye Excel. Goodbye notebook. Hello KA."**
+- **"Goodbye Excel. Goodbye notebook. Hello Kai."**
 - **"₱399/month vs ₱11,800/month sa accountant."** (94% savings — real pricing from Reddit)
 
 ### Overwhelmed → Handled (DM Management)
-- **"Si KA na ang sasagot — ikaw na lang mag-send."** (KA drafts it, you just send.)
-- **"100 messages today? Let KA help you reply."**
+- **"Si Kai na ang sasagot — ikaw na lang mag-send."** (Kai drafts it, you just send.)
+- **"100 messages today? Let Kai help you reply."**
 
 ### Aspiration (from BCG data)
 - **"From hustle to real business."** (already in brand pillars — now BCG-validated)

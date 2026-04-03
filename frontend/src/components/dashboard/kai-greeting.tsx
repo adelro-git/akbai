@@ -31,9 +31,9 @@ export default function KaiGreeting({
     <section
       className="px-4 pt-6 pb-4"
       data-testid="kai-greeting"
-      aria-label="KA greeting"
+      aria-label="Kai greeting"
     >
-      {/* KA bubble */}
+      {/* Kai bubble */}
       <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 mb-3">
         <p className="text-on-surface text-base leading-relaxed" data-testid="kai-greeting-text">
           {greeting}

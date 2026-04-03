@@ -11,13 +11,42 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: 'AKBai — Katuwang ng Negosyo Mo',
-  description: 'Your AI business partner for Filipino MSMEs',
+  description:
+    'AI-powered na kaakbay mo sa tax, expenses, at daily operations — para sa Filipino MSMEs. 97% cheaper than hiring a bookkeeper.',
   manifest: '/manifest.json',
+  metadataBase: new URL('https://akbai.vercel.app'),
+  openGraph: {
+    title: 'AKBai — Katuwang ng Negosyo Mo',
+    description:
+      'AI-powered na kaakbay mo sa tax, expenses, at daily operations — para sa Filipino MSMEs.',
+    url: 'https://akbai.vercel.app',
+    siteName: 'AKBai',
+    locale: 'fil_PH',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AKBai — Katuwang ng Negosyo Mo',
+    description:
+      'AI-powered na kaakbay mo sa tax, expenses, at daily operations — para sa Filipino MSMEs.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'AKBai',
   },
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'AKBai',
+  description: 'AI-powered business partner for Filipino MSMEs',
+  url: 'https://akbai.vercel.app',
 }
 
 export const viewport: Viewport = {
@@ -41,6 +70,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

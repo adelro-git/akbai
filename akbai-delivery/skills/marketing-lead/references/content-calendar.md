@@ -312,12 +312,12 @@ These hooks are derived from real Reddit, Facebook, and TikTok conversations. Th
 
 **Manual → Automatic (Receipt Tracking)**
 - "Snap mo lang, tracked na." — Simple, action-oriented
-- "Goodbye Excel. Goodbye notebook. Hello KA." — Addresses the FB group question "Excel pa rin?"
+- "Goodbye Excel. Goodbye notebook. Hello Kai." — Addresses the FB group question "Excel pa rin?"
 - "₱399/month vs ₱11,800/month sa accountant." — Real pricing from Reddit
 
 **Overwhelmed → Handled (DM Management)**
-- "Si KA na ang sasagot — ikaw na lang mag-send." — Direct value prop for Reply Drafter
-- "100 messages today? Let KA help you reply." — Scale of the problem
+- "Si Kai na ang sasagot — ikaw na lang mag-send." — Direct value prop for Reply Drafter
+- "100 messages today? Let Kai help you reply." — Scale of the problem
 
 **Aspiration (BCG-validated)**
 - "From hustle to real business." — Already a brand pillar, now BCG-confirmed

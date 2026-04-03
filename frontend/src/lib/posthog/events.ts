@@ -18,6 +18,12 @@ const EVENTS = {
   SIGNED_OUT: 'signed_out',
   EXPENSE_ADDED: 'expense_added',
   EXPENSE_DELETED: 'expense_deleted',
+  // Marketing & landing page events
+  WAITLIST_SIGNUP: 'waitlist_signup',
+  LANDING_PAGE_VIEWED: 'landing_page_viewed',
+  LANDING_PAGE_CTA_CLICKED: 'landing_page_cta_clicked',
+  TOOL_USED: 'tool_used',
+  TOOL_RESULT_SHARED: 'tool_result_shared',
 } as const
 
 type EventName = (typeof EVENTS)[keyof typeof EVENTS]
@@ -77,4 +83,31 @@ export function trackExpenseAdded(type: string, category: string): void {
 /** Track when user deletes a transaction */
 export function trackExpenseDeleted(): void {
   capture(EVENTS.EXPENSE_DELETED)
+}
+
+// ─── Marketing & Landing Page events ────────────────────────────────
+
+/** Track when someone submits the waitlist form */
+export function trackWaitlistSignup(source: string, emailDomain: string): void {
+  capture(EVENTS.WAITLIST_SIGNUP, { source, email_domain: emailDomain })
+}
+
+/** Track when someone views the landing page */
+export function trackLandingPageViewed(): void {
+  capture(EVENTS.LANDING_PAGE_VIEWED)
+}
+
+/** Track when someone clicks a CTA button on the landing page */
+export function trackLandingPageCtaClicked(section: string): void {
+  capture(EVENTS.LANDING_PAGE_CTA_CLICKED, { section })
+}
+
+/** Track when someone uses a free tool */
+export function trackToolUsed(toolName: string, resultType: string): void {
+  capture(EVENTS.TOOL_USED, { tool_name: toolName, result_type: resultType })
+}
+
+/** Track when someone shares a tool result */
+export function trackToolResultShared(toolName: string, shareChannel: string): void {
+  capture(EVENTS.TOOL_RESULT_SHARED, { tool_name: toolName, share_channel: shareChannel })
 }

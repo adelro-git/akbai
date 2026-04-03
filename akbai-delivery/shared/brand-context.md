@@ -32,7 +32,7 @@ AKBai uses a **light-first** design system ("Sun-Drenched Atelier") with dark mo
 | MD3 Token | Role | Light Hex | Dark Hex | Usage |
 |-----------|------|-----------|----------|-------|
 | background / surface | Page background | #fdf9f2 | #07101e | Default app background |
-| surface-container | Card background | #f1ede7 | #0d1a2e | Chat bubbles (KA), cards, modals |
+| surface-container | Card background | #f1ede7 | #0d1a2e | Chat bubbles (Kai), cards, modals |
 | surface-container-high | Elevated surface | #ebe8e1 | #111f36 | Alternate cards, selected states |
 | surface-container-low | Recessed surface | #f7f3ec | #0a1422 | Input fields, inset panels |
 | surface-container-lowest | Base white | #ffffff | #030812 | Full-contrast areas, overlays |
@@ -40,7 +40,7 @@ AKBai uses a **light-first** design system ("Sun-Drenched Atelier") with dark mo
 | on-surface | Primary text | #1c1c18 | #e6e2db | Body copy, headings |
 | on-surface-variant | Secondary text | #534434 | #d8c3ad | Timestamps, labels, captions |
 | primary | Brand action | #855300 | #ffb95f | Primary CTAs, active indicators |
-| primary-container | Brand highlight | #f59e0b | #f59e0b | Logo mark, accents, KA avatar ring |
+| primary-container | Brand highlight | #f59e0b | #f59e0b | Logo mark, accents, Kai avatar ring |
 | tertiary | Trust / success | #006b54 | #43deb4 | Financial data, BIR compliance states |
 | error | Error | #F87171 | #F87171 | Error states (never use Honey or Teal for errors) |
 | warning | Warning | #FBBF24 | #FBBF24 | Warning states |
@@ -104,13 +104,13 @@ Doesn't wait to be asked. Sends the morning briefing, flags the approaching dead
 
 ## Voice Examples
 
-**KA says:**
+**Kai says:**
 - "Na-scan ko na yung receipt mo — check mo if tama lahat bago i-save natin."
 - "Heads up! BIR deadline in 3 days — ready na ba yung 1701Q mo?"
 - "Ang laki ng gastos mo this week — ₱18,200 vs ₱12,000 last week. Gusto mo pag-usapan?"
 - "Nice, sold out na yung ube cake! Restock na ba ng ingredients?"
 
-**KA never says:**
+**Kai never says:**
 - "Your receipt has been successfully processed and stored in the system."
 - "ALERT: BIR filing deadline approaching. Please take immediate action."
 - "Warning: Expense threshold exceeded by 51.67% compared to previous period."
@@ -154,7 +154,7 @@ These hooks use language and pain points confirmed by real Reddit/Facebook/TikTo
 | "Alam mo na ba kung kumikita ka?" | Cash flow blindness | Echoes real quote: "hindi ko alam kung kumikita ba o hindi" |
 | "Snap mo lang, tracked na." | Manual receipt tracking | Contrast to FB groups asking "Excel pa rin?" |
 | "₱399/month vs ₱11,800/month sa accountant." | Cost | Real pricing from Reddit (₱5K filing + ₱5K bookkeeping + ₱1.8K encoding) |
-| "Si KA na ang sasagot — ikaw na lang mag-send." | DM overload | BigSeller confirms chat management is "clearest pain point" for PH sellers |
+| "Si Kai na ang sasagot — ikaw na lang mag-send." | DM overload | BigSeller confirms chat management is "clearest pain point" for PH sellers |
 | "99.5% ng businesses sa Pilipinas, MSME. Deserve nila ng AI partner." | Aspiration | BCG/DTI data — emotionally resonant scale stat |
 
 ---

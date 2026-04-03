@@ -164,7 +164,7 @@ const TEMPLATES: Record<string, FirstResponse> = {
 };
 
 /**
- * Get the first KA message after onboarding completes.
+ * Get the first Kai message after onboarding completes.
  * Static lookup — NOT a Claude API call.
  */
 export function getFirstKAMessage(
