@@ -1,6 +1,6 @@
 # AKBai Illustration Library — Style Guide
 
-Last updated: 2026-04-03
+Last updated: 2026-04-04
 
 ## Overview
 AKBai uses two types of visual assets:
@@ -83,27 +83,71 @@ Filipino MSME context. No text in image.
 
 ## AI Image Inventory
 
-| # | Filename | Location | Description | Status |
-|---|----------|----------|-------------|--------|
-| 1 | hero-team.webp | hero/ | Business owners with tablets, growth charts | EXISTS (sample) |
-| 2 | hero-vendor.webp | hero/ | Vendor with phone + sari-sari cart | EXISTS (sample) |
-| 3 | hero-organize.webp | hero/ | Owner organizing with KA help | EXISTS (sample) |
-| 4 | hero-pain.webp | hero/ | Stressed owner with receipt piles | EXISTS (sample) |
-| 5 | welcome.webp | onboarding/ | KA greeting new user | TO GENERATE |
-| 6 | business-type.webp | onboarding/ | Montage of 4 business types | TO GENERATE |
-| 7 | pain-point.webp | onboarding/ | Split: messy → organized | TO GENERATE |
-| 8 | ready.webp | onboarding/ | Completion celebration | TO GENERATE |
-| 9 | no-expenses.webp | empty-states/ | Empty wallet + KA peeking | TO GENERATE |
-| 10 | no-deadlines.webp | empty-states/ | Clean calendar + KA | TO GENERATE |
-| 11 | no-replies.webp | empty-states/ | Empty chat + KA ready | TO GENERATE |
-| 12 | no-chat.webp | empty-states/ | KA waving "Kumusta!" | TO GENERATE |
-| 13 | first-scan.webp | empty-states/ | Phone with receipt camera | TO GENERATE |
-| 14 | offline.webp | status/ | No signal, warm patient tone | TO GENERATE |
-| 15 | error.webp | status/ | KA apologetic | TO GENERATE |
-| 16 | session-expired.webp | status/ | Clock/timeout | TO GENERATE |
-| 17 | first-expense.webp | celebrations/ | First entry celebration | TO GENERATE |
-| 18 | revenue-milestone.webp | celebrations/ | Revenue goal + confetti | TO GENERATE |
-| 19 | streak.webp | celebrations/ | Usage streak | TO GENERATE |
+> Full inventory with WebP paths and persona assignments: see [gemini-prompt-library.md](gemini-prompt-library.md) §Complete Image Inventory
+> **Source PNGs:** `frontend/src/components/illustrations/vector-images/` (descriptive names)
+> **Deployed WebPs:** `frontend/public/illustrations/{category}/` (ready for `<IllustrationWrapper>`)
+
+### Hero (v1)
+| # | WebP Path | Description | Status |
+|---|-----------|-------------|--------|
+| 1 | `hero/hero-team.webp` | Business owners with tablets, growth charts | EXISTS |
+| 2 | `hero/hero-organize.webp` | Owner organizing with Kai help | EXISTS |
+| 3 | `hero/hero-pain.webp` | Stressed owner with receipt piles | EXISTS |
+
+### Onboarding
+| # | WebP Path | Description | Persona | Status |
+|---|-----------|-------------|---------|--------|
+| 5 | `onboarding/welcome.webp` | Owners around table with phone, Kai, floating UI cards | Group | EXISTS |
+| 6 | `onboarding/business-type.webp` | 4-quadrant montage: baker, seller, sari-sari, freelancer | All four | EXISTS |
+| 7 | `onboarding/pain-point.webp` | Split: stressed → organized with Kai | Jose | EXISTS |
+| 8 | `onboarding/ready.webp` | Fist-pump celebration, setup checklist complete | Maya | EXISTS |
+
+### Empty States
+| # | WebP Path | Description | Persona | Status |
+|---|-----------|-------------|---------|--------|
+| 9 | `empty-states/no-expenses.webp` | Kai peeking from wallet, scattered coins | Kai only | EXISTS |
+| 10 | `empty-states/no-deadlines.webp` | Kai sitting on calendar, coffee cup | Kai only | EXISTS |
+| 11 | `empty-states/no-replies.webp` | Kai next to phone with empty chat | Kai only | EXISTS |
+| 12 | `empty-states/no-chat.webp` | Kai centered, sunburst glow, welcoming | Kai only | EXISTS |
+| 13 | `empty-states/first-scan.webp` | Hands scanning receipt, Kai peeking, teal brackets | Nena | EXISTS |
+| 25 | `empty-states/costing-empty.webp` | Kai on kitchen scale, bakery bg, eggs, flour | Kai only | EXISTS |
+| 26 | `empty-states/invoice-empty.webp` | Kai leaning on clipboard with invoice, coins, pen | Kai only | EXISTS |
+
+### Status
+| # | WebP Path | Description | Persona | Status |
+|---|-----------|-------------|---------|--------|
+| 14 | `status/offline.webp` | Kai on bench, wifi X, rain, clock | Kai only | EXISTS |
+| 15 | `status/error.webp` | Kai apologetic, broken gear, plug | Kai only | EXISTS |
+| 16 | `status/session-expired.webp` | Clock/hourglass, Kai gesturing to login | Kai only | EXISTS |
+
+### Celebrations
+| # | WebP Path | Description | Persona | Status |
+|---|-----------|-------------|---------|--------|
+| 17 | `celebrations/first-expense.webp` | Nena with phone checkmark, Kai celebrating | Nena | EXISTS |
+| 18 | `celebrations/revenue-milestone.webp` | Kuya Rico arms raised, revenue goal, peso confetti | Kuya Rico | EXISTS |
+| 19 | `celebrations/streak.webp` | Jose walking with phone, Kai running, flame icon | Jose | EXISTS |
+
+### Features
+| # | WebP Path | Description | Persona | Status |
+|---|-----------|-------------|---------|--------|
+| 20 | `features/scan-in-progress.webp` | Nena scanning receipt, teal brackets, Kai watching | Nena | EXISTS |
+| 21 | `features/scan-success.webp` | Maya with captured receipt + peso cards, Kai thumbs-up | Maya | EXISTS |
+| 22 | `features/paywall-upgrade.webp` | Split: Free vs Pro features, PRO badge | Kai only | EXISTS |
+| 23 | `features/payment-success.webp` | Ben with teal checkmark, PRO badge, Kai celebrating | Ben | EXISTS |
+| 24 | `features/pwa-install-guide.webp` | Phone share menu + Save, Kai pointing | Kai only | EXISTS |
+
+### Marketing
+| # | WebP Path | Description | Persona | Status |
+|---|-----------|-------------|---------|--------|
+| M1 | `marketing/facebook-hero.webp` | Nena at sari-sari counter with phone + Kai | Nena | EXISTS |
+| M2 | `marketing/bir-stress.webp` | Tita Rosa stressed with BIR forms, no mascot | Tita Rosa | EXISTS |
+| M3 | `marketing/receipt-scanning.webp` | Hands scanning receipt, laptop with expenses | Ben | EXISTS |
+| M4 | `marketing/morning-briefing.webp` | Kuya Rico with tablet, morning briefing, Manila skyline | Kuya Rico | EXISTS |
+| M5 | `marketing/sari-sari-digital.webp` | Jose behind sari-sari counter with phone + Kai | Jose | EXISTS |
+| M6 | `marketing/multi-feature.webp` | Maya surrounded by floating feature cards + Kai | Maya | EXISTS |
+| 27 | `marketing/blog-header-cashflow.webp` | Kuya Rico pointing at Cash In/Cash Out chart | Kuya Rico | EXISTS |
+
+**Summary: All 33 images exist. Full coverage achieved.**
 
 ---
 
