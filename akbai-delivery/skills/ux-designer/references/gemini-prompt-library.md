@@ -1,6 +1,6 @@
 # AKBai — Gemini Prompt Library (Nano Banana Style)
 
-Last updated: 2026-04-03
+Last updated: 2026-04-04
 
 ## How to Use
 
@@ -15,27 +15,84 @@ Last updated: 2026-04-03
 
 ---
 
-## Existing Image Inventory (9 images in vector-images/)
+## Complete Image Inventory (37 files)
 
-| # | Filename | Label | Scene Description | Character |
-|---|----------|-------|-------------------|-----------|
-| 1 | `8ow3vb` | hero-pain | Stressed owner at desk, receipt piles, wall clock, sari-sari shelves behind | Female, medium brown skin, black shoulder-length hair, white blouse |
-| 2 | `7jvrd4` | hero-organize | Owner holding tablet with Kai + dashboard UI floating, messy desk with receipts | Female, dark brown skin, long black hair, white top, seated in chair |
-| 3 | `24sqmi` | hero-team | 3 owners around table with phone, Kai mascot floating, UI cards, Manila skyline | 1 male + 2 females, all navy aprons + white shirts (too similar) |
-| 4 | `csyl0j` | feature-dashboard | Group viewing large cash flow dashboard/whiteboard, BIR data visible | 1 man pointing at board + woman beside, 2 women at desk with laptops |
-| 5 | `js1vc7` | hero-team-alt | 4 business owners standing together, floating charts, Manila skyline, plants | 2 male + 2 female, mixed apron colors (green, navy) — best diversity |
-| 6 | `k9qygg` | feature-bir-reminder | Woman at laptop in coworking space, Kai notification bubble about BIR 1701Q | Female, light skin, long black hair, white button-up blouse |
-| 7 | `t7fr84` | feature-resibo-scanner | Hand holding phone scanning official receipt (OR), close-up | No full character — hand only, light-medium skin |
-| 8 | `taupm8` | feature-vendor | Woman with sari-sari cart, phone showing AKBai app, Kai mascot, data cards | Female, light skin, bun hairstyle, navy blazer (too corporate for vendor) |
-| 9 | `vyf801` | feature-morning-briefing | Man at cafe table with tablet, morning briefing card floating, coffee cup | Male, medium-dark brown skin, short hair, navy apron |
+> **Source PNGs:** `frontend/src/components/illustrations/vector-images/`
+> **Deployed WebPs:** `frontend/public/illustrations/{category}/`
 
-### Diversity Issues in Current Set
-- **Clothing:** 7 of 8 characters wear white shirt + navy apron/blazer — looks like a uniform
-- **Body type:** Everyone is slim, similar height, 25-35 age range
-- **Skin tone:** Narrow range — mostly medium brown, a few light-skinned
-- **Hair:** All straight black, similar lengths
-- **Gender:** Skews female (6F, 3M across all images)
-- **Result:** Characters feel like the same 2-3 people in different scenes
+### Hero (v1)
+
+| Inv# | WebP Path | Source PNG | Scene | Persona |
+|------|-----------|-----------|-------|---------|
+| #1 | `hero/hero-pain.webp` | `hero-pain.png` | Stressed owner, receipt piles, clock, sari-sari bg | F (v1) |
+| #2 | `hero/hero-organize.webp` | `hero-organize.png` | Owner with tablet + Kai, dashboard UI, messy desk | F (v1) |
+| #3 | `hero/hero-team.webp` | `hero-team.png` | 4 owners standing, floating charts, Manila skyline | Group (v1) |
+
+### Onboarding
+
+| Inv# | WebP Path | Source PNG | Scene | Persona |
+|------|-----------|-----------|-------|---------|
+| #5 | `onboarding/welcome.webp` | `welcome.png` | Owners around table with phone, Kai, floating UI cards | Group |
+| #6 | `onboarding/business-type.webp` | `business-type.png` | 4-quadrant montage: baker, seller, sari-sari, freelancer | All four |
+| #7 | `onboarding/pain-point.webp` | `pain-point.png` | Split: stressed Jose → organized Jose with Kai | Jose |
+| #8 | `onboarding/ready.webp` | `ready.png` | Maya fist-pump, setup checklist, Kai celebrating | Maya |
+
+### Empty States
+
+| Inv# | WebP Path | Source PNG | Scene | Persona |
+|------|-----------|-----------|-------|---------|
+| #9 | `empty-states/no-expenses.webp` | `no-expenses.png` | Kai peeking from wallet, scattered coins | Kai only |
+| #10 | `empty-states/no-deadlines.webp` | `no-deadlines.png` | Kai sitting on calendar, coffee cup | Kai only |
+| #11 | `empty-states/no-replies.webp` | `no-replies.png` | Kai next to phone with empty chat | Kai only |
+| #12 | `empty-states/no-chat.webp` | `no-chat.png` | Kai centered, sunburst glow, welcoming | Kai only |
+| #13 | `empty-states/first-scan.webp` | `first-scan.png` | Nena's hands scanning receipt, teal brackets | Nena |
+| #25 | `empty-states/costing-empty.webp` | `costing-empty.png` | Kai on kitchen scale, bakery bg, eggs, flour | Kai only |
+| #26 | `empty-states/invoice-empty.webp` | `invoice-empty.png` | Kai leaning on clipboard with invoice, coins, pen | Kai only |
+
+### Status
+
+| Inv# | WebP Path | Source PNG | Scene | Persona |
+|------|-----------|-----------|-------|---------|
+| #14 | `status/offline.webp` | `offline.png` | Kai on bench, wifi X, rain, clock | Kai only |
+| #15 | `status/error.webp` | `error.png` | Kai apologetic, broken gear, plug | Kai only |
+| #16 | `status/session-expired.webp` | `session-expired.png` | Clock/hourglass, Kai gesturing to login | Kai only |
+
+### Celebrations
+
+| Inv# | WebP Path | Source PNG | Scene | Persona |
+|------|-----------|-----------|-------|---------|
+| #17 | `celebrations/first-expense.webp` | `first-expense.png` | Nena with phone checkmark, Kai celebrating | Nena |
+| #18 | `celebrations/revenue-milestone.webp` | `revenue-milestone.png` | Kuya Rico arms raised, revenue goal, peso confetti | Kuya Rico |
+| #19 | `celebrations/streak.webp` | `streak.png` | Jose walking with phone, Kai running, flame icon | Jose |
+
+### Features
+
+| Inv# | WebP Path | Source PNG | Scene | Persona |
+|------|-----------|-----------|-------|---------|
+| #20 | `features/scan-in-progress.webp` | `scan-in-progress.png` | Nena scanning receipt, teal brackets, Kai watching | Nena |
+| #21 | `features/scan-success.webp` | `scan-success.png` | Maya phone with captured receipt + peso cards, Kai thumbs-up | Maya |
+| #22 | `features/paywall-upgrade.webp` | `paywall-upgrade.png` | Split: Free (greyed) vs Pro (full features, PRO badge) | Kai only |
+| #23 | `features/payment-success.webp` | `payment-success.png` | Ben with phone teal checkmark, PRO badge, Kai celebrating | Ben |
+| #24 | `features/pwa-install-guide.webp` | `pwa-install-guide.png` | Phone share menu + Save, Kai pointing, app icons | Kai only |
+| — | `features/feature-dashboard.webp` | `feature-dashboard.png` | Group at cash flow dashboard (v1 reference) | Group (v1) |
+| — | `features/feature-bir-reminder.webp` | `feature-bir-reminder.png` | Woman at laptop, BIR notification (v1 reference) | F (v1) |
+| — | `features/feature-resibo-scanner-v1.webp` | `feature-resibo-scanner-v1.png` | Hand scanning receipt close-up (v1 reference) | Hand (v1) |
+| — | `features/feature-vendor-v1.webp` | `feature-vendor-v1.png` | Woman with sari-sari cart (v1 reference) | F (v1) |
+| — | `features/feature-morning-briefing-v1.webp` | `feature-morning-briefing-v1.png` | Man at cafe, morning briefing (v1 reference) | M (v1) |
+
+### Marketing
+
+| Inv# | WebP Path | Source PNG | Scene | Persona |
+|------|-----------|-----------|-------|---------|
+| M1 | `marketing/facebook-hero.webp` | `facebook-hero.png` | Nena at sari-sari counter with phone + Kai | Nena |
+| M2 | `marketing/bir-stress.webp` | `bir-stress.png` | Tita Rosa stressed with BIR forms, no mascot | Tita Rosa |
+| M3 | `marketing/receipt-scanning.webp` | `receipt-scanning.png` | Hands scanning receipt, laptop with expenses | Ben |
+| M4 | `marketing/morning-briefing.webp` | `morning-briefing.png` | Kuya Rico with tablet, morning briefing, Manila skyline | Kuya Rico |
+| M5 | `marketing/sari-sari-digital.webp` | `sari-sari-digital.png` | Jose behind sari-sari counter with phone + Kai | Jose |
+| M6 | `marketing/multi-feature.webp` | `multi-feature.png` | Maya surrounded by floating feature cards + Kai | Maya |
+| #27 | `marketing/blog-header-cashflow.webp` | `blog-header-cashflow.png` | Kuya Rico pointing at Cash In/Cash Out chart | Kuya Rico |
+
+**All 37 files renamed, converted to WebP (80% quality), and deployed to `public/illustrations/`.**
 
 ---
 
@@ -416,30 +473,149 @@ golden glow. Amber swoosh curves connecting the cards. Dynamic, feature-rich. 4:
 
 ---
 
+## Future Build Images (8 — Builds 3, 8, Phase 1 launch)
+
+### Resibo Scanner Flow (Build 3)
+
+#### #20 — scan-in-progress.webp | Active scanning
+
+```
+[MASTER STYLE PROMPT]
+[NENA PERSONA]
+Scene: Nena — stocky Filipina in her late 40s, dark morena skin, messy bun, floral
+house dress — holding her phone over a receipt on a wooden counter. Phone screen shows
+the camera viewfinder with a teal scan line sweeping downward and corner brackets
+framing the receipt. Small loading dots or progress indicator. The yin-yang mascot
+floating beside the phone, leaning in to look at the screen with a focused expression.
+Ambient glow from the phone screen. Anticipatory, "working on it" mood. 4:3 landscape.
+```
+
+#### #21 — scan-success.webp | Receipt captured successfully
+
+```
+[MASTER STYLE PROMPT]
+[MAYA PERSONA]
+Scene: Maya — young petite Filipina in her early 20s, wavy hair, casual t-shirt —
+smiling at her phone which shows a green checkmark over a captured receipt image. Next
+to the phone, a floating expense card is materializing (merchant name, amount in pesos,
+category icon). The yin-yang mascot giving a thumbs-up gesture with sparkle accents.
+Teal checkmark and card border. Clean, satisfying "success" moment. 4:3 landscape.
+```
+
+### Payment & Upgrade (Build 8)
+
+#### #22 — paywall-upgrade.webp | Free vs Pro comparison
+
+```
+[MASTER STYLE PROMPT]
+Scene: Split composition with an amber swoosh divider. LEFT side: a basic phone screen
+showing limited features (greyed-out cards, a "10 queries/day" counter, no receipt
+scanner), muted colors, the yin-yang mascot looking small and constrained. RIGHT side:
+a vibrant phone screen showing the full AKBai dashboard with all features lit up
+(receipt scanner, morning briefing, deadlines, reply drafter), bright warm colors, the
+yin-yang mascot large and glowing with sparkle accents. A golden "PRO" badge floating.
+Aspirational, "unlock your potential" mood. No human character. 4:3 landscape.
+```
+
+#### #23 — payment-success.webp | Subscription activated
+
+```
+[MASTER STYLE PROMPT]
+[BEN PERSONA]
+Scene: Ben — lean Filipino man in his early 30s, light-medium skin, fade haircut,
+glasses, olive polo — looking at his phone with a relieved smile. Phone screen shows
+a teal checkmark and "Pro Activated" message. The yin-yang mascot beside him doing a
+small celebration with confetti. A GCash logo subtly visible. Golden "PRO" badge
+floating above with sparkle accents. Satisfied, confident mood. 4:3 landscape.
+```
+
+### PWA Installation (Phase 1 Launch — Gap B7/D9)
+
+#### #24 — pwa-install-guide.webp | Add to Home Screen
+
+```
+[MASTER STYLE PROMPT]
+Scene: A smartphone being held at a slight angle, screen showing a browser share menu
+with "Add to Home Screen" option highlighted in amber. An arrow pointing from the share
+icon to the option. Below, the phone's home screen showing the AKBai app icon (yin-yang
+mascot) newly placed among other app icons. The yin-yang mascot floating beside the
+phone, pointing at the highlighted option encouragingly. Simple, instructional, step-by-
+step mood. No human character — focus on the phone interaction. 4:3 landscape.
+```
+
+### Costing & Invoicing (Build 8)
+
+#### #25 — costing-empty.webp | No costing cards yet
+
+```
+[MASTER STYLE PROMPT]
+Scene: A clean kitchen scale or calculator on a counter, with a blank recipe card
+beside it. A few ingredient items (eggs, flour bag, sugar) arranged neatly but unused.
+The yin-yang mascot sitting on the scale, looking eager and ready with a small notepad.
+Clean, uncluttered. Gentle encouraging mood — "let's figure out your margins." Warm
+kitchen/bakery background. No human character. 4:3 landscape.
+```
+
+#### #26 — invoice-empty.webp | No invoices yet
+
+```
+[MASTER STYLE PROMPT]
+Scene: A blank invoice template on a clipboard, sitting on a clean desk. A pen beside
+it. The yin-yang mascot leaning against the clipboard, looking up with an encouraging
+expression as if saying "ready when you are." A few peso coins nearby. Clean, minimal,
+professional mood. Warm cream background with soft amber swoosh. No human character.
+4:3 landscape.
+```
+
+### Marketing — Blog (Phase 0B)
+
+#### #27 — blog-header-cashflow.webp | Cash flow visibility article
+
+```
+[MASTER STYLE PROMPT]
+[KUYA RICO PERSONA]
+Scene: Kuya Rico — tall broad Filipino man in his late 40s, dark moreno skin,
+salt-and-pepper hair, tucked-in polo — standing in front of a large screen showing a
+cash flow chart with clear "Cash In" (teal) and "Cash Out" (amber) lines over 6 months.
+He's pointing at the chart with one hand, other hand holding a tablet. The yin-yang
+mascot floating near the screen, also looking at the data. Background: his retail store
+interior, shelves visible. Confident, informed mood. 16:9 landscape.
+```
+
+---
+
 ## Persona Rotation Guide
 
 To ensure diversity across your full image set, track which persona you've used:
 
-| Image | Persona | Gender | Age | Build |
-|-------|---------|--------|-----|-------|
-| #5 welcome | Kai only | — | — | — |
-| #6 business-type | ALL FOUR | Mixed | 20s-40s | Mixed |
-| #7 pain-point | JOSE | M | 50s | Stocky |
-| #8 ready | MAYA | F | 20s | Petite |
-| #9-12 empty states | Kai only | — | — | — |
-| #13 first-scan | NENA | F | 40s | Stocky |
-| #14-16 status | Kai only | — | — | — |
-| #17 first-expense | NENA | F | 40s | Stocky |
-| #18 revenue-milestone | KUYA RICO | M | 40s | Tall/broad |
-| #19 streak | JOSE | M | 50s | Stocky |
-| M1 facebook | NENA | F | 40s | Stocky |
-| M2 BIR stress | TITA ROSA | F | 40s | Plump |
-| M3 scanning | BEN | M | 30s | Lean |
-| M4 morning | KUYA RICO | M | 40s | Tall/broad |
-| M5 sari-sari | JOSE | M | 50s | Stocky |
-| M6 multi-feature | MAYA | F | 20s | Petite |
+| Image | Persona | Gender | Age | Build | Status |
+|-------|---------|--------|-----|-------|--------|
+| #5 welcome | Group | Mixed | — | — | EXISTS |
+| #6 business-type | ALL FOUR | Mixed | 20s-40s | Mixed | EXISTS |
+| #7 pain-point | JOSE | M | 50s | Stocky | EXISTS |
+| #8 ready | MAYA | F | 20s | Petite | EXISTS |
+| #9-12 empty states | Kai only | — | — | — | EXISTS |
+| #13 first-scan | NENA | F | 40s | Stocky | EXISTS |
+| #14-16 status | Kai only | — | — | — | EXISTS |
+| #17 first-expense | NENA | F | 40s | Stocky | EXISTS |
+| #18 revenue-milestone | KUYA RICO | M | 40s | Tall/broad | EXISTS |
+| #19 streak | JOSE | M | 50s | Stocky | EXISTS |
+| #20 scan-in-progress | NENA | F | 40s | Stocky | EXISTS |
+| #21 scan-success | MAYA | F | 20s | Petite | EXISTS |
+| #22 paywall-upgrade | Kai only | — | — | — | EXISTS |
+| #23 payment-success | BEN | M | 30s | Lean | EXISTS |
+| #24 pwa-install-guide | Kai only | — | — | — | EXISTS |
+| #25 costing-empty | Kai only | — | — | — | EXISTS |
+| #26 invoice-empty | Kai only | — | — | — | EXISTS |
+| #27 blog-cashflow | KUYA RICO | M | 40s | Tall/broad | EXISTS |
+| M1 facebook | NENA | F | 40s | Stocky | EXISTS |
+| M2 BIR stress | TITA ROSA | F | 40s | Plump | EXISTS |
+| M3 scanning | BEN | M | 30s | Lean | EXISTS |
+| M4 morning | KUYA RICO | M | 40s | Tall/broad | EXISTS |
+| M5 sari-sari | JOSE | M | 50s | Stocky | EXISTS |
+| M6 multi-feature | MAYA | F | 20s | Petite | EXISTS |
 
-**Result:** 6 distinct personas, 8F/8M gender balance, ages 20s-50s, 4 different body types.
+**All 33 images exist.** Full coverage across all builds and marketing.
 
 ---
 
