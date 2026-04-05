@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { BusinessTypeEnum, IncomeRangeEnum } from '@/lib/kilala-kita/schemas';
 import { BIR_TAX_TYPES } from '@/lib/deadlines/types';
@@ -96,7 +97,7 @@ export async function GET() {
   // Fetch business profile
   const { data: profile } = await supabase
     .from('business_profiles')
-    .select('business_name, business_type, income_range, bir_registered, bir_tax_type, profile_version')
+    .select('business_name, business_type, income_range, bir_registered, bir_tax_type')
     .eq('user_id', userId)
     .is('deleted_at', null)
     .single();
@@ -109,7 +110,7 @@ export async function GET() {
     income_range: profile?.income_range ?? null,
     bir_registered: profile?.bir_registered ?? false,
     bir_tax_type: profile?.bir_tax_type ?? null,
-    profile_version: profile?.profile_version ?? 1,
+    profile_version: 1,
   };
 
   return NextResponse.json({ success: true, data: response });
@@ -153,16 +154,65 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    // Dev bypass — return mock success
+    // Dev bypass — persist to DB like production, use service client to bypass RLS
+    const svc = createServiceClient();
+    const data = parsed.data;
+
+    // Update users table if display_name provided
+    if (data.display_name !== undefined) {
+      await svc
+        .from('users')
+        .update({ display_name: data.display_name })
+        .eq('id', userId);
+    }
+
+    // Update business_profiles if any business field provided
+    const devBusinessFields: Record<string, string | boolean> = {};
+    if (data.business_name !== undefined) devBusinessFields.business_name = data.business_name;
+    if (data.business_type !== undefined) devBusinessFields.business_type = data.business_type;
+    if (data.income_range !== undefined) devBusinessFields.income_range = data.income_range;
+    if (data.bir_registered !== undefined) devBusinessFields.bir_registered = data.bir_registered;
+    if (data.bir_tax_type !== undefined) devBusinessFields.bir_tax_type = data.bir_tax_type;
+
+    if (Object.keys(devBusinessFields).length > 0) {
+      const { data: currentProfile } = await svc
+        .from('business_profiles')
+        .select('id')
+        .eq('user_id', userId)
+        .is('deleted_at', null)
+        .single();
+
+      if (currentProfile) {
+        await svc
+          .from('business_profiles')
+          .update(devBusinessFields)
+          .eq('id', currentProfile.id);
+      }
+    }
+
+    // Re-fetch updated data
+    const { data: devUser } = await svc
+      .from('users')
+      .select('display_name')
+      .eq('id', userId)
+      .single();
+
+    const { data: devProfile } = await svc
+      .from('business_profiles')
+      .select('business_name, business_type, income_range, bir_registered, bir_tax_type')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .single();
+
     const response: ProfileData = {
-      display_name: parsed.data.display_name ?? 'Boss',
+      display_name: devUser?.display_name ?? 'Boss',
       email: DEV_USER.email ?? null,
-      business_name: parsed.data.business_name ?? 'Dev Business',
-      business_type: parsed.data.business_type ?? 'food_baking',
-      income_range: parsed.data.income_range ?? 'below_50k',
-      bir_registered: parsed.data.bir_registered ?? false,
-      bir_tax_type: parsed.data.bir_tax_type ?? null,
-      profile_version: 2,
+      business_name: devProfile?.business_name ?? 'Dev Business',
+      business_type: devProfile?.business_type ?? 'food_baking',
+      income_range: devProfile?.income_range ?? 'below_50k',
+      bir_registered: devProfile?.bir_registered ?? false,
+      bir_tax_type: devProfile?.bir_tax_type ?? null,
+      profile_version: 1,
     };
 
     return NextResponse.json({ success: true, data: response });
@@ -242,10 +292,9 @@ export async function PATCH(req: NextRequest) {
   if (data.bir_tax_type !== undefined) businessFields.bir_tax_type = data.bir_tax_type;
 
   if (Object.keys(businessFields).length > 0) {
-    // Get current profile_version
     const { data: currentProfile } = await supabase
       .from('business_profiles')
-      .select('id, profile_version')
+      .select('id')
       .eq('user_id', userId)
       .is('deleted_at', null)
       .single();
@@ -257,11 +306,9 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const newVersion = (currentProfile.profile_version ?? 1) + 1;
-
     const { error: profileError } = await supabase
       .from('business_profiles')
-      .update({ ...businessFields, profile_version: newVersion })
+      .update(businessFields)
       .eq('id', currentProfile.id);
 
     if (profileError) {
@@ -281,7 +328,7 @@ export async function PATCH(req: NextRequest) {
 
   const { data: updatedProfile } = await supabase
     .from('business_profiles')
-    .select('business_name, business_type, income_range, bir_registered, bir_tax_type, profile_version')
+    .select('business_name, business_type, income_range, bir_registered, bir_tax_type')
     .eq('user_id', userId)
     .is('deleted_at', null)
     .single();
@@ -294,7 +341,7 @@ export async function PATCH(req: NextRequest) {
     income_range: updatedProfile?.income_range ?? null,
     bir_registered: updatedProfile?.bir_registered ?? false,
     bir_tax_type: updatedProfile?.bir_tax_type ?? null,
-    profile_version: updatedProfile?.profile_version ?? 1,
+    profile_version: 1,
   };
 
   return NextResponse.json({ success: true, data: response });

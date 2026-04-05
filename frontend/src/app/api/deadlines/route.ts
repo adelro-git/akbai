@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { getManilaToday } from '@/lib/timezone';
 import {
@@ -82,14 +83,22 @@ export async function GET(req: NextRequest) {
   const filters = parsed.data;
 
   if (SKIP_AUTH) {
-    let filtered = devDeadlines.filter((d) => d.deleted_at === null);
-    if (filters.status) filtered = filtered.filter((d) => d.status === filters.status);
-    filtered.sort((a, b) => a.due_date.localeCompare(b.due_date));
+    // Dev bypass — query real DB with service client to bypass RLS
+    const svc = createServiceClient();
+    const userId = DEV_USER.id;
+    let devQuery = svc
+      .from('bir_deadlines')
+      .select('id, user_id, form_name, due_date, description, status, notified_7d, notified_3d, notified_1d, created_at, updated_at')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .order('due_date', { ascending: true });
 
-    const enriched = enrichWithUrgency(
-      filtered.map(({ deleted_at: _da, ...rest }) => rest),
-      today
-    );
+    if (filters.status) {
+      devQuery = devQuery.eq('status', filters.status);
+    }
+
+    const { data: devDeadlineRows } = await devQuery;
+    const enriched = enrichWithUrgency(devDeadlineRows ?? [], today);
 
     return NextResponse.json({ success: true, data: { deadlines: enriched } });
   }
@@ -171,30 +180,31 @@ export async function POST(req: NextRequest) {
   const generated = generateDeadlines(tax_type, year);
 
   if (SKIP_AUTH) {
+    // Dev bypass — persist to real DB with service client to bypass RLS
+    const svc = createServiceClient();
     const userId = DEV_USER.id;
     let insertedCount = 0;
 
     for (const dl of generated) {
-      // Upsert: skip if already exists for same form+due_date
-      const exists = devDeadlines.find(
-        (d) => d.user_id === userId && d.form_name === dl.form_name && d.due_date === dl.due_date && d.deleted_at === null
-      );
+      const { data: existing } = await svc
+        .from('bir_deadlines')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('form_name', dl.form_name)
+        .eq('due_date', dl.due_date)
+        .is('deleted_at', null)
+        .maybeSingle();
 
-      if (!exists) {
-        devDeadlines.push({
-          id: crypto.randomUUID(),
-          user_id: userId,
-          form_name: dl.form_name,
-          due_date: dl.due_date,
-          description: dl.description,
-          status: 'upcoming',
-          notified_7d: false,
-          notified_3d: false,
-          notified_1d: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          deleted_at: null,
-        });
+      if (!existing) {
+        await svc
+          .from('bir_deadlines')
+          .insert({
+            user_id: userId,
+            form_name: dl.form_name,
+            due_date: dl.due_date,
+            description: dl.description,
+            status: 'upcoming',
+          });
         insertedCount++;
       }
     }
@@ -308,16 +318,24 @@ export async function PATCH(req: NextRequest) {
   const { id, status } = parsed.data;
 
   if (SKIP_AUTH) {
-    const deadline = devDeadlines.find((d) => d.id === id && d.deleted_at === null);
-    if (!deadline) {
+    // Dev bypass — persist to real DB with service client to bypass RLS
+    const svc = createServiceClient();
+    const { data: devUpdated, error: devUpdateError } = await svc
+      .from('bir_deadlines')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', DEV_USER.id)
+      .is('deleted_at', null)
+      .select('id, status')
+      .single();
+
+    if (devUpdateError || !devUpdated) {
       return NextResponse.json(
         { success: false, error: { code: 'NOT_FOUND', message_tl: 'Hindi makita ang deadline.' } },
         { status: 404 }
       );
     }
-    deadline.status = status;
-    deadline.updated_at = new Date().toISOString();
-    return NextResponse.json({ success: true, data: { id, status } });
+    return NextResponse.json({ success: true, data: { id: devUpdated.id, status: devUpdated.status } });
   }
 
   // Auth check

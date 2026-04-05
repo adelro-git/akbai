@@ -315,8 +315,8 @@ describe('GET /api/morning-briefing', () => {
 
   // --- Outside time window ---
 
-  it('returns outside_window when outside 5AM-12PM Manila', async () => {
-    mockManilaHour = 14; // 2 PM
+  it('returns outside_window when outside 5AM-11PM Manila', async () => {
+    mockManilaHour = 23; // 11 PM
     setupDefaultMocks();
 
     const res = await GET();
@@ -326,7 +326,7 @@ describe('GET /api/morning-briefing', () => {
     expect(json.success).toBe(true);
     expect(json.data.available).toBe(false);
     expect(json.data.reason).toBe('outside_window');
-    expect(json.data.message_tl).toContain('5AM to 12PM');
+    expect(json.data.message_tl).toContain('5AM');
   });
 
   it('returns outside_window before 5AM Manila', async () => {

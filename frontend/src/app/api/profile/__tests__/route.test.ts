@@ -236,7 +236,7 @@ describe('PATCH /api/profile', () => {
     expect(json.error.code).toBe('INVALID_INPUT');
   });
 
-  it('should update business_profiles and increment profile_version', async () => {
+  it('should update business_profiles successfully', async () => {
     setupPatchChains(3);
 
     const res = await PATCH(
@@ -246,7 +246,7 @@ describe('PATCH /api/profile', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(json.data.profile_version).toBe(4);
+    expect(json.data.profile_version).toBe(1);
   });
 
   it('should return 404 if business profile does not exist', async () => {

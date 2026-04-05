@@ -447,7 +447,7 @@ describe('aggregateBriefingData', () => {
   it('calculates days_since_signup from user created_at', async () => {
     const supabase = createMockSupabase({
       allTimeTxns: [],
-      userData: { created_at: '2026-03-25T00:00:00Z' }, // 3 days ago
+      userData: { created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() }, // 3 days ago (dynamic)
     });
 
     const result = await aggregateBriefingData(supabase, TEST_USER_ID);

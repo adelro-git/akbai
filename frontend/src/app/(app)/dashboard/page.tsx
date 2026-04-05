@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { toManila, getManilaToday } from '@/lib/timezone';
 import DashboardTracker from '@/components/dashboard/dashboard-tracker';
@@ -145,120 +146,104 @@ export default async function DashboardPage() {
     expenses_amount: number | null;
   } | null = null;
 
+  // Use service client in dev mode to bypass RLS (no real auth session)
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
+
   if (SKIP_AUTH) {
-    // Dev bypass — fetch from API to get dev-store persisted data
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-    try {
-      const devRes = await fetch(`${baseUrl}/api/dashboard`, { cache: 'no-store' });
-      const devJson = await devRes.json();
-      if (devJson.success) {
-        const d = devJson.data;
-        userId = DEV_USER.id;
-        userName = d.userName ?? 'Boss';
-        businessName = d.businessName ?? 'Dev Business';
-        businessType = d.businessType ?? 'food_baking';
-        todayCheckIn = d.todayCheckIn ?? null;
-      }
-    } catch {
-      userId = DEV_USER.id;
-      userName = 'Boss';
-      businessName = 'Dev Business';
-      businessType = 'food_baking';
-    }
+    userId = DEV_USER.id;
   } else {
     const { data } = await supabase.auth.getUser();
     const user = data.user;
     if (!user) redirect('/login');
-
     userId = user.id;
-
-    // Fetch user profile
-    const { data: userData } = await supabase
-      .from('users')
-      .select('display_name')
-      .eq('id', userId)
-      .single();
-
-    userName = userData?.display_name ?? 'Boss';
-
-    // Fetch business profile (includes bir_registered for card wiring)
-    const { data: profile } = await supabase
-      .from('business_profiles')
-      .select('business_name, business_type, bir_registered, primary_pain')
-      .eq('user_id', userId)
-      .is('deleted_at', null)
-      .single();
-
-    businessName = profile?.business_name ?? null;
-    businessType = profile?.business_type ?? null;
-    birRegistered = profile?.bir_registered === true;
-    primaryPain = profile?.primary_pain ?? null;
-
-    // --- Fetch today's check-in (now captured and used) ---
-    const today = getManilaToday();
-    const { data: checkInData } = await supabase
-      .from('daily_check_in')
-      .select('id, mood, kai_greeting, check_in_date, sales_amount, expenses_amount')
-      .eq('user_id', userId)
-      .eq('check_in_date', today)
-      .is('deleted_at', null)
-      .single();
-
-    todayCheckIn = checkInData ?? null;
-
-    // --- Fetch conversation count for Quick Chat card ---
-    const { count } = await supabase
-      .from('ka_conversations')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .is('deleted_at', null);
-
-    conversationCount = count ?? 0;
-
-    // --- Fetch this month's transaction count for Saan Napunta card (Sprint 7) ---
-    const currentMonth = today.slice(0, 7); // YYYY-MM
-    const monthStart = `${currentMonth}-01`;
-    const [y, m] = currentMonth.split('-').map(Number);
-    const lastDay = new Date(y, m, 0).getDate();
-    const monthEnd = `${currentMonth}-${String(lastDay).padStart(2, '0')}`;
-
-    const { count: txCount } = await supabase
-      .from('transactions')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .is('deleted_at', null)
-      .gte('transaction_date', monthStart)
-      .lte('transaction_date', monthEnd);
-
-    expenseCount = txCount ?? 0;
-
-    // --- Fetch deadline summary for BIR Deadlines card (Build 6) ---
-    const { data: nextDeadline } = await supabase
-      .from('bir_deadlines')
-      .select('due_date')
-      .eq('user_id', userId)
-      .eq('status', 'upcoming')
-      .is('deleted_at', null)
-      .gte('due_date', today)
-      .order('due_date', { ascending: true })
-      .limit(1)
-      .maybeSingle();
-
-    if (nextDeadline?.due_date) {
-      const d = new Date(nextDeadline.due_date + 'T00:00:00');
-      nextDeadlineDate = d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
-    }
-
-    const { count: odCount } = await supabase
-      .from('bir_deadlines')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('status', 'upcoming')
-      .is('deleted_at', null)
-      .lt('due_date', today);
-
-    overdueCount = odCount ?? 0;
   }
+
+  // Fetch user profile
+  const { data: userData } = await db
+    .from('users')
+    .select('display_name')
+    .eq('id', userId)
+    .single();
+
+  userName = userData?.display_name ?? 'Boss';
+
+  // Fetch business profile (includes bir_registered for card wiring)
+  const { data: profile } = await db
+    .from('business_profiles')
+    .select('business_name, business_type, bir_registered, primary_pain')
+    .eq('user_id', userId)
+    .is('deleted_at', null)
+    .single();
+
+  businessName = profile?.business_name ?? null;
+  businessType = profile?.business_type ?? null;
+  birRegistered = profile?.bir_registered === true;
+  primaryPain = profile?.primary_pain ?? null;
+
+  // --- Fetch today's check-in ---
+  const today = getManilaToday();
+  const { data: checkInData } = await db
+    .from('daily_check_in')
+    .select('id, mood, kai_greeting, check_in_date, sales_amount, expenses_amount')
+    .eq('user_id', userId)
+    .eq('check_in_date', today)
+    .is('deleted_at', null)
+    .single();
+
+  todayCheckIn = checkInData ?? null;
+
+  // --- Fetch conversation count for Quick Chat card ---
+  const { count } = await db
+    .from('ka_conversations')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .is('deleted_at', null);
+
+  conversationCount = count ?? 0;
+
+  // --- Fetch this month's transaction count for Saan Napunta card ---
+  const currentMonth = today.slice(0, 7); // YYYY-MM
+  const monthStart = `${currentMonth}-01`;
+  const [y, m] = currentMonth.split('-').map(Number);
+  const lastDay = new Date(y, m, 0).getDate();
+  const monthEnd = `${currentMonth}-${String(lastDay).padStart(2, '0')}`;
+
+  const { count: txCount } = await db
+    .from('transactions')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .is('deleted_at', null)
+    .gte('transaction_date', monthStart)
+    .lte('transaction_date', monthEnd);
+
+  expenseCount = txCount ?? 0;
+
+  // --- Fetch deadline summary for BIR Deadlines card (Build 6) ---
+  const { data: nextDeadline } = await db
+    .from('bir_deadlines')
+    .select('due_date')
+    .eq('user_id', userId)
+    .eq('status', 'upcoming')
+    .is('deleted_at', null)
+    .gte('due_date', today)
+    .order('due_date', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (nextDeadline?.due_date) {
+    const d = new Date(nextDeadline.due_date + 'T00:00:00');
+    nextDeadlineDate = d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
+  }
+
+  const { count: odCount } = await db
+    .from('bir_deadlines')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('status', 'upcoming')
+    .is('deleted_at', null)
+    .lt('due_date', today);
+
+  overdueCount = odCount ?? 0;
 
   const greeting = generateGreeting(userName);
   const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount });

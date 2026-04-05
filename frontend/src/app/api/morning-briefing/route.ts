@@ -167,19 +167,19 @@ export async function GET() {
       }
     }
 
-    // --- Time Window Check (5AM-12PM Manila) ---
+    // --- Time Window Check ---
+    // Briefing is generated once daily (cached). Available all day after generation.
+    // Only block NEW generation outside 5AM-11PM Manila — but if cache exists,
+    // it was already returned above (line 160), so this only gates first-time generation.
     const manilaHour = toManila().getUTCHours();
-    if (manilaHour < MORNING_WINDOW_START || manilaHour >= MORNING_WINDOW_END) {
-      // In dev mode, skip the time window check so we can test anytime
-      if (!SKIP_AUTH) {
-        const response: MorningBriefingResponse = {
-          available: false,
-          reason: 'outside_window',
-          cached: false,
-          message_tl: 'Bukas ulit! Ang Morning Briefing mo ay available from 5AM to 12PM.',
-        };
-        return NextResponse.json({ success: true, data: response });
-      }
+    if (!SKIP_AUTH && (manilaHour < MORNING_WINDOW_START || manilaHour >= 23)) {
+      const response: MorningBriefingResponse = {
+        available: false,
+        reason: 'outside_window',
+        cached: false,
+        message_tl: 'Bukas ulit! Ang Morning Briefing mo ay available mula 5AM.',
+      };
+      return NextResponse.json({ success: true, data: response });
     }
 
     // --- API Key Check ---

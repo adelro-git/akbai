@@ -545,3 +545,31 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Illustration Sprint | 1 | Rename 37 PNGs from Gemini hashes to descriptive names, convert to WebP (80%), deploy to `frontend/public/illustrations/{category}/` | DONE — 2026-04-04. 37 WebPs across 7 categories (hero, onboarding, empty-states, status, celebrations, features, marketing). |
 | Illustration Sprint | 2 | Wire illustrations into app components: empty states (#9-13), offline page (#14), error (#15), session expired (#16), onboarding (#5-8), celebrations (#17-19) | OPEN — WebPs are deployed and ready. Wire via `<IllustrationWrapper>` when each Build ships its UI. |
 | Illustration Sprint | 3 | Generate 8 future-build illustrations (#20-27): scan flow, paywall, payment success, PWA install, costing/invoice empty states, blog cashflow header | DONE — All 8 generated, renamed, converted 2026-04-04. |
+
+---
+
+### Sprint 10 — 2026-04-04 (Builds 5-7 Hardening + Build 5 Completion)
+
+**Phase:** 0A — Builds 5-7 Hardening + Build 5 Completion
+**Sprint Goal:** Live-test Sprint 8+9 deliverables (Morning Briefing, Deadline Watcher, Reply Drafter), wire illustrations into app components, complete Build 5 (Weekly + Monthly Reconciliation).
+**Capacity:** 2.5 hrs Anton Time (LOW)
+
+**Tasks:**
+
+| # | Task | Agent Size | Anton Time | Status | Stream | Notes |
+|---|------|-----------|------------|--------|--------|-------|
+| 1 | Live Test: Morning Briefing | — | 0.5 hr | IN PROGRESS | Anton | Sprint 8 acceptance |
+| 2 | Live Test: Deadline Watcher | — | 0.5 hr | IN PROGRESS | Anton | Sprint 9 acceptance |
+| 3 | Live Test: Reply Drafter | — | 0.5 hr | IN PROGRESS | Anton | Sprint 9 acceptance |
+| 4 | Illustration Wiring: Empty States + Status Pages | M | 0.25 hr | IN PROGRESS | A | 7 illustrations into components |
+| 5 | Illustration Wiring: Onboarding Steps | S | 0.15 hr | IN PROGRESS | A | 4 onboarding illustrations |
+| 6 | Weekly + Monthly Reconciliation | M | 0.5 hr | IN PROGRESS | B | Build 5 completion (Sprint 8 carryover) |
+| 7 | Sprint 8+9 Retro | — | 0.1 hr | PLANNED | Sequential | After Tasks 1-6 |
+
+**Parallel Streams:**
+- Stream Anton (Tasks 1-3): Live testing — runs in parallel with agent streams
+- Stream A (Tasks 4-5): `claude/sprint10-illustrations` — illustration wiring
+- Stream B (Task 6): `claude/sprint10-recon` — reconciliation features
+
+**Actual Anton Hours:** TBD
+**Sprint Outcome:** IN PROGRESS
