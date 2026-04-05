@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { MorningBriefing, CashFlow, CustomerMessages, ResiboScanner, ProfileUser } from '@/components/illustrations/svg';
 
@@ -28,9 +29,22 @@ export default function SidebarNav() {
       data-testid="sidebar-nav"
     >
       {/* Logo / Brand */}
-      <div className="px-5 pt-6 pb-5">
-        <p className="text-on-surface text-xl font-extrabold tracking-tight">AKBai</p>
-        <p className="text-on-surface-variant text-xs mt-0.5">Katuwang ng Negosyo Mo</p>
+      <div className="px-5 pt-6 pb-5 flex items-center gap-3">
+        <div className="relative w-10 h-10 flex-shrink-0">
+          <Image
+            src="/icons/mark-honey.png"
+            alt=""
+            fill
+            className="object-contain"
+            aria-hidden="true"
+          />
+        </div>
+        <div>
+          <p className="text-on-surface text-xl font-extrabold tracking-tight">
+            AKB<span className="text-primary-container">ai</span>
+          </p>
+          <p className="text-on-surface-variant text-xs mt-0.5">Katuwang ng Negosyo Mo</p>
+        </div>
       </div>
 
       {/* Nav items */}
