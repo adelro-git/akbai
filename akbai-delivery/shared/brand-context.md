@@ -92,8 +92,8 @@ AKBai uses a **light-first** design system ("Sun-Drenched Atelier") with dark mo
 ## Logo System
 
 **Mark structure:** The AKBai logo consists of three components:
-- **Circular mark:** An abstract yin-yang form in Warm Honey gradient (light mode) or all-white (dark mode/reversed contexts).
-- **Kai's face:** Integrated into the mark's center as two curved eyes and a smile arc, rendered in primary-container (#f59e0b). This transforms the mark from an abstract symbol into a representation of Kai, the AI persona.
+- **Circular mark:** A yin-yang inspired form featuring Kai's smiling face at its center, rendered in Warm Honey gradient (light mode), full-color on dark backgrounds, or white+grey on honey/gradient backgrounds.
+- **Kai's face:** Two curved happy eyes and a gentle smile arc at the center of the mark — the primary visual element that makes the logo instantly recognizable as Kai, the AI persona.
 - **Wordmark:** "AKB" in on-surface (#1c1c18 light, #e6e2db dark) + "ai" in primary-container (#f59e0b). Plus Jakarta Sans, ExtraBold 800.
 
 **Application rules:**
@@ -193,8 +193,9 @@ For digital-first Filipino MSMEs who are scaling past the informal stage but dro
 
 | File | Type | Location |
 |------|------|----------|
-| Brand Book | PDF | /AKBai/brand/AKBai Brand Book.pdf |
-| Logo Files | Directory (PNGs) | /AKBai/brand/Logo Files/ |
+| Brand Book | PDF | /AKBai/brand/AKBai Brand Book.pdf (needs regeneration — still shows old mark) |
+| Logo Files | Directory (14 PNGs) | /AKBai/brand/Logo Files/ |
+| Logo Generator | Python script | /AKBai/brand/generate_logos.py |
 | Logo System | HTML interactive | /AKBai/Archive/brand archive/01 - Logo System.html |
 | Brand Guide (full) | HTML interactive | /AKBai/Archive/brand archive/02 - Brand Guide.html |
 | One-Pager | HTML | /AKBai/Archive/brand archive/03 - One-Pager.html |
