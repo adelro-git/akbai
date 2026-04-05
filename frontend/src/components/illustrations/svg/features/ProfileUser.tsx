@@ -15,14 +15,14 @@ export function ProfileUser({ size = 48, className }: IllustrationProps) {
       className={className}
     >
       {/* Circular background */}
-      <circle cx="24" cy="24" r="22" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="1" opacity="0.3" />
+      <circle cx="24" cy="24" r="22" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="1.5" opacity="0.85" />
       {/* Head */}
-      <circle cx="24" cy="18" r="7" fill="hsl(var(--on-surface))" opacity="0.4" />
+      <circle cx="24" cy="18" r="7" fill="hsl(var(--on-surface))" opacity="0.7" />
       {/* Body / shoulders */}
       <path
         d="M10 42C10 34 16 28 24 28C32 28 38 34 38 42"
         fill="hsl(var(--on-surface))"
-        opacity="0.4"
+        opacity="0.7"
       />
     </svg>
   );

@@ -15,7 +15,7 @@ export function ExpenseRent({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Building body */}
-      <rect x="8" y="10" width="20" height="24" rx="1.5" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="0.8" opacity="0.25" />
+      <rect x="8" y="10" width="20" height="24" rx="1.5" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="1.2" opacity="0.7" />
       {/* Roof / awning */}
       <path
         d="M5 10L20 3L35 10H5Z"

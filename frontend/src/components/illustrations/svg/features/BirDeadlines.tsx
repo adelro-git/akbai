@@ -16,18 +16,18 @@ export function BirDeadlines({ size = 64, className }: IllustrationProps) {
     >
       {/* Calendar body */}
       <rect x="8" y="14" width="40" height="40" rx="4" fill="hsl(var(--surface))" />
-      <rect x="8" y="14" width="40" height="40" rx="4" stroke="hsl(var(--on-surface))" strokeWidth="1" opacity="0.3" />
+      <rect x="8" y="14" width="40" height="40" rx="4" stroke="hsl(var(--on-surface))" strokeWidth="1.5" opacity="0.7" />
 
       {/* Calendar header */}
       <rect x="8" y="14" width="40" height="12" rx="4" fill="hsl(var(--primary-container))" />
       <rect x="8" y="22" width="40" height="4" fill="hsl(var(--primary-container))" />
 
       {/* Binding rings */}
-      <rect x="18" y="10" width="3.5" height="8" rx="1.75" fill="hsl(var(--on-surface))" opacity="0.5" />
-      <rect x="34" y="10" width="3.5" height="8" rx="1.75" fill="hsl(var(--on-surface))" opacity="0.5" />
+      <rect x="18" y="10" width="3.5" height="8" rx="1.75" fill="hsl(var(--on-surface))" opacity="0.8" />
+      <rect x="34" y="10" width="3.5" height="8" rx="1.75" fill="hsl(var(--on-surface))" opacity="0.8" />
 
       {/* Month text */}
-      <rect x="18" y="18" width="20" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.5" />
+      <rect x="18" y="18" width="20" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.8" />
 
       {/* Day grid - Row 1 */}
       <rect x="12" y="30" width="5" height="5" rx="1.5" fill="hsl(var(--surface-container))" />
@@ -40,7 +40,7 @@ export function BirDeadlines({ size = 64, className }: IllustrationProps) {
       <rect x="12" y="37" width="5" height="5" rx="1.5" fill="hsl(var(--surface-container))" />
       <rect x="19" y="37" width="5" height="5" rx="1.5" fill="hsl(var(--surface-container))" />
       {/* Highlighted deadline day */}
-      <rect x="26" y="37" width="5" height="5" rx="1.5" fill="hsl(var(--tertiary))" opacity="0.6" />
+      <rect x="26" y="37" width="5" height="5" rx="1.5" fill="hsl(var(--tertiary))" opacity="0.85" />
       <circle cx="28.5" cy="39.5" r="1" fill="hsl(var(--tertiary))" />
       <rect x="33" y="37" width="5" height="5" rx="1.5" fill="hsl(var(--surface-container))" />
       <rect x="40" y="37" width="5" height="5" rx="1.5" fill="hsl(var(--surface-container))" />

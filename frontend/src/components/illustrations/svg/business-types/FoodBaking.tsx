@@ -25,7 +25,7 @@ export function FoodBaking({ size = 48, className }: IllustrationProps) {
       />
 
       {/* Pan de sal body */}
-      <ellipse cx="24" cy="30" rx="9" ry="7" fill="#d4954a" stroke="#92400e" strokeWidth="0.8" />
+      <ellipse cx="24" cy="30" rx="9" ry="7" fill="#d4954a" stroke="#92400e" strokeWidth="1.2" />
       {/* Bread highlight */}
       <ellipse cx="22" cy="27" rx="5" ry="3.5" fill="#e8b06a" />
       {/* Bread score line */}
@@ -38,7 +38,7 @@ export function FoodBaking({ size = 48, className }: IllustrationProps) {
         strokeWidth="1.2"
         strokeLinecap="round"
         fill="none"
-        opacity="0.5"
+        opacity="0.7"
       />
       {/* Steam curl 2 */}
       <path
@@ -47,7 +47,7 @@ export function FoodBaking({ size = 48, className }: IllustrationProps) {
         strokeWidth="1.2"
         strokeLinecap="round"
         fill="none"
-        opacity="0.45"
+        opacity="0.7"
       />
       {/* Steam curl 3 */}
       <path
@@ -56,7 +56,7 @@ export function FoodBaking({ size = 48, className }: IllustrationProps) {
         strokeWidth="1.2"
         strokeLinecap="round"
         fill="none"
-        opacity="0.4"
+        opacity="0.7"
       />
     </svg>
   );

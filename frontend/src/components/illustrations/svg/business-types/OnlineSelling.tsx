@@ -15,7 +15,7 @@ export function OnlineSelling({ size = 48, className }: IllustrationProps) {
       className={className}
     >
       {/* Phone body */}
-      <rect x="12" y="4" width="24" height="40" rx="4" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" strokeWidth="1" opacity="0.3" />
+      <rect x="12" y="4" width="24" height="40" rx="4" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" strokeWidth="1.5" opacity="0.7" />
       {/* Phone screen */}
       <rect x="14" y="8" width="20" height="32" rx="2" fill="hsl(var(--surface))" />
 
@@ -30,7 +30,7 @@ export function OnlineSelling({ size = 48, className }: IllustrationProps) {
         strokeLinecap="round"
       />
       {/* Bag detail line */}
-      <rect x="20" y="19" width="8" height="1.5" rx="0.5" fill="#e8b06a" opacity="0.6" />
+      <rect x="20" y="19" width="8" height="1.5" rx="0.5" fill="#e8b06a" opacity="0.8" />
 
       {/* Cart badge */}
       <circle cx="32" cy="14" r="5" fill="hsl(var(--tertiary))" />
@@ -46,7 +46,7 @@ export function OnlineSelling({ size = 48, className }: IllustrationProps) {
       </text>
 
       {/* Bottom bar indicator */}
-      <rect x="20" y="37" width="8" height="1.5" rx="0.75" fill="hsl(var(--on-surface))" opacity="0.4" />
+      <rect x="20" y="37" width="8" height="1.5" rx="0.75" fill="hsl(var(--on-surface))" opacity="0.7" />
     </svg>
   );
 }

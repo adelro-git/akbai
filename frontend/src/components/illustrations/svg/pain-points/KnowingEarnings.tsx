@@ -15,19 +15,19 @@ export function KnowingEarnings({ size = 48, className }: IllustrationProps) {
       className={className}
     >
       {/* Chart background area */}
-      <rect x="4" y="8" width="40" height="32" rx="3" fill="hsl(var(--surface-container))" opacity="0.7" stroke="hsl(var(--on-surface))" strokeWidth="1" />
+      <rect x="4" y="8" width="40" height="32" rx="3" fill="hsl(var(--surface-container))" opacity="0.85" stroke="hsl(var(--on-surface))" strokeWidth="1.5" />
 
       {/* Grid lines */}
-      <line x1="8" y1="16" x2="40" y2="16" stroke="hsl(var(--on-surface))" strokeWidth="0.5" opacity="0.2" />
-      <line x1="8" y1="22" x2="40" y2="22" stroke="hsl(var(--on-surface))" strokeWidth="0.5" opacity="0.2" />
-      <line x1="8" y1="28" x2="40" y2="28" stroke="hsl(var(--on-surface))" strokeWidth="0.5" opacity="0.2" />
-      <line x1="8" y1="34" x2="40" y2="34" stroke="hsl(var(--on-surface))" strokeWidth="0.5" opacity="0.2" />
+      <line x1="8" y1="16" x2="40" y2="16" stroke="hsl(var(--on-surface))" strokeWidth="0.5" opacity="0.5" />
+      <line x1="8" y1="22" x2="40" y2="22" stroke="hsl(var(--on-surface))" strokeWidth="0.5" opacity="0.5" />
+      <line x1="8" y1="28" x2="40" y2="28" stroke="hsl(var(--on-surface))" strokeWidth="0.5" opacity="0.5" />
+      <line x1="8" y1="34" x2="40" y2="34" stroke="hsl(var(--on-surface))" strokeWidth="0.5" opacity="0.5" />
 
       {/* Upward trend area fill */}
       <path
         d="M8 34 L16 30 L24 26 L32 18 L40 12 L40 34Z"
         fill="hsl(var(--tertiary))"
-        opacity="0.3"
+        opacity="0.85"
       />
 
       {/* Upward trend line */}
@@ -64,7 +64,7 @@ export function KnowingEarnings({ size = 48, className }: IllustrationProps) {
         fontSize="12"
         fontWeight="bold"
         fill="hsl(var(--primary-container))"
-        opacity="0.7"
+        opacity="0.85"
       >
         ₱
       </text>
