@@ -18,6 +18,9 @@ export function ExpenseMarketing({ size = 40, className }: IllustrationProps) {
       <path
         d="M10 16L28 8V32L10 24V16Z"
         fill="hsl(var(--primary-container))"
+        stroke="hsl(var(--on-surface))"
+        strokeWidth="0.8"
+        opacity="0.25"
       />
       {/* Megaphone mouth opening */}
       <path
@@ -31,9 +34,9 @@ export function ExpenseMarketing({ size = 40, className }: IllustrationProps) {
         opacity="0.4"
       />
       {/* Handle grip */}
-      <rect x="6" y="16" width="5" height="8" rx="1.5" fill="hsl(var(--on-surface))" opacity="0.3" />
+      <rect x="6" y="16" width="5" height="8" rx="1.5" fill="hsl(var(--on-surface))" opacity="0.5" />
       {/* Handle detail */}
-      <rect x="7" y="17.5" width="3" height="5" rx="1" fill="hsl(var(--on-surface))" opacity="0.15" />
+      <rect x="7" y="17.5" width="3" height="5" rx="1" fill="hsl(var(--on-surface))" opacity="0.35" />
       {/* Sound wave lines */}
       <path d="M35 15C37 17 37 23 35 25" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" fill="none" />
       <path d="M37 12C39.5 15.5 39.5 24.5 37 28" stroke="#fbbf24" strokeWidth="1.2" strokeLinecap="round" opacity="0.6" fill="none" />

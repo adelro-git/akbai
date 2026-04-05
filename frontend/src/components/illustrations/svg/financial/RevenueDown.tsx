@@ -15,7 +15,7 @@ export function RevenueDown({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Background circle */}
-      <circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" />
+      <circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" strokeWidth="0.8" opacity="0.25" />
       {/* Downward trending arrow */}
       <path
         d="M8 12L16 20L22 16L32 28"

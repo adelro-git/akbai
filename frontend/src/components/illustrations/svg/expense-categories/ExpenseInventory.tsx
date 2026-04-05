@@ -15,7 +15,7 @@ export function ExpenseInventory({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Bottom box */}
-      <rect x="4" y="18" width="22" height="16" rx="1.5" fill="hsl(var(--primary-container))" />
+      <rect x="4" y="18" width="22" height="16" rx="1.5" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="0.8" opacity="0.25" />
       {/* Bottom box tape */}
       <rect x="13" y="18" width="4" height="16" rx="0.5" fill="#f59e0b" opacity="0.4" />
       {/* Bottom box front face */}
@@ -27,7 +27,7 @@ export function ExpenseInventory({ size = 40, className }: IllustrationProps) {
       {/* Top box lid line */}
       <rect x="10" y="11" width="20" height="1" rx="0.3" fill="#d97706" opacity="0.3" />
       {/* Top box shadow on bottom box */}
-      <rect x="10" y="18" width="16" height="2" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.06" />
+      <rect x="10" y="18" width="16" height="2" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.2" />
       {/* Price tag */}
       <rect x="28" y="10" width="8" height="12" rx="1.5" fill="hsl(var(--tertiary))" opacity="0.85" />
       {/* Tag hole */}

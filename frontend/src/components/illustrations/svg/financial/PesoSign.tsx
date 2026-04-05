@@ -15,7 +15,7 @@ export function PesoSign({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Circular background */}
-      <circle cx="20" cy="20" r="18" fill="#f59e0b" />
+      <circle cx="20" cy="20" r="18" fill="#f59e0b" stroke="#92400e" strokeWidth="0.8" />
       {/* Inner ring highlight */}
       <circle cx="20" cy="20" r="14" fill="#fbbf24" />
       {/* Peso symbol */}

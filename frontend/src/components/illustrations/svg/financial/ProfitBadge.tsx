@@ -23,7 +23,7 @@ export function ProfitBadge({ size = 40, className }: IllustrationProps) {
       <path
         d="M20 7L23.2 15L31 15.7L25 21L27 29L20 25L13 29L15 21L9 15.7L16.8 15Z"
         fill="hsl(var(--tertiary))"
-        opacity="0.7"
+        opacity="0.85"
       />
       {/* Plus/checkmark inside */}
       <path

@@ -15,7 +15,7 @@ export function StatusSuccess({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Circle background */}
-      <circle cx="20" cy="20" r="18" fill="hsl(var(--tertiary))" />
+      <circle cx="20" cy="20" r="18" fill="hsl(var(--tertiary))" stroke="hsl(var(--on-surface))" strokeWidth="1" opacity="0.3" />
       {/* Checkmark */}
       <path
         d="M12 20L17.5 25.5L28 14.5"

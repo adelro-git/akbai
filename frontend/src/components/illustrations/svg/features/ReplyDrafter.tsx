@@ -15,15 +15,15 @@ export function ReplyDrafter({ size = 64, className }: IllustrationProps) {
       className={className}
     >
       {/* Message bubble */}
-      <rect x="6" y="8" width="40" height="32" rx="6" fill="hsl(var(--primary-container))" />
+      <rect x="6" y="8" width="40" height="32" rx="6" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="1" opacity="0.3" />
       {/* Bubble tail */}
       <path d="M14 40 L8 50 L24 40Z" fill="hsl(var(--primary-container))" />
 
       {/* Text lines in bubble */}
-      <rect x="12" y="15" width="24" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.2" />
-      <rect x="12" y="20" width="18" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.15" />
-      <rect x="12" y="25" width="28" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.15" />
-      <rect x="12" y="30" width="14" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.12" />
+      <rect x="12" y="15" width="24" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.45" />
+      <rect x="12" y="20" width="18" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.4" />
+      <rect x="12" y="25" width="28" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.4" />
+      <rect x="12" y="30" width="14" height="2.5" rx="1" fill="hsl(var(--on-surface))" opacity="0.35" />
 
       {/* Pencil / pen */}
       {/* Pencil body */}

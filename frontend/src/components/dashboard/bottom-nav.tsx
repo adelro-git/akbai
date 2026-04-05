@@ -2,22 +2,20 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { User } from 'lucide-react';
-import { MorningBriefing, CustomerMessages, ResiboScanner } from '@/components/illustrations/svg';
+import { MorningBriefing, CustomerMessages, ResiboScanner, ProfileUser } from '@/components/illustrations/svg';
 
 interface NavItem {
   label: string;
   href: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
   testId: string;
-  isLucide?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Home', href: '/dashboard', icon: MorningBriefing, testId: 'nav-home' },
   { label: 'Chat', href: '/chat', icon: CustomerMessages, testId: 'nav-chat' },
   { label: 'Resibo', href: '/scan', icon: ResiboScanner, testId: 'nav-scan' },
-  { label: 'Profile', href: '/profile', icon: User, testId: 'nav-profile', isLucide: true },
+  { label: 'Profile', href: '/profile', icon: ProfileUser, testId: 'nav-profile' },
 ];
 
 export default function BottomNav() {
@@ -48,15 +46,9 @@ export default function BottomNav() {
               data-testid={item.testId}
               aria-current={isActive ? 'page' : undefined}
             >
-              {item.isLucide ? (
-                <Icon
-                  className={`w-7 h-7 ${isActive ? 'text-primary-container' : 'text-on-surface-variant'}`}
-                />
-              ) : (
-                <div className={`rounded-lg p-1 ${isActive ? 'bg-primary-container/15' : 'opacity-60'}`}>
-                  <Icon size={28} />
-                </div>
-              )}
+              <div className={`rounded-lg p-1 ${isActive ? 'bg-primary-container/15' : 'opacity-60'}`}>
+                <Icon size={28} />
+              </div>
               <span
                 className={`text-[11px] font-semibold mt-0.5 ${
                   isActive ? 'text-primary-container' : 'text-on-surface-variant'

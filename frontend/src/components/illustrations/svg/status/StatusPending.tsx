@@ -15,7 +15,7 @@ export function StatusPending({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Circle background */}
-      <circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" />
+      <circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" strokeWidth="1" opacity="0.3" />
       {/* Clock face */}
       <circle cx="20" cy="20" r="12" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" strokeWidth="2" />
       {/* Hour hand */}

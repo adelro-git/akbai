@@ -15,7 +15,7 @@ export function ExpenseSupplies({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Box body */}
-      <rect x="6" y="16" width="28" height="18" rx="2" fill="hsl(var(--primary-container))" />
+      <rect x="6" y="16" width="28" height="18" rx="2" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="0.8" opacity="0.25" />
       {/* Box front face darker shade */}
       <rect x="6" y="24" width="28" height="10" rx="1" fill="#d97706" opacity="0.25" />
       {/* Box flap left */}
@@ -39,7 +39,7 @@ export function ExpenseSupplies({ size = 40, className }: IllustrationProps) {
       <rect x="24.8" y="10" width="0.8" height="1" rx="0.2" fill="hsl(var(--surface-container))" />
       <rect x="24.8" y="12" width="0.8" height="1" rx="0.2" fill="hsl(var(--surface-container))" />
       {/* Item 3: round object (tape roll) */}
-      <circle cx="18" cy="8" r="3" fill="hsl(var(--on-surface))" opacity="0.25" />
+      <circle cx="18" cy="8" r="3" fill="hsl(var(--on-surface))" opacity="0.45" />
       <circle cx="18" cy="8" r="1.5" fill="hsl(var(--surface-container))" />
       {/* Box tape strip */}
       <rect x="18" y="16" width="4" height="10" rx="0.5" fill="#fbbf24" opacity="0.4" />

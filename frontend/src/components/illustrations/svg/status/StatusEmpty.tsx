@@ -23,13 +23,13 @@ export function StatusEmpty({ size = 40, className }: IllustrationProps) {
       <path
         d="M8 16L20 22L20 34L8 28Z"
         fill="#f59e0b"
-        opacity="0.2"
+        opacity="0.4"
       />
       {/* Box right face */}
       <path
         d="M32 16L20 22L20 34L32 28Z"
         fill="#f59e0b"
-        opacity="0.12"
+        opacity="0.3"
       />
       {/* Box top edge lines */}
       <path
@@ -41,20 +41,20 @@ export function StatusEmpty({ size = 40, className }: IllustrationProps) {
         opacity="0.5"
       />
       {/* Box left edge */}
-      <path d="M8 16L8 28L20 34L20 22" stroke="#d97706" strokeWidth="1.2" strokeLinejoin="round" fill="none" opacity="0.4" />
+      <path d="M8 16L8 28L20 34L20 22" stroke="#d97706" strokeWidth="1.2" strokeLinejoin="round" fill="none" opacity="0.6" />
       {/* Box right edge */}
-      <path d="M32 16L32 28L20 34" stroke="#d97706" strokeWidth="1.2" strokeLinejoin="round" fill="none" opacity="0.4" />
+      <path d="M32 16L32 28L20 34" stroke="#d97706" strokeWidth="1.2" strokeLinejoin="round" fill="none" opacity="0.6" />
       {/* Open flap left */}
       <path
         d="M8 16L14 8L20 12L20 10"
         fill="#f59e0b"
-        opacity="0.15"
+        opacity="0.35"
       />
       {/* Open flap right */}
       <path
         d="M32 16L26 8L20 12L20 10"
         fill="#f59e0b"
-        opacity="0.1"
+        opacity="0.3"
       />
       {/* Dotted interior line suggesting emptiness */}
       <path

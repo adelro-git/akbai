@@ -18,6 +18,9 @@ export function ExpenseEquipment({ size = 40, className }: IllustrationProps) {
       <path
         d="M20 6L22.5 8.5L26 7.5L27 11L30.5 12L30 15.5L33 18L31 21L33 24L30 26.5L30.5 30L27 31L26 34.5L22.5 33.5L20 36L17.5 33.5L14 34.5L13 31L9.5 30L10 26.5L7 24L9 21L7 18L10 15.5L9.5 12L13 11L14 7.5L17.5 8.5L20 6Z"
         fill="hsl(var(--primary-container))"
+        stroke="hsl(var(--on-surface))"
+        strokeWidth="0.8"
+        opacity="0.25"
       />
       {/* Gear inner circle */}
       <circle cx="20" cy="21" r="7" fill="hsl(var(--surface-container))" />

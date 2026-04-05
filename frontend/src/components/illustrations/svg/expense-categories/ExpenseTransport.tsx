@@ -15,7 +15,7 @@ export function ExpenseTransport({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Jeepney body */}
-      <rect x="5" y="14" width="30" height="14" rx="2" fill="hsl(var(--primary-container))" />
+      <rect x="5" y="14" width="30" height="14" rx="2" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="0.8" opacity="0.25" />
       {/* Jeepney roof */}
       <rect x="4" y="11" width="32" height="4" rx="1.5" fill="#f59e0b" />
       {/* Roof rack rails */}
@@ -31,7 +31,7 @@ export function ExpenseTransport({ size = 40, className }: IllustrationProps) {
       {/* Bumper stripe */}
       <rect x="5" y="25" width="30" height="2" rx="0.5" fill="#d97706" />
       {/* Rear opening */}
-      <rect x="31" y="17" width="3" height="8" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.15" />
+      <rect x="31" y="17" width="3" height="8" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.35" />
       {/* Left wheel */}
       <circle cx="12" cy="30" r="3" fill="hsl(var(--on-surface))" opacity="0.7" />
       <circle cx="12" cy="30" r="1.5" fill="hsl(var(--surface-container))" />
@@ -41,7 +41,7 @@ export function ExpenseTransport({ size = 40, className }: IllustrationProps) {
       {/* Headlight */}
       <circle cx="7" cy="24" r="1.2" fill="#fbbf24" />
       {/* Ground line */}
-      <rect x="3" y="32.5" width="34" height="1" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.1" />
+      <rect x="3" y="32.5" width="34" height="1" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.3" />
     </svg>
   );
 }

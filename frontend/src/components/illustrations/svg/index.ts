@@ -16,6 +16,7 @@ export { CashFlow } from './features/CashFlow';
 export { BirDeadlines } from './features/BirDeadlines';
 export { ReplyDrafter } from './features/ReplyDrafter';
 export { MorningBriefing } from './features/MorningBriefing';
+export { ProfileUser } from './features/ProfileUser';
 
 // Expense Categories
 export { ExpenseFood } from './expense-categories/ExpenseFood';

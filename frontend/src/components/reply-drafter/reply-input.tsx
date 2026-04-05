@@ -17,9 +17,9 @@ import { KaHappy, KaWorking, KaWaving } from '@/components/illustrations/svg';
 // ============================================================
 
 const TONE_OPTIONS: { value: ReplyTone; label: string; icon: React.ReactNode }[] = [
-  { value: 'friendly', label: 'Friendly', icon: <KaHappy size={24} /> },
-  { value: 'professional', label: 'Professional', icon: <KaWorking size={24} /> },
-  { value: 'casual', label: 'Casual', icon: <KaWaving size={24} /> },
+  { value: 'friendly', label: 'Friendly', icon: <KaHappy size={32} /> },
+  { value: 'professional', label: 'Professional', icon: <KaWorking size={32} /> },
+  { value: 'casual', label: 'Casual', icon: <KaWaving size={32} /> },
 ];
 
 // ============================================================

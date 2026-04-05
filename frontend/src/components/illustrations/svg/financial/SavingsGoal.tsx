@@ -15,7 +15,7 @@ export function SavingsGoal({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Piggy bank body */}
-      <ellipse cx="20" cy="23" rx="13" ry="10" fill="#f59e0b" />
+      <ellipse cx="20" cy="23" rx="13" ry="10" fill="#f59e0b" stroke="#92400e" strokeWidth="0.8" />
       {/* Piggy bank ear */}
       <ellipse cx="11" cy="16" rx="3" ry="4" fill="#d97706" />
       {/* Snout */}

@@ -15,7 +15,7 @@ export function BudgetMeter({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Background circle */}
-      <circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" />
+      <circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" strokeWidth="0.8" opacity="0.25" />
       {/* Gauge track - caution zone (amber, left side) */}
       <path
         d="M8 26A14 14 0 0 1 20 8"

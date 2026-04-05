@@ -24,7 +24,7 @@ export function PottedPlant({ size = 80, className }: IllustrationProps) {
       <path
         d="M35 52L37 72H52L55 52H35Z"
         fill="#a85d32"
-        opacity="0.3"
+        opacity="0.4"
       />
       {/* Soil */}
       <ellipse cx="40" cy="52" rx="15" ry="2" fill="#8b5e3c" />

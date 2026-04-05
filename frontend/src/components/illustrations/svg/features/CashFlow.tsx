@@ -15,8 +15,8 @@ export function CashFlow({ size = 64, className }: IllustrationProps) {
       className={className}
     >
       {/* Income node (left) */}
-      <circle cx="14" cy="32" r="11" fill="hsl(var(--tertiary))" opacity="0.15" />
-      <circle cx="14" cy="32" r="8" fill="hsl(var(--tertiary))" opacity="0.25" />
+      <circle cx="14" cy="32" r="11" fill="hsl(var(--tertiary))" opacity="0.4" />
+      <circle cx="14" cy="32" r="8" fill="hsl(var(--tertiary))" opacity="0.5" stroke="hsl(var(--on-surface))" strokeWidth="1" />
       <text
         x="14"
         y="36"
@@ -29,8 +29,8 @@ export function CashFlow({ size = 64, className }: IllustrationProps) {
       </text>
 
       {/* Expense node (right) */}
-      <circle cx="50" cy="32" r="11" fill="hsl(var(--primary-container))" opacity="0.2" />
-      <circle cx="50" cy="32" r="8" fill="hsl(var(--primary-container))" opacity="0.35" />
+      <circle cx="50" cy="32" r="11" fill="hsl(var(--primary-container))" opacity="0.4" />
+      <circle cx="50" cy="32" r="8" fill="hsl(var(--primary-container))" opacity="0.6" stroke="hsl(var(--on-surface))" strokeWidth="1" />
       <text
         x="50"
         y="36"
@@ -110,7 +110,7 @@ export function CashFlow({ size = 64, className }: IllustrationProps) {
 
       {/* Center balance indicator */}
       <rect x="28" y="30" width="8" height="4" rx="2" fill="hsl(var(--surface-container))" />
-      <rect x="29.5" y="31" width="5" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.15" />
+      <rect x="29.5" y="31" width="5" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.4" />
     </svg>
   );
 }

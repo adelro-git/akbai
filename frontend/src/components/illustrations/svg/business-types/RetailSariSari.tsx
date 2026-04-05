@@ -35,7 +35,7 @@ export function RetailSariSari({ size = 48, className }: IllustrationProps) {
       <rect x="10" y="18" width="28" height="14" rx="1" fill="hsl(var(--surface))" />
 
       {/* Shelf 1 */}
-      <rect x="11" y="24" width="26" height="1" fill="hsl(var(--on-surface))" opacity="0.15" />
+      <rect x="11" y="24" width="26" height="1" fill="hsl(var(--on-surface))" opacity="0.35" />
       {/* Products on shelf 1 */}
       <rect x="13" y="19" width="4" height="5" rx="1" fill="#d4954a" opacity="0.7" />
       <rect x="18" y="20" width="3" height="4" rx="0.5" fill="hsl(var(--tertiary))" opacity="0.5" />
@@ -43,7 +43,7 @@ export function RetailSariSari({ size = 48, className }: IllustrationProps) {
       <circle cx="30" cy="22" r="2.5" fill="#c07830" opacity="0.5" />
 
       {/* Shelf 2 */}
-      <rect x="11" y="30" width="26" height="1" fill="hsl(var(--on-surface))" opacity="0.15" />
+      <rect x="11" y="30" width="26" height="1" fill="hsl(var(--on-surface))" opacity="0.35" />
       {/* Products on shelf 2 */}
       <rect x="12" y="26" width="5" height="4" rx="1" fill="hsl(var(--tertiary))" opacity="0.4" />
       <rect x="19" y="27" width="3" height="3" rx="0.5" fill="#d4954a" opacity="0.6" />
@@ -51,10 +51,10 @@ export function RetailSariSari({ size = 48, className }: IllustrationProps) {
       <rect x="30" y="27" width="5" height="3" rx="0.5" fill="#c07830" opacity="0.4" />
 
       {/* Counter ledge */}
-      <rect x="6" y="34" width="36" height="2" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.2" />
+      <rect x="6" y="34" width="36" height="2" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.4" />
 
       {/* Ground */}
-      <rect x="4" y="40" width="40" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.1" />
+      <rect x="4" y="40" width="40" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.3" />
     </svg>
   );
 }

@@ -55,8 +55,8 @@ export function ExpenseMisc({ size = 40, className }: IllustrationProps) {
         ?
       </text>
       {/* Floating dots for "misc" feel */}
-      <circle cx="30" cy="28" r="1.5" fill="hsl(var(--on-surface))" opacity="0.12" />
-      <circle cx="35" cy="24" r="1" fill="hsl(var(--on-surface))" opacity="0.1" />
+      <circle cx="30" cy="28" r="1.5" fill="hsl(var(--on-surface))" opacity="0.3" />
+      <circle cx="35" cy="24" r="1" fill="hsl(var(--on-surface))" opacity="0.3" />
       <circle cx="28" cy="33" r="1.8" fill="#fbbf24" opacity="0.3" />
       <circle cx="34" cy="32" r="1.2" fill="hsl(var(--tertiary))" opacity="0.2" />
       {/* Small sparkle near coin */}

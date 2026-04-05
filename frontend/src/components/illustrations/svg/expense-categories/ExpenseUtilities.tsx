@@ -36,10 +36,10 @@ export function ExpenseUtilities({ size = 40, className }: IllustrationProps) {
         fill="none"
       />
       {/* Bulb base screw */}
-      <rect x="14" y="23" width="12" height="2" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.4" />
-      <rect x="15" y="25" width="10" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.3" />
-      <rect x="16" y="26.5" width="8" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.4" />
-      <rect x="17" y="28" width="6" height="1.5" rx="0.75" fill="hsl(var(--on-surface))" opacity="0.3" />
+      <rect x="14" y="23" width="12" height="2" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.6" />
+      <rect x="15" y="25" width="10" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.5" />
+      <rect x="16" y="26.5" width="8" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.6" />
+      <rect x="17" y="28" width="6" height="1.5" rx="0.75" fill="hsl(var(--on-surface))" opacity="0.5" />
       {/* Light rays */}
       <rect x="19.25" y="1" width="1.5" height="2.5" rx="0.75" fill="#fbbf24" opacity="0.5" />
       <rect x="8" y="7" width="2.5" height="1.5" rx="0.75" fill="#fbbf24" opacity="0.4" transform="rotate(-40 9.25 7.75)" />
