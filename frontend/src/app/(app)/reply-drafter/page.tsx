@@ -111,7 +111,7 @@ export default function ReplyDrafterPage() {
               <div className="flex justify-center mb-3">
                 <IllustrationWrapper
                   src="empty-states/no-replies.webp"
-                  alt="No reply drafts yet"
+                  alt="Wala pang mga draft na reply"
                   category="empty-state"
                 />
               </div>

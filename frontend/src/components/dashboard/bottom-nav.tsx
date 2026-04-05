@@ -53,8 +53,8 @@ export default function BottomNav() {
                   className={`w-6 h-6 ${isActive ? 'text-primary-container' : 'text-on-surface-variant'}`}
                 />
               ) : (
-                <div className={isActive ? 'opacity-100' : 'opacity-60'}>
-                  <Icon size={24} />
+                <div className={`rounded-lg p-1 ${isActive ? 'bg-primary-container/15' : 'opacity-60'}`}>
+                  <Icon size={22} />
                 </div>
               )}
               <span

@@ -56,7 +56,7 @@ export default function SidebarNav() {
               {item.isLucide ? (
                 <Icon className="w-5 h-5 flex-shrink-0" />
               ) : (
-                <div className={`flex-shrink-0 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
+                <div className={`flex-shrink-0 rounded-lg p-0.5 ${isActive ? 'bg-primary-container/15' : 'opacity-60'}`}>
                   <Icon size={20} />
                 </div>
               )}

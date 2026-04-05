@@ -29,7 +29,7 @@ export default function OfflinePage() {
       <div className="mb-4">
         <IllustrationWrapper
           src="status/offline.webp"
-          alt="No internet connection"
+          alt="Walang internet connection"
           category="status"
           width={160}
           height={120}

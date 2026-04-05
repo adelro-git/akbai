@@ -18,7 +18,7 @@ export default function DeadlineEmpty() {
       <div className="mb-4">
         <IllustrationWrapper
           src="empty-states/no-deadlines.webp"
-          alt="No BIR deadlines"
+          alt="Wala pang BIR deadlines"
           category="empty-state"
         />
       </div>

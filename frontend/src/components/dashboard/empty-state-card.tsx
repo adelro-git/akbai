@@ -17,7 +17,7 @@ export default function EmptyStateCard({ message, hint }: EmptyStateCardProps) {
       <div className="flex justify-center mb-3">
         <IllustrationWrapper
           src="empty-states/first-scan.webp"
-          alt="Get started"
+          alt="I-scan ang unang resibo mo"
           category="empty-state"
           width={120}
           height={90}

@@ -37,7 +37,6 @@ export function IllustrationWrapper({
     <div
       className={[
         'relative inline-flex items-center justify-center',
-        'dark:brightness-[0.85] dark:saturate-[0.9]',
         className,
       ]
         .filter(Boolean)
@@ -49,7 +48,7 @@ export function IllustrationWrapper({
         width={w}
         height={h}
         priority={priority}
-        className="object-contain"
+        className="object-contain dark:brightness-[0.85] dark:saturate-[0.9]"
       />
     </div>
   );
