@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKBai Brand Book v2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================== */
+/* BASE & RESET                   */
+/* ============================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --ink: #07101e;
+  --card: #0d1a2e;
+  --honey: #F59E0B;
+  --honey-deep: #D97706;
+  --teal: #20C9A0;
+  --white: #FFFFFF;
+  --cream: #FEFAF3;
+  --cream-page: #fdf9f2;
+  --muted: #8A9BB5;
+  --warm-card: #FFF8ED;
+  --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+html {
+  font-size: 11pt;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--cream-page);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================== */
+/* PRINT / PAGE SETUP             */
+/* ============================== */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  body {
+    background: white;
+  }
+  .page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto 20px auto;
+  padding: 48px 56px;
+  background: var(--cream-page);
+  page-break-after: always;
+  break-after: page;
+  position: relative;
+  overflow: hidden;
+}
+
+@media screen {
+  .page {
+    box-shadow: 0 4px 40px rgba(7, 16, 30, 0.08);
+    border-radius: 4px;
+    margin-top: 20px;
+  }
+}
+
+/* ============================== */
+/* DARK PAGES                     */
+/* ============================== */
+.page--dark {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.page--dark .section-label {
+  color: var(--honey);
+}
+
+.page--dark .body-text {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.page--dark .sub-heading {
+  color: var(--white);
+}
+
+/* ============================== */
+/* COVER PAGE                     */
+/* ============================== */
+.cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--cream-page);
+  color: var(--ink);
+  min-height: 297mm;
+}
+
+.cover__logo-mark {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 40px;
+}
+
+.cover__title {
+  font-size: 64px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.cover__title span {
+  color: var(--honey);
+}
+
+.cover__subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: #534434;
+  margin-bottom: 48px;
+}
+
+.cover__tagline {
+  font-size: 20px;
+  font-weight: 500;
+  color: #855300;
+  font-style: italic;
+  margin-bottom: 64px;
+}
+
+.cover__version {
+  font-size: 13px;
+  color: #534434;
+  font-weight: 400;
+}
+
+.cover__accent-line {
+  width: 48px;
+  height: 3px;
+  background: var(--honey);
+  border-radius: 2px;
+  margin: 0 auto 32px auto;
+}
+
+/* ============================== */
+/* TABLE OF CONTENTS              */
+/* ============================== */
+.toc {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 297mm;
+  padding: 48px 56px;
+}
+
+.toc__title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+
+.toc__item {
+  display: flex;
+  align-items: baseline;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(7, 16, 30, 0.06);
+}
+
+.toc__item:last-child {
+  border-bottom: none;
+}
+
+.toc__number {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--honey);
+  width: 72px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.toc__label {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-right: 12px;
+}
+
+.toc__desc {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: auto;
+  text-align: right;
+  max-width: 280px;
+}
+
+/* ============================== */
+/* SECTION COMPONENTS             */
+/* ============================== */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--honey);
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  margin-bottom: 32px;
+  color: var(--ink);
+}
+
+.page--dark .section-title {
+  color: var(--white);
+}
+
+.section-title span {
+  color: var(--honey);
+}
+
+.sub-heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  margin-top: 28px;
+  line-height: 1.3;
+}
+
+.sub-heading:first-of-type {
+  margin-top: 0;
+}
+
+.body-text {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(7, 16, 30, 0.75);
+  margin-bottom: 16px;
+}
+
+.body-text strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.page--dark .body-text strong {
+  color: var(--white);
+}
+
+.highlight-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 24px;
+}
+
+.page--dark .highlight-text {
+  color: var(--cream);
+}
+
+.tagline-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--honey);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+/* ============================== */
+/* CARDS & BOXES                  */
+/* ============================== */
+.info-card {
+  background: var(--warm-card);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.page--dark .info-card {
+  background: var(--card);
+}
+
+.info-card__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--honey);
+  margin-bottom: 8px;
+}
+
+.info-card__text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.page--dark .info-card__text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Value cards row */
+.value-cards {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  margin-bottom: 16px;
+}
+
+.value-card {
+  flex: 1;
+  background: var(--warm-card);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.page--dark .value-card {
+  background: var(--card);
+}
+
+.value-card__title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--honey);
+}
+
+.value-card__text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(7, 16, 30, 0.7);
+}
+
+.page--dark .value-card__text {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ============================== */
+/* COLOR SWATCHES                 */
+/* ============================== */
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.swatch {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.swatch__color {
+  height: 72px;
+  border-radius: 12px 12px 0 0;
+}
+
+.swatch__info {
+  padding: 12px 14px;
+  background: var(--warm-card);
+  border-radius: 0 0 12px 12px;
+}
+
+.swatch__name {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.swatch__hex {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
+  font-family: 'Plus Jakarta Sans', monospace;
+}
+
+.swatch__usage {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Large swatch row */
+.swatch-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.swatch-large {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.swatch-large__color {
+  height: 96px;
+  display: flex;
+  align-items: flex-end;
+  padding: 12px 16px;
+  border-radius: 12px 12px 0 0;
+}
+
+.swatch-large__color span {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.swatch-large__info {
+  padding: 14px 16px;
+  background: var(--warm-card);
+  border-radius: 0 0 12px 12px;
+}
+
+.swatch-large__name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.swatch-large__hex {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.swatch-large__pct {
+  font-size: 11px;
+  color: var(--honey);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ============================== */
+/* TYPOGRAPHY SAMPLES             */
+/* ============================== */
+.type-sample {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(7, 16, 30, 0.06);
+}
+
+.type-sample:last-child {
+  border-bottom: none;
+}
+
+.type-sample__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.type-sample__text {
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.type-sample__meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ============================== */
+/* DO / DON'T BOXES               */
+/* ============================== */
+.do-dont {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.do-box, .dont-box {
+  flex: 1;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.do-box {
+  background: rgba(32, 201, 160, 0.08);
+}
+
+.dont-box {
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.do-box__title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 10px;
+}
+
+.dont-box__title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #EF4444;
+  margin-bottom: 10px;
+}
+
+.do-box li, .dont-box li {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 6px;
+  list-style: none;
+  padding-left: 20px;
+  position: relative;
+}
+
+.do-box li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.dont-box li::before {
+  content: "\2717";
+  position: absolute;
+  left: 0;
+  color: #EF4444;
+  font-weight: 700;
+}
+
+/* ============================== */
+/* LOGO DISPLAY                   */
+/* ============================== */
+.logo-display {
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.logo-display--dark {
+  background: var(--ink);
+}
+
+.logo-display--light {
+  background: var(--cream);
+  border: 1px solid rgba(7, 16, 30, 0.06);
+}
+
+.logo-display--honey {
+  background: linear-gradient(135deg, var(--honey), var(--honey-deep));
+}
+
+.logo-display img {
+  max-height: 80px;
+  width: auto;
+}
+
+.logo-display--large img {
+  max-height: 140px;
+}
+
+.logo-caption {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.logo-caption strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ============================== */
+/* PERSONA CARDS                  */
+/* ============================== */
+.persona-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.persona-card {
+  background: var(--warm-card);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.persona-card__name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.persona-card__role {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--honey);
+  margin-bottom: 8px;
+}
+
+.persona-card__detail {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.persona-card__pain {
+  font-size: 11px;
+  color: rgba(7, 16, 30, 0.7);
+  line-height: 1.5;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(7, 16, 30, 0.06);
+}
+
+.persona-card__pain strong {
+  color: var(--ink);
+}
+
+/* ============================== */
+/* PILLAR CARDS                   */
+/* ============================== */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.pillar-card {
+  background: var(--warm-card);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.pillar-card__number {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--honey);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.pillar-card__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.pillar-card__tagline {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--honey);
+  margin-bottom: 6px;
+  font-style: italic;
+}
+
+.pillar-card__text {
+  font-size: 11px;
+  color: rgba(7, 16, 30, 0.7);
+  line-height: 1.5;
+}
+
+/* ============================== */
+/* LIST STYLES                    */
+/* ============================== */
+.bullet-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.bullet-list li {
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 6px 0 6px 20px;
+  position: relative;
+  color: rgba(7, 16, 30, 0.75);
+}
+
+.bullet-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--honey);
+}
+
+.page--dark .bullet-list li {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.numbered-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 16px;
+  counter-reset: item;
+}
+
+.numbered-list li {
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 6px 0 6px 28px;
+  position: relative;
+  color: rgba(7, 16, 30, 0.75);
+  counter-increment: item;
+}
+
+.numbered-list li::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+  color: var(--honey);
+}
+
+/* ============================== */
+/* TWO-COLUMN LAYOUT              */
+/* ============================== */
+.two-col {
+  display: flex;
+  gap: 32px;
+}
+
+.two-col > * {
+  flex: 1;
+}
+
+/* ============================== */
+/* DIVIDER                        */
+/* ============================== */
+.divider {
+  width: 48px;
+  height: 3px;
+  background: var(--honey);
+  border-radius: 2px;
+  margin: 24px 0;
+}
+
+/* ============================== */
+/* BACK COVER                     */
+/* ============================== */
+.back-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--cream-page);
+  color: var(--ink);
+  min-height: 297mm;
+}
+
+.back-cover__logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 32px;
+}
+
+.back-cover__name {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+}
+
+.back-cover__name span {
+  color: var(--honey);
+}
+
+.back-cover__tagline {
+  font-size: 18px;
+  font-weight: 500;
+  color: #855300;
+  font-style: italic;
+  margin-bottom: 48px;
+}
+
+.back-cover__contact {
+  font-size: 14px;
+  color: #534434;
+  line-height: 2;
+}
+
+.back-cover__contact a {
+  color: #855300;
+  text-decoration: none;
+}
+
+.back-cover__footer {
+  font-size: 12px;
+  color: #534434;
+  opacity: 0.6;
+  margin-top: 48px;
+}
+
+/* ============================== */
+/* PAGE FOOTER                    */
+/* ============================== */
+.page-footer {
+  position: absolute;
+  bottom: 32px;
+  left: 56px;
+  right: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.page-footer__brand {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.page-footer__brand span {
+  color: var(--honey);
+}
+
+/* ============================== */
+/* COLOR BALANCE BAR              */
+/* ============================== */
+.color-bar {
+  display: flex;
+  height: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.color-bar__segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+/* ============================== */
+/* QUOTE BOX                      */
+/* ============================== */
+.quote-box {
+  border-left: 3px solid var(--honey);
+  padding: 12px 20px;
+  margin: 16px 0;
+  background: var(--warm-card);
+  border-radius: 0 12px 12px 0;
+}
+
+.page--dark .quote-box {
+  background: var(--card);
+}
+
+.quote-box__text {
+  font-size: 14px;
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.page--dark .quote-box__text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ============================== */
+/* SEQUENCE TABLE                 */
+/* ============================== */
+.sequence-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  margin-bottom: 16px;
+}
+
+.sequence-table th {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  padding: 0 12px 8px 12px;
+}
+
+.sequence-table td {
+  font-size: 12px;
+  padding: 12px;
+  background: var(--warm-card);
+  line-height: 1.4;
+}
+
+.sequence-table td:first-child {
+  border-radius: 8px 0 0 8px;
+  font-weight: 700;
+  color: var(--honey);
+  width: 60px;
+}
+
+.sequence-table td:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+/* ============================== */
+/* WEIGHT SAMPLES                 */
+/* ============================== */
+.weight-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.weight-sample {
+  text-align: center;
+  padding: 16px 8px;
+  background: var(--warm-card);
+  border-radius: 10px;
+}
+
+.weight-sample__letter {
+  font-size: 36px;
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.weight-sample__name {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.weight-sample__value {
+  font-size: 10px;
+  color: var(--honey);
+  font-weight: 600;
+}
+
+/* ============================== */
+/* CHANNEL CARDS                  */
+/* ============================== */
+.channel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.channel-card {
+  background: var(--warm-card);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.channel-card__name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.channel-card__tone {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--honey);
+  margin-bottom: 6px;
+}
+
+.channel-card__desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ============================== */
+/* UI PRINCIPLE CARDS             */
+/* ============================== */
+.ui-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ui-card {
+  background: var(--warm-card);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.ui-card__number {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--honey);
+  margin-bottom: 4px;
+}
+
+.ui-card__title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.ui-card__text {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Logo anatomy items */
+.anatomy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.anatomy-item {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.anatomy-item__number {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--honey);
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.anatomy-item__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.anatomy-item__text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+}
+
+/* Logo lockup grid */
+.lockup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.lockup-item {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.lockup-item__display {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.lockup-item__display--dark {
+  background: var(--ink);
+}
+
+.lockup-item__display--light {
+  background: var(--cream);
+}
+
+.lockup-item__display--honey {
+  padding: 0;
+  overflow: hidden;
+  background: none;
+}
+
+.lockup-item__display--honey img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  max-height: none;
+  max-width: none;
+}
+
+.lockup-item__display img {
+  max-height: 80px;
+  width: auto;
+  max-width: 90%;
+}
+
+.lockup-item__display--stacked img {
+  max-height: 110px;
+}
+
+.lockup-item__caption {
+  padding: 10px 14px;
+  background: var(--warm-card);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.lockup-item__caption strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.lockup-item__caption span {
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- COVER PAGE (Page 1)                                          -->
+<!-- ============================================================ -->
+<div class="page cover">
+  <img src="Logo Files/AKBai_Mark_OnLight.png" alt="AKBai Mark" class="cover__logo-mark">
+  <div class="cover__title">AKB<span>ai</span></div>
+  <div class="cover__subtitle">Brand Book</div>
+  <div class="cover__accent-line"></div>
+  <div class="cover__tagline">Kaakbay mo sa negosyo.</div>
+  <div class="cover__version">v2.0 &middot; 2026</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TABLE OF CONTENTS (Page 2)                                   -->
+<!-- ============================================================ -->
+<div class="page toc">
+  <div class="toc__title">Table of Contents</div>
+
+  <div class="toc__item">
+    <div class="toc__number">01</div>
+    <div class="toc__label">Brand Story</div>
+    <div class="toc__desc">Our origin, vision, mission, and core values</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">02</div>
+    <div class="toc__label">Logo</div>
+    <div class="toc__desc">Logo mark, wordmark variants, and usage guidelines</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">03</div>
+    <div class="toc__label">Color</div>
+    <div class="toc__desc">Complete color system with hex codes and usage rules</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">04</div>
+    <div class="toc__label">Typography</div>
+    <div class="toc__desc">Plus Jakarta Sans type scale and hierarchy</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">05</div>
+    <div class="toc__label">Voice &amp; Tone</div>
+    <div class="toc__desc">Personality, messaging style, and tone by channel</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">06</div>
+    <div class="toc__label">Audience</div>
+    <div class="toc__desc">Personas, pain points, and jobs-to-be-done</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">07</div>
+    <div class="toc__label">Messaging</div>
+    <div class="toc__desc">Tagline, value proposition, and messaging pillars</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">08</div>
+    <div class="toc__label">Social Media</div>
+    <div class="toc__desc">Platform guidelines, content pillars, caption formulas</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">09</div>
+    <div class="toc__label">Email</div>
+    <div class="toc__desc">Email templates, sequences, and voice guidelines</div>
+  </div>
+  <div class="toc__item">
+    <div class="toc__number">10</div>
+    <div class="toc__label">Digital</div>
+    <div class="toc__desc">Web design principles and UI guidelines</div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>2</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 01 / BRAND STORY (Page 3)                                    -->
+<!-- ============================================================ -->
+<div class="page page--dark">
+  <div class="section-label">01 / Brand Story</div>
+  <div class="section-title">Ang pangalan ay may <span>kahulugan.</span></div>
+
+  <div class="body-text" style="font-size: 15px; line-height: 1.8; margin-bottom: 24px;">
+    AKBai comes from a Filipino word with deep meaning. <strong>"Akbay"</strong> means to put an arm around someone's shoulder, to walk beside them, to accompany. Combined with <strong>"AI,"</strong> it represents something powerful: not a tool that replaces you, but a partner that walks with you every step of your business journey.
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="highlight-text">Hindi lang software. Kaakbay.</div>
+
+  <div class="body-text">
+    In a world of cold, corporate AI solutions, we chose a name that speaks to the heart. AKBai exists to lighten your load, to be there when you need support, and to help you succeed — not by replacing your judgment, but by amplifying your ability to lead.
+  </div>
+
+  <div class="two-col" style="margin-top: 32px;">
+    <div>
+      <div class="info-card">
+        <div class="info-card__label">Vision</div>
+        <div class="info-card__text">To be the most trusted AI partner for Filipino entrepreneurs, enabling them to compete globally while staying true to their values.</div>
+      </div>
+    </div>
+    <div>
+      <div class="info-card">
+        <div class="info-card__label">Mission</div>
+        <div class="info-card__text">To provide intelligent, human-centered business solutions that understand Filipino business culture and empower entrepreneurs to scale with confidence.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>3</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 01 / BRAND STORY continued (Page 4)                          -->
+<!-- ============================================================ -->
+<div class="page page--dark">
+  <div class="section-label">01 / Brand Story</div>
+  <div class="section-title">Brand <span>Promise</span></div>
+
+  <div class="info-card" style="text-align: center; padding: 32px;">
+    <div class="info-card__text" style="font-size: 22px; font-weight: 700; line-height: 1.4;">
+      "Mas maraming oras para sa negosyo.<br>Mas kaunting oras sa admin."
+    </div>
+  </div>
+
+  <div class="sub-heading" style="color: var(--white); margin-top: 40px;">Core Values</div>
+
+  <div class="value-cards">
+    <div class="value-card">
+      <div class="value-card__title">Tiwala (Trust)</div>
+      <div class="value-card__text">We earn trust through transparency, security, and consistent delivery. Your data is sacred.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card__title">Malasakit (Care)</div>
+      <div class="value-card__text">We genuinely care about your success. Your wins are our wins. We listen and adapt.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card__title">Kahusayan (Excellence)</div>
+      <div class="value-card__text">We sweat the details. Quality is non-negotiable. We constantly improve.</div>
+    </div>
+  </div>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>4</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 02 / LOGO - The Mark (Page 5)                                -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">02 / Logo</div>
+  <div class="section-title">The Mark — <span>Meet Kai</span></div>
+
+  <div style="display: flex; gap: 32px; align-items: flex-start;">
+    <div style="flex: 1;">
+      <div class="sub-heading" style="margin-top: 0;">Logo Anatomy</div>
+      <div class="body-text">
+        The AKBai logo mark is a yin-yang inspired circular form featuring <strong>Kai's smiling face</strong> — the AI persona — at its center. The light variant on cream is the primary logo used across all key brand touchpoints.
+      </div>
+    </div>
+    <div style="flex-shrink: 0; width: 180px; height: 180px; background: var(--cream-page); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+      <img src="Logo Files/AKBai_Mark_OnLight.png" alt="AKBai Mark" style="max-width: 140px; max-height: 140px;">
+    </div>
+  </div>
+
+  <div class="sub-heading" style="margin-top: 28px;">Three Components</div>
+
+  <div class="anatomy-grid">
+    <div class="anatomy-item">
+      <div class="anatomy-item__number">1</div>
+      <div class="anatomy-item__title">Circular Mark</div>
+      <div class="anatomy-item__text">A yin-yang inspired form with Kai's integrated smiling face. Rendered in Warm Honey gradient (#F59E0B to #D97706) on light backgrounds, full-color on dark, or white + light grey on honey/gradient backgrounds.</div>
+    </div>
+    <div class="anatomy-item">
+      <div class="anatomy-item__number">2</div>
+      <div class="anatomy-item__title">Kai's Face</div>
+      <div class="anatomy-item__text">Two curved happy eyes and a gentle smile arc at the center. This is the primary visual element — it transforms the logo from an abstract shape into a character users connect with emotionally.</div>
+    </div>
+    <div class="anatomy-item">
+      <div class="anatomy-item__number">3</div>
+      <div class="anatomy-item__title">Wordmark</div>
+      <div class="anatomy-item__text">"AKB" in on-surface color (#1c1c18 light / #e6e2db dark) + "ai" in primary-container (#f59e0b). Plus Jakarta Sans, ExtraBold 800.</div>
+    </div>
+  </div>
+
+  <div class="sub-heading">Minimum Size &amp; Clear Space</div>
+  <div class="two-col" style="gap: 16px;">
+    <div class="info-card">
+      <div class="info-card__label">Minimum Size</div>
+      <div class="info-card__text">24px for favicon, 48px for app icon, 64px for UI avatar</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card__label">Clear Space</div>
+      <div class="info-card__text">Half the mark's radius on all sides</div>
+    </div>
+  </div>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>5</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 02 / LOGO - Lockups (Page 6)                                 -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">02 / Logo</div>
+  <div class="section-title">Logo <span>Lockups</span></div>
+
+  <div class="lockup-grid">
+    <div class="lockup-item">
+      <div class="lockup-item__display lockup-item__display--light">
+        <img src="Logo Files/AKBai_Logo_Primary_OnLight.png" alt="Primary lockup on light">
+      </div>
+      <div class="lockup-item__caption">
+        <strong>Primary Lockup (Default)</strong><br>
+        <span>The main logo. Use on cream or white backgrounds.</span>
+      </div>
+    </div>
+    <div class="lockup-item">
+      <div class="lockup-item__display lockup-item__display--light lockup-item__display--stacked">
+        <img src="Logo Files/AKBai_Logo_Stacked_OnLight.png" alt="Stacked lockup">
+      </div>
+      <div class="lockup-item__caption">
+        <strong>Stacked</strong><br>
+        <span>Mark above wordmark for narrow or square layouts.</span>
+      </div>
+    </div>
+    <div class="lockup-item">
+      <div class="lockup-item__display lockup-item__display--honey" style="background: none;">
+        <img src="Logo Files/AKBai_Logo_Primary_OnDark.png" alt="Primary lockup on dark">
+      </div>
+      <div class="lockup-item__caption">
+        <strong>Dark Background</strong><br>
+        <span>Alternate variant for dark backgrounds.</span>
+      </div>
+    </div>
+    <div class="lockup-item">
+      <div class="lockup-item__display lockup-item__display--honey">
+        <img src="Logo Files/AKBai_Logo_Primary_OnGradient.png" alt="Logo on honey">
+      </div>
+      <div class="lockup-item__caption">
+        <strong>Reversed (Honey)</strong><br>
+        <span>Alternate variant for honey or colored backgrounds.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>6</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 02 / LOGO - Rules (Page 7)                                   -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">02 / Logo</div>
+  <div class="section-title">Logo <span>Rules</span></div>
+
+  <div class="do-dont">
+    <div class="do-box">
+      <div class="do-box__title">Do</div>
+      <ul>
+        <li>Use on approved backgrounds (dark navy, cream, white, honey, or brand gradient)</li>
+        <li>Maintain minimum 24px size for legibility</li>
+        <li>Keep clear space of half the mark's radius on all sides</li>
+        <li>Kai's face must always be visible — never crop or obscure it</li>
+      </ul>
+    </div>
+    <div class="dont-box">
+      <div class="dont-box__title">Don't</div>
+      <ul>
+        <li>Stretch, squeeze, or distort the logo</li>
+        <li>Remove Kai's face from the mark for any application</li>
+        <li>Change the colors — use official hex values only</li>
+        <li>Place on clashing or low-contrast backgrounds</li>
+        <li>Rotate the wordmark (mark orientation is fixed)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Visual examples of mark variants -->
+  <div class="sub-heading" style="margin-top: 32px;">Approved Background Examples</div>
+  <div style="display: flex; gap: 12px; margin-top: 12px;">
+    <div style="flex: 1; height: 100px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(7,16,30,0.06);">
+      <img src="Logo Files/AKBai_Mark_OnLight.png" alt="Mark on light (primary)" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    <div style="flex: 1; height: 100px; border-radius: 12px; overflow: hidden;">
+      <img src="Logo Files/AKBai_Mark_OnDark.png" alt="Mark on dark" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    <div style="flex: 1; height: 100px; border-radius: 12px; overflow: hidden;">
+      <img src="Logo Files/AKBai_Mark_Honey.png" alt="Mark on honey" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    <div style="flex: 1; height: 100px; border-radius: 12px; overflow: hidden;">
+      <img src="Logo Files/AKBai_Mark_OnGradient.png" alt="Mark on gradient" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>7</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 03 / COLOR (Page 8)                                          -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">03 / Color</div>
+  <div class="section-title">Color <span>Palette</span></div>
+
+  <!-- Primary colors large -->
+  <div class="swatch-row">
+    <div class="swatch-large">
+      <div class="swatch-large__color" style="background: #07101e;">
+        <span style="color: #fff;">Aa</span>
+      </div>
+      <div class="swatch-large__info">
+        <div class="swatch-large__name">Ink</div>
+        <div class="swatch-large__hex">#07101e</div>
+        <div class="swatch-large__pct">60% usage</div>
+      </div>
+    </div>
+    <div class="swatch-large">
+      <div class="swatch-large__color" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+        <span style="color: #fff;">Aa</span>
+      </div>
+      <div class="swatch-large__info">
+        <div class="swatch-large__name">Warm Honey</div>
+        <div class="swatch-large__hex">#F59E0B</div>
+        <div class="swatch-large__pct">25% usage</div>
+      </div>
+    </div>
+    <div class="swatch-large">
+      <div class="swatch-large__color" style="background: #20C9A0;">
+        <span style="color: #fff;">Aa</span>
+      </div>
+      <div class="swatch-large__info">
+        <div class="swatch-large__name">Teal</div>
+        <div class="swatch-large__hex">#20C9A0</div>
+        <div class="swatch-large__pct">10% usage</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secondary colors -->
+  <div class="swatch-grid">
+    <div class="swatch">
+      <div class="swatch__color" style="background: #0d1a2e;"></div>
+      <div class="swatch__info">
+        <div class="swatch__name">Card</div>
+        <div class="swatch__hex">#0d1a2e</div>
+        <div class="swatch__usage">Secondary dark background, cards</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background: #D97706;"></div>
+      <div class="swatch__info">
+        <div class="swatch__name">Honey Deep</div>
+        <div class="swatch__hex">#D97706</div>
+        <div class="swatch__usage">Gradient end, hover states</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background: #FFFFFF; border: 1px solid rgba(7,16,30,0.08);"></div>
+      <div class="swatch__info">
+        <div class="swatch__name">White</div>
+        <div class="swatch__hex">#FFFFFF</div>
+        <div class="swatch__usage">Text on dark, clean backgrounds</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background: #FEFAF3; border: 1px solid rgba(7,16,30,0.08);"></div>
+      <div class="swatch__info">
+        <div class="swatch__name">Warm Cream</div>
+        <div class="swatch__hex">#FEFAF3</div>
+        <div class="swatch__usage">Page background, card backgrounds</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background: #8A9BB5;"></div>
+      <div class="swatch__info">
+        <div class="swatch__name">Muted</div>
+        <div class="swatch__hex">#8A9BB5</div>
+        <div class="swatch__usage">Secondary text, labels, captions</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background: #FFF8ED; border: 1px solid rgba(7,16,30,0.08);"></div>
+      <div class="swatch__info">
+        <div class="swatch__name">Warm Card</div>
+        <div class="swatch__hex">#FFF8ED</div>
+        <div class="swatch__usage">Card highlights, subtle backgrounds</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>8</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 03 / COLOR continued (Page 9)                                -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">03 / Color</div>
+  <div class="section-title">Color <span>Balance &amp; Usage</span></div>
+
+  <div class="sub-heading">Color Balance</div>
+  <div class="color-bar">
+    <div class="color-bar__segment" style="flex: 60; background: var(--ink);">Ink 60%</div>
+    <div class="color-bar__segment" style="flex: 25; background: var(--honey);">Honey 25%</div>
+    <div class="color-bar__segment" style="flex: 10; background: var(--teal);">Teal 10%</div>
+    <div class="color-bar__segment" style="flex: 5; background: var(--muted); font-size: 8px;">5%</div>
+  </div>
+  <div class="body-text">
+    Ink dominates to create a grounded, premium feel. Honey draws the eye to actions and highlights.
+    Teal is used sparingly for success states and secondary accents. Neutrals fill the gaps.
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sub-heading">Contrast Combinations</div>
+  <div class="do-dont">
+    <div class="do-box">
+      <div class="do-box__title">Do</div>
+      <ul>
+        <li><span style="background: var(--ink); color: var(--honey); padding: 2px 8px; border-radius: 4px; font-weight: 600;">Honey on Ink</span> — High contrast, primary CTA</li>
+        <li><span style="background: var(--card); color: #fff; padding: 2px 8px; border-radius: 4px; font-weight: 600;">White on Card</span> — Maximum contrast for body text</li>
+        <li><span style="background: var(--ink); color: #fff; padding: 2px 8px; border-radius: 4px; font-weight: 600;">White on Ink</span> — Clean dark-mode text</li>
+      </ul>
+    </div>
+    <div class="dont-box">
+      <div class="dont-box__title">Don't</div>
+      <ul>
+        <li><span style="background: var(--cream); color: var(--muted); padding: 2px 8px; border-radius: 4px;">Muted on Cream</span> — Poor contrast ratio</li>
+        <li><span style="background: var(--cream); color: var(--teal); padding: 2px 8px; border-radius: 4px;">Teal on Cream</span> — Insufficient contrast</li>
+        <li><span style="background: var(--honey); color: #fff; padding: 2px 8px; border-radius: 4px;">White on Honey</span> — Fails WCAG AA</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sub-heading">Usage by Role</div>
+  <div class="info-card">
+    <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+      <tr style="border-bottom: 1px solid rgba(7,16,30,0.06);">
+        <td style="padding: 8px 0; font-weight: 700; width: 120px;">Primary Text</td>
+        <td style="padding: 8px 0; color: var(--muted);">Ink on light, White on dark</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(7,16,30,0.06);">
+        <td style="padding: 8px 0; font-weight: 700;">CTA / Accent</td>
+        <td style="padding: 8px 0; color: var(--muted);">Warm Honey (#F59E0B)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(7,16,30,0.06);">
+        <td style="padding: 8px 0; font-weight: 700;">Success States</td>
+        <td style="padding: 8px 0; color: var(--muted);">Teal (#20C9A0)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(7,16,30,0.06);">
+        <td style="padding: 8px 0; font-weight: 700;">Backgrounds</td>
+        <td style="padding: 8px 0; color: var(--muted);">Ink (dark), Warm Cream (light)</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: 700;">Secondary Text</td>
+        <td style="padding: 8px 0; color: var(--muted);">Muted (#8A9BB5)</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>9</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 04 / TYPOGRAPHY (Page 10)                                    -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">04 / Typography</div>
+  <div class="section-title">Plus Jakarta <span>Sans</span></div>
+
+  <div class="body-text" style="margin-bottom: 24px;">
+    Geometric clarity with warm, human character. Our single typeface handles everything from display headlines to UI labels.
+  </div>
+
+  <div class="sub-heading">Weights</div>
+  <div class="weight-grid">
+    <div class="weight-sample">
+      <div class="weight-sample__letter" style="font-weight: 400;">Aa</div>
+      <div class="weight-sample__name">Regular</div>
+      <div class="weight-sample__value">400</div>
+    </div>
+    <div class="weight-sample">
+      <div class="weight-sample__letter" style="font-weight: 500;">Aa</div>
+      <div class="weight-sample__name">Medium</div>
+      <div class="weight-sample__value">500</div>
+    </div>
+    <div class="weight-sample">
+      <div class="weight-sample__letter" style="font-weight: 600;">Aa</div>
+      <div class="weight-sample__name">SemiBold</div>
+      <div class="weight-sample__value">600</div>
+    </div>
+    <div class="weight-sample">
+      <div class="weight-sample__letter" style="font-weight: 700;">Aa</div>
+      <div class="weight-sample__name">Bold</div>
+      <div class="weight-sample__value">700</div>
+    </div>
+    <div class="weight-sample">
+      <div class="weight-sample__letter" style="font-weight: 800;">Aa</div>
+      <div class="weight-sample__name">ExtraBold</div>
+      <div class="weight-sample__value">800</div>
+    </div>
+  </div>
+
+  <div class="sub-heading">Type Scale</div>
+
+  <div class="type-sample">
+    <div class="type-sample__label">Display &middot; 56px / ExtraBold 800</div>
+    <div class="type-sample__text" style="font-size: 42px; font-weight: 800; letter-spacing: -1.5px;">Kumikita ka ba?</div>
+    <div class="type-sample__meta">Line height 1.1 &middot; Letter spacing -1.5px</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="type-sample__label">H1 &middot; 40px / Bold 700</div>
+    <div class="type-sample__text" style="font-size: 32px; font-weight: 700; letter-spacing: -1px;">Kaakbay mo sa negosyo.</div>
+    <div class="type-sample__meta">Line height 1.2 &middot; Letter spacing -1px</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="type-sample__label">H2 &middot; 28px / SemiBold 600</div>
+    <div class="type-sample__text" style="font-size: 24px; font-weight: 600; letter-spacing: -0.5px;">Alam mo kung magkano ang kita mo?</div>
+    <div class="type-sample__meta">Line height 1.2 &middot; Letter spacing -0.5px</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="type-sample__label">H3 &middot; 20px / SemiBold 600</div>
+    <div class="type-sample__text" style="font-size: 18px; font-weight: 600;">Hindi? Kaya nandito kami.</div>
+    <div class="type-sample__meta">Line height 1.3</div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>10</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 04 / TYPOGRAPHY continued (Page 11)                          -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">04 / Typography</div>
+  <div class="section-title">Type Scale <span>(continued)</span></div>
+
+  <div class="type-sample">
+    <div class="type-sample__label">Body &middot; 15px / Regular 400</div>
+    <div class="type-sample__text" style="font-size: 15px; font-weight: 400; line-height: 1.7;">
+      Alam mo kung magkano ang kita mo ngayong buwan? Hindi? Kaya nandito kami. Ang AKBai ang kaakbay mo — isang AI business partner na tutulong sa'yo mag-manage ng negosyo mo nang mas madali.
+    </div>
+    <div class="type-sample__meta">Line height 1.6 - 1.8</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="type-sample__label">Caption &middot; 11px / Medium 500</div>
+    <div class="type-sample__text" style="font-size: 11px; font-weight: 500; color: var(--muted);">
+      Last updated: April 5, 2026 &middot; Manila, Philippines
+    </div>
+    <div class="type-sample__meta">Used for timestamps, labels, and metadata</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sub-heading">Typographic Rules</div>
+  <div class="two-col">
+    <div>
+      <ul class="bullet-list">
+        <li><strong>Headings:</strong> Line height 1.2, slight negative letter-spacing for warmth</li>
+        <li><strong>Body text:</strong> Line height 1.6 to 1.8 for comfortable reading</li>
+        <li><strong>Labels:</strong> Medium 500 weight, uppercase with letter-spacing for UI elements</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="bullet-list">
+        <li><strong>Taglish headlines:</strong> Natural code-switching, not translated English</li>
+        <li><strong>Numbers:</strong> Tabular figures for financial data alignment</li>
+        <li><strong>Logo wordmark:</strong> Always ExtraBold 800, never retype — use the logo asset</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sub-heading" style="margin-top: 24px;">Taglish in Practice</div>
+  <div class="info-card">
+    <div class="info-card__label">Headline Example</div>
+    <div class="info-card__text" style="font-size: 22px; font-weight: 700; letter-spacing: -0.5px;">Kumikita ka ba?</div>
+  </div>
+  <div class="info-card">
+    <div class="info-card__label">Body Example</div>
+    <div class="info-card__text">Alam mo kung magkano ang kita mo ngayong buwan? Hindi? Kaya nandito kami.</div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>11</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 05 / VOICE & TONE (Page 12)                                  -->
+<!-- ============================================================ -->
+<div class="page page--dark">
+  <div class="section-label">05 / Voice &amp; Tone</div>
+  <div class="section-title">Brand <span>Personality</span></div>
+
+  <div class="highlight-text">Smart ate/kuya with an MBA who still speaks your language.</div>
+
+  <div class="value-cards" style="margin-top: 24px;">
+    <div class="value-card">
+      <div class="value-card__title">Mainit (Warm)</div>
+      <div class="value-card__text">Approachable, friendly, human. We talk to you like a trusted friend.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card__title">Tapat (Honest)</div>
+      <div class="value-card__text">Straightforward, no fluff. We tell you what you need to hear.</div>
+    </div>
+  </div>
+  <div class="value-cards">
+    <div class="value-card">
+      <div class="value-card__title">Matalino (Smart)</div>
+      <div class="value-card__text">Knowledgeable, competent. We know business inside and out.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card__title">Malapit (Close)</div>
+      <div class="value-card__text">Invested in your success. We celebrate your wins like our own.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="do-dont">
+    <div class="do-box" style="background: rgba(32, 201, 160, 0.12);">
+      <div class="do-box__title">Do — Write Like This</div>
+      <ul>
+        <li style="color: rgba(255,255,255,0.8);">"Hayaan mong si AKBai ang bahala sa accounting. Ikaw, mag-focus sa paglaki ng negosyo."</li>
+      </ul>
+    </div>
+    <div class="dont-box" style="background: rgba(239, 68, 68, 0.12);">
+      <div class="dont-box__title">Don't — Never Write Like This</div>
+      <ul>
+        <li style="color: rgba(255,255,255,0.8);">"Leverage our advanced AI-powered accounting solution to optimize your business metrics."</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>12</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 05 / VOICE & TONE continued (Page 13)                        -->
+<!-- ============================================================ -->
+<div class="page page--dark">
+  <div class="section-label">05 / Voice &amp; Tone</div>
+  <div class="section-title">Tone by <span>Channel</span></div>
+
+  <div class="channel-grid">
+    <div class="channel-card" style="background: var(--card);">
+      <div class="channel-card__name">Social Media</div>
+      <div class="channel-card__tone">Archetype: Sage</div>
+      <div class="channel-card__desc" style="color: rgba(255,255,255,0.6);">Educational, helpful, community-focused. We share knowledge generously and build trust through consistent value.</div>
+    </div>
+    <div class="channel-card" style="background: var(--card);">
+      <div class="channel-card__name">Email</div>
+      <div class="channel-card__tone">Archetype: Caregiver</div>
+      <div class="channel-card__desc" style="color: rgba(255,255,255,0.6);">Personal, supportive, warm. Every email feels like a one-on-one conversation with someone who genuinely cares.</div>
+    </div>
+    <div class="channel-card" style="background: var(--card);">
+      <div class="channel-card__name">Website</div>
+      <div class="channel-card__tone">Archetype: Balanced</div>
+      <div class="channel-card__desc" style="color: rgba(255,255,255,0.6);">Clear, confident, professional-warm. We present ourselves with authority but remain approachable.</div>
+    </div>
+    <div class="channel-card" style="background: var(--card);">
+      <div class="channel-card__name">Pitch Deck</div>
+      <div class="channel-card__tone">Archetype: Professional</div>
+      <div class="channel-card__desc" style="color: rgba(255,255,255,0.6);">Composed, data-backed, visionary. We let the numbers and vision speak with clarity and conviction.</div>
+    </div>
+  </div>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>13</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 06 / AUDIENCE (Page 14)                                      -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">06 / Audience</div>
+  <div class="section-title">Our <span>Personas</span></div>
+
+  <div class="persona-grid">
+    <div class="persona-card">
+      <div class="persona-card__name">Maria</div>
+      <div class="persona-card__role">Sari-Sari &amp; Online Seller</div>
+      <div class="persona-card__detail">Age 28-38 &middot; Income: P30k-80k/mo</div>
+      <div class="persona-card__pain"><strong>Pain:</strong> Juggling inventory and orders manually. Loses track of stock. Spends evenings on spreadsheets instead of with family.</div>
+    </div>
+    <div class="persona-card">
+      <div class="persona-card__name">Jose</div>
+      <div class="persona-card__role">Food Business Owner</div>
+      <div class="persona-card__detail">Age 25-40 &middot; Income: P50k-150k/mo</div>
+      <div class="persona-card__pain"><strong>Pain:</strong> Delivery logistics and cash flow management. Never knows if he's actually profitable after all expenses.</div>
+    </div>
+    <div class="persona-card">
+      <div class="persona-card__name">Ana</div>
+      <div class="persona-card__role">Boutique &amp; Retail</div>
+      <div class="persona-card__detail">Age 22-35 &middot; Income: P40k-120k/mo</div>
+      <div class="persona-card__pain"><strong>Pain:</strong> Multi-channel sales across Shopee, Lazada, and Instagram. Can't keep inventory synced across platforms.</div>
+    </div>
+    <div class="persona-card">
+      <div class="persona-card__name">Andoy</div>
+      <div class="persona-card__role">Services &amp; Repair</div>
+      <div class="persona-card__detail">Age 30-45 &middot; Income: P60k-200k/mo</div>
+      <div class="persona-card__pain"><strong>Pain:</strong> Scheduling and invoicing headaches. Clients forget to pay. No system to track outstanding work.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>14</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 06 / AUDIENCE continued (Page 15)                            -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">06 / Audience</div>
+  <div class="section-title">Jobs-to-be-<span>Done</span></div>
+
+  <div class="body-text" style="margin-bottom: 32px;">
+    Our personas share common needs. These are the functional and emotional jobs they hire AKBai to do.
+  </div>
+
+  <div class="quote-box" style="margin-bottom: 20px;">
+    <div class="quote-box__text">"When I'm drowning in paperwork, I want a smart system to handle them automatically, so I can focus on building my business."</div>
+  </div>
+
+  <div class="quote-box" style="margin-bottom: 20px;">
+    <div class="quote-box__text">"When I'm unsure if I'm making money, I want clear visibility into my finances, so I can make confident decisions."</div>
+  </div>
+
+  <div class="quote-box" style="margin-bottom: 20px;">
+    <div class="quote-box__text">"When I want to scale but worry about complexity, I want a partner who grows with me."</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sub-heading">What They All Have in Common</div>
+  <ul class="bullet-list">
+    <li>They are hardworking Filipino entrepreneurs running real businesses</li>
+    <li>They spend too much time on admin and not enough on growth</li>
+    <li>They need a partner, not another tool to learn</li>
+    <li>They value trust, honesty, and real results over flashy features</li>
+    <li>They want to be treated with respect, not talked down to</li>
+  </ul>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>15</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 07 / MESSAGING (Page 16)                                     -->
+<!-- ============================================================ -->
+<div class="page page--dark">
+  <div class="section-label">07 / Messaging</div>
+  <div class="section-title">Tagline &amp; <span>Value Proposition</span></div>
+
+  <div style="text-align: center; padding: 32px 0;">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;">Tagline</div>
+    <div style="font-size: 32px; font-weight: 800; color: var(--honey); letter-spacing: -1px; line-height: 1.2;">Kaakbay mo sa negosyo.</div>
+  </div>
+
+  <div class="divider" style="margin: 0 auto 32px auto;"></div>
+
+  <div class="info-card" style="text-align: center; padding: 28px;">
+    <div class="info-card__label">Value Proposition</div>
+    <div class="info-card__text" style="font-size: 18px; font-weight: 600; line-height: 1.5;">
+      AKBai is the AI business partner built for Filipino entrepreneurs.
+    </div>
+  </div>
+
+  <div class="sub-heading" style="color: var(--white); margin-top: 32px;">Hero Message</div>
+  <div class="info-card">
+    <div class="info-card__text" style="font-size: 16px; font-weight: 600;">
+      More time for your business. Less time on admin.
+    </div>
+  </div>
+
+  <div class="sub-heading" style="color: var(--white);">Key Features</div>
+  <ul class="bullet-list">
+    <li>Smart invoicing</li>
+    <li>Real-time accounting</li>
+    <li>Cashflow visibility</li>
+  </ul>
+
+  <div class="sub-heading" style="color: var(--white);">Social Proof</div>
+  <div class="body-text" style="font-size: 16px; font-weight: 600; color: var(--honey);">
+    50,000+ Filipino entrepreneurs trust AKBai.
+  </div>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>16</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 07 / MESSAGING continued (Page 17)                           -->
+<!-- ============================================================ -->
+<div class="page page--dark">
+  <div class="section-label">07 / Messaging</div>
+  <div class="section-title">Four <span>Pillars</span></div>
+
+  <div class="pillar-grid">
+    <div class="pillar-card" style="background: var(--card);">
+      <div class="pillar-card__number">01</div>
+      <div class="pillar-card__title" style="color: var(--white);">Simplicity</div>
+      <div class="pillar-card__tagline">"Tanungin lang."</div>
+      <div class="pillar-card__text" style="color: rgba(255,255,255,0.6);">No complex dashboards. No steep learning curves. Just ask, and AKBai handles the rest.</div>
+    </div>
+    <div class="pillar-card" style="background: var(--card);">
+      <div class="pillar-card__number">02</div>
+      <div class="pillar-card__title" style="color: var(--white);">Trust</div>
+      <div class="pillar-card__tagline">"Tapat at tama lagi."</div>
+      <div class="pillar-card__text" style="color: rgba(255,255,255,0.6);">Your data is safe. Our numbers are accurate. We earn your trust every single day.</div>
+    </div>
+    <div class="pillar-card" style="background: var(--card);">
+      <div class="pillar-card__number">03</div>
+      <div class="pillar-card__title" style="color: var(--white);">Partnership</div>
+      <div class="pillar-card__tagline">"Kasama mo kami."</div>
+      <div class="pillar-card__text" style="color: rgba(255,255,255,0.6);">Not a tool, a partner. AKBai grows with you and adapts to your unique business needs.</div>
+    </div>
+    <div class="pillar-card" style="background: var(--card);">
+      <div class="pillar-card__number">04</div>
+      <div class="pillar-card__title" style="color: var(--white);">Filipino-First</div>
+      <div class="pillar-card__tagline">"Para sa atin."</div>
+      <div class="pillar-card__text" style="color: rgba(255,255,255,0.6);">Built for Filipino culture, Filipino workflows, and Filipino entrepreneurs. This is ours.</div>
+    </div>
+  </div>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>17</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 08 / SOCIAL MEDIA (Page 18)                                  -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">08 / Social Media</div>
+  <div class="section-title">Platform <span>Guidelines</span></div>
+
+  <div class="sub-heading">Platforms &amp; Frequency</div>
+  <div class="value-cards">
+    <div class="value-card">
+      <div class="value-card__title">Instagram</div>
+      <div class="value-card__text">3-5 posts per week. Visual-first. Stories for behind-the-scenes.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card__title">Facebook</div>
+      <div class="value-card__text">5-7 posts per week. Community engagement. Longer-form content.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card__title">LinkedIn</div>
+      <div class="value-card__text">2-3 posts per week. Thought leadership. Founder story.</div>
+    </div>
+  </div>
+
+  <div class="sub-heading">Content Pillars</div>
+  <div class="pillar-grid">
+    <div class="pillar-card">
+      <div class="pillar-card__number" style="font-size: 20px;">E</div>
+      <div class="pillar-card__title">Education</div>
+      <div class="pillar-card__text">Tips, tutorials, and business knowledge that helps entrepreneurs level up.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-card__number" style="font-size: 20px;">C</div>
+      <div class="pillar-card__title">Community</div>
+      <div class="pillar-card__text">Stories, features, and engagement that builds a tribe of Filipino entrepreneurs.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-card__number" style="font-size: 20px;">P</div>
+      <div class="pillar-card__title">Product</div>
+      <div class="pillar-card__text">Feature highlights, demos, and use cases that show AKBai in action.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-card__number" style="font-size: 20px;">S</div>
+      <div class="pillar-card__title">Proof</div>
+      <div class="pillar-card__text">Testimonials, case studies, and results that build credibility and trust.</div>
+    </div>
+  </div>
+
+  <div class="sub-heading">Caption Formula</div>
+  <div class="info-card">
+    <div class="info-card__text"><strong>Hook</strong> + <strong>Value</strong> + <strong>CTA</strong></div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>18</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 08 / SOCIAL MEDIA continued (Page 19)                        -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">08 / Social Media</div>
+  <div class="section-title">Social <span>Voice</span></div>
+
+  <div class="sub-heading">Hashtags</div>
+  <div class="info-card" style="margin-bottom: 24px;">
+    <div class="info-card__text" style="font-size: 13px; color: var(--honey); font-weight: 600;">
+      #AKBai &nbsp; #KaakbayMoSaNegosyo &nbsp; #FilipinoEntrepreneur &nbsp; #SmallBusiness
+    </div>
+  </div>
+
+  <div class="do-dont">
+    <div class="do-box">
+      <div class="do-box__title">Do</div>
+      <ul>
+        <li>Personal, relatable, conversational</li>
+        <li>Taglish that feels natural</li>
+        <li>Specific benefits over vague promises</li>
+        <li>Questions that spark engagement</li>
+      </ul>
+    </div>
+    <div class="dont-box">
+      <div class="dont-box__title">Don't</div>
+      <ul>
+        <li>Generic motivational quotes</li>
+        <li>ALL CAPS FOR EMPHASIS</li>
+        <li>Buzzwords and corporate jargon</li>
+        <li>Vague promises without substance</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sub-heading" style="margin-top: 24px;">Example Post</div>
+  <div class="info-card">
+    <div class="info-card__label">Instagram Caption</div>
+    <div class="info-card__text" style="line-height: 1.8;">
+      Ilan ang oras mo na napupunta sa pagbibilang ng inventory? <br><br>
+      Si Maria, dating 3 hours per night. Ngayon? 10 minutes lang.<br><br>
+      Ganyan kapag may kaakbay ka. Try AKBai free for 14 days. Link in bio.<br><br>
+      <span style="color: var(--honey);">#AKBai #KaakbayMoSaNegosyo #SmallBusiness</span>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>19</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 09 / EMAIL (Page 20)                                         -->
+<!-- ============================================================ -->
+<div class="page page--dark">
+  <div class="section-label">09 / Email</div>
+  <div class="section-title">Welcome <span>Sequence</span></div>
+
+  <div class="body-text">
+    Our 4-email welcome sequence nurtures new signups from curiosity to conversion. Each email builds on the last, deepening the relationship.
+  </div>
+
+  <table class="sequence-table">
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Purpose</th>
+        <th>Focus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Day 0</td>
+        <td style="background: var(--card); color: rgba(255,255,255,0.85);"><strong>Welcome + Free Trial</strong></td>
+        <td style="background: var(--card); color: rgba(255,255,255,0.65);">Warm welcome, set expectations, provide immediate value. Make them feel seen.</td>
+      </tr>
+      <tr>
+        <td>Day 2</td>
+        <td style="background: var(--card); color: rgba(255,255,255,0.85);"><strong>Icebreaker + Walkthrough</strong></td>
+        <td style="background: var(--card); color: rgba(255,255,255,0.65);">Show them around. Reduce friction. Help them get their first win quickly.</td>
+      </tr>
+      <tr>
+        <td>Day 7</td>
+        <td style="background: var(--card); color: rgba(255,255,255,0.85);"><strong>Value + Progress Stats</strong></td>
+        <td style="background: var(--card); color: rgba(255,255,255,0.65);">Show them what they've accomplished. Reinforce the value of continuing.</td>
+      </tr>
+      <tr>
+        <td>Day 13</td>
+        <td style="background: var(--card); color: rgba(255,255,255,0.85);"><strong>Convert + Early-Bird Offer</strong></td>
+        <td style="background: var(--card); color: rgba(255,255,255,0.65);">Gentle nudge. Special pricing. Create urgency without pressure.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>20</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 09 / EMAIL continued (Page 21)                               -->
+<!-- ============================================================ -->
+<div class="page page--dark">
+  <div class="section-label">09 / Email</div>
+  <div class="section-title">Email <span>Voice</span></div>
+
+  <div class="info-card" style="margin-bottom: 24px;">
+    <div class="info-card__label">Dominant Archetype</div>
+    <div class="info-card__text" style="font-size: 18px; font-weight: 700;">
+      Caregiver — Personal, one-to-one conversations.
+    </div>
+  </div>
+
+  <div class="sub-heading" style="color: var(--white);">Subject Line Formulas</div>
+
+  <div class="value-cards">
+    <div class="value-card">
+      <div class="value-card__title">Question-Based</div>
+      <div class="value-card__text">"Alam mo ba kung magkano ang kita mo this month?"</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card__title">Benefit-Driven</div>
+      <div class="value-card__text">"Save 3 hours a day on invoicing"</div>
+    </div>
+    <div class="value-card">
+      <div class="value-card__title">Curiosity</div>
+      <div class="value-card__text">"Maria saved P15k last month. Here's how."</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sub-heading" style="color: var(--white);">Email Voice Rules</div>
+  <div class="do-dont">
+    <div class="do-box" style="background: rgba(32, 201, 160, 0.12);">
+      <div class="do-box__title">Do</div>
+      <ul>
+        <li style="color: rgba(255,255,255,0.8);">Write like you're texting a friend who asked for advice</li>
+        <li style="color: rgba(255,255,255,0.8);">Use their name. Reference their business type.</li>
+        <li style="color: rgba(255,255,255,0.8);">Keep paragraphs short — 2-3 sentences max</li>
+      </ul>
+    </div>
+    <div class="dont-box" style="background: rgba(239, 68, 68, 0.12);">
+      <div class="dont-box__title">Don't</div>
+      <ul>
+        <li style="color: rgba(255,255,255,0.8);">Use "Dear Valued Customer" or corporate greetings</li>
+        <li style="color: rgba(255,255,255,0.8);">Write walls of text — break it up</li>
+        <li style="color: rgba(255,255,255,0.8);">Hard-sell or use pressure tactics</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer" style="color: var(--muted);">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>21</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 10 / DIGITAL (Page 22)                                       -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">10 / Digital</div>
+  <div class="section-title">Design <span>Philosophy</span></div>
+
+  <div class="highlight-text" style="color: var(--ink);">Warm, Not Tech.</div>
+
+  <div class="two-col" style="margin-bottom: 32px;">
+    <div>
+      <div class="sub-heading" style="color: var(--teal);">Warm</div>
+      <ul class="bullet-list">
+        <li>Honey accents that draw the eye naturally</li>
+        <li>Cream backgrounds that feel inviting</li>
+        <li>Rounded corners that soften every edge</li>
+        <li>Taglish copy that speaks their language</li>
+      </ul>
+    </div>
+    <div>
+      <div class="sub-heading" style="color: #EF4444;">Not</div>
+      <ul class="bullet-list">
+        <li>Gray palettes that feel cold and corporate</li>
+        <li>Harsh lines and sharp edges</li>
+        <li>Stock photos of generic office workers</li>
+        <li>English-only interfaces</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sub-heading">Five UI Principles</div>
+  <div class="ui-grid">
+    <div class="ui-card">
+      <div class="ui-card__number">01</div>
+      <div class="ui-card__title">Warm Backgrounds</div>
+      <div class="ui-card__text">Cream, soft whites. Never cold gray.</div>
+    </div>
+    <div class="ui-card">
+      <div class="ui-card__number">02</div>
+      <div class="ui-card__title">Rounded Corners</div>
+      <div class="ui-card__text">8-12px border-radius on all elements.</div>
+    </div>
+    <div class="ui-card">
+      <div class="ui-card__number">03</div>
+      <div class="ui-card__title">Amber Glow</div>
+      <div class="ui-card__text">Subtle honey-tinted shadows.</div>
+    </div>
+  </div>
+  <div style="display: flex; gap: 12px; justify-content: center;">
+    <div class="ui-card" style="width: calc(33.33% - 8px);">
+      <div class="ui-card__number">04</div>
+      <div class="ui-card__title">Taglish Copy</div>
+      <div class="ui-card__text">UI labels in natural Taglish.</div>
+    </div>
+    <div class="ui-card" style="width: calc(33.33% - 8px);">
+      <div class="ui-card__number">05</div>
+      <div class="ui-card__title">Real Filipino Imagery</div>
+      <div class="ui-card__text">Actual Filipino faces, not stock.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>22</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 10 / DIGITAL continued (Page 23)                             -->
+<!-- ============================================================ -->
+<div class="page">
+  <div class="section-label">10 / Digital</div>
+  <div class="section-title">UI <span>Guidelines</span></div>
+
+  <div class="sub-heading">Component Styling</div>
+  <div class="two-col" style="margin-bottom: 24px;">
+    <div>
+      <div class="info-card">
+        <div class="info-card__label">Buttons</div>
+        <div class="info-card__text">Rounded (8px radius), honey fill for primary, ghost for secondary. 44px minimum touch target for mobile.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card__label">Cards</div>
+        <div class="info-card__text">12px radius, warm-card background (#FFF8ED), ambient shadow instead of borders. Tonal layering over lines.</div>
+      </div>
+    </div>
+    <div>
+      <div class="info-card">
+        <div class="info-card__label">Inputs</div>
+        <div class="info-card__text">8px radius, subtle cream background, honey focus ring. Placeholder text in Muted (#8A9BB5).</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card__label">Navigation</div>
+        <div class="info-card__text">Bottom nav for mobile. Honey active indicator. Icons with Taglish labels where space permits.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-heading">Shadows &amp; Elevation</div>
+  <div class="body-text">
+    Use tonal layering and ambient shadows instead of borders. The <strong>No-Line Rule</strong> creates a softer, warmer visual hierarchy.
+  </div>
+
+  <div style="display: flex; gap: 16px; margin-top: 16px;">
+    <div style="flex: 1; padding: 20px; background: var(--warm-card); border-radius: 12px; text-align: center;">
+      <div style="font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">Level 1</div>
+      <div style="background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(7,16,30,0.06);">
+        <div style="font-size: 12px; font-weight: 600;">Subtle</div>
+      </div>
+    </div>
+    <div style="flex: 1; padding: 20px; background: var(--warm-card); border-radius: 12px; text-align: center;">
+      <div style="font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">Level 2</div>
+      <div style="background: white; border-radius: 8px; padding: 16px; box-shadow: 0 4px 12px rgba(7,16,30,0.08);">
+        <div style="font-size: 12px; font-weight: 600;">Medium</div>
+      </div>
+    </div>
+    <div style="flex: 1; padding: 20px; background: var(--warm-card); border-radius: 12px; text-align: center;">
+      <div style="font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">Level 3</div>
+      <div style="background: white; border-radius: 8px; padding: 16px; box-shadow: 0 8px 24px rgba(245,158,11,0.12);">
+        <div style="font-size: 12px; font-weight: 600;">Amber Glow</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="page-footer__brand">AKB<span>ai</span> Brand Book</div>
+    <div>23</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- BACK COVER (Page 24)                                         -->
+<!-- ============================================================ -->
+<div class="page back-cover">
+  <img src="Logo Files/AKBai_Mark_OnLight.png" alt="AKBai Mark" class="back-cover__logo">
+  <div class="back-cover__name">AKB<span>ai</span></div>
+  <div class="back-cover__tagline">Kaakbay mo sa negosyo.</div>
+  <div class="back-cover__contact">
+    hello@akbai.ph<br>
+    akbai.com
+  </div>
+  <div class="back-cover__footer">&copy; 2026 AKBai. Ginawa sa Pilipinas.</div>
+</div>
+
+</body>
+</html>
