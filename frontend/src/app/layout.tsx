@@ -74,7 +74,7 @@ export default function RootLayout({
   return (
     <html lang="tl" className={plusJakartaSans.variable} suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        <link rel="icon" href="/favicon-light.png" type="image/png" sizes="48x48" />
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

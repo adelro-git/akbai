@@ -1,34 +1,43 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
+import Image from 'next/image'
 import { trackLandingPageViewed, trackLandingPageCtaClicked } from '@/lib/posthog/events'
 import WaitlistForm from './waitlist-form'
 
 // ─── SVG Icon Components ────────────────────────────────────────────
 function IconBIR() {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <rect x="6" y="4" width="20" height="24" rx="3" fill="hsl(37 90% 51% / 0.15)" />
-      <path d="M11 11h10M11 15h10M11 19h6" stroke="hsl(37 90% 51%)" strokeWidth="2" strokeLinecap="round" />
-      <path d="M22 22l3 3" stroke="hsl(37 90% 51%)" strokeWidth="2" strokeLinecap="round" />
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      {/* Calendar with warning — BIR deadline stress */}
+      <rect x="5" y="7" width="26" height="24" rx="4" fill="hsl(37 90% 51% / 0.15)" />
+      <path d="M5 15h26" stroke="hsl(37 90% 51%)" strokeWidth="2" />
+      <path d="M12 4v6M24 4v6" stroke="hsl(37 90% 51%)" strokeWidth="2" strokeLinecap="round" />
+      <path d="M18 19v5M18 27v0.5" stroke="hsl(37 90% 51%)" strokeWidth="2.5" strokeLinecap="round" />
     </svg>
   )
 }
 
 function IconCashFlow() {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <circle cx="16" cy="16" r="12" fill="hsl(37 90% 51% / 0.15)" />
-      <path d="M16 8v16M12 12l4-4 4 4M20 20l-4 4-4-4" stroke="hsl(37 90% 51%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      {/* Peso sign with question — "kumikita ka ba?" */}
+      <circle cx="18" cy="18" r="14" fill="hsl(37 90% 51% / 0.15)" />
+      <text x="12" y="24" fill="hsl(37 90% 51%)" fontSize="18" fontWeight="bold" fontFamily="sans-serif">₱</text>
+      <path d="M26 10l-2 2" stroke="hsl(37 90% 51%)" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="27" cy="8" r="1.5" fill="hsl(37 90% 51%)" />
     </svg>
   )
 }
 
 function IconReceipt() {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path d="M8 4h16a2 2 0 012 2v20l-3-2-3 2-3-2-3 2-3-2-3 2V6a2 2 0 012-2z" fill="hsl(37 90% 51% / 0.15)" />
-      <path d="M12 10h8M12 14h8M12 18h4" stroke="hsl(37 90% 51%)" strokeWidth="2" strokeLinecap="round" />
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      {/* Camera/scan — receipt scanning */}
+      <rect x="4" y="9" width="28" height="20" rx="4" fill="hsl(37 90% 51% / 0.15)" />
+      <circle cx="18" cy="19" r="6" stroke="hsl(37 90% 51%)" strokeWidth="2" />
+      <circle cx="18" cy="19" r="2.5" fill="hsl(37 90% 51%)" />
+      <rect x="12" y="6" width="12" height="5" rx="2" fill="hsl(37 90% 51% / 0.25)" />
     </svg>
   )
 }
@@ -96,21 +105,27 @@ function IconCheckmark() {
 const painPoints = [
   {
     icon: IconBIR,
+    image: '/illustrations/marketing/bir-stress.webp',
+    imageAlt: 'Tita Rosa stressed with BIR forms and paperwork piling up',
     title: 'Nakakatakot ang BIR?',
     description:
       'Hindi ka nagiisa. Maraming MSME owners ang stressed sa deadlines, penalties, at forms. Si Kai, alam ang BIR calendar mo — para hindi ka ma-late.',
   },
   {
-    icon: IconCashFlow,
-    title: 'Hindi mo alam kung kumikita ka?',
-    description:
-      'Busy ka sa negosyo pero di mo alam kung tumutubo ba talaga. Kai tracks your cash flow daily — para laging clear ang picture.',
-  },
-  {
     icon: IconReceipt,
+    image: '/illustrations/marketing/receipt-scanning.webp',
+    imageAlt: 'Hands scanning a receipt with phone while laptop shows organized expense dashboard',
     title: 'Pagod na sa manual tracking?',
     description:
       'Excel, notebook, GCash screenshots — nakakalat lahat. Snap mo lang ang receipt, tracked na. All in one place.',
+  },
+  {
+    icon: IconCashFlow,
+    image: '/illustrations/hero/hero-pain.webp',
+    imageAlt: 'Stressed business owner surrounded by receipts, not knowing if profitable',
+    title: 'Hindi mo alam kung kumikita ka?',
+    description:
+      'Busy ka sa negosyo pero di mo alam kung tumutubo ba talaga. Kai tracks your cash flow daily — para laging clear ang picture.',
   },
 ] as const
 
@@ -118,18 +133,18 @@ const painPoints = [
 const steps = [
   {
     step: '1',
-    title: 'Kilala Kita',
+    title: 'Kikilalanin Kita',
     description: 'Sabihin mo lang ang tungkol sa negosyo mo — type, income range, at biggest pain point. 2 minutes lang.',
   },
   {
     step: '2',
-    title: 'Kai Speaks First',
-    description: 'Every morning, morning briefing ka ni Kai — deadlines, reminders, at insights na relevant sa negosyo mo.',
+    title: 'Umagang Kai Ganda!',
+    description: 'Every morning, briefing mula kay Kai — deadlines, reminders, at insights na relevant sa negosyo mo.',
   },
   {
     step: '3',
     title: 'Track Everything',
-    description: 'Receipts, expenses, BIR deadlines — lahat nasa iisang lugar. Snap, type, or voice — bahala ka kung paano.',
+    description: 'Receipts, expenses, BIR deadlines — lahat nasa iisang lugar. Snap, type, or voice — tutulungan ka ni Kai.',
   },
 ] as const
 
@@ -139,14 +154,14 @@ const pillars = [
     icon: IconFinance,
     title: 'Financial Tracking',
     tagline: 'Saan Napunta ang Pera?',
-    description: 'Cash flow visibility, expense categorization, at receipt scanning — ₱0.16 per scan lang.',
+    description: 'Cash flow visibility, expense categorization, at receipt scanning — lahat kasama sa Pro.',
     accent: 'from-primary-container/10 to-transparent',
   },
   {
     icon: IconTax,
     title: 'BIR Compliance',
     tagline: 'Hindi Na Nakakatakot ang BIR',
-    description: 'Deadline calendar, filing guides, quarterly tax estimates, at 7/3/1-day reminders.',
+    description: 'Deadline calendar, filing guides, quarterly tax estimates, at mas madalas na reminders.',
     accent: 'from-tertiary/10 to-transparent',
   },
   {
@@ -185,7 +200,7 @@ const tiers = [
     name: 'Pro',
     price: 39900,
     period: '/month',
-    features: ['Lahat ng Free features', '50 receipt scans/month', 'Unlimited Kai queries', 'Cash flow insights', 'Tax estimate reports'],
+    features: ['Lahat ng Free features', '50 receipt scans/month', 'Cash flow insights', 'Tax estimate reports', 'Priority Kai responses'],
     highlighted: true,
   },
   {
@@ -218,8 +233,8 @@ const communityQuotes = [
 
 // ─── Bold Stats ─────────────────────────────────────────────────────
 const boldStats = [
-  { number: '74%', label: 'don\'t know if profitable' },
-  { number: '₱399', label: 'vs ₱11,800/mo sa bookkeeper' },
+  { number: '74%', label: 'hindi alam kung kumikita' },
+  { number: '₱399', label: 'vs ~₱10,000+/mo sa bookkeeper' },
   { number: '99.5%', label: 'ng businesses, MSME' },
 ] as const
 
@@ -297,9 +312,19 @@ export default function LandingPage() {
       {/* ─── Floating Nav ─────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav shadow-ambient">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3">
-          <span className="text-xl font-extrabold tracking-tight text-on-surface">
-            AKB<span className="text-gradient-honey">ai</span>
-          </span>
+          <div className="flex items-center gap-2">
+            <Image
+              src="/apple-touch-icon.png"
+              alt="AKBai logo"
+              width={44}
+              height={44}
+              className="h-10 w-10 rounded-xl"
+              priority
+            />
+            <span className="text-xl font-extrabold tracking-tight text-on-surface">
+              AKB<span className="text-gradient-honey">ai</span>
+            </span>
+          </div>
           <button
             type="button"
             onClick={scrollToWaitlist}
@@ -340,30 +365,52 @@ export default function LandingPage() {
         <div className="pointer-events-none absolute left-12 top-48 h-2 w-2 rounded-full bg-tertiary/20 landing-pulse" aria-hidden="true" />
         <div className="pointer-events-none absolute right-24 bottom-32 h-2.5 w-2.5 rounded-full bg-primary-container/20 landing-pulse" aria-hidden="true" />
 
-        <div className="relative mx-auto max-w-3xl text-center">
-          {/* Section label */}
-          <p className="landing-section-label mb-6">
-            Your AI Business Partner
-          </p>
+        {/* Hero: side-by-side on desktop, stacked on mobile */}
+        <div className="relative mx-auto max-w-7xl">
+          <div className="flex flex-col items-center gap-10 md:flex-row md:gap-8 lg:gap-12">
+            {/* Left: Text + CTA */}
+            <div className="flex-shrink-0 md:w-[35%] text-center md:text-left">
+              <p className="landing-section-label mb-6">
+                Your AI Business Partner
+              </p>
 
-          <h1
-            className="text-4xl font-extrabold leading-[1.1] text-on-surface sm:text-5xl md:text-6xl lg:text-7xl"
-            style={{ letterSpacing: '-0.02em' }}
-          >
-            Katuwang ng{' '}
-            <span className="text-gradient-honey">
-              Negosyo Mo
-            </span>
-          </h1>
+              <h1
+                className="text-4xl font-extrabold leading-[1.1] text-on-surface sm:text-5xl md:text-5xl lg:text-6xl"
+                style={{ letterSpacing: '-0.02em' }}
+              >
+                Katuwang mo sa{' '}
+                <span className="text-gradient-honey">
+                  Negosyo
+                </span>
+              </h1>
 
-          <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-on-surface-variant sm:mt-8 sm:text-lg md:text-xl">
-            AI-powered na kaakbay mo sa tax, expenses, at daily operations
-            &mdash; para sa Filipino MSMEs.
-          </p>
+              <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-on-surface-variant sm:mt-8 sm:text-lg md:mx-0 md:text-xl">
+                AI-powered na kaakbay mo sa tax, expenses, at daily operations
+                &mdash; para sa Filipino MSMEs.
+              </p>
 
-          {/* Dual CTAs */}
-          <div className="mt-10 flex flex-col items-center gap-4 sm:mt-12">
-            <WaitlistForm section="hero" />
+              <div className="mt-10 flex flex-col items-center gap-4 sm:mt-12 md:items-start">
+                <WaitlistForm section="hero" />
+              </div>
+            </div>
+
+            {/* Right: Hero Illustration — takes 65% of the section */}
+            <div className="flex-1 w-full">
+              <div className="overflow-hidden rounded-3xl shadow-ambient-lg">
+                <Image
+                  src="/illustrations/hero/hero-organize.webp"
+                  alt="MSME owner using AKBai on tablet with Kai mascot helping organize finances"
+                  width={1200}
+                  height={675}
+                  className="w-full h-auto"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Centered "Alamin Kung Paano" */}
+          <div className="mt-10 flex justify-center sm:mt-12">
             <button
               type="button"
               onClick={scrollToContent}
@@ -377,13 +424,13 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Floating Social Proof Badges */}
-        <div className="relative mx-auto mt-16 max-w-4xl sm:mt-20">
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+        {/* Social Proof Badges — single row */}
+        <div className="relative mx-auto mt-12 max-w-5xl sm:mt-16">
+          <div className="flex justify-center gap-4 sm:gap-6">
             {badges.map((badge) => (
               <div
                 key={badge.text}
-                className="landing-badge landing-fade-in flex items-center gap-3 rounded-2xl px-4 py-3 shadow-ambient sm:px-5 sm:py-3.5"
+                className="landing-badge landing-fade-in flex items-center gap-3 whitespace-nowrap rounded-2xl px-5 py-3.5 shadow-ambient sm:px-7 sm:py-4"
               >
                 <span
                   className="text-base font-extrabold text-on-surface sm:text-lg"
@@ -402,11 +449,11 @@ export default function LandingPage() {
 
       {/* ─── Section 2: Pain Points — "BAKIT AKBAI?" ──────────── */}
       <section id="bakit-akbai" className="bg-surface-container-low px-5 py-20 sm:py-28 md:py-32">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <div className="landing-reveal text-center">
-            <p className="landing-section-label mb-4">BAKIT AKBAI?</p>
+            <p className="text-lg font-extrabold tracking-widest text-primary-container sm:text-xl md:text-2xl">BAKIT AKBAI?</p>
             <h2
-              className="text-2xl font-extrabold tracking-tight text-on-surface sm:text-3xl md:text-4xl"
+              className="mt-4 text-3xl font-extrabold tracking-tight text-on-surface sm:text-4xl md:text-5xl"
               style={{ letterSpacing: '-0.02em' }}
             >
               Alam namin ang struggle
@@ -416,21 +463,32 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="landing-reveal-stagger mt-12 grid gap-5 sm:mt-16 sm:grid-cols-3 sm:gap-6 md:gap-8">
+          <div className="landing-reveal-stagger mt-14 grid gap-8 sm:mt-20 sm:grid-cols-3 sm:gap-10">
             {painPoints.map((point) => (
               <div
                 key={point.title}
-                className="landing-reveal group rounded-2xl bg-surface-container-lowest p-7 shadow-ambient transition-all duration-300 hover:shadow-ambient-lg hover:-translate-y-1 sm:p-8"
+                className="landing-reveal group overflow-hidden rounded-3xl bg-surface-container-lowest shadow-ambient transition-all duration-300 hover:shadow-ambient-lg hover:-translate-y-1"
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-low transition-colors group-hover:bg-primary-container/10">
-                  <point.icon />
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                  <Image
+                    src={point.image}
+                    alt={point.imageAlt}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, 33vw"
+                  />
                 </div>
-                <h3 className="mt-5 text-lg font-bold text-on-surface sm:text-xl">
-                  {point.title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-on-surface-variant sm:text-base">
-                  {point.description}
-                </p>
+                <div className="p-8 text-center sm:p-10">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low transition-colors group-hover:bg-primary-container/10">
+                    <point.icon />
+                  </div>
+                  <h3 className="mt-5 text-xl font-bold text-on-surface sm:text-2xl">
+                    {point.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-on-surface-variant sm:text-base md:text-lg">
+                    {point.description}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -475,6 +533,40 @@ export default function LandingPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Section 3.5: Meet Kai ─────────────────────────────── */}
+      <section className="px-5 py-20 sm:py-28 md:py-32">
+        <div className="mx-auto max-w-5xl">
+          <div className="landing-reveal flex flex-col items-center gap-10 md:flex-row md:gap-16">
+            {/* Kai mascot image — half the section */}
+            <div className="w-64 flex-shrink-0 sm:w-80 md:flex-1 md:max-w-md">
+              <Image
+                src="/illustrations/empty-states/no-chat.webp"
+                alt="Kai — AKBai's friendly AI mascot with a warm smile and sunburst glow"
+                width={600}
+                height={450}
+                className="w-full h-auto"
+              />
+            </div>
+            {/* Kai intro text */}
+            <div className="flex-1 text-center md:text-left">
+              <p className="landing-section-label mb-4">KILALANIN SI KAI</p>
+              <h2
+                className="text-2xl font-extrabold tracking-tight text-on-surface sm:text-3xl md:text-4xl"
+                style={{ letterSpacing: '-0.02em' }}
+              >
+                Si Kai ang{' '}
+                <span className="text-gradient-honey">AI partner</span> mo
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-on-surface-variant sm:text-base md:text-lg">
+                AKBai is your AI-powered business platform &mdash; at si Kai ang persona ng AI assistant mo.
+                Hindi siya chatbot na naghihintay ng tanong. Si Kai, siya ang unang babati sa&rsquo;yo tuwing umaga,
+                i-papaalala sa&rsquo;yo ang deadlines, at mag-track ng finances mo. Parang business partner na laging naka-abang.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -534,20 +626,28 @@ export default function LandingPage() {
               Isang partner, limang pillar
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-on-surface-variant sm:text-base md:text-lg">
-              Hindi lang isang tool — integrated AI partner na covers lahat ng kailangan ng negosyo mo.
+              Hindi lang isang tool — ang AKBai ay AI partner mo na alam ang lahat ng kailangan ng negosyo mo.
             </p>
           </div>
 
-          {/* Mobile: horizontal scroll. Desktop: grid */}
-          <div className="mt-12 sm:mt-16">
-            {/* Mobile scroll container */}
-            <div className="landing-scroll-snap -mx-5 flex gap-4 overflow-x-auto px-5 pb-4 sm:hidden">
+          {/* Mobile: horizontal scroll */}
+          <div className="mt-12 sm:hidden">
+            <div className="mx-auto mb-8 max-w-[360px]">
+              <Image
+                src="/illustrations/marketing/multi-feature.webp"
+                alt="Maya surrounded by floating feature cards with Kai mascot — calendar, notifications, receipt scanning, chat, and analytics"
+                width={600}
+                height={750}
+                className="w-full h-auto"
+              />
+            </div>
+            <div className="landing-scroll-snap -mx-5 flex gap-4 overflow-x-auto px-5 pb-4">
               {pillars.map((pillar) => (
                 <div
                   key={pillar.title}
-                  className="landing-scroll-snap-item w-[280px] rounded-2xl bg-surface-container-lowest p-6 shadow-ambient"
+                  className="landing-scroll-snap-item w-[280px] rounded-2xl bg-surface-container-lowest p-6 text-center shadow-ambient"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-container-low">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-surface-container-low">
                     <pillar.icon />
                   </div>
                   <h3 className="mt-4 text-base font-bold text-on-surface">
@@ -562,28 +662,87 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
+          </div>
 
-            {/* Desktop grid */}
-            <div className="landing-reveal-stagger hidden sm:grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-              {pillars.map((pillar) => (
-                <div
-                  key={pillar.title}
-                  className="landing-reveal group rounded-2xl bg-surface-container-lowest p-7 shadow-ambient transition-all duration-300 hover:shadow-ambient-lg hover:-translate-y-1"
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-container-low transition-colors group-hover:bg-primary-container/10">
-                    <pillar.icon />
+          {/* Desktop: image center, cards surrounding */}
+          <div className="landing-reveal-stagger mt-16 hidden sm:block">
+            <div className="grid grid-cols-[1fr_1.5fr_1fr] items-center gap-8 md:gap-10">
+              {/* Left column: Financial Tracking + BIR Compliance */}
+              <div className="flex flex-col gap-8 md:gap-10">
+                {[pillars[0], pillars[1]].map((pillar) => (
+                  <div
+                    key={pillar.title}
+                    className="landing-reveal group rounded-2xl bg-surface-container-lowest p-7 text-center shadow-ambient transition-all duration-300 hover:shadow-ambient-lg hover:-translate-y-1 md:p-8"
+                  >
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-surface-container-low transition-colors group-hover:bg-primary-container/10">
+                      <pillar.icon />
+                    </div>
+                    <h3 className="mt-4 text-base font-bold text-on-surface lg:text-lg">
+                      {pillar.title}
+                    </h3>
+                    <p className="mt-1 text-sm font-semibold text-gradient-honey">
+                      {pillar.tagline}
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
+                      {pillar.description}
+                    </p>
                   </div>
-                  <h3 className="mt-4 text-base font-bold text-on-surface sm:text-lg">
-                    {pillar.title}
-                  </h3>
-                  <p className="mt-1 text-sm font-semibold text-gradient-honey">
-                    {pillar.tagline}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
-                    {pillar.description}
-                  </p>
+                ))}
+              </div>
+
+              {/* Center: Multi-feature image — enlarged */}
+              <div className="flex items-center justify-center">
+                <Image
+                  src="/illustrations/marketing/multi-feature.webp"
+                  alt="Maya surrounded by floating feature cards with Kai mascot — calendar, notifications, receipt scanning, chat, and analytics"
+                  width={800}
+                  height={1000}
+                  className="w-full h-auto"
+                />
+              </div>
+
+              {/* Right column: Customer Comms + Daily Ops */}
+              <div className="flex flex-col gap-8 md:gap-10">
+                {[pillars[2], pillars[3]].map((pillar) => (
+                  <div
+                    key={pillar.title}
+                    className="landing-reveal group rounded-2xl bg-surface-container-lowest p-7 text-center shadow-ambient transition-all duration-300 hover:shadow-ambient-lg hover:-translate-y-1 md:p-8"
+                  >
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-surface-container-low transition-colors group-hover:bg-primary-container/10">
+                      <pillar.icon />
+                    </div>
+                    <h3 className="mt-4 text-base font-bold text-on-surface lg:text-lg">
+                      {pillar.title}
+                    </h3>
+                    <p className="mt-1 text-sm font-semibold text-gradient-honey">
+                      {pillar.tagline}
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
+                      {pillar.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom center: Task Management */}
+            <div className="mt-8 flex justify-center md:mt-10">
+              <div
+                className="landing-reveal group w-full max-w-md rounded-2xl bg-surface-container-lowest p-7 text-center shadow-ambient transition-all duration-300 hover:shadow-ambient-lg hover:-translate-y-1 md:p-8"
+              >
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-surface-container-low transition-colors group-hover:bg-primary-container/10">
+                  <IconTasks />
                 </div>
-              ))}
+                <h3 className="mt-4 text-base font-bold text-on-surface lg:text-lg">
+                  {pillars[4].title}
+                </h3>
+                <p className="mt-1 text-sm font-semibold text-gradient-honey">
+                  {pillars[4].tagline}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
+                  {pillars[4].description}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -613,7 +772,7 @@ export default function LandingPage() {
                 className="font-extrabold text-on-surface"
                 style={{ letterSpacing: '-0.02em' }}
               >
-                ₱11,800/mo
+                ~₱10,000+/mo
               </span>
             </p>
             <p className="mt-1 text-sm text-on-surface-variant">
@@ -735,6 +894,15 @@ export default function LandingPage() {
 
         <div className="relative mx-auto max-w-2xl text-center">
           <div className="landing-reveal">
+            <div className="mx-auto mb-10 max-w-sm overflow-hidden rounded-3xl shadow-ambient-lg sm:max-w-md md:max-w-lg">
+              <Image
+                src="/illustrations/marketing/sari-sari-digital.webp"
+                alt="Jose smiling at his sari-sari store, holding up his phone with AKBai dashboard and Kai mascot"
+                width={800}
+                height={800}
+                className="w-full h-auto"
+              />
+            </div>
             <h2
               className="text-3xl font-extrabold tracking-tight text-on-surface sm:text-4xl md:text-5xl"
               style={{ letterSpacing: '-0.02em' }}
@@ -774,11 +942,20 @@ export default function LandingPage() {
       {/* ─── Footer ───────────────────────────────────────────── */}
       <footer className="bg-surface-container-low px-5 py-10 sm:py-12">
         <div className="mx-auto max-w-5xl text-center">
-          <span className="text-xl font-extrabold tracking-tight text-on-surface">
-            AKB<span className="text-gradient-honey">ai</span>
-          </span>
+          <div className="flex items-center justify-center gap-2">
+            <Image
+              src="/apple-touch-icon.png"
+              alt="AKBai logo"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-lg"
+            />
+            <span className="text-xl font-extrabold tracking-tight text-on-surface">
+              AKB<span className="text-gradient-honey">ai</span>
+            </span>
+          </div>
           <p className="mt-2 text-sm text-on-surface-variant/80">
-            Katuwang ng Negosyo Mo
+            Katuwang mo sa Negosyo
           </p>
           <p className="mt-3 text-xs text-on-surface-variant/60">
             Made with <span aria-label="love" className="text-primary-container">&hearts;</span> in the Philippines

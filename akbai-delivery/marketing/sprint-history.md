@@ -1,6 +1,6 @@
 # Marketing Sprint History
 > Parallel to shared/sprint-history.md. Tracks marketing-specific sprints (M1, M2, ...).
-> Last updated: 2026-04-03
+> Last updated: 2026-04-04
 
 ---
 
@@ -13,17 +13,24 @@
 
 | # | Task | Agent | Size | Status | Notes |
 |---|------|-------|------|--------|-------|
-| 1 | Create marketing folder structure | marketing-lead | S | IN PROGRESS | STRATEGY.md, sprint-history, campaigns, SEO, analytics |
-| 2 | Create 7 marketing agent definitions | marketing-lead | M | IN PROGRESS | marketing-tools, marketing-seo, marketing-content, marketing-analytics, marketing-social, marketing-email, marketing-research |
-| 3 | Create /marketing command | marketing-lead | S | IN PROGRESS | Wires slash command to marketing skill |
-| 4 | Build public landing page | marketing-tools | M | IN PROGRESS | Waitlist form, hero section, OG tags |
-| 5 | Add OG tags + JSON-LD | marketing-seo | S | IN PROGRESS | Organization schema, og:image, Twitter cards |
-| 6 | Add sitemap + robots.txt | marketing-seo | S | IN PROGRESS | sitemap.xml, robots.txt for akbai.vercel.app |
-| 7 | Wire PostHog waitlist events | marketing-analytics | S | IN PROGRESS | waitlist_signup, waitlist_source, tool_used events |
+| 1 | Create marketing folder structure | marketing-lead | S | DONE | STRATEGY.md, sprint-history, campaigns/, content/, seo/, analytics/ |
+| 2 | Create 7 marketing agent definitions | marketing-lead | M | DONE | marketing-lead, content, social, seo, email, tools, analytics |
+| 3 | Create /marketing command | marketing-lead | S | DONE | Full routing: sprint, content-batch, tool, metrics, campaign |
+| 4 | Build public landing page | marketing-tools | M | DONE | `/landing` route, full component with hero, features, social proof, waitlist form |
+| 5 | Add OG tags + JSON-LD | marketing-seo | S | DONE | Organization schema in root layout, OG tags, Twitter cards |
+| 6 | Add sitemap + robots.txt | marketing-seo | S | DONE | `sitemap.ts` (2 routes) + `robots.txt` with app route disallows |
+| 7 | Wire PostHog waitlist events | marketing-analytics | S | DONE | `trackWaitlistSignup`, `trackLandingPageViewed`, `trackLandingPageCtaClicked` |
 
 ### Sprint Metrics
-- Tasks completed: 0/7
-- Anton hours used: 0/3
+- Tasks completed: 7/7
+- Anton hours used: ~1/3 (status audit on 2026-04-04)
+
+### Notes (added 2026-04-04)
+- All infrastructure built in initial session on 2026-04-03
+- Landing page lives at `/landing` (not a `(public)` route group yet — will scaffold for M2 tools)
+- Landing page inherits root layout metadata — good enough for now, custom metadata can be added in M2
+- Content directories have `.gitkeep` placeholders — ready for M2 content
+- Pending: verify Vercel deployment is live and accessible
 
 ---
 
