@@ -12,7 +12,7 @@ export default function AppGroupLayout({
     <>
       <SessionGuard />
       <SidebarNav />
-      <div className="md:ml-56">
+      <div className="md:ml-64">
         {children}
       </div>
       <BottomNav />

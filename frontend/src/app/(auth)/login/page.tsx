@@ -14,7 +14,7 @@ export default function LoginPage() {
       {/* Atmospheric Glow (Top Left) */}
       <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary-container/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <main className="w-full max-w-md flex flex-col space-y-12 relative z-10">
+      <main className="w-full max-w-lg md:max-w-xl flex flex-col space-y-12 relative z-10">
         {/* Header & Branding */}
         <header className="flex flex-col items-center text-center space-y-8">
           <div className="relative">

@@ -41,9 +41,9 @@ export default function DashboardCard({
   return (
     <Link
       href={href}
-      className="block bg-surface-container rounded-xl p-4 min-h-[88px] transition-colors hover:ring-1 hover:ring-primary-container/40 active:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
+      className="block bg-surface-container rounded-xl p-5 min-h-[100px] transition-colors hover:ring-1 hover:ring-primary-container/40 active:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
       data-testid={`dashboard-card-${icon}`}
-      style={{ minHeight: '88px' }} // 2x 44px touch target
+      style={{ minHeight: '100px' }} // enlarged touch target
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
@@ -57,7 +57,7 @@ export default function DashboardCard({
 
         {/* Content */}
         <div className="min-w-0 flex-1">
-          <h3 className="text-on-surface text-sm font-bold truncate">{title}</h3>
+          <h3 className="text-on-surface text-base font-bold truncate">{title}</h3>
           {hasData ? (
             <>
               <p className="text-on-surface-variant text-xs mt-0.5 line-clamp-2">
