@@ -16,6 +16,7 @@ export { CashFlow } from './features/CashFlow';
 export { BirDeadlines } from './features/BirDeadlines';
 export { ReplyDrafter } from './features/ReplyDrafter';
 export { MorningBriefing } from './features/MorningBriefing';
+export { ProfileUser } from './features/ProfileUser';
 
 // Expense Categories
 export { ExpenseFood } from './expense-categories/ExpenseFood';
@@ -58,3 +59,4 @@ export { AmberSwoosh } from './decorative/AmberSwoosh';
 export { PottedPlant } from './decorative/PottedPlant';
 export { CitylineSilhouette } from './decorative/CitylineSilhouette';
 export { SparkleAccent } from './decorative/SparkleAccent';
+export { DotPattern } from './decorative/DotPattern';

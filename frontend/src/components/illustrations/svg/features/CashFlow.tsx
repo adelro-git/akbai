@@ -11,106 +11,41 @@ export function CashFlow({ size = 64, className }: IllustrationProps) {
       viewBox="0 0 64 64"
       fill="none"
       role="img"
-      aria-label="Cash flow tracking"
+      aria-label="Saan Napunta expense tracking"
       className={className}
     >
-      {/* Income node (left) */}
-      <circle cx="14" cy="32" r="11" fill="hsl(var(--tertiary))" opacity="0.15" />
-      <circle cx="14" cy="32" r="8" fill="hsl(var(--tertiary))" opacity="0.25" />
-      <text
-        x="14"
-        y="36"
-        textAnchor="middle"
-        fontSize="11"
-        fontWeight="bold"
-        fill="hsl(var(--tertiary))"
-      >
-        ₱
-      </text>
-
-      {/* Expense node (right) */}
-      <circle cx="50" cy="32" r="11" fill="hsl(var(--primary-container))" opacity="0.2" />
-      <circle cx="50" cy="32" r="8" fill="hsl(var(--primary-container))" opacity="0.35" />
-      <text
-        x="50"
-        y="36"
-        textAnchor="middle"
-        fontSize="11"
-        fontWeight="bold"
+      {/* Wallet body */}
+      <rect
+        x="8" y="16" width="40" height="32" rx="4"
         fill="hsl(var(--primary-container))"
-      >
-        ₱
-      </text>
-
-      {/* Flow arrow: income to center (right) */}
-      <path
-        d="M25 28 Q32 24 39 28"
-        stroke="hsl(var(--tertiary))"
-        strokeWidth="2"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Arrowhead */}
-      <path
-        d="M37 26 L39 28 L37 30"
-        stroke="hsl(var(--tertiary))"
+        stroke="hsl(var(--on-surface))"
         strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
+        opacity="0.9"
       />
-
-      {/* Flow arrow: center to expense (left, return) */}
+      {/* Wallet flap */}
       <path
-        d="M39 36 Q32 40 25 36"
-        stroke="hsl(var(--primary-container))"
-        strokeWidth="2"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Arrowhead */}
-      <path
-        d="M27 34 L25 36 L27 38"
-        stroke="hsl(var(--primary-container))"
+        d="M8 24C8 20 10 16 14 16H44C46 16 48 18 48 20V24H8Z"
+        fill="hsl(var(--primary))"
+        opacity="0.8"
+        stroke="hsl(var(--on-surface))"
         strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
       />
+      {/* Wallet clasp */}
+      <rect x="36" y="30" width="12" height="10" rx="2" fill="hsl(var(--surface))" stroke="hsl(var(--on-surface))" strokeWidth="1" />
+      <circle cx="42" cy="35" r="3" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" strokeWidth="1" />
 
-      {/* Small floating coins / dots along arrows */}
-      <circle cx="30" cy="25.5" r="1.5" fill="hsl(var(--tertiary))" opacity="0.4" />
-      <circle cx="34" cy="39" r="1.5" fill="hsl(var(--primary-container))" opacity="0.5" />
-
-      {/* Top label: IN */}
+      {/* Peso coin popping out */}
+      <circle cx="52" cy="20" r="10" fill="hsl(var(--tertiary))" stroke="hsl(var(--on-surface))" strokeWidth="1.5" />
       <text
-        x="14"
-        y="16"
+        x="52" y="24"
         textAnchor="middle"
-        fontSize="7"
-        fontWeight="600"
-        fill="hsl(var(--tertiary))"
-        opacity="0.7"
-      >
-        IN
-      </text>
+        fontSize="12"
+        fontWeight="bold"
+        fill="white"
+      >₱</text>
 
-      {/* Bottom label: OUT */}
-      <text
-        x="50"
-        y="50"
-        textAnchor="middle"
-        fontSize="7"
-        fontWeight="600"
-        fill="hsl(var(--primary-container))"
-        opacity="0.7"
-      >
-        OUT
-      </text>
-
-      {/* Center balance indicator */}
-      <rect x="28" y="30" width="8" height="4" rx="2" fill="hsl(var(--surface-container))" />
-      <rect x="29.5" y="31" width="5" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.15" />
+      {/* Small sparkle accent */}
+      <path d="M56 8L57 11L60 12L57 13L56 16L55 13L52 12L55 11Z" fill="hsl(var(--primary-container))" opacity="0.8" />
     </svg>
   );
 }

@@ -10,15 +10,16 @@
 import { useRef } from 'react';
 import { Send } from 'lucide-react';
 import type { ReplyTone } from '@/lib/reply-drafter/types';
+import { KaHappy, KaWorking, KaWaving } from '@/components/illustrations/svg';
 
 // ============================================================
 // Tone Options
 // ============================================================
 
-const TONE_OPTIONS: { value: ReplyTone; label: string; emoji: string }[] = [
-  { value: 'friendly', label: 'Friendly', emoji: '😊' },
-  { value: 'professional', label: 'Professional', emoji: '💼' },
-  { value: 'casual', label: 'Casual', emoji: '✌️' },
+const TONE_OPTIONS: { value: ReplyTone; label: string; icon: React.ReactNode }[] = [
+  { value: 'friendly', label: 'Friendly', icon: <KaHappy size={32} /> },
+  { value: 'professional', label: 'Professional', icon: <KaWorking size={32} /> },
+  { value: 'casual', label: 'Casual', icon: <KaWaving size={32} /> },
 ];
 
 // ============================================================
@@ -116,7 +117,7 @@ export default function ReplyInput({
               } disabled:opacity-50`}
               data-testid={`tone-${option.value}`}
             >
-              {option.emoji} {option.label}
+              <span className="inline-flex items-center gap-1.5">{option.icon} {option.label}</span>
             </button>
           ))}
         </div>

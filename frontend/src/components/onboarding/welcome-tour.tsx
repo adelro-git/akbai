@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Receipt, Bell, MessageCircle, BarChart3 } from 'lucide-react';
+import { ResiboScanner, BirCompliance, CustomerMessages, KnowingEarnings } from '@/components/illustrations/svg';
 
 const TOUR_STORAGE_KEY = 'akbai_tour_seen';
 
@@ -20,20 +20,20 @@ interface FeatureHighlight {
 const PAIN_TO_FEATURES: Record<string, { primary: FeatureHighlight; supporting: FeatureHighlight[] }> = {
   receipt_tracking: {
     primary: {
-      icon: <Receipt size={28} className="text-primary" />,
+      icon: <ResiboScanner size={28} className="text-primary" />,
       title: 'Track ang gastos mo',
       description: 'I-record ang expenses mo araw-araw sa check-in o manual entry — para lagi mong alam saan napupunta ang pera.',
       href: '/expenses',
     },
     supporting: [
       {
-        icon: <BarChart3 size={20} className="text-primary" />,
+        icon: <KnowingEarnings size={20} className="text-primary" />,
         title: 'Saan Napunta?',
         description: 'Category breakdown ng gastos mo.',
         href: '/expenses',
       },
       {
-        icon: <MessageCircle size={20} className="text-primary" />,
+        icon: <CustomerMessages size={20} className="text-primary" />,
         title: 'Kausapin si Kai',
         description: 'Tanungin si Kai tungkol sa negosyo mo.',
         href: '/chat',
@@ -42,20 +42,20 @@ const PAIN_TO_FEATURES: Record<string, { primary: FeatureHighlight; supporting: 
   },
   bir_compliance: {
     primary: {
-      icon: <Bell size={28} className="text-primary" />,
+      icon: <BirCompliance size={28} className="text-primary" />,
       title: 'Hindi mo na makakalimutan ang BIR',
       description: 'Si Kai ang mag-re-remind sa lahat ng tax deadlines mo — para walang penalty.',
       href: '/chat',
     },
     supporting: [
       {
-        icon: <MessageCircle size={20} className="text-primary" />,
+        icon: <CustomerMessages size={20} className="text-primary" />,
         title: 'Tanungin si Kai',
         description: 'I-ask ang BIR questions mo kay Kai.',
         href: '/chat',
       },
       {
-        icon: <Receipt size={20} className="text-primary" />,
+        icon: <ResiboScanner size={20} className="text-primary" />,
         title: 'Track expenses',
         description: 'Para ready ka sa tax filing.',
         href: '/expenses',
@@ -64,20 +64,20 @@ const PAIN_TO_FEATURES: Record<string, { primary: FeatureHighlight; supporting: 
   },
   customer_messages: {
     primary: {
-      icon: <MessageCircle size={28} className="text-primary" />,
+      icon: <CustomerMessages size={28} className="text-primary" />,
       title: 'Si Kai ang katuwang mo sa messages',
       description: 'Pa-draft kay Kai ang replies sa customers mo — professional at Taglish.',
       href: '/chat',
     },
     supporting: [
       {
-        icon: <Receipt size={20} className="text-primary" />,
+        icon: <ResiboScanner size={20} className="text-primary" />,
         title: 'Track expenses',
         description: 'I-log ang gastos habang busy ka.',
         href: '/expenses',
       },
       {
-        icon: <Bell size={20} className="text-primary" />,
+        icon: <BirCompliance size={20} className="text-primary" />,
         title: 'BIR reminders',
         description: 'Auto reminders para sa deadlines.',
         href: '/chat',
@@ -86,20 +86,20 @@ const PAIN_TO_FEATURES: Record<string, { primary: FeatureHighlight; supporting: 
   },
   knowing_earnings: {
     primary: {
-      icon: <BarChart3 size={28} className="text-primary" />,
+      icon: <KnowingEarnings size={28} className="text-primary" />,
       title: 'Alamin kung kumikita ka',
       description: 'I-check-in ang sales at gastos mo araw-araw — sa expenses mo makikita ang buong picture.',
       href: '/expenses',
     },
     supporting: [
       {
-        icon: <Receipt size={20} className="text-primary" />,
+        icon: <ResiboScanner size={20} className="text-primary" />,
         title: 'Saan Napunta?',
         description: 'Detailed breakdown ng expenses.',
         href: '/expenses',
       },
       {
-        icon: <MessageCircle size={20} className="text-primary" />,
+        icon: <CustomerMessages size={20} className="text-primary" />,
         title: 'Kausapin si Kai',
         description: 'Tanungin kung magkano ang net mo.',
         href: '/chat',

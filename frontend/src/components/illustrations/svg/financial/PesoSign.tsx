@@ -15,7 +15,7 @@ export function PesoSign({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Circular background */}
-      <circle cx="20" cy="20" r="18" fill="#f59e0b" />
+      <circle cx="20" cy="20" r="18" fill="#f59e0b" stroke="#92400e" strokeWidth="1.2" />
       {/* Inner ring highlight */}
       <circle cx="20" cy="20" r="14" fill="#fbbf24" />
       {/* Peso symbol */}
@@ -31,7 +31,7 @@ export function PesoSign({ size = 40, className }: IllustrationProps) {
         ₱
       </text>
       {/* Shine accent */}
-      <ellipse cx="14" cy="13" rx="4" ry="2.5" fill="#fde68a" opacity="0.6" />
+      <ellipse cx="14" cy="13" rx="4" ry="2.5" fill="#fde68a" opacity="0.8" />
     </svg>
   );
 }

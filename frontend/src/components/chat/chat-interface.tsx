@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { markSignOutAsUserInitiated } from '@/lib/supabase/session-watcher'
 import Image from 'next/image'
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper'
 import MessageList from './message-list'
 import ChatInput from './chat-input'
 import DisclaimerBanner from './disclaimer-banner'
@@ -144,6 +145,17 @@ export default function ChatInterface({
       </header>
 
       <DisclaimerBanner />
+
+      {/* Welcome illustration — shown when only the initial Kai greeting is displayed */}
+      {messages.length === 1 && messages[0].id === 'welcome' && !loading && (
+        <div className="flex justify-center pt-4">
+          <IllustrationWrapper
+            src="empty-states/no-chat.webp"
+            alt="Kai waiting to chat"
+            category="empty-state"
+          />
+        </div>
+      )}
 
       <MessageList messages={messages} loading={loading} bottomRef={bottomRef} />
 

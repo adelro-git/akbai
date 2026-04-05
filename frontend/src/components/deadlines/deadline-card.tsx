@@ -8,7 +8,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
+import { StatusSuccess, StatusError, StatusPending } from '@/components/illustrations/svg';
 import type { DeadlineWithUrgency, DeadlineUrgency } from '@/lib/deadlines/types';
 
 // ============================================================
@@ -90,11 +90,11 @@ export default function DeadlineCard({ deadline, onMarkFiled }: DeadlineCardProp
         <div className="flex items-start gap-3 min-w-0 flex-1">
           <div className="flex-shrink-0 mt-0.5">
             {isFiled ? (
-              <CheckCircle2 className="w-5 h-5 text-primary-container" data-testid="icon-filed" />
+              <span data-testid="icon-filed"><StatusSuccess size={20} /></span>
             ) : urgency === 'overdue' ? (
-              <AlertTriangle className="w-5 h-5 text-error" data-testid="icon-overdue" />
+              <span data-testid="icon-overdue"><StatusError size={20} /></span>
             ) : (
-              <Clock className={`w-5 h-5 ${styles.icon}`} data-testid="icon-clock" />
+              <span data-testid="icon-clock"><StatusPending size={20} /></span>
             )}
           </div>
 

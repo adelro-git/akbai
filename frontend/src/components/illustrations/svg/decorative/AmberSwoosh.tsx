@@ -21,7 +21,7 @@ export function AmberSwoosh({ width = 200, height = 100, className }: AmberSwoos
         strokeWidth="20"
         strokeLinecap="round"
         fill="none"
-        opacity="0.1"
+        opacity="0.4"
       />
       {/* Front swoosh layer - slightly higher opacity */}
       <path
@@ -30,7 +30,7 @@ export function AmberSwoosh({ width = 200, height = 100, className }: AmberSwoos
         strokeWidth="12"
         strokeLinecap="round"
         fill="none"
-        opacity="0.2"
+        opacity="0.5"
       />
     </svg>
   );

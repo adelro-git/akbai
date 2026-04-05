@@ -10,7 +10,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { MessageSquare } from 'lucide-react';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import ReplyInput from '@/components/reply-drafter/reply-input';
 import ReplyResults from '@/components/reply-drafter/reply-results';
 import type { ReplyTone, ReplyOption } from '@/lib/reply-drafter/types';
@@ -108,8 +108,12 @@ export default function ReplyDrafterPage() {
           {/* Empty State — shown when no replies yet and not loading */}
           {!loading && replies.length === 0 && !error && (
             <div className="text-center py-10 md:py-20">
-              <div className="w-14 h-14 rounded-2xl bg-primary-container/15 flex items-center justify-center mx-auto mb-3">
-                <MessageSquare className="w-7 h-7 text-primary-container" />
+              <div className="flex justify-center mb-3">
+                <IllustrationWrapper
+                  src="empty-states/no-replies.webp"
+                  alt="Wala pang mga draft na reply"
+                  category="empty-state"
+                />
               </div>
               <p className="text-on-surface text-sm font-semibold mb-1">
                 Wala pang draft

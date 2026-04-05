@@ -88,7 +88,7 @@ export default function ProfileView({
     : 'Hindi pa na-set';
 
   return (
-    <div className="max-w-md mx-auto" data-testid="profile-view">
+    <div className="max-w-lg md:max-w-2xl mx-auto" data-testid="profile-view">
       {/* Header */}
       <header className="flex items-center gap-3 px-4 py-4">
         <button

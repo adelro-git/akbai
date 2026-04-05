@@ -7,7 +7,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CalendarX } from 'lucide-react';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 
 export default function DeadlineEmpty() {
   return (
@@ -15,8 +15,12 @@ export default function DeadlineEmpty() {
       className="flex flex-col items-center justify-center py-16 px-6 text-center"
       data-testid="deadline-empty"
     >
-      <div className="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center mb-4">
-        <CalendarX className="w-8 h-8 text-on-surface-variant" />
+      <div className="mb-4">
+        <IllustrationWrapper
+          src="empty-states/no-deadlines.webp"
+          alt="Wala pang BIR deadlines"
+          category="empty-state"
+        />
       </div>
 
       <h2 className="text-lg font-bold text-on-surface mb-2">

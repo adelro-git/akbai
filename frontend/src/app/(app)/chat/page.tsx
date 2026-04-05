@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth'
 import ChatInterface from '@/components/chat/chat-interface'
+import { PageBackground } from '@/components/ui/page-background'
 
 export const metadata: Metadata = {
   title: 'Kai — AKBai',
@@ -47,9 +48,11 @@ export default async function ChatPage() {
     .limit(50)
 
   return (
-    <ChatInterface
-      initialMessages={(messages || []) as ChatMessage[]}
-      userEmail={user.email || ''}
-    />
+    <PageBackground variant="chat">
+      <ChatInterface
+        initialMessages={(messages || []) as ChatMessage[]}
+        userEmail={user.email || ''}
+      />
+    </PageBackground>
   )
 }

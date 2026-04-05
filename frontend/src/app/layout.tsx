@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'AKBai — Katuwang ng Negosyo Mo',
   description:
     'AI-powered na kaakbay mo sa tax, expenses, at daily operations — para sa Filipino MSMEs. 97% cheaper than hiring a bookkeeper.',
-  manifest: '/manifest.json',
+  // manifest moved to (app) layout — landing page should not trigger PWA install
   metadataBase: new URL('https://akbai.vercel.app'),
   openGraph: {
     title: 'AKBai — Katuwang ng Negosyo Mo',
@@ -76,8 +76,6 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon-light.png" type="image/png" sizes="48x48" />
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <script
@@ -103,17 +101,6 @@ export default function RootLayout({
         <PostHogProvider>
           {children}
         </PostHogProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js');
-                });
-              }
-            `,
-          }}
-        />
       </body>
     </html>
   )

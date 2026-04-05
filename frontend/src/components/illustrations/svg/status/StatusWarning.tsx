@@ -15,7 +15,7 @@ export function StatusWarning({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Circle background */}
-      <circle cx="20" cy="20" r="18" fill="#f59e0b" />
+      <circle cx="20" cy="20" r="18" fill="#f59e0b" stroke="#92400e" strokeWidth="1" />
       {/* Exclamation mark line */}
       <rect x="18" y="11" width="4" height="13" rx="2" fill="#1c1c18" />
       {/* Exclamation mark dot */}

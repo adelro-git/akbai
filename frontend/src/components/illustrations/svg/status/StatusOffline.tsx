@@ -15,7 +15,7 @@ export function StatusOffline({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Circle background */}
-      <circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" />
+      <circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" strokeWidth="2" opacity="0.85" />
       {/* Wifi arc 1 (outer) */}
       <path
         d="M8 18C12.5 13 17 11 20 11C23 11 27.5 13 32 18"
@@ -23,7 +23,7 @@ export function StatusOffline({ size = 40, className }: IllustrationProps) {
         strokeWidth="2"
         strokeLinecap="round"
         fill="none"
-        opacity="0.4"
+        opacity="0.85"
       />
       {/* Wifi arc 2 (middle) */}
       <path
@@ -32,7 +32,7 @@ export function StatusOffline({ size = 40, className }: IllustrationProps) {
         strokeWidth="2"
         strokeLinecap="round"
         fill="none"
-        opacity="0.4"
+        opacity="0.85"
       />
       {/* Wifi arc 3 (inner) */}
       <path
@@ -41,10 +41,10 @@ export function StatusOffline({ size = 40, className }: IllustrationProps) {
         strokeWidth="2"
         strokeLinecap="round"
         fill="none"
-        opacity="0.4"
+        opacity="0.85"
       />
       {/* Wifi dot */}
-      <circle cx="20" cy="29" r="1.5" fill="hsl(var(--on-surface))" opacity="0.4" />
+      <circle cx="20" cy="29" r="1.5" fill="hsl(var(--on-surface))" opacity="0.85" />
       {/* Diagonal slash */}
       <path
         d="M10 10L30 30"

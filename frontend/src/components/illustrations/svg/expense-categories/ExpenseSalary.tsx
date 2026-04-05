@@ -22,17 +22,17 @@ export function ExpenseSalary({ size = 40, className }: IllustrationProps) {
         fill="hsl(var(--primary-container))"
       />
       {/* Person 1 - face detail */}
-      <circle cx="13" cy="12" r="3.2" fill="#f59e0b" opacity="0.5" />
+      <circle cx="13" cy="12" r="3.2" fill="#f59e0b" opacity="0.8" />
       {/* Person 2 - head (slightly behind) */}
-      <circle cx="24" cy="14" r="4" fill="hsl(var(--on-surface))" opacity="0.2" />
+      <circle cx="24" cy="14" r="4" fill="hsl(var(--on-surface))" opacity="0.7" />
       {/* Person 2 - shoulders/body */}
       <path
         d="M16 32C16 26 19 22 24 22C29 22 32 26 32 32H16Z"
         fill="hsl(var(--on-surface))"
-        opacity="0.2"
+        opacity="0.7"
       />
       {/* Person 2 - face detail */}
-      <circle cx="24" cy="14" r="2.8" fill="hsl(var(--on-surface))" opacity="0.12" />
+      <circle cx="24" cy="14" r="2.8" fill="hsl(var(--on-surface))" opacity="0.7" />
       {/* Peso coin */}
       <circle cx="34" cy="10" r="5" fill="hsl(var(--tertiary))" opacity="0.85" />
       <circle cx="34" cy="10" r="3.5" fill="hsl(var(--tertiary))" />
@@ -53,11 +53,11 @@ export function ExpenseSalary({ size = 40, className }: IllustrationProps) {
         stroke="hsl(var(--surface-container))"
         strokeWidth="0.6"
         strokeLinecap="round"
-        opacity="0.5"
+        opacity="0.8"
         fill="none"
       />
       {/* Ground line */}
-      <rect x="2" y="31" width="30" height="1" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.08" />
+      <rect x="2" y="31" width="30" height="1" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.7" />
     </svg>
   );
 }

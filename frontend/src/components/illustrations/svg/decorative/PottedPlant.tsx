@@ -24,7 +24,7 @@ export function PottedPlant({ size = 80, className }: IllustrationProps) {
       <path
         d="M35 52L37 72H52L55 52H35Z"
         fill="#a85d32"
-        opacity="0.3"
+        opacity="0.6"
       />
       {/* Soil */}
       <ellipse cx="40" cy="52" rx="15" ry="2" fill="#8b5e3c" />
@@ -44,7 +44,7 @@ export function PottedPlant({ size = 80, className }: IllustrationProps) {
         stroke="hsl(var(--tertiary))"
         strokeWidth="0.8"
         fill="none"
-        opacity="0.5"
+        opacity="0.7"
       />
       {/* Right leaf */}
       <path
@@ -57,7 +57,7 @@ export function PottedPlant({ size = 80, className }: IllustrationProps) {
         stroke="hsl(var(--tertiary))"
         strokeWidth="0.8"
         fill="none"
-        opacity="0.4"
+        opacity="0.6"
       />
       {/* Center stem vein */}
       <path
@@ -65,14 +65,14 @@ export function PottedPlant({ size = 80, className }: IllustrationProps) {
         stroke="hsl(var(--tertiary))"
         strokeWidth="0.8"
         fill="none"
-        opacity="0.4"
+        opacity="0.6"
       />
       <path
         d="M40 48L46 24"
         stroke="hsl(var(--tertiary))"
         strokeWidth="0.8"
         fill="none"
-        opacity="0.4"
+        opacity="0.6"
       />
     </svg>
   );

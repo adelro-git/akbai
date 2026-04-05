@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 
 interface StepWelcomeProps {
   onComplete: (displayName: string) => void;
@@ -31,8 +32,18 @@ export default function StepWelcome({ onComplete, loading, initialName }: StepWe
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Header illustration — full width of content area */}
+      <div className="flex justify-center w-full">
+        <IllustrationWrapper
+          src="onboarding/welcome.webp"
+          alt="Welcome to AKBai"
+          category="onboarding"
+          className="w-full max-w-full"
+        />
+      </div>
+
       {/* Kai bubble */}
-      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
+      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
         <p className="text-on-surface text-base leading-relaxed">
           Kumusta! Ako si <span className="text-primary-container font-semibold">Kai</span>, ang AI business
           partner mo. Ano ang pangalan mo?

@@ -18,6 +18,9 @@ export function ExpenseMarketing({ size = 40, className }: IllustrationProps) {
       <path
         d="M10 16L28 8V32L10 24V16Z"
         fill="hsl(var(--primary-container))"
+        stroke="hsl(var(--on-surface))"
+        strokeWidth="1.2"
+        opacity="0.7"
       />
       {/* Megaphone mouth opening */}
       <path
@@ -28,24 +31,24 @@ export function ExpenseMarketing({ size = 40, className }: IllustrationProps) {
       <path
         d="M29 10L33 7.5V32.5L29 30V10Z"
         fill="#d97706"
-        opacity="0.4"
+        opacity="0.7"
       />
       {/* Handle grip */}
-      <rect x="6" y="16" width="5" height="8" rx="1.5" fill="hsl(var(--on-surface))" opacity="0.3" />
+      <rect x="6" y="16" width="5" height="8" rx="1.5" fill="hsl(var(--on-surface))" opacity="0.8" />
       {/* Handle detail */}
-      <rect x="7" y="17.5" width="3" height="5" rx="1" fill="hsl(var(--on-surface))" opacity="0.15" />
+      <rect x="7" y="17.5" width="3" height="5" rx="1" fill="hsl(var(--on-surface))" opacity="0.7" />
       {/* Sound wave lines */}
       <path d="M35 15C37 17 37 23 35 25" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <path d="M37 12C39.5 15.5 39.5 24.5 37 28" stroke="#fbbf24" strokeWidth="1.2" strokeLinecap="round" opacity="0.6" fill="none" />
+      <path d="M37 12C39.5 15.5 39.5 24.5 37 28" stroke="#fbbf24" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" fill="none" />
       {/* Sparkle top-right */}
       <path d="M32 4L33 2L34 4L36 5L34 6L33 8L32 6L30 5Z" fill="#fbbf24" opacity="0.8" />
       {/* Sparkle small */}
-      <path d="M5 8L5.5 6.5L6 8L7.5 8.5L6 9L5.5 10.5L5 9L3.5 8.5Z" fill="hsl(var(--tertiary))" opacity="0.6" />
+      <path d="M5 8L5.5 6.5L6 8L7.5 8.5L6 9L5.5 10.5L5 9L3.5 8.5Z" fill="hsl(var(--tertiary))" opacity="0.8" />
       {/* Sparkle bottom */}
       <path d="M7 30L7.7 28.5L8.4 30L10 30.7L8.4 31.4L7.7 33L7 31.4L5.3 30.7Z" fill="#fbbf24" opacity="0.7" />
       {/* Dot accents */}
-      <circle cx="36" cy="9" r="1" fill="#fbbf24" opacity="0.5" />
-      <circle cx="3" cy="14" r="0.8" fill="hsl(var(--tertiary))" opacity="0.4" />
+      <circle cx="36" cy="9" r="1" fill="#fbbf24" opacity="0.8" />
+      <circle cx="3" cy="14" r="0.8" fill="hsl(var(--tertiary))" opacity="0.7" />
     </svg>
   );
 }

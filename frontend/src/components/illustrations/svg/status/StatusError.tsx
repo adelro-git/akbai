@@ -15,7 +15,7 @@ export function StatusError({ size = 40, className }: IllustrationProps) {
       className={className}
     >
       {/* Circle background */}
-      <circle cx="20" cy="20" r="18" fill="#F87171" />
+      <circle cx="20" cy="20" r="18" fill="#DC2626" stroke="#991B1B" strokeWidth="1" />
       {/* X mark */}
       <path
         d="M14 14L26 26"

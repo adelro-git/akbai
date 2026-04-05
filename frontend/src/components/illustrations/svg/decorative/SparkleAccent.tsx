@@ -17,6 +17,9 @@ export function SparkleAccent({ size = 24, className }: IllustrationProps) {
       <path
         d="M12 0L14 9L24 12L14 15L12 24L10 15L0 12L10 9Z"
         fill="hsl(var(--primary-container))"
+        stroke="hsl(var(--on-surface))"
+        strokeWidth="0.5"
+        opacity="0.9"
       />
     </svg>
   );

@@ -15,6 +15,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Sun, Sparkles, Lock, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import type { MorningBriefingResponse } from '@/lib/morning-briefing/types';
 
 // ============================================================
@@ -122,7 +123,16 @@ export default function MorningBriefingCard() {
           <h2 className="text-on-surface text-sm font-bold">
             Ang Umaga Mo
           </h2>
-          <Sparkles className="w-3 h-3 text-primary ml-auto" />
+          <div className="ml-auto flex items-center gap-1">
+            <IllustrationWrapper
+              src="features/feature-morning-briefing-v1.webp"
+              alt="Ang Umaga Mo morning briefing"
+              category="empty-state"
+              width={80}
+              height={60}
+            />
+            <Sparkles className="w-3 h-3 text-primary" />
+          </div>
         </div>
 
         {/* Briefing Content */}

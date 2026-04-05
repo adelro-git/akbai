@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import OnboardingWizard from '@/components/onboarding/onboarding-wizard';
+import { PageBackground } from '@/components/ui/page-background';
 import type { OnboardingState } from '@/lib/kilala-kita';
 
 export const metadata: Metadata = {
@@ -52,18 +53,20 @@ export default async function OnboardingPage() {
   };
 
   return (
+    <PageBackground variant="onboarding">
     <main className="min-h-dvh bg-background flex items-start justify-center pt-safe">
-      <div className="w-full max-w-md px-5 py-8">
+      <div className="w-full max-w-lg md:max-w-2xl px-5 py-8">
         {/* Logo */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-on-surface">
+          <h1 className="text-3xl md:text-4xl font-bold text-on-surface">
             AKB<span className="text-primary-container">ai</span>
           </h1>
-          <p className="text-outline text-sm mt-1">Kilala Kita</p>
+          <p className="text-outline text-base md:text-lg mt-1">Maaari ka bang Makilala?</p>
         </div>
 
         <OnboardingWizard initialState={state} />
       </div>
     </main>
+    </PageBackground>
   );
 }
