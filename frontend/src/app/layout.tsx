@@ -23,12 +23,21 @@ export const metadata: Metadata = {
     siteName: 'AKBai',
     locale: 'fil_PH',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'AKBai — Katuwang ng Negosyo Mo',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'AKBai — Katuwang ng Negosyo Mo',
     description:
       'AI-powered na kaakbay mo sa tax, expenses, at daily operations — para sa Filipino MSMEs.',
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -65,11 +74,12 @@ export default function RootLayout({
   return (
     <html lang="tl" className={plusJakartaSans.variable} suppressHydrationWarning>
       <head>
-        <link rel="icon" type="image/png" href="/icons/icon-192.png" />
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
