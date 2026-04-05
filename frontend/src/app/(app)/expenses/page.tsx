@@ -9,7 +9,9 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Wallet } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
+import { PageBackground } from '@/components/ui/page-background';
 import { getManilaToday } from '@/lib/timezone';
 import { trackExpenseDeleted } from '@/lib/posthog/events';
 import MonthPicker from '@/components/expenses/month-picker';
@@ -103,6 +105,7 @@ export default function ExpensesPage() {
   const hasData = data && data.transactions.length > 0;
 
   return (
+    <PageBackground variant="expenses">
     <div className="min-h-dvh bg-background pb-20 md:pb-6" data-testid="expenses-page">
       {/* ── Header ── */}
       <header className="px-4 pt-5 pb-3 md:px-8 md:pt-8 md:pb-5 md:flex md:items-center md:justify-between">
@@ -134,8 +137,12 @@ export default function ExpensesPage() {
       {/* ── Empty state ── */}
       {data && !loading && !error && !hasData && (
         <div className="px-4 py-10 text-center md:py-20">
-          <div className="w-14 h-14 rounded-2xl bg-primary-container/15 flex items-center justify-center mx-auto mb-3">
-            <Wallet className="w-7 h-7 text-primary-container" />
+          <div className="flex justify-center mb-3">
+            <IllustrationWrapper
+              src="empty-states/no-expenses.webp"
+              alt="No expenses tracked yet"
+              category="empty-state"
+            />
           </div>
           <p className="text-on-surface text-sm font-semibold mb-1">
             Wala pang transactions
@@ -220,5 +227,6 @@ export default function ExpensesPage() {
         onSuccess={handleAddSuccess}
       />
     </div>
+    </PageBackground>
   );
 }

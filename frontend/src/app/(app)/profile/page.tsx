@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import ProfileView from '@/components/profile/profile-view';
+import { PageBackground } from '@/components/ui/page-background';
 
 export const metadata: Metadata = {
   title: 'Profile — AKBai',
@@ -54,6 +55,7 @@ export default async function ProfilePage() {
   const profileVersion = 1;
 
   return (
+    <PageBackground variant="profile">
     <div
       className="min-h-dvh bg-background pb-20"
       data-testid="profile-page"
@@ -69,5 +71,6 @@ export default async function ProfilePage() {
         profileVersion={profileVersion}
       />
     </div>
+    </PageBackground>
   );
 }

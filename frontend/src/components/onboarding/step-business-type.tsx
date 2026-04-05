@@ -2,6 +2,8 @@
 
 import { useState, useRef } from 'react';
 import type { BusinessType } from '@/lib/kilala-kita/schemas';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
+import { FoodBaking, OnlineSelling, Freelance, RetailSariSari, SparkleAccent } from '@/components/illustrations/svg';
 
 interface StepBusinessTypeProps {
   onComplete: (businessType: BusinessType, otherText?: string) => void;
@@ -10,36 +12,36 @@ interface StepBusinessTypeProps {
   initialValue?: string | null;
 }
 
-const BUSINESS_TYPES: { value: BusinessType; label: string; description: string; icon: string }[] = [
+const BUSINESS_TYPES: { value: BusinessType; label: string; description: string; icon: React.ReactNode }[] = [
   {
     value: 'food_baking',
     label: 'Food / Baking',
     description: 'Lutong bahay, pastries, kakanin',
-    icon: '🍰',
+    icon: <FoodBaking size={28} />,
   },
   {
     value: 'online_selling',
     label: 'Online Selling',
     description: 'Shopee, Lazada, Facebook, TikTok',
-    icon: '📦',
+    icon: <OnlineSelling size={28} />,
   },
   {
     value: 'freelance_creative',
     label: 'Freelance / Creative',
     description: 'Design, writing, dev, VA',
-    icon: '💻',
+    icon: <Freelance size={28} />,
   },
   {
     value: 'sari_sari_retail',
     label: 'Sari-Sari / Retail',
     description: 'Tindahan, retail, reselling',
-    icon: '🏪',
+    icon: <RetailSariSari size={28} />,
   },
   {
     value: 'other',
     label: 'Iba Pa',
     description: 'Salon, services, farming, etc.',
-    icon: '✨',
+    icon: <SparkleAccent size={28} />,
   },
 ];
 
@@ -91,6 +93,17 @@ export default function StepBusinessType({
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Step header illustration */}
+      <div className="flex justify-center">
+        <IllustrationWrapper
+          src="onboarding/business-type.webp"
+          alt="Choose your business type"
+          category="onboarding"
+          width={180}
+          height={180}
+        />
+      </div>
+
       {/* Kai bubble */}
       <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
         <p className="text-on-surface text-base leading-relaxed">
@@ -112,7 +125,7 @@ export default function StepBusinessType({
                 : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
             }`}
           >
-            <span className="text-2xl">{type.icon}</span>
+            <span className="flex items-center justify-center w-8 h-8">{type.icon}</span>
             <div>
               <p className="text-on-surface font-semibold text-sm">{type.label}</p>
               <p className="text-on-surface-variant text-xs">{type.description}</p>

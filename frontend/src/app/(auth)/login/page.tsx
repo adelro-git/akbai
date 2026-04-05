@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import LoginForm from '@/components/auth/login-form'
 import Image from 'next/image'
+import { PageBackground } from '@/components/ui/page-background'
 
 export const metadata: Metadata = {
   title: 'Login — AKBai',
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
+    <PageBackground variant="login">
     <div className="min-h-dvh bg-background flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
       {/* Atmospheric Glow (Top Left) */}
       <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary-container/5 rounded-full blur-[120px] pointer-events-none" />
@@ -80,5 +82,6 @@ export default function LoginPage() {
         AKBai provides informational guidance only — hindi ito professional financial o tax advice.
       </p>
     </div>
+    </PageBackground>
   )
 }

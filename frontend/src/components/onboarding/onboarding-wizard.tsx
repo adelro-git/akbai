@@ -8,6 +8,7 @@ import StepIncomeRange from './step-income-range';
 import StepPainPoint from './step-pain-point';
 import StepBirConsent from './step-bir-consent';
 import StepBirTaxType from './step-bir-tax-type';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import { trackOnboardingStarted, trackOnboardingCompleted } from '@/lib/posthog/events';
 import type { OnboardingState, BusinessType, IncomeRange, PainPoint } from '@/lib/kilala-kita';
 import type { BirTaxType } from '@/lib/deadlines/types';
@@ -183,6 +184,15 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
 
     return (
       <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+        {/* Completion illustration */}
+        <div className="flex justify-center">
+          <IllustrationWrapper
+            src="onboarding/ready.webp"
+            alt="You're all set!"
+            category="onboarding"
+          />
+        </div>
+
         <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
           <p className="text-on-surface text-base leading-relaxed">{firstMessage}</p>
         </div>

@@ -9,6 +9,7 @@ import { Metadata } from 'next';
 import { ChevronLeft, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import DeadlineList from '@/components/deadlines/deadline-list';
+import { PageBackground } from '@/components/ui/page-background';
 
 export const metadata: Metadata = {
   title: 'BIR Deadlines — AKBai',
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 
 export default function DeadlinesPage() {
   return (
+    <PageBackground variant="deadlines">
     <div
       className="min-h-dvh bg-background pb-20"
       data-testid="deadlines-page"
@@ -49,5 +51,6 @@ export default function DeadlinesPage() {
       {/* ─── Deadline List (client component) ─── */}
       <DeadlineList />
     </div>
+    </PageBackground>
   );
 }

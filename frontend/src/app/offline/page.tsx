@@ -6,6 +6,8 @@
  */
 
 import type { Metadata } from 'next';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
+import { PageBackground } from '@/components/ui/page-background';
 import RetryButton from './retry-button';
 
 export const metadata: Metadata = {
@@ -14,6 +16,7 @@ export const metadata: Metadata = {
 
 export default function OfflinePage() {
   return (
+    <PageBackground variant="offline">
     <main
       className="flex min-h-dvh flex-col items-center justify-center px-6 text-center bg-background"
     >
@@ -22,9 +25,15 @@ export default function OfflinePage() {
         AKBai
       </div>
 
-      {/* --- Offline Icon --- */}
-      <div className="mb-4 text-6xl" aria-hidden="true">
-        📡
+      {/* --- Offline Illustration --- */}
+      <div className="mb-4">
+        <IllustrationWrapper
+          src="status/offline.webp"
+          alt="No internet connection"
+          category="status"
+          width={160}
+          height={120}
+        />
       </div>
 
       {/* --- Taglish Offline Message --- */}
@@ -40,5 +49,6 @@ export default function OfflinePage() {
       {/* --- Retry Button (client component) --- */}
       <RetryButton />
     </main>
+    </PageBackground>
   );
 }

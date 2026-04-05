@@ -1,6 +1,7 @@
 'use client';
 
 import { Sparkles } from 'lucide-react';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 
 interface EmptyStateCardProps {
   message: string;
@@ -13,8 +14,14 @@ export default function EmptyStateCard({ message, hint }: EmptyStateCardProps) {
       className="bg-surface-container rounded-xl p-6 text-center"
       data-testid="empty-state-card"
     >
-      <div className="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center mx-auto mb-3">
-        <Sparkles className="w-6 h-6 text-primary-container/60" />
+      <div className="flex justify-center mb-3">
+        <IllustrationWrapper
+          src="empty-states/first-scan.webp"
+          alt="Get started"
+          category="empty-state"
+          width={120}
+          height={90}
+        />
       </div>
       <p className="text-on-surface-variant text-sm">{message}</p>
       {hint && (

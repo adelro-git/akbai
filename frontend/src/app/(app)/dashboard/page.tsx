@@ -10,6 +10,7 @@ import DashboardCard from '@/components/dashboard/dashboard-card';
 import CheckInSection from '@/components/dashboard/check-in-section';
 import WelcomeTour from '@/components/onboarding/welcome-tour';
 import MorningBriefingCard from '@/components/dashboard/morning-briefing-card';
+import { PageBackground } from '@/components/ui/page-background';
 
 export const metadata: Metadata = {
   title: 'Dashboard — AKBai',
@@ -249,6 +250,7 @@ export default async function DashboardPage() {
   const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount });
 
   return (
+    <PageBackground variant="dashboard">
     <div
       className="min-h-dvh bg-background pb-20 md:pb-6"
       data-testid="dashboard-page"
@@ -288,5 +290,6 @@ export default async function DashboardPage() {
         </div>
       </section>
     </div>
+    </PageBackground>
   );
 }

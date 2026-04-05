@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 
 interface StepWelcomeProps {
   onComplete: (displayName: string) => void;
@@ -31,6 +32,17 @@ export default function StepWelcome({ onComplete, loading, initialName }: StepWe
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Header illustration */}
+      <div className="flex justify-center">
+        <IllustrationWrapper
+          src="onboarding/welcome.webp"
+          alt="Welcome to AKBai"
+          category="onboarding"
+          width={200}
+          height={200}
+        />
+      </div>
+
       {/* Kai bubble */}
       <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
         <p className="text-on-surface text-base leading-relaxed">

@@ -58,3 +58,4 @@ export { AmberSwoosh } from './decorative/AmberSwoosh';
 export { PottedPlant } from './decorative/PottedPlant';
 export { CitylineSilhouette } from './decorative/CitylineSilhouette';
 export { SparkleAccent } from './decorative/SparkleAccent';
+export { DotPattern } from './decorative/DotPattern';
