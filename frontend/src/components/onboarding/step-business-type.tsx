@@ -93,19 +93,18 @@ export default function StepBusinessType({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Step header illustration */}
-      <div className="flex justify-center">
+      {/* Step header illustration — full width */}
+      <div className="flex justify-center w-full">
         <IllustrationWrapper
           src="onboarding/business-type.webp"
           alt="Choose your business type"
           category="onboarding"
-          width={260}
-          height={260}
+          className="w-full max-w-full"
         />
       </div>
 
       {/* Kai bubble */}
-      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
+      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
         <p className="text-on-surface text-base leading-relaxed">
           Nice to meet you, <span className="text-primary-container font-semibold">{firstName}</span>! Ano ang
           negosyo mo?

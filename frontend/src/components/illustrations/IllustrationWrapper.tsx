@@ -48,7 +48,8 @@ export function IllustrationWrapper({
         width={w}
         height={h}
         priority={priority}
-        className="object-contain dark:brightness-[0.85] dark:saturate-[0.9]"
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className="object-contain dark:brightness-[0.85] dark:saturate-[0.9] max-w-full h-auto"
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import OnboardingWizard from '@/components/onboarding/onboarding-wizard';
+import { PageBackground } from '@/components/ui/page-background';
 import type { OnboardingState } from '@/lib/kilala-kita';
 
 export const metadata: Metadata = {
@@ -52,6 +53,7 @@ export default async function OnboardingPage() {
   };
 
   return (
+    <PageBackground variant="onboarding">
     <main className="min-h-dvh bg-background flex items-start justify-center pt-safe">
       <div className="w-full max-w-lg md:max-w-2xl px-5 py-8">
         {/* Logo */}
@@ -65,5 +67,6 @@ export default async function OnboardingPage() {
         <OnboardingWizard initialState={state} />
       </div>
     </main>
+    </PageBackground>
   );
 }
