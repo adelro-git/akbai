@@ -1,6 +1,6 @@
 # AKBai — Brand Context
 > Used by: marketing-lead, ux-designer, product-owner, ops-lead, ai-engineer
-> Last updated: March 25, 2026 | Source: AKBai Brand Guide v1.0, Brand Kit, "Art of Warmth" design system
+> Last updated: April 5, 2026 | Source: AKBai Brand Guide v1.0, Brand Kit, "Art of Warmth" design system
 > Full brand kit location: /AKBai/AKBai Brand Kit/
 
 ---
@@ -40,13 +40,13 @@ AKBai uses a **light-first** design system ("Sun-Drenched Atelier") with dark mo
 | on-surface | Primary text | #1c1c18 | #e6e2db | Body copy, headings |
 | on-surface-variant | Secondary text | #534434 | #d8c3ad | Timestamps, labels, captions |
 | primary | Brand action | #855300 | #ffb95f | Primary CTAs, active indicators |
-| primary-container | Brand highlight | #f59e0b | #f59e0b | Logo mark, accents, Kai avatar ring |
+| primary-container | Brand highlight | #f59e0b | #f59e0b | Logo mark (fill), Kai's face (eyes & smile), accents |
 | tertiary | Trust / success | #006b54 | #43deb4 | Financial data, BIR compliance states |
 | error | Error | #F87171 | #F87171 | Error states (never use Honey or Teal for errors) |
 | warning | Warning | #FBBF24 | #FBBF24 | Warning states |
 | outline-variant | Ghost border | #534434 at 20% | #d8c3ad at 20% | Subtle dividers when tonal shift alone is insufficient |
 
-**Rules:** Surface #fdf9f2 is the default (light-first). Dark mode (#07101e background) is available via user preference toggle. Logo mark = Warm Honey gradient or all-white (reversed). Primary CTA = Honey gradient fill. Financial data = Tertiary (teal) only. Never pure black backgrounds. Never cold greys. Never 1px solid borders — use background color shifts instead.
+**Rules:** Surface #fdf9f2 is the default (light-first). Dark mode (#07101e background) is available via user preference toggle. Logo mark = Warm Honey gradient or all-white (reversed). Kai's integrated face (eyes & smile) always renders in primary-container, maintaining visual clarity on all backgrounds. Primary CTA = Honey gradient fill. Financial data = Tertiary (teal) only. Never pure black backgrounds. Never cold greys. Never 1px solid borders — use background color shifts instead.
 
 > See `skills/ux-designer/references/design-system.md` for the full design system specification.
 
@@ -86,6 +86,28 @@ AKBai uses a **light-first** design system ("Sun-Drenched Atelier") with dark mo
 | Body | 15px | 400 | normal |
 | Chat | 14px | 400 | normal |
 | Label | 11px | 700 | normal |
+
+---
+
+## Logo System
+
+**Mark structure:** The AKBai logo consists of three components:
+- **Circular mark:** An abstract yin-yang form in Warm Honey gradient (light mode) or all-white (dark mode/reversed contexts).
+- **Kai's face:** Integrated into the mark's center as two curved eyes and a smile arc, rendered in primary-container (#f59e0b). This transforms the mark from an abstract symbol into a representation of Kai, the AI persona.
+- **Wordmark:** "AKB" in on-surface (#1c1c18 light, #e6e2db dark) + "ai" in primary-container (#f59e0b). Plus Jakarta Sans, ExtraBold 800.
+
+**Application rules:**
+- Mark + wordmark together = full logo lockup (primary application)
+- Mark alone = favicon, app icon, avatar (when space is constrained)
+- Kai's face must always maintain sufficient contrast against its background; primary-container fill on lighter backgrounds, all-white fill on darker backgrounds
+- Minimum size: 24px (favicon), 48px (app icon), 64px (UI component avatar)
+- Clear space: margin equal to half the mark's radius on all sides
+- Do not rotate, skew, or distort the mark
+- Do not remove Kai's face from the mark for any application
+
+See `brand/Logo Files/` for all logo variations and production files.
+
+> Last updated: April 5, 2026 — Logo mark updated to include Kai's face
 
 ---
 
