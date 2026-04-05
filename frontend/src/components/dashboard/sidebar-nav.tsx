@@ -32,7 +32,7 @@ export default function SidebarNav() {
       <div className="px-5 pt-6 pb-5 flex items-center gap-3">
         <div className="relative w-10 h-10 flex-shrink-0">
           <Image
-            src="/icons/mark-honey.png"
+            src="/icons/mark-on-light.png"
             alt=""
             fill
             className="object-contain"
@@ -43,7 +43,7 @@ export default function SidebarNav() {
           <p className="text-on-surface text-xl font-extrabold tracking-tight">
             AKB<span className="text-primary-container">ai</span>
           </p>
-          <p className="text-on-surface-variant text-xs mt-0.5">Katuwang ng Negosyo Mo</p>
+          <p className="text-on-surface-variant text-xs mt-0.5">Katuwang mo sa Negosyo</p>
         </div>
       </div>
 

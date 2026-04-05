@@ -61,7 +61,7 @@ export default async function OnboardingPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-on-surface">
             AKB<span className="text-primary-container">ai</span>
           </h1>
-          <p className="text-outline text-base md:text-lg mt-1">Kilala Kita</p>
+          <p className="text-outline text-base md:text-lg mt-1">Maaari ka bang Makilala?</p>
         </div>
 
         <OnboardingWizard initialState={state} />
