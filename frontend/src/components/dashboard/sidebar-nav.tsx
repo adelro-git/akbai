@@ -2,20 +2,22 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageCircle, Camera, User, Wallet } from 'lucide-react';
+import { User } from 'lucide-react';
+import { MorningBriefing, CashFlow, CustomerMessages, ResiboScanner } from '@/components/illustrations/svg';
 
 interface NavItem {
   label: string;
   href: string;
-  icon: typeof Home;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  isLucide?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: Home },
-  { label: 'Saan Napunta?', href: '/expenses', icon: Wallet },
-  { label: 'Chat with Kai', href: '/chat', icon: MessageCircle },
-  { label: 'Resibo', href: '/scan', icon: Camera },
-  { label: 'Profile', href: '/profile', icon: User },
+  { label: 'Dashboard', href: '/dashboard', icon: MorningBriefing },
+  { label: 'Saan Napunta?', href: '/expenses', icon: CashFlow },
+  { label: 'Chat with Kai', href: '/chat', icon: CustomerMessages },
+  { label: 'Resibo', href: '/scan', icon: ResiboScanner },
+  { label: 'Profile', href: '/profile', icon: User, isLucide: true },
 ];
 
 export default function SidebarNav() {
@@ -51,7 +53,13 @@ export default function SidebarNav() {
                   : 'text-on-surface-variant hover:bg-surface-container-high/50'
               }`}
             >
-              <Icon className="w-5 h-5 flex-shrink-0" />
+              {item.isLucide ? (
+                <Icon className="w-5 h-5 flex-shrink-0" />
+              ) : (
+                <div className={`flex-shrink-0 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
+                  <Icon size={20} />
+                </div>
+              )}
               {item.label}
             </Link>
           );

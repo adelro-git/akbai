@@ -2,20 +2,19 @@
 
 import Link from 'next/link';
 import {
-  Camera,
-  Wallet,
-  Calendar,
-  MessageCircle,
-  MessageSquare,
-  type LucideIcon,
-} from 'lucide-react';
+  ResiboScanner,
+  CashFlow,
+  BirDeadlines,
+  CustomerMessages,
+  ReplyDrafter,
+} from '@/components/illustrations/svg';
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  camera: Camera,
-  wallet: Wallet,
-  calendar: Calendar,
-  'message-circle': MessageCircle,
-  'message-square': MessageSquare,
+const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  camera: ResiboScanner,
+  wallet: CashFlow,
+  calendar: BirDeadlines,
+  'message-circle': CustomerMessages,
+  'message-square': ReplyDrafter,
 };
 
 interface DashboardCardProps {
@@ -50,7 +49,7 @@ export default function DashboardCard({
         {/* Icon */}
         <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center flex-shrink-0">
           {IconComponent ? (
-            <IconComponent className="w-5 h-5 text-primary-container" />
+            <IconComponent size={20} />
           ) : (
             <span className="text-primary-container text-sm">?</span>
           )}

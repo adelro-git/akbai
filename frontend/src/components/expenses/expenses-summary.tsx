@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { RevenueUp, RevenueDown } from '@/components/illustrations/svg';
 import { centavosToPeso } from '@/lib/utils/money';
 
 interface ExpensesSummaryProps {
@@ -38,7 +38,7 @@ export default function ExpensesSummary({ totalIncome, totalExpenses, net }: Exp
       <div className="flex gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-1.5 mb-0.5">
-            <TrendingUp className="w-3.5 h-3.5 text-tertiary" />
+            <RevenueUp size={14} />
             <span className="text-on-surface-variant text-xs">Kita</span>
           </div>
           <p className="text-on-surface text-sm font-bold" data-testid="total-income">
@@ -50,7 +50,7 @@ export default function ExpensesSummary({ totalIncome, totalExpenses, net }: Exp
 
         <div className="flex-1">
           <div className="flex items-center gap-1.5 mb-0.5">
-            <TrendingDown className="w-3.5 h-3.5 text-destructive" />
+            <RevenueDown size={14} />
             <span className="text-on-surface-variant text-xs">Gastos</span>
           </div>
           <p className="text-on-surface text-sm font-bold" data-testid="total-expenses">

@@ -15,17 +15,19 @@ import { X, ChevronRight } from 'lucide-react';
 import { pesoToCentavos, centavosToPeso } from '@/lib/utils/money';
 import { trackDailyCheckInCompleted } from '@/lib/posthog/events';
 import { EXPENSE_CATEGORIES } from '@/lib/expenses/categories';
+import { KaCelebrating, KaHappy, KaThinking, KaConcerned } from '@/components/illustrations/svg';
+import { CategoryIcon } from '@/lib/expenses/category-icons';
 
 // ============================================================
 // Mood Options
 // ============================================================
 
-const MOOD_OPTIONS = [
-  { value: 'bongga', emoji: '🔥', label: 'Bongga' },
-  { value: 'okay', emoji: '😊', label: 'Okay' },
-  { value: 'steady', emoji: '😐', label: 'Steady' },
-  { value: 'hirap', emoji: '😰', label: 'Hirap' },
-  { value: 'grabe', emoji: '💀', label: 'Grabe' },
+const MOOD_OPTIONS: { value: string; icon: React.ReactNode; label: string }[] = [
+  { value: 'bongga', icon: <KaCelebrating size={28} />, label: 'Bongga' },
+  { value: 'okay', icon: <KaHappy size={28} />, label: 'Okay' },
+  { value: 'steady', icon: <KaThinking size={28} />, label: 'Steady' },
+  { value: 'hirap', icon: <KaConcerned size={28} />, label: 'Hirap' },
+  { value: 'grabe', icon: <KaConcerned size={28} className="opacity-70" />, label: 'Grabe' },
 ];
 
 // ============================================================
@@ -223,8 +225,8 @@ export default function CheckInModal({ isOpen, onClose, onSuccess, hasExistingCh
                     data-testid={`mood-${mood.value}`}
                     type="button"
                   >
-                    <span className="text-2xl" role="img" aria-label={mood.label}>
-                      {mood.emoji}
+                    <span className="flex items-center justify-center">
+                      {mood.icon}
                     </span>
                     <span className="text-xs text-on-surface-variant">{mood.label}</span>
                   </button>
@@ -311,13 +313,14 @@ export default function CheckInModal({ isOpen, onClose, onSuccess, hasExistingCh
                 <button
                   key={cat.key}
                   onClick={() => setSelectedCategory(cat.key)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                     selectedCategory === cat.key
                       ? 'bg-primary-container/20 ring-2 ring-primary-container text-on-surface'
                       : 'bg-surface-container text-on-surface-variant'
                   }`}
                   type="button"
                 >
+                  <CategoryIcon categoryKey={cat.key} size={16} />
                   {cat.label}
                 </button>
               ))}

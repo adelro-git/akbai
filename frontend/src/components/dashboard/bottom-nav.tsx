@@ -2,20 +2,22 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageCircle, Camera, User } from 'lucide-react';
+import { User } from 'lucide-react';
+import { MorningBriefing, CustomerMessages, ResiboScanner } from '@/components/illustrations/svg';
 
 interface NavItem {
   label: string;
   href: string;
-  icon: typeof Home;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   testId: string;
+  isLucide?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/dashboard', icon: Home, testId: 'nav-home' },
-  { label: 'Chat', href: '/chat', icon: MessageCircle, testId: 'nav-chat' },
-  { label: 'Resibo', href: '/scan', icon: Camera, testId: 'nav-scan' },
-  { label: 'Profile', href: '/profile', icon: User, testId: 'nav-profile' },
+  { label: 'Home', href: '/dashboard', icon: MorningBriefing, testId: 'nav-home' },
+  { label: 'Chat', href: '/chat', icon: CustomerMessages, testId: 'nav-chat' },
+  { label: 'Resibo', href: '/scan', icon: ResiboScanner, testId: 'nav-scan' },
+  { label: 'Profile', href: '/profile', icon: User, testId: 'nav-profile', isLucide: true },
 ];
 
 export default function BottomNav() {
@@ -46,9 +48,15 @@ export default function BottomNav() {
               data-testid={item.testId}
               aria-current={isActive ? 'page' : undefined}
             >
-              <Icon
-                className={`w-6 h-6 ${isActive ? 'text-primary-container' : 'text-on-surface-variant'}`}
-              />
+              {item.isLucide ? (
+                <Icon
+                  className={`w-6 h-6 ${isActive ? 'text-primary-container' : 'text-on-surface-variant'}`}
+                />
+              ) : (
+                <div className={isActive ? 'opacity-100' : 'opacity-60'}>
+                  <Icon size={24} />
+                </div>
+              )}
               <span
                 className={`text-[11px] font-semibold mt-0.5 ${
                   isActive ? 'text-primary-container' : 'text-on-surface-variant'
