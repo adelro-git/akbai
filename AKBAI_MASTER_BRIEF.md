@@ -63,21 +63,24 @@ The project is currently in Phase 0A (Legal Foundation). No code has been writte
 │   └── AKBai_Skills_Utilization_Guide_v1.html  ← Which skills to use per phase (meta-reference)
 │
 ├── brand/                               ← Brand assets (production-ready)
-│   ├── AKBai Brand Book.pdf             ← Full brand guidelines
-│   └── Logo Files/                      ← Production logo PNGs
+│   ├── AKBai Brand Book.pdf             ← Full brand guidelines (needs regeneration)
+│   ├── generate_logos.py                ← Logo variant generator script
+│   └── Logo Files/                      ← Production logo PNGs (Kai face mark)
 │       ├── AKBai_Logo_Primary_OnDark.png
 │       ├── AKBai_Logo_Primary_OnLight.png
+│       ├── AKBai_Logo_Primary_OnGradient.png
 │       ├── AKBai_Logo_Stacked_OnDark.png
 │       ├── AKBai_Logo_Stacked_OnLight.png
-│       ├── AKBai_Logo_White.png
-│       ├── AKBai_Icon_512.png           ← PWA icon (use this for manifest)
+│       ├── AKBai_Logo_Stacked_OnGradient.png
+│       ├── AKBai_Icon_512.png           ← PWA icon (dark bg)
 │       ├── AKBai_Icon_512_Honey.png
-│       ├── AKBai_Mark_Dark.png
+│       ├── AKBai_Icon_512_Light.png
 │       ├── AKBai_Mark_Honey.png
 │       ├── AKBai_Mark_OnDark.png
 │       ├── AKBai_Mark_OnLight.png
 │       ├── AKBai_Mark_OnGradient.png
-│       └── AKBai_Mark_White.png
+│       ├── logo-transparent.png         ← Mark on transparent bg
+│       └── new-logo-source.png          ← Original stacked source
 │
 ├── akbai-delivery/                      ← Claude Code plugin (12 skills, 15 commands)
 │   ├── .claude-plugin/plugin.json       ← Plugin manifest
