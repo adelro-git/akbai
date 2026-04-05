@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { BUSINESS_TYPES, INCOME_RANGES } from '@/lib/constants/business-options';
-import { BIR_TAX_TYPES, BIR_TAX_TYPE_LABELS, type BirTaxType } from '@/lib/deadlines/types';
+import { BIR_TAX_TYPES, BIR_TAX_TYPE_LABELS, BIR_TAX_TYPE_DESCRIPTIONS, type BirTaxType } from '@/lib/deadlines/types';
 import { trackProfileUpdated } from '@/lib/posthog/events';
 
 interface ProfileEditFormProps {
@@ -73,7 +73,7 @@ export default function ProfileEditForm({
     if (birToggle !== birRegistered) {
       payload.bir_registered = birToggle;
     }
-    if (selectedTaxType && selectedTaxType !== birTaxType) {
+    if (selectedTaxType && (selectedTaxType !== birTaxType || birToggle !== birRegistered)) {
       payload.bir_tax_type = selectedTaxType;
     }
 
@@ -100,8 +100,9 @@ export default function ProfileEditForm({
 
       trackProfileUpdated();
 
-      // If tax type changed, trigger deadline generation
-      if (selectedTaxType && selectedTaxType !== birTaxType) {
+      // Generate deadlines when BIR is enabled with a tax type selected
+      // Triggers on: first-time setup, tax type change, or re-enabling BIR toggle
+      if (birToggle && selectedTaxType) {
         try {
           await fetch('/api/deadlines', {
             method: 'POST',
@@ -119,7 +120,7 @@ export default function ProfileEditForm({
         business_type: json.data.business_type,
         income_range: json.data.income_range,
         bir_registered: json.data.bir_registered,
-        bir_tax_type: json.data.bir_tax_type ?? selectedTaxType || null,
+        bir_tax_type: json.data.bir_tax_type ?? (selectedTaxType || null),
         profile_version: json.data.profile_version,
       });
     } catch {
@@ -214,51 +215,66 @@ export default function ProfileEditForm({
         </div>
       </div>
 
-      {/* BIR Tax Type selector */}
-      {birToggle && (
-        <div data-testid="bir-tax-type-section">
-          <p className="text-xs text-on-surface-variant mb-2">BIR Tax Type mo</p>
-          <div className="grid gap-2">
-            {BIR_TAX_TYPES.map((taxType) => (
-              <button
-                key={taxType}
-                type="button"
-                onClick={() => setSelectedTaxType(taxType)}
-                className={`flex items-center w-full text-left px-3 py-2.5 rounded-xl border transition-all text-sm ${
-                  selectedTaxType === taxType
-                    ? 'border-primary-container bg-primary-container/10 ring-1 ring-primary-container'
-                    : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
-                }`}
-                data-testid={`tax-type-${taxType}`}
-              >
-                <span className="text-on-surface font-medium">
-                  {BIR_TAX_TYPE_LABELS[taxType as BirTaxType]}
-                </span>
-              </button>
-            ))}
+      {/* BIR Section — highlighted card for discoverability */}
+      <div className="rounded-xl border border-primary-container/40 bg-primary-container/5 p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-base">📋</span>
+            <p className="text-sm font-semibold text-on-surface">BIR Registered ka ba?</p>
           </div>
-        </div>
-      )}
-
-      {/* BIR registered toggle */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-on-surface">BIR Registered</p>
-        <button
-          type="button"
-          onClick={() => setBirToggle(!birToggle)}
-          className={`relative w-11 h-6 rounded-full transition-colors ${
-            birToggle ? 'bg-primary-container' : 'bg-surface-container-high border border-outline-variant/30'
-          }`}
-          role="switch"
-          aria-checked={birToggle}
-          data-testid="bir-toggle"
-        >
-          <span
-            className={`absolute top-0.5 w-5 h-5 rounded-full bg-surface-container-lowest shadow transition-transform ${
-              birToggle ? 'translate-x-[22px]' : 'translate-x-0.5'
+          <button
+            type="button"
+            onClick={() => setBirToggle(!birToggle)}
+            className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${
+              birToggle ? 'bg-primary-container' : 'bg-surface-container-high border border-outline-variant/30'
             }`}
-          />
-        </button>
+            role="switch"
+            aria-checked={birToggle}
+            data-testid="bir-toggle"
+          >
+            <span
+              className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-surface-container-lowest shadow transition-transform ${
+                birToggle ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+        {!birToggle && (
+          <p className="text-xs text-on-surface-variant">
+            I-on ito para ma-track ni Kai ang BIR deadlines mo.
+          </p>
+        )}
+
+        {/* BIR Tax Type selector — shown after toggle is enabled */}
+        {birToggle && (
+          <div data-testid="bir-tax-type-section">
+            <p className="text-xs text-on-surface-variant mb-2">Anong tax type mo sa BIR?</p>
+            <div className="grid gap-2">
+              {BIR_TAX_TYPES.map((taxType) => (
+                <button
+                  key={taxType}
+                  type="button"
+                  onClick={() => setSelectedTaxType(taxType)}
+                  className={`flex w-full text-left px-3 py-2.5 rounded-xl border transition-all ${
+                    selectedTaxType === taxType
+                      ? 'border-primary-container bg-primary-container/10 ring-1 ring-primary-container'
+                      : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
+                  }`}
+                  data-testid={`tax-type-${taxType}`}
+                >
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-on-surface font-medium text-sm">
+                      {BIR_TAX_TYPE_LABELS[taxType as BirTaxType]}
+                    </span>
+                    <span className="text-on-surface-variant text-xs">
+                      {BIR_TAX_TYPE_DESCRIPTIONS[taxType as BirTaxType]}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action buttons */}

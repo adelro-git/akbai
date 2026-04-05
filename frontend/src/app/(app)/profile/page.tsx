@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import ProfileView from '@/components/profile/profile-view';
 
@@ -11,54 +12,46 @@ export const metadata: Metadata = {
 export default async function ProfilePage() {
   const supabase = await createClient();
 
-  let displayName: string | null = null;
+  let userId: string;
   let email: string | null = null;
-  let businessName: string | null = null;
-  let businessType: string | null = null;
-  let incomeRange: string | null = null;
-  let birRegistered = false;
-  let birTaxType: string | null = null;
-  let profileVersion = 1;
+
+  // Use service client in dev mode to bypass RLS (no real auth session)
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
 
   if (SKIP_AUTH) {
-    displayName = 'Boss';
+    userId = DEV_USER.id;
     email = DEV_USER.email ?? 'dev@akbai.test';
-    businessName = 'Dev Business';
-    businessType = 'food_baking';
-    incomeRange = 'below_50k';
-    birRegistered = false;
-    profileVersion = 1;
   } else {
     const { data } = await supabase.auth.getUser();
     const user = data.user;
     if (!user) redirect('/login');
-
+    userId = user.id;
     email = user.email ?? null;
-
-    // Fetch user profile
-    const { data: userData } = await supabase
-      .from('users')
-      .select('display_name')
-      .eq('id', user.id)
-      .single();
-
-    displayName = userData?.display_name ?? null;
-
-    // Fetch business profile
-    const { data: profile } = await supabase
-      .from('business_profiles')
-      .select('business_name, business_type, income_range, bir_registered, bir_tax_type, profile_version')
-      .eq('user_id', user.id)
-      .is('deleted_at', null)
-      .single();
-
-    businessName = profile?.business_name ?? null;
-    businessType = profile?.business_type ?? null;
-    incomeRange = profile?.income_range ?? null;
-    birRegistered = profile?.bir_registered ?? false;
-    birTaxType = profile?.bir_tax_type ?? null;
-    profileVersion = profile?.profile_version ?? 1;
   }
+
+  // Fetch user profile
+  const { data: userData } = await db
+    .from('users')
+    .select('display_name')
+    .eq('id', userId)
+    .single();
+
+  const displayName = userData?.display_name ?? null;
+
+  // Fetch business profile
+  const { data: profile } = await db
+    .from('business_profiles')
+    .select('business_name, business_type, income_range, bir_registered, bir_tax_type')
+    .eq('user_id', userId)
+    .is('deleted_at', null)
+    .single();
+
+  const businessName = profile?.business_name ?? null;
+  const businessType = profile?.business_type ?? null;
+  const incomeRange = profile?.income_range ?? null;
+  const birRegistered = profile?.bir_registered ?? false;
+  const birTaxType = profile?.bir_tax_type ?? null;
+  const profileVersion = 1;
 
   return (
     <div

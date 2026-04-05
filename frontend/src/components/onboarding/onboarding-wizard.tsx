@@ -7,8 +7,10 @@ import StepBusinessType from './step-business-type';
 import StepIncomeRange from './step-income-range';
 import StepPainPoint from './step-pain-point';
 import StepBirConsent from './step-bir-consent';
+import StepBirTaxType from './step-bir-tax-type';
 import { trackOnboardingStarted, trackOnboardingCompleted } from '@/lib/posthog/events';
 import type { OnboardingState, BusinessType, IncomeRange, PainPoint } from '@/lib/kilala-kita';
+import type { BirTaxType } from '@/lib/deadlines/types';
 
 interface OnboardingWizardProps {
   initialState: OnboardingState;
@@ -128,17 +130,57 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
     async (birConsent: boolean) => {
       const ok = await saveStep(5, { bir_consent: birConsent });
       if (ok) {
-        trackOnboardingCompleted(savedData.business_type ?? 'unknown');
-        setCurrentStep(6); // Show first message screen
+        if (birConsent) {
+          // User said yes to BIR — ask for tax type before completing
+          setCurrentStep(5.5);
+        } else {
+          trackOnboardingCompleted(savedData.business_type ?? 'unknown');
+          setCurrentStep(6); // Skip tax type, show first message
+        }
       }
     },
     [saveStep, savedData.business_type]
   );
 
+  const handleBirTaxType = useCallback(
+    async (taxType: BirTaxType) => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Save BIR registered + tax type to profile
+        await fetch('/api/profile', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bir_registered: true, bir_tax_type: taxType }),
+        });
+        // Generate deadlines
+        await fetch('/api/deadlines', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tax_type: taxType }),
+        });
+      } catch {
+        // Non-blocking — can be set up later in profile
+      }
+      setLoading(false);
+      trackOnboardingCompleted(savedData.business_type ?? 'unknown');
+      setCurrentStep(6);
+    },
+    [savedData.business_type]
+  );
+
   const progressPct = Math.min(((currentStep - 1) / 5) * 100, 100);
 
-  // Step 6: Show first Kai message then redirect
+  // Step 6: Show first Kai message then redirect based on painpoint
   if (currentStep === 6 && firstMessage) {
+    const painpointRedirect: Record<string, string> = {
+      bir_compliance: '/deadlines',
+      receipt_tracking: '/expenses',
+      customer_messages: '/chat',
+      knowing_earnings: '/dashboard',
+    };
+    const redirectTo = painpointRedirect[savedData.primary_pain ?? ''] ?? '/dashboard';
+
     return (
       <div className="flex flex-col gap-6 animate-in fade-in duration-500">
         <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
@@ -147,7 +189,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         <button
           type="button"
           onClick={() => {
-            router.push('/dashboard');
+            router.push(redirectTo);
             router.refresh();
           }}
           className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all"
@@ -210,6 +252,13 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
           loading={loading}
           firstName={firstName}
           initialValue={savedData.primary_pain}
+        />
+      )}
+      {currentStep === 5.5 && (
+        <StepBirTaxType
+          onComplete={handleBirTaxType}
+          loading={loading}
+          firstName={firstName}
         />
       )}
       {currentStep === 5 && (

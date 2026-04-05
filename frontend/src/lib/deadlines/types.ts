@@ -28,6 +28,15 @@ export const BIR_TAX_TYPE_LABELS: Record<BirTaxType, string> = {
   online_seller: 'Online Seller (Shopee/Lazada)',
 };
 
+/** Short descriptions for each tax type to help users choose */
+export const BIR_TAX_TYPE_DESCRIPTIONS: Record<BirTaxType, string> = {
+  sole_prop_graduated_osd: 'May DTI registration, ginagamit ang OSD para sa deductions',
+  sole_prop_8pct: 'May DTI registration, flat 8% tax sa gross sales (below ₱3M)',
+  sole_prop_vat: 'May DTI registration, VAT-registered (above ₱3M gross)',
+  freelancer: 'Walang DTI — graphic designer, VA, developer, etc.',
+  online_seller: 'Nagbebenta sa Shopee, Lazada, o sariling online store',
+};
+
 // ============================================================
 // Deadline Status
 // ============================================================
