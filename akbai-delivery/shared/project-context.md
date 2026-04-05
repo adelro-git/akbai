@@ -144,8 +144,8 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Build 4 Complete (2026-03-26)
-> Build 0 shipped (2026-03-20). Build 1 frontend (Sprint 3, 2026-03-22). Build 2 complete (Sprint 5, 2026-03-25). Sprint 6: Design Gates 2 & 3 closed, UX gaps B1/B2/D6 resolved, first-run polish. Sprint 7: Build 4 (Saan Napunta/Expenses) shipped. 559 tests passing. All 8 Design Gates resolved. Gaps A1, A3, A4, A5, B1, B2, B3, B4, D6, E3 resolved.
+> Current: Phase 0A — Build 7 Complete (2026-04-05)
+> Build 0 shipped (2026-03-20). Build 1 frontend (Sprint 3, 2026-03-22). Build 2 complete (Sprint 5, 2026-03-25). Sprint 6: Design Gates 2 & 3 closed, UX gaps B1/B2/D6 resolved, first-run polish. Sprint 7: Build 4 (Saan Napunta/Expenses) shipped. Sprint 8+9: Build 5 (Ang Umaga Mo) + Build 6 (Deadline Watcher) + Build 7 (Reply Drafter) shipped. Sprint 10: Build 5 completed (reconciliation), illustrations wired, 6 dev-mode bugs fixed. 761 tests passing. All 8 Design Gates resolved.
 
 ### What's Built
 - **Build 0 — AI Scope Definition** (2026-03-20): `/frontend/src/lib/claude/` module

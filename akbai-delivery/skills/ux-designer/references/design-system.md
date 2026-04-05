@@ -109,6 +109,37 @@ If a border is strictly necessary for accessibility (e.g., Input fields), use a 
 * **Top bar:** Floating with `backdrop-blur-[20px]`, `surface-container-lowest` at 80% opacity, `xl` corner radius, amber ambient shadow.
 * **Bottom nav:** Same glassmorphism treatment. Active tab uses `primary-container` gradient. Inactive uses `on-surface-variant`.
 
+### Illustrations (`IllustrationWrapper`)
+
+All illustrations use WebP images served from `/public/illustrations/` via the `IllustrationWrapper` component at `components/illustrations/IllustrationWrapper.tsx`.
+
+**Categories and default sizes:**
+| Category | Size | Use for |
+|----------|------|---------|
+| `hero` | 600x338 | Landing page hero images |
+| `onboarding` | 300x300 | Onboarding wizard steps |
+| `empty-state` | 240x180 | Empty states (no data yet) |
+| `status` | 200x150 | Error, offline, session expired |
+| `celebration` | 280x210 | Achievement milestones |
+
+**Usage pattern:**
+```tsx
+import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
+
+<IllustrationWrapper
+  src="empty-states/no-expenses.webp"
+  alt="Wala pang gastos o kita na naka-record"
+  category="empty-state"
+/>
+```
+
+**Rules:**
+- Always use Taglish alt text (see taglish-copy-guide.md)
+- Use `category` prop for automatic sizing — avoid custom `width`/`height` unless necessary
+- Dark mode handled automatically (`dark:brightness-[0.85] dark:saturate-[0.9]`)
+- Don't use Lucide icons for empty states if a WebP illustration exists — illustrations are warmer and more on-brand
+- Available illustrations: check `frontend/public/illustrations/` for the full set (37 WebPs across 7 categories)
+
 ---
 
 ## 6. Do's and Don'ts

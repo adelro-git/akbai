@@ -383,3 +383,33 @@ When a dashboard section has no data yet:
 **Notes:**
 - "Resibo" (Filipino spelling) replaces "Receipts" — natural and shorter
 - "Home", "Chat", and "Profile" stay English — universally understood on mobile nav bars
+
+### BIR Tax Type Selector (Profile + Onboarding Step 5.5)
+
+When user enables BIR registration, they select their tax type. Each option needs a label + Taglish description to help users identify their situation.
+
+| Tax Type | Label | Taglish Description |
+|----------|-------|---------------------|
+| Sole Prop (Graduated + OSD) | Sole Proprietor (Graduated + OSD) | May DTI registration, ginagamit ang OSD para sa deductions |
+| Sole Prop (8% Flat) | Sole Proprietor (8% Flat Tax) | May DTI registration, flat 8% tax sa gross sales (below ₱3M) |
+| Sole Prop (VAT) | Sole Proprietor (VAT Registered) | May DTI registration, VAT-registered (above ₱3M gross) |
+| Freelancer | Freelancer / Self-Employed | Walang DTI — graphic designer, VA, developer, etc. |
+| Online Seller | Online Seller (Shopee/Lazada) | Nagbebenta sa Shopee, Lazada, o sariling online store |
+
+**Onboarding prompt:** "Nice, [Name]! Anong tax type mo sa BIR?"
+**Profile section header:** "BIR Registered ka ba?"
+**Helper text (when toggle off):** "I-on ito para ma-track ni Kai ang BIR deadlines mo."
+
+### Illustration Alt Text (Empty States + Status Pages)
+
+All illustration alt text should use natural Taglish, not translated English:
+
+| Illustration | Alt Text |
+|-------------|----------|
+| No expenses | Wala pang gastos o kita na naka-record |
+| No deadlines | Wala pang BIR deadlines na naka-setup |
+| No replies | Wala pang customer message na na-draft |
+| No chat | Simulan ang usapan mo kay Kai |
+| Error page | May problema — subukan muli |
+| Offline | Walang internet connection |
+| Session expired | Nag-expire na ang session mo |

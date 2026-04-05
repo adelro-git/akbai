@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-03-28 (Sprint 8+9 plans)
+> Last updated: 2026-04-05 (Sprint 10 retro)
 
 ---
 
@@ -451,8 +451,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **Build 7 — Reply Drafter:** `lib/reply-drafter/` (types, schemas, prompt, guardrails — 5 files), `/api/reply-draft` (Claude Haiku with circuit breaker + spend tracking), `/reply-drafter` page, 3 reply components (input, card, results), copy-to-clipboard, output guardrails (no impersonation/commitments/financial advice), `REPLY_DRAFTER_ENABLED` flag
 - **Sprint 8 partial (Morning Briefing):** Migration 012 (`morning_briefing_cache`), `lib/morning-briefing/`, `/api/morning-briefing`, morning briefing card component (also landed via parallel agent work)
 
-**Actual Anton hours:** TBD — live testing in progress
-**Sprint outcome:** IN PROGRESS — awaiting Anton live testing
+**Actual Anton hours:** ~2 hrs (testing + review, parallel with Sprint 10)
+**Sprint outcome:** DONE — All features shipped, live testing completed in Sprint 10
 
 ### Sprint 6+7 Retro — 2026-03-26
 
@@ -486,6 +486,37 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **Evening consistency:** Focused sessions + iterative feedback
 - **Recommendation:** Keep pace. Dual-sprint parallel execution is validated and sustainable. Add build/test enforcement and agent pitfall checklists to reduce fix cycles.
 
+### Sprint 8+9+10 Retro — 2026-04-05
+
+**What Went Well:**
+- Parallel agent streams + live testing is the ideal workflow — agents built illustrations and reconciliation while Anton live-tested Morning Briefing, Deadlines, and Reply Drafter simultaneously. Zero idle time.
+- Live testing caught 6 critical bugs that 761 automated tests missed — every single dev bypass route was silently not persisting data. This would have been invisible without hands-on testing.
+- Build 5 is now fully complete (Morning Briefing + Weekly/Monthly Reconciliation) — 3 sprints of work wrapped up cleanly.
+
+**What Didn't Go Well:**
+- Dev bypass / mock data was fundamentally broken — EVERY API route in dev mode (`SKIP_AUTH=true`) returned mock data or used in-memory arrays instead of persisting to the real database. Took 4+ fix rounds across profile, deadlines, and dashboard to fully resolve.
+- Too many fix rounds — the profile save issue went: mock data fix → RLS blocking fix → `profile_version` column missing fix → finally working. Each layer hid the next problem. Should have diagnosed the full stack in one pass.
+- DB schema mismatch between code and remote — `profile_version` column exists in migration SQL but not in the actual Supabase instance. `bir_deadlines` table didn't exist. Dev user didn't exist. The gap between "what migrations say" and "what's deployed" caused silent failures.
+
+**What We Learned:**
+- Dev bypass must persist to the real database — mock/in-memory dev bypasses create a class of bugs that only surface during live testing. Future dev bypasses should use `createServiceClient()` to bypass RLS while still writing to real tables. The "skip auth, not skip persistence" principle.
+- DB migration state must be verified before testing — code assumes tables and columns exist, but the remote DB may be behind. Need a startup check or at least a documented "run migrations before testing" step.
+- Reply Drafter as a separate page is wrong — Anton's instinct is that reply drafting should be part of Kai Chat, not a standalone feature. This is a Sprint 11 architecture change.
+
+**Action Items:**
+
+| # | Action | Owner | Due By | Status | Notes |
+|---|--------|-------|--------|--------|-------|
+| 1 | Audit all remaining API routes for dev bypass persistence — ensure every `SKIP_AUTH` block uses `createServiceClient()` and writes to real DB | Claude (fullstack-engineer) | Sprint 11 | OPEN | Prevent recurrence of the mock-data class of bugs |
+| 2 | Integrate Reply Drafter into Kai Chat — remove standalone `/reply-drafter` page, add reply drafting as a chat capability | Claude (fullstack-engineer + ai-engineer) | Sprint 11 | OPEN | Anton's testing feedback: separate page doesn't make UX sense |
+| 3 | Define query caps for Pro and Business tiers — find sweet spot between value and cost | Anton + ai-engineer | Sprint 12 | OPEN | Strategic decision needed before Xendit payment integration |
+
+**Energy Check:**
+- **Sustainability:** Felt good — pace was fine
+- **Saturday block:** N/A — done in single session
+- **Evening consistency:** Single focused session, high throughput
+- **Recommendation:** Keep pace. The parallel agent + live testing model is validated and sustainable. Priority for Sprint 11: Reply Drafter → Chat integration + dev bypass audit.
+
 ---
 
 ## Velocity & Patterns
@@ -502,8 +533,9 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | 5 | Build 2 completion + infra | 4 hrs (Anton) | ~4-5 (Anton) | 5+2 | 7 | YES |
 | 6 | Design Gates + UX quality | 4 hrs (Anton) | ~4 (Anton) | 7+1 | 8 | YES |
 | 7 | Build 4 (Expenses) | 4 hrs (Anton) | (parallel w/6) | ~6 | ~6 | YES |
-| 8 | Build 5 (Morning Briefing + Recon) | 3.5 hrs (Anton) | TBD | 8 | TBD | TBD |
-| 9 | Build 6 (Deadlines) + Build 7 (Reply Drafter) | 4 hrs (Anton) | TBD | 12 | TBD | TBD |
+| 8 | Build 5 (Morning Briefing + Recon) | 3.5 hrs (Anton) | ~2 (Anton) | 8 | 6 | PARTIAL — Recon deferred to Sprint 10 |
+| 9 | Build 6 (Deadlines) + Build 7 (Reply Drafter) | 4 hrs (Anton) | ~2 (Anton) | 12 | 10 | YES — Live testing in Sprint 10 |
+| 10 | Builds 5-7 Hardening | 2.5 hrs (Anton) | ~2.5 (Anton) | 8 | 7 | YES — Build 5 complete, 6 bugs fixed |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
@@ -521,6 +553,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **NEW (Sprint 6+7): Dual-sprint parallel execution works — independent workstreams (quality + feature) can run as separate sprints in parallel sessions. Plan sprints in pairs when workstreams don't share files.**
 - **NEW (Sprint 6+7): Agents still violate documented patterns (React 19 useRef, personalization depth). Need "Known Pitfalls" sections in skill files as pre-submit checklists.**
 - **NEW (Sprint 6+7): Build + test must be mandatory sprint workflow steps — `/build` after plan approval, `/test` before declaring done. Prevents "forgot to test" regressions.**
+- **NEW (Sprint 10): Dev bypass must persist to real DB — mock/in-memory dev bypasses create bugs invisible to automated tests. Use `createServiceClient()` to bypass RLS while writing to real tables. "Skip auth, not skip persistence."**
+- **NEW (Sprint 10): Verify DB migration state before testing — code assumes tables/columns exist but remote DB may lag behind migration SQL. Silent query failures result.**
 
 ---
 
@@ -543,8 +577,11 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Sprint 6+7 Retro | 2 | Add "Known Pitfalls" section to fullstack-engineer + ux-designer SKILL.md | DONE — Updated 2026-03-26. 6 pitfalls in fullstack-engineer, 5 in ux-designer |
 | Sprint 6+7 Retro | 3 | Collect 10-15 receipt images for OCR spike (Gap E1) | OPEN — Carryover from Sprint 4/5. Anton, deferred until images available |
 | Illustration Sprint | 1 | Rename 37 PNGs from Gemini hashes to descriptive names, convert to WebP (80%), deploy to `frontend/public/illustrations/{category}/` | DONE — 2026-04-04. 37 WebPs across 7 categories (hero, onboarding, empty-states, status, celebrations, features, marketing). |
-| Illustration Sprint | 2 | Wire illustrations into app components: empty states (#9-13), offline page (#14), error (#15), session expired (#16), onboarding (#5-8), celebrations (#17-19) | OPEN — WebPs are deployed and ready. Wire via `<IllustrationWrapper>` when each Build ships its UI. |
+| Illustration Sprint | 2 | Wire illustrations into app components: empty states (#9-13), offline page (#14), error (#15), session expired (#16), onboarding (#5-8), celebrations (#17-19) | DONE — Sprint 10. 11 illustrations wired via `<IllustrationWrapper>` (7 empty/status + 4 onboarding). Celebrations deferred to future builds. |
 | Illustration Sprint | 3 | Generate 8 future-build illustrations (#20-27): scan flow, paywall, payment success, PWA install, costing/invoice empty states, blog cashflow header | DONE — All 8 generated, renamed, converted 2026-04-04. |
+| Sprint 10 Retro | 1 | Audit all remaining API routes for dev bypass persistence — use `createServiceClient()` | OPEN — Prevent recurrence of mock-data bugs |
+| Sprint 10 Retro | 2 | Integrate Reply Drafter into Kai Chat — remove standalone page | OPEN — Sprint 11 architecture change |
+| Sprint 10 Retro | 3 | Define query caps for Pro and Business tiers | OPEN — Strategic decision before Xendit integration (Sprint 12) |
 
 ---
 
@@ -558,18 +595,39 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 | # | Task | Agent Size | Anton Time | Status | Stream | Notes |
 |---|------|-----------|------------|--------|--------|-------|
-| 1 | Live Test: Morning Briefing | — | 0.5 hr | IN PROGRESS | Anton | Sprint 8 acceptance |
-| 2 | Live Test: Deadline Watcher | — | 0.5 hr | IN PROGRESS | Anton | Sprint 9 acceptance |
-| 3 | Live Test: Reply Drafter | — | 0.5 hr | IN PROGRESS | Anton | Sprint 9 acceptance |
-| 4 | Illustration Wiring: Empty States + Status Pages | M | 0.25 hr | IN PROGRESS | A | 7 illustrations into components |
-| 5 | Illustration Wiring: Onboarding Steps | S | 0.15 hr | IN PROGRESS | A | 4 onboarding illustrations |
-| 6 | Weekly + Monthly Reconciliation | M | 0.5 hr | IN PROGRESS | B | Build 5 completion (Sprint 8 carryover) |
-| 7 | Sprint 8+9 Retro | — | 0.1 hr | PLANNED | Sequential | After Tasks 1-6 |
+| 1 | Live Test: Morning Briefing | — | 0.25 hr | DONE | Anton | Time gate bug found + fixed |
+| 2 | Live Test: Deadline Watcher | — | 0.5 hr | DONE | Anton | Dev bypass not persisting — multiple fix rounds |
+| 3 | Live Test: Reply Drafter | — | 0.1 hr | DEFERRED | Anton | Deferred — will test as part of Kai Chat integration (Sprint 11) |
+| 4 | Illustration Wiring: Empty States + Status Pages | M | 0.1 hr | DONE | A | 7 illustrations wired, 22 tests added |
+| 5 | Illustration Wiring: Onboarding Steps | S | 0.05 hr | DONE | A | 4 onboarding illustrations wired |
+| 6 | Weekly + Monthly Reconciliation | M | 0.1 hr | DONE | B | 33 tests, 2 API routes, 2 dashboard cards |
+| 7 | Sprint 8+9+10 Retro | — | 0.25 hr | DONE | Sequential | This retro |
+| 8 | Bug fixes from live testing | M | 1.0 hr | DONE | Main | 6 bugs fixed (see below) |
+
+**Unplanned work (Task 8 — Bug fixes from live testing):**
+- Morning Briefing time gate too restrictive (extended 5AM-12PM → 5AM-11PM)
+- Profile PATCH dev bypass returned mock data, never persisted to DB
+- Deadlines API dev bypass used in-memory array, not real DB
+- Dashboard dev bypass returned hardcoded defaults, skipped DB queries
+- All dev bypasses used anon client blocked by RLS — switched to service client
+- `profile_version` column missing from remote DB — removed from all queries
+- Onboarding: painpoint-aware redirect (BIR→/deadlines, receipts→/expenses)
+- Onboarding: added tax type selection step after BIR consent
+- Profile: BIR toggle moved above tax types, added descriptions, highlighted card
+- Profile: deadline generation trigger fixed (fires on any BIR+tax save)
+- Flaky `days_since_signup` test fixed (hardcoded date → dynamic)
+
+**What was built:**
+- 11 illustrations wired into app components via `IllustrationWrapper` (7 empty/status + 4 onboarding)
+- Weekly + Monthly Reconciliation (Build 5 complete): `lib/reconciliation/`, 2 API routes, 2 dashboard cards
+- `StepBirTaxType` onboarding component
+- Dev user seed SQL (`supabase/seed-dev-user.sql`)
+- 55 new tests (22 illustration + 33 reconciliation), 761 total passing
 
 **Parallel Streams:**
-- Stream Anton (Tasks 1-3): Live testing — runs in parallel with agent streams
-- Stream A (Tasks 4-5): `claude/sprint10-illustrations` — illustration wiring
-- Stream B (Task 6): `claude/sprint10-recon` — reconciliation features
+- Stream Anton (Tasks 1-3): Live testing — ran in parallel with agent streams
+- Stream A (Tasks 4-5): `claude/sprint10-illustrations` — illustration wiring (worktree)
+- Stream B (Task 6): `claude/sprint10-recon` — reconciliation (worktree)
 
-**Actual Anton Hours:** TBD
-**Sprint Outcome:** IN PROGRESS
+**Actual Anton Hours:** ~2.5 hrs (testing + review + bug triage + retro)
+**Sprint Outcome:** DONE — Build 5 complete, Builds 5-7 hardened, 6 dev-mode bugs fixed

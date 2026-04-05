@@ -330,6 +330,8 @@ These are mistakes agents have made in past sprints. **Check every item before s
 | **Taglish personalization depth** | When building features that reference the user's business type or pain point, personalize the content — don't use generic copy. Check `kilala-kita-context.md` for pain-point-specific templates and routes. | Sprint 6 |
 | **Design system mandatory reading** | If your task involves ANY UI work, you MUST read `skills/ux-designer/references/design-system.md` in addition to your task's SKILL.md. Agents that skip this produce functional but visually non-compliant components. | Sprint 5 |
 | **Bottom nav visibility** | Bottom nav should be hidden on pages where it overlaps with input fields (e.g., `/chat`). Check whether your page has a fixed-bottom input before including BottomNav. | Sprint 6 |
+| **Dev bypass must persist to real DB** | When `SKIP_AUTH=true`, API routes must still write to the real database using `createServiceClient()` (service role, bypasses RLS). NEVER return mock data or use in-memory arrays. Principle: "skip auth, not skip persistence." In-memory dev bypasses create bugs invisible to automated tests — only caught by live testing. | Sprint 10 |
+| **Verify DB schema before querying** | Don't assume columns/tables exist just because migration SQL defines them. Remote DB may be behind. If a query silently returns null, check whether the column exists in the actual schema. Use `select('col1, col2')` — selecting a nonexistent column fails silently in Supabase. | Sprint 10 |
 
 **If you're unsure whether a pattern applies, check CLAUDE.md first.** The non-negotiable rules there override any assumption.
 

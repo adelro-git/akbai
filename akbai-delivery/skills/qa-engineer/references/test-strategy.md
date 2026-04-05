@@ -79,6 +79,7 @@ export default defineConfig({
 - Circuit breaker behavior (daily spend cap → graceful degradation)
 - Migration integrity (all migrations apply + rollback cleanly)
 - Soft-delete enforcement (no physical deletes, deleted_at filtering)
+- Dev bypass persistence (SKIP_AUTH routes must write to real DB via service client, not mock/in-memory — Sprint 10 learning)
 
 **Setup:**
 ```bash

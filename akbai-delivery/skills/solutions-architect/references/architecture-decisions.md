@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-011
-> Last updated: 2026-03-28
+> Current highest: ADR-012
+> Last updated: 2026-04-05
 
 ---
 
@@ -20,6 +20,7 @@
 | ADR-009 | PostHog for product analytics (Gap A5) | Accepted | 2026-03-24 |
 | ADR-010 | Saan Napunta expenses dashboard (Build 4) | Accepted | 2026-03-26 |
 | ADR-011 | Ang Umaga Mo morning briefing (Build 5) | Accepted | 2026-03-28 |
+| ADR-012 | Reply Drafter integration into Kai Chat | Accepted | 2026-04-05 |
 
 ---
 
@@ -472,3 +473,38 @@ The aggregation logic lives in `lib/` (testable in isolation). The API route orc
 - Offline UX (Gap registry item 5): cached briefing_content enables offline display of this morning's briefing
 
 **Review Trigger:** If briefing content needs versioning (A/B testing prompt variants) or if the `daily_check_in` table becomes overloaded with unrelated columns, extract to a dedicated `morning_briefings` table. Also revisit when BIR deadline data moves from hardcoded to a dynamic table (Build 6).
+
+---
+
+## ADR-012: Reply Drafter Integration into Kai Chat
+
+**Status:** Accepted
+**Date:** 2026-04-05
+**Context:** Sprint 10 live testing
+
+**Decision:**
+
+Integrate the Reply Drafter (Build 7) into the main Kai Chat interface rather than keeping it as a standalone page at `/reply-drafter`.
+
+**Context:**
+
+Reply Drafter was built in Sprint 9 as a standalone feature: `/reply-drafter` page with its own input form, Claude Haiku call, and results display. During Sprint 10 live testing, Anton identified that switching to a separate page to draft customer replies breaks the natural workflow. Users should be able to ask Kai "help me reply to this message" within the existing chat interface.
+
+**Approach (Sprint 11):**
+
+1. Add a "reply draft" intent detection to the chat routing — when user pastes a customer message and asks for a reply, route to the reply drafter prompt + Haiku model
+2. Display reply options (short + detailed) as chat cards within the conversation, not a separate page
+3. Keep copy-to-clipboard on each reply card
+4. Keep output guardrails (no impersonation, commitments, or financial advice)
+5. Remove the standalone `/reply-drafter` page and its dashboard card
+6. Reuse `lib/reply-drafter/` (prompt, schemas, guardrails) — only the UI layer changes
+
+**Consequences:**
+
+- Better UX: users stay in one interface for all Kai interactions
+- Removes a navigation step from the user flow
+- Dashboard card for Reply Drafter is removed (one fewer card in the grid)
+- Chat interface needs to handle multiple response types (text, reply drafts, briefings)
+- `REPLY_DRAFTER_ENABLED` feature flag still works — just gates the chat intent, not a page route
+
+**Review Trigger:** If reply drafting needs more complex input (multiple messages, thread context, customer profile), it may need a dedicated UI again. Revisit if chat interface becomes overloaded with too many card types.
