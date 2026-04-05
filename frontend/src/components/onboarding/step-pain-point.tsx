@@ -62,8 +62,8 @@ export default function StepPainPoint({
           src="onboarding/pain-point.webp"
           alt="What's your biggest challenge?"
           category="onboarding"
-          width={180}
-          height={180}
+          width={260}
+          height={260}
         />
       </div>
 

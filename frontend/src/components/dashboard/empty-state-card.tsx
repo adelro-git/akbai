@@ -19,8 +19,8 @@ export default function EmptyStateCard({ message, hint }: EmptyStateCardProps) {
           src="empty-states/first-scan.webp"
           alt="I-scan ang unang resibo mo"
           category="empty-state"
-          width={120}
-          height={90}
+          width={180}
+          height={135}
         />
       </div>
       <p className="text-on-surface-variant text-sm">{message}</p>

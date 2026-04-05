@@ -50,11 +50,11 @@ export default function BottomNav() {
             >
               {item.isLucide ? (
                 <Icon
-                  className={`w-6 h-6 ${isActive ? 'text-primary-container' : 'text-on-surface-variant'}`}
+                  className={`w-7 h-7 ${isActive ? 'text-primary-container' : 'text-on-surface-variant'}`}
                 />
               ) : (
                 <div className={`rounded-lg p-1 ${isActive ? 'bg-primary-container/15' : 'opacity-60'}`}>
-                  <Icon size={22} />
+                  <Icon size={28} />
                 </div>
               )}
               <span

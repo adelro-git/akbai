@@ -33,24 +33,24 @@ function BackgroundElements({ variant }: { variant: PageVariant }) {
     case 'dashboard':
       return (
         <>
-          {/* Mobile: only PottedPlant. Desktop: full set */}
+          {/* Mobile: PottedPlant + CitylineSilhouette. Desktop: full set */}
           <div
-            className="absolute bottom-8 left-4 z-0 opacity-[0.08] dark:opacity-[0.03] pointer-events-none"
+            className="absolute bottom-24 left-4 z-0 opacity-[0.20] dark:opacity-[0.10] pointer-events-none"
             aria-hidden="true"
           >
-            <PottedPlant size={60} />
+            <PottedPlant size={120} />
           </div>
           <div
-            className="absolute top-4 right-4 z-0 opacity-[0.05] dark:opacity-[0.03] rotate-180 pointer-events-none hidden md:block"
+            className="absolute top-4 right-4 z-0 opacity-[0.15] dark:opacity-[0.08] rotate-180 pointer-events-none hidden md:block"
             aria-hidden="true"
           >
-            <AmberSwoosh width={120} height={60} />
+            <AmberSwoosh width={280} height={140} />
           </div>
           <div
-            className="absolute bottom-0 right-0 z-0 opacity-[0.05] dark:opacity-[0.03] pointer-events-none hidden md:block"
+            className="absolute bottom-16 right-0 z-0 opacity-[0.12] dark:opacity-[0.06] pointer-events-none"
             aria-hidden="true"
           >
-            <CitylineSilhouette width={200} height={40} />
+            <CitylineSilhouette width={400} height={80} />
           </div>
         </>
       );
@@ -59,77 +59,107 @@ function BackgroundElements({ variant }: { variant: PageVariant }) {
       return (
         <>
           <div
-            className="absolute top-8 right-8 z-0 opacity-[0.08] dark:opacity-[0.03] pointer-events-none"
+            className="absolute top-8 right-8 z-0 opacity-[0.20] dark:opacity-[0.10] pointer-events-none"
             aria-hidden="true"
           >
-            <SparkleAccent size={48} />
+            <SparkleAccent size={100} />
           </div>
           <div
-            className="absolute top-1/3 left-0 z-0 opacity-[0.06] dark:opacity-[0.03] pointer-events-none"
+            className="absolute top-1/3 -left-8 z-0 opacity-[0.15] dark:opacity-[0.08] pointer-events-none"
             aria-hidden="true"
           >
-            <AmberSwoosh width={100} height={50} />
+            <AmberSwoosh width={240} height={120} />
+          </div>
+          <div
+            className="absolute bottom-8 right-8 z-0 opacity-[0.10] dark:opacity-[0.06] pointer-events-none"
+            aria-hidden="true"
+          >
+            <PottedPlant size={100} />
           </div>
         </>
       );
 
     case 'onboarding':
       return (
-        <div
-          className="absolute top-4 right-4 z-0 opacity-[0.06] dark:opacity-[0.03] pointer-events-none"
-          aria-hidden="true"
-        >
-          <SparkleAccent size={32} />
-        </div>
+        <>
+          <div
+            className="absolute top-4 right-4 z-0 opacity-[0.18] dark:opacity-[0.08] pointer-events-none"
+            aria-hidden="true"
+          >
+            <SparkleAccent size={80} />
+          </div>
+          <div
+            className="absolute bottom-8 left-4 z-0 opacity-[0.12] dark:opacity-[0.06] pointer-events-none hidden md:block"
+            aria-hidden="true"
+          >
+            <PottedPlant size={90} />
+          </div>
+        </>
       );
 
     case 'chat':
       return (
         <div
-          className="absolute top-4 right-4 z-0 opacity-[0.03] dark:opacity-[0.03] pointer-events-none"
+          className="absolute top-4 right-4 z-0 opacity-[0.10] dark:opacity-[0.05] pointer-events-none"
           aria-hidden="true"
         >
-          <SparkleAccent size={24} />
+          <SparkleAccent size={60} />
         </div>
       );
 
     case 'expenses':
       return (
-        <div
-          className="absolute top-0 left-0 right-0 z-0 opacity-[0.04] dark:opacity-[0.03] pointer-events-none"
-          aria-hidden="true"
-        >
-          <AmberSwoosh width={160} height={80} />
-        </div>
+        <>
+          <div
+            className="absolute top-0 left-0 z-0 opacity-[0.12] dark:opacity-[0.06] pointer-events-none"
+            aria-hidden="true"
+          >
+            <AmberSwoosh width={320} height={160} />
+          </div>
+          <div
+            className="absolute bottom-24 right-4 z-0 opacity-[0.15] dark:opacity-[0.08] pointer-events-none hidden md:block"
+            aria-hidden="true"
+          >
+            <PottedPlant size={80} />
+          </div>
+        </>
       );
 
     case 'deadlines':
       return (
         <div
-          className="absolute top-4 right-4 z-0 opacity-[0.05] dark:opacity-[0.03] pointer-events-none"
+          className="absolute top-4 right-4 z-0 opacity-[0.15] dark:opacity-[0.08] pointer-events-none"
           aria-hidden="true"
         >
-          <SparkleAccent size={20} />
+          <SparkleAccent size={60} />
         </div>
       );
 
     case 'profile':
       return (
-        <div
-          className="absolute bottom-8 right-4 z-0 opacity-[0.06] dark:opacity-[0.03] pointer-events-none"
-          aria-hidden="true"
-        >
-          <PottedPlant size={48} />
-        </div>
+        <>
+          <div
+            className="absolute bottom-24 right-4 z-0 opacity-[0.18] dark:opacity-[0.08] pointer-events-none"
+            aria-hidden="true"
+          >
+            <PottedPlant size={100} />
+          </div>
+          <div
+            className="absolute top-4 left-4 z-0 opacity-[0.10] dark:opacity-[0.06] pointer-events-none hidden md:block"
+            aria-hidden="true"
+          >
+            <SparkleAccent size={50} />
+          </div>
+        </>
       );
 
     case 'offline':
       return (
         <div
-          className="absolute bottom-0 left-0 right-0 z-0 opacity-[0.04] dark:opacity-[0.03] pointer-events-none"
+          className="absolute bottom-0 left-0 right-0 z-0 opacity-[0.15] dark:opacity-[0.08] pointer-events-none"
           aria-hidden="true"
         >
-          <CitylineSilhouette width={200} height={40} />
+          <CitylineSilhouette width={400} height={80} />
         </div>
       );
 

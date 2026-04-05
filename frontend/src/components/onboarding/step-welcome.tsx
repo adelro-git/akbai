@@ -38,8 +38,8 @@ export default function StepWelcome({ onComplete, loading, initialName }: StepWe
           src="onboarding/welcome.webp"
           alt="Welcome to AKBai"
           category="onboarding"
-          width={200}
-          height={200}
+          width={280}
+          height={280}
         />
       </div>
 

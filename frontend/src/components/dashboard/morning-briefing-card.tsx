@@ -128,8 +128,8 @@ export default function MorningBriefingCard() {
               src="features/feature-morning-briefing-v1.webp"
               alt="Ang Umaga Mo morning briefing"
               category="empty-state"
-              width={48}
-              height={36}
+              width={80}
+              height={60}
             />
             <Sparkles className="w-3 h-3 text-primary" />
           </div>

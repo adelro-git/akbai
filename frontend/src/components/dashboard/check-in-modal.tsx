@@ -15,7 +15,7 @@ import { X, ChevronRight } from 'lucide-react';
 import { pesoToCentavos, centavosToPeso } from '@/lib/utils/money';
 import { trackDailyCheckInCompleted } from '@/lib/posthog/events';
 import { EXPENSE_CATEGORIES } from '@/lib/expenses/categories';
-import { KaCelebrating, KaHappy, KaThinking, KaConcerned } from '@/components/illustrations/svg';
+import { KaCelebrating, KaHappy, KaThinking, KaConcerned, KaWorking } from '@/components/illustrations/svg';
 import { CategoryIcon } from '@/lib/expenses/category-icons';
 
 // ============================================================
@@ -23,11 +23,11 @@ import { CategoryIcon } from '@/lib/expenses/category-icons';
 // ============================================================
 
 const MOOD_OPTIONS: { value: string; icon: React.ReactNode; label: string }[] = [
-  { value: 'bongga', icon: <KaCelebrating size={28} />, label: 'Bongga' },
-  { value: 'okay', icon: <KaHappy size={28} />, label: 'Okay' },
-  { value: 'steady', icon: <KaThinking size={28} />, label: 'Steady' },
-  { value: 'hirap', icon: <KaConcerned size={28} />, label: 'Hirap' },
-  { value: 'grabe', icon: <KaConcerned size={28} className="opacity-70" />, label: 'Grabe' },
+  { value: 'bongga', icon: <KaCelebrating size={36} />, label: 'Bongga' },
+  { value: 'okay', icon: <KaHappy size={36} />, label: 'Okay' },
+  { value: 'steady', icon: <KaThinking size={36} />, label: 'Steady' },
+  { value: 'hirap', icon: <KaConcerned size={36} />, label: 'Hirap' },
+  { value: 'grabe', icon: <KaWorking size={36} />, label: 'Grabe' },
 ];
 
 // ============================================================

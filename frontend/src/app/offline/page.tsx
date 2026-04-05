@@ -31,8 +31,8 @@ export default function OfflinePage() {
           src="status/offline.webp"
           alt="Walang internet connection"
           category="status"
-          width={160}
-          height={120}
+          width={240}
+          height={180}
         />
       </div>
 

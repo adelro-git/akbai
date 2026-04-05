@@ -47,9 +47,9 @@ export default function DashboardCard({
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
-        <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center flex-shrink-0">
           {IconComponent ? (
-            <IconComponent size={20} />
+            <IconComponent size={32} />
           ) : (
             <span className="text-primary-container text-sm">?</span>
           )}

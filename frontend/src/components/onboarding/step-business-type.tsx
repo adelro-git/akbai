@@ -99,8 +99,8 @@ export default function StepBusinessType({
           src="onboarding/business-type.webp"
           alt="Choose your business type"
           category="onboarding"
-          width={180}
-          height={180}
+          width={260}
+          height={260}
         />
       </div>
 
