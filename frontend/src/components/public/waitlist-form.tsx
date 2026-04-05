@@ -87,7 +87,7 @@ export default function WaitlistForm({ section }: WaitlistFormProps) {
         <input
           ref={emailRef}
           type="email"
-          placeholder="Email mo dito..."
+          placeholder="I-lagay ang email dito.."
           aria-label="Email address"
           className="flex-1 rounded-xl bg-surface-container-lowest px-4 py-3.5 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
         />
