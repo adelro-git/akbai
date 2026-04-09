@@ -65,3 +65,5 @@ venv/
 **/*.tar.gz
 **/*.tar
 **/*.tgz
+Archive/
+.firecrawl/
