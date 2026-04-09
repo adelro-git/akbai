@@ -109,15 +109,15 @@ const painPoints = [
     imageAlt: 'Tita Rosa stressed with BIR forms and paperwork piling up',
     title: 'Nakakatakot ang BIR?',
     description:
-      'Hindi ka nagiisa. Maraming MSME owners ang stressed sa deadlines, penalties, at forms. Si Kai, alam ang BIR calendar mo — para hindi ka ma-late.',
+      'Hindi ka nag-iisa. Maraming may-ari ng MSME ang na-sstress sa mga deadline, penalty, at form. Alam ni Kai ang BIR calendar mo — para hindi ka mahuli.',
   },
   {
     icon: IconReceipt,
     image: '/illustrations/marketing/receipt-scanning.webp',
     imageAlt: 'Hands scanning a receipt with phone while laptop shows organized expense dashboard',
-    title: 'Pagod na sa manual tracking?',
+    title: 'Pagod na sa manu-manong pagtatala?',
     description:
-      'Excel, notebook, GCash screenshots — nakakalat lahat. Snap mo lang ang receipt, tracked na. All in one place.',
+      'Excel, notebook, GCash screenshots — nakakalat lahat. Kuhanan mo lang ng litrato ang resibo, na-track na. Nasa isang lugar lahat.',
   },
   {
     icon: IconCashFlow,
@@ -133,18 +133,18 @@ const painPoints = [
 const steps = [
   {
     step: '1',
-    title: 'Kikilalanin Kita',
-    description: 'Sabihin mo lang ang tungkol sa negosyo mo — type, income range, at biggest pain point. 2 minutes lang.',
+    title: 'Kamusta ka na?',
+    description: 'Ikwento mo lang ang tungkol sa negosyo mo — kung anong klase, magkano ang kita, at ano ang pinakamalaking hirap mo. 2 minuto lang.',
   },
   {
     step: '2',
     title: 'Umagang Kai Ganda!',
-    description: 'Tuwing umaga, briefing mula kay Kai — deadlines, reminders, at insights para sa negosyo mo.',
+    description: 'Tuwing umaga, may briefing mula kay Kai — mga deadline, paalala, at napapansin niya sa negosyo mo.',
   },
   {
     step: '3',
-    title: 'Track Everything',
-    description: 'Receipts, expenses, BIR deadlines — lahat nasa iisang lugar. Snap, type, or voice — tutulungan ka ni Kai.',
+    title: 'Lahat, Nasa Isang Lugar',
+    description: 'Mga resibo, gastos, BIR deadlines — lahat nasa iisang lugar. Kuhanan ng litrato, i-type, o i-sabi mo lang — tutulungan ka ni Kai.',
   },
 ] as const
 
@@ -152,37 +152,37 @@ const steps = [
 const pillars = [
   {
     icon: IconFinance,
-    title: 'Financial Tracking',
-    tagline: 'Saan Napunta ang Pera?',
-    description: 'Makikita mo ang cash flow mo, nakaayos ang mga gastos, at na-sca-scan ang mga resibo — lahat kasama sa Pro.',
+    title: 'Saan Napunta ang Pera?',
+    tagline: 'Financial Tracking',
+    description: 'Makikita mo ang cash flow mo, nakaayos ang mga gastos, at nasca-scan ang mga resibo — lahat kasama sa Pro.',
     accent: 'from-primary-container/10 to-transparent',
   },
   {
     icon: IconTax,
-    title: 'BIR Compliance',
-    tagline: 'Hindi Na Nakakatakot ang BIR',
-    description: 'Deadline calendar, filing guides, quarterly tax estimates, at mas madalas na reminders.',
+    title: 'Hindi Na Nakakatakot ang BIR',
+    tagline: 'BIR Compliance',
+    description: 'Kalendaryo ng mga deadline, gabay sa filing, tax estimates bawat quarter, at madalas na paalala.',
     accent: 'from-tertiary/10 to-transparent',
   },
   {
     icon: IconComms,
-    title: 'Customer Comms',
-    tagline: 'Reply sa DM, Draft ni Kai',
-    description: 'AI-drafted replies sa customer messages. Ikaw na lang mag-review at send.',
+    title: 'Reply sa DM, Draft ni Kai',
+    tagline: 'Customer Comms',
+    description: 'AI-drafted replies sa mga customer message. Ikaw na lang mag-review at magsend.',
     accent: 'from-primary-container/10 to-transparent',
   },
   {
     icon: IconOps,
-    title: 'Daily Operations',
-    tagline: 'Ang Umaga Mo, Organized',
-    description: 'Morning briefing, daily check-in, weekly reconciliation — automated by Kai.',
+    title: 'Ang Umaga Mo, Handa Na',
+    tagline: 'Daily Operations',
+    description: 'Morning briefing, daily check-in, weekly reconciliation — ginagawa lahat ni Kai para sa iyo.',
     accent: 'from-tertiary/10 to-transparent',
   },
   {
     icon: IconTasks,
-    title: 'Task Management',
-    tagline: 'Alam ni Kai ang Priorities Mo',
-    description: 'Proactive task surfacing at deadline-aware scheduling. Hindi ka makakalimot.',
+    title: 'Alam ni Kai ang Priorities Mo',
+    tagline: 'Task Management',
+    description: 'Ipapaalala ni Kai ang mga dapat mong gawin at mga deadline. Hindi ka na makakalimot.',
     accent: 'from-primary-container/10 to-transparent',
   },
 ] as const
@@ -192,22 +192,22 @@ const tiers = [
   {
     name: 'Free',
     price: 0,
-    period: '/month',
-    features: ['Basic expense tracking', '10 Kai queries/day', 'BIR deadline reminders', 'Morning briefing'],
+    period: '/buwan',
+    features: ['Simpleng pag-track ng gastos', '10 tanong kay Kai kada araw', 'Paalala sa BIR deadlines', 'Morning briefing'],
     highlighted: false,
   },
   {
     name: 'Pro',
     price: 39900,
-    period: '/month',
-    features: ['Lahat ng Free features', '50 receipt scans/month', 'Cash flow insights', 'Tax estimate reports', 'Priority Kai responses'],
+    period: '/buwan',
+    features: ['Lahat ng Free features', '50 resibo scans kada buwan', 'Insights sa cash flow mo', 'Tax estimate reports', 'Priority na sagot ni Kai'],
     highlighted: true,
   },
   {
     name: 'Business',
     price: 89900,
-    period: '/month',
-    features: ['Lahat ng Pro features', 'Multi-seat (up to 3 users)', 'Priority support', 'Custom Kai training', 'Advanced analytics'],
+    period: '/buwan',
+    features: ['Lahat ng Pro features', 'Hanggang 3 user sa isang account', 'Priority support', 'Custom training ni Kai', 'Malalim na analytics'],
     highlighted: false,
   },
 ] as const
@@ -234,14 +234,14 @@ const communityQuotes = [
 // ─── Bold Stats ─────────────────────────────────────────────────────
 const boldStats = [
   { number: '74%', label: 'hindi alam kung kumikita' },
-  { number: '₱399', label: 'vs ~₱10,000+/mo sa bookkeeper' },
-  { number: '99.5%', label: 'ng businesses, MSME' },
+  { number: '₱399', label: 'kaysa ~₱10,000+/buwan sa bookkeeper' },
+  { number: '99.5%', label: 'ng mga negosyo, MSME' },
 ] as const
 
 // ─── Social Proof Badges ────────────────────────────────────────────
 const badges = [
-  { text: '5 Pillars', subtext: 'Finance, Tax, Comms, Ops, Tasks' },
-  { text: '97% Mas Mura', subtext: 'vs hiring a bookkeeper' },
+  { text: '5 Haligi', subtext: 'Pera, Buwis, Chat, Ops, Gawain' },
+  { text: '97% Mas Mura', subtext: 'kaysa magkuha ng bookkeeper' },
   { text: '100% Filipino', subtext: 'wika mo ang ginagamit' },
 ] as const
 
@@ -330,7 +330,7 @@ export default function LandingPage() {
             onClick={scrollToWaitlist}
             className="min-h-[44px] min-w-[44px] rounded-full bg-gradient-to-r from-primary-container to-secondary-container px-5 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-ambient-lg active:scale-[0.98]"
           >
-            Join Waitlist
+            Sumali sa Waitlist
           </button>
         </div>
       </nav>
@@ -381,8 +381,8 @@ export default function LandingPage() {
               </h1>
 
               <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-on-surface-variant sm:mt-8 sm:text-lg md:mx-0 md:text-xl">
-                AI-powered na kaakbay mo sa tax, expenses, at daily operations
-                &mdash; para sa Filipino MSMEs.
+                AI-powered na kaakbay mo sa buwis, gastos, at araw-araw na negosyo
+                &mdash; para sa mga Pinoy na MSME.
               </p>
 
               <div className="mt-10 flex flex-col items-center gap-4 sm:mt-12 md:items-start">
@@ -412,7 +412,7 @@ export default function LandingPage() {
               onClick={scrollToContent}
               className="group flex min-h-[44px] items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-on-surface-variant transition-all hover:text-on-surface hover:bg-surface-container-low active:scale-[0.98]"
             >
-              Alamin Kung Paano
+              Alamin Mo Pa
               <span className="inline-block transition-transform group-hover:translate-y-0.5" aria-hidden="true">
                 ↓
               </span>
@@ -452,10 +452,10 @@ export default function LandingPage() {
               className="mt-4 text-3xl font-extrabold tracking-tight text-on-surface sm:text-4xl md:text-5xl"
               style={{ letterSpacing: '-0.02em' }}
             >
-              Alam namin ang struggle
+              Alam namin ang hirap
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-on-surface-variant sm:text-base md:text-lg">
-              99.5% ng businesses sa Pilipinas, MSME. Deserve nila ng AI partner.
+              99.5% ng mga negosyo sa Pilipinas, MSME. Karapat-dapat sila sa AI partner.
             </p>
           </div>
 
@@ -511,7 +511,7 @@ export default function LandingPage() {
               1.1M
             </p>
             <p className="mt-4 text-lg font-medium text-on-surface sm:mt-6 sm:text-xl md:text-2xl">
-              Filipino MSMEs na deserving ng AI business partner
+              na Filipino MSME, karapat-dapat sa AI business partner
             </p>
           </div>
 
@@ -558,9 +558,9 @@ export default function LandingPage() {
                 <span className="text-gradient-honey">AI partner</span> mo
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-on-surface-variant sm:text-base md:text-lg">
-                Ang AKBai ay iyong AI-powered business platform &mdash; at si Kai ang mukha ng AI assistant mo.
+                Ang AKBai ay AI-powered business platform mo &mdash; at si Kai ang mukha ng AI assistant mo.
                 Hindi siya chatbot na naghihintay ng tanong. Si Kai ang unang babati sa&rsquo;yo tuwing umaga,
-                mag-papaalala sa&rsquo;yo ng mga deadlines, at mag-ta-track ng finances mo. Parang business partner na laging naka-abang.
+                siya ang magpapaalala sa&rsquo;yo ng mga deadline, at siya rin ang magbabantay sa kita at gastos mo. Parang kasosyo na laging nasa tabi mo.
               </p>
             </div>
           </div>
@@ -614,15 +614,15 @@ export default function LandingPage() {
       <section className="px-5 py-20 sm:py-28 md:py-32">
         <div className="mx-auto max-w-5xl">
           <div className="landing-reveal text-center">
-            <p className="landing-section-label mb-4">5 PILLARS</p>
+            <p className="landing-section-label mb-4">5 HALIGI</p>
             <h2
               className="text-2xl font-extrabold tracking-tight text-on-surface sm:text-3xl md:text-4xl"
               style={{ letterSpacing: '-0.02em' }}
             >
-              Isang partner, limang pillar
+              Isang kasosyo, limang haligi
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-on-surface-variant sm:text-base md:text-lg">
-              Hindi lang isang tool — ang AKBai ay AI partner mo na alam ang lahat ng kailangan ng negosyo mo.
+              Hindi lang basta tool — ang AKBai ay AI partner mo na alam ang lahat ng kailangan ng negosyo mo.
             </p>
           </div>
 
@@ -748,33 +748,33 @@ export default function LandingPage() {
       <section className="bg-surface-container-low px-5 py-20 sm:py-28 md:py-32">
         <div className="mx-auto max-w-5xl">
           <div className="landing-reveal text-center">
-            <p className="landing-section-label mb-4">PRICING</p>
+            <p className="landing-section-label mb-4">PRESYO</p>
             <h2
               className="text-2xl font-extrabold tracking-tight text-on-surface sm:text-3xl md:text-4xl"
               style={{ letterSpacing: '-0.02em' }}
             >
-              Simple, transparent pricing
+              Simple, walang nakatagong presyo
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-on-surface-variant sm:text-base md:text-lg">
-              97% cheaper than hiring a bookkeeper
+              97% mas mura kaysa magkuha ng bookkeeper
             </p>
           </div>
 
           {/* Comparison callout */}
           <div className="landing-reveal mx-auto mt-8 max-w-md rounded-2xl bg-surface-container-lowest p-4 text-center shadow-ambient sm:mt-10">
             <p className="text-sm text-on-surface-variant">
-              Average bookkeeper cost:{' '}
+              Presyo ng bookkeeper:{' '}
               <span
                 className="font-extrabold text-on-surface"
                 style={{ letterSpacing: '-0.02em' }}
               >
-                ~₱10,000+/mo
+                ~₱10,000+/buwan
               </span>
             </p>
             <p className="mt-1 text-sm text-on-surface-variant">
               AKBai Pro:{' '}
               <span className="font-extrabold text-gradient-honey">
-                ₱399/mo
+                ₱399/buwan
               </span>
             </p>
           </div>
@@ -791,7 +791,7 @@ export default function LandingPage() {
               >
                 {tier.highlighted && (
                   <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary-container to-secondary-container px-4 py-1.5 text-xs font-semibold text-white shadow-ambient">
-                    Most Popular
+                    Pinakasikat
                   </span>
                 )}
                 <h3 className="text-lg font-bold text-on-surface">{tier.name}</h3>
@@ -831,15 +831,15 @@ export default function LandingPage() {
       <section className="px-5 py-20 sm:py-28 md:py-32">
         <div className="mx-auto max-w-5xl">
           <div className="landing-reveal text-center">
-            <p className="landing-section-label mb-4">COMMUNITY VOICES</p>
+            <p className="landing-section-label mb-4">TINIG NG KOMUNIDAD</p>
             <h2
               className="text-2xl font-extrabold tracking-tight text-on-surface sm:text-3xl md:text-4xl"
               style={{ letterSpacing: '-0.02em' }}
             >
-              Galing sa mga nag-hustle din
+              Mula sa mga kapwa negosyante
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-on-surface-variant sm:text-base md:text-lg">
-              Real quotes from Filipino business owners sa Reddit at Facebook.
+              Mga totoong sinabi ng mga Pinoy na negosyante sa Reddit at Facebook.
             </p>
           </div>
 
@@ -908,8 +908,8 @@ export default function LandingPage() {
               sa negosyo mo.
             </h2>
             <p className="mx-auto mt-5 max-w-md text-base text-on-surface-variant sm:mt-6 sm:text-lg">
-              Sumali sa waitlist at maging isa sa unang mag-try ng AKBai &mdash;
-              your AI-powered na katuwang sa hustle.
+              Sumali sa waitlist at maging isa sa unang maka-try ng AKBai &mdash;
+              ang AI-powered mong katuwang sa negosyo.
             </p>
           </div>
 
@@ -921,11 +921,11 @@ export default function LandingPage() {
           <div className="landing-reveal mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2">
             <span className="flex items-center gap-1.5 text-xs text-on-surface-variant/70">
               <IconCheckmark />
-              100% free to join
+              Libreng sumali
             </span>
             <span className="flex items-center gap-1.5 text-xs text-on-surface-variant/70">
               <IconCheckmark />
-              No credit card needed
+              Walang credit card
             </span>
             <span className="flex items-center gap-1.5 text-xs text-on-surface-variant/70">
               <IconCheckmark />
@@ -954,7 +954,7 @@ export default function LandingPage() {
             Katuwang mo sa Negosyo
           </p>
           <p className="mt-3 text-xs text-on-surface-variant/60">
-            Made with <span aria-label="love" className="text-primary-container">&hearts;</span> in the Philippines
+            Ginawa nang may <span aria-label="love" className="text-primary-container">&hearts;</span> sa Pilipinas
           </p>
           <p className="mt-1 text-xs text-on-surface-variant/50">
             &copy; {new Date().getFullYear()} AKBai. All rights reserved.
