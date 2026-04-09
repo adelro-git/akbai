@@ -106,7 +106,7 @@ export default function ExpensesPage() {
 
   return (
     <PageBackground variant="expenses">
-    <div className="min-h-dvh bg-background pb-20 md:pb-6" data-testid="expenses-page">
+    <div className="min-h-dvh pb-20 md:pb-6" data-testid="expenses-page">
       {/* ── Header ── */}
       <header className="px-4 pt-5 pb-3 md:px-8 md:pt-8 md:pb-5 md:flex md:items-center md:justify-between">
         <h1 className="text-on-surface text-lg md:text-2xl font-extrabold mb-3 md:mb-0">

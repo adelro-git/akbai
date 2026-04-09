@@ -57,7 +57,7 @@ export default async function ProfilePage() {
   return (
     <PageBackground variant="profile">
     <div
-      className="min-h-dvh bg-background pb-20"
+      className="min-h-dvh pb-20"
       data-testid="profile-page"
     >
       <ProfileView

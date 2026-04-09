@@ -54,7 +54,7 @@ export default async function OnboardingPage() {
 
   return (
     <PageBackground variant="onboarding">
-    <main className="min-h-dvh bg-background flex items-start justify-center pt-safe">
+    <main className="min-h-dvh flex items-start justify-center pt-safe">
       <div className="w-full max-w-lg md:max-w-2xl px-5 py-8">
         {/* Logo */}
         <div className="mb-8">

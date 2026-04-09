@@ -120,7 +120,7 @@ export default function ChatInterface({
   }
 
   return (
-    <div className="flex flex-col h-dvh bg-background" data-testid="chat-interface">
+    <div className="flex flex-col h-dvh" data-testid="chat-interface">
       <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 bg-surface-container border-b border-outline-variant/20 pt-safe">
         <div className="flex items-center gap-2.5">
           <div className="relative w-6 h-6 rounded-full overflow-hidden ring-1 ring-primary-container/30 flex items-center justify-center bg-primary-container/10">

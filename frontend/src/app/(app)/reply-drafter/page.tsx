@@ -64,7 +64,7 @@ export default function ReplyDrafterPage() {
 
   return (
     <div
-      className="min-h-dvh bg-background pb-20 md:pb-6"
+      className="min-h-dvh pb-20 md:pb-6"
       data-testid="reply-drafter-page"
     >
       {/* Header */}

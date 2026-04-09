@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <PageBackground variant="login">
-    <div className="min-h-dvh bg-background flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+    <div className="min-h-dvh flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
       {/* Atmospheric Glow (Top Left) */}
       <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary-container/5 rounded-full blur-[120px] pointer-events-none" />
 

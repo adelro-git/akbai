@@ -252,7 +252,7 @@ export default async function DashboardPage() {
   return (
     <PageBackground variant="dashboard">
     <div
-      className="min-h-dvh bg-background pb-20 md:pb-6"
+      className="min-h-dvh pb-20 md:pb-6"
       data-testid="dashboard-page"
     >
       <DashboardTracker />

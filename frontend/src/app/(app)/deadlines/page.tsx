@@ -19,7 +19,7 @@ export default function DeadlinesPage() {
   return (
     <PageBackground variant="deadlines">
     <div
-      className="min-h-dvh bg-background pb-20"
+      className="min-h-dvh pb-20"
       data-testid="deadlines-page"
     >
       {/* ─── Header ─── */}
