@@ -497,13 +497,13 @@ Track flag rate per feature and per prompt version in PostHog:
 
 ### The Design Gate
 
-The gap registry (Design Gate 3) requires a 20–30 case Taglish regression test library. Every prompt change must be run against this library before shipping.
+The gap registry (Design Gate 3) requires a 20–30 case Conversational Filipino regression test library. Every prompt change must be run against this library before shipping.
 
 ### Test Categories
 
 | Category | Cases | Tests |
 |----------|-------|-------|
-| Kai voice | 5 | Taglish blend natural? "Po" appropriate? No corporate filler? |
+| Kai voice | 5 | Conversational Filipino blend natural? "Po" appropriate? No corporate filler? |
 | BIR disclaimer | 5 | Disclaimer present on all tax-related outputs? |
 | OCR extraction | 5 | Correct JSON? Confidence scores reasonable? Edge cases handled? |
 | Hallucination | 5 | No invented amounts? Uncertainty flagged? Data sourced correctly? |
@@ -519,7 +519,7 @@ The gap registry (Design Gate 3) requires a 20–30 case Taglish regression test
   "input": "Magkano ang gastos ko this week?",
   "user_context": { "name": "Maria", "business_type": "food_seller", "tier": "pro" },
   "assertions": [
-    "Response is in Taglish, not pure English",
+    "Response is in conversational Filipino, not pure English",
     "Uses 'Maria' in the response",
     "Numbers use ₱ sign with digits",
     "No corporate filler phrases",
@@ -545,7 +545,7 @@ The gap registry (Design Gate 3) requires a 20–30 case Taglish regression test
 | **P0 — Critical** | Hallucinated BIR deadline, wrong tax calculation, financial amount fabricated | Immediate (within 1 hour) |
 | **P1 — High** | Kai persona completely broken, prompt injection succeeded, disclaimer missing | Same day |
 | **P2 — Medium** | OCR consistently wrong on a receipt type, voice drifts to corporate English | Next sprint |
-| **P3 — Low** | Minor Taglish awkwardness, confidence scores slightly off | Backlog |
+| **P3 — Low** | Minor conversational Filipino awkwardness, confidence scores slightly off | Backlog |
 
 ### P0 Response Protocol
 

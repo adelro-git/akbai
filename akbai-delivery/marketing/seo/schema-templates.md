@@ -22,7 +22,7 @@ Add these JSON-LD blocks inside `<script type="application/ld+json">` tags in th
   "alternateName": "Katuwang ng Negosyo Mo",
   "url": "https://akbai.vercel.app",
   "logo": "https://akbai.vercel.app/icons/icon-512.png",
-  "description": "AI-powered business partner for Filipino MSMEs. Receipt scanning, BIR compliance, expense tracking, and daily operations — lahat in Taglish.",
+  "description": "AI-powered business partner for Filipino MSMEs. Receipt scanning, BIR compliance, expense tracking, and daily operations — lahat in conversational Filipino.",
   "foundingDate": "2026",
   "founder": {
     "@type": "Person",
@@ -79,7 +79,7 @@ Add these JSON-LD blocks inside `<script type="application/ld+json">` tags in th
 ```
 
 **Notes:**
-- `inLanguage`: Use "tl" (Tagalog) for Taglish articles — Google treats Taglish as Filipino
+- `inLanguage`: Use "tl" (Tagalog) for conversational Filipino articles — Google treats Filipino-English code-switching as Filipino
 - Always set `dateModified` when updating an article
 - `headline` must match the H1 tag on the page
 
@@ -296,7 +296,7 @@ Add these JSON-LD blocks inside `<script type="application/ld+json">` tags in th
   "alternateName": "Katuwang ng Negosyo Mo",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web, Android, iOS (PWA)",
-  "description": "AI-powered business partner for Filipino MSMEs. Receipt scanning, BIR compliance, expense tracking, customer communications, and daily operations — lahat in Taglish.",
+  "description": "AI-powered business partner for Filipino MSMEs. Receipt scanning, BIR compliance, expense tracking, customer communications, and daily operations — lahat in conversational Filipino.",
   "offers": [
     {
       "@type": "Offer",

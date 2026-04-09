@@ -42,7 +42,7 @@ describe('WelcomeTour — feature cards', () => {
     expect(titles).toContain('Scan receipts');
   });
 
-  it('should use Taglish descriptions', () => {
+  it('should use conversational Filipino descriptions', () => {
     // Each description should contain Filipino words
     expect(FEATURE_CARDS[0].description).toContain('gastos');
     expect(FEATURE_CARDS[1].description).toContain('Hindi');
@@ -63,7 +63,7 @@ describe('WelcomeTour — dismiss behavior', () => {
     expect(TOUR_STORAGE_KEY).toBe('akbai_tour_seen');
   });
 
-  it('should have Taglish dismiss CTA', () => {
+  it('should have conversational Filipino dismiss CTA', () => {
     expect(DISMISS_CTA).toContain('Tara');
     expect(DISMISS_CTA).toContain('simulan');
     // Not corporate English

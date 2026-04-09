@@ -14,7 +14,7 @@ akbai-delivery/
 │   ├── project-context.md         # Product briefing (~200 lines)
 │   ├── tech-stack.md              # Canonical tech stack reference
 │   ├── gap-registry.md            # 29 pre-launch gaps, 10 CRITICAL hard gates
-│   ├── glossary.md                # Product, business, technical, Taglish terms
+│   ├── glossary.md                # Product, business, technical, conversational Filipino terms
 │   └── brand-context.md           # Brand identity, voice, colors, messaging
 ├── skills/                        # 12 role-based skills
 │   ├── project-manager/           # Phase A — Foundation

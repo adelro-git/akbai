@@ -233,7 +233,7 @@ describe('withFeatureFlag', () => {
     expect(allowed).toBe(true);
   });
 
-  it('exports FEATURE_BLOCKED_MESSAGE with Taglish copy', async () => {
+  it('exports FEATURE_BLOCKED_MESSAGE with conversational Filipino copy', async () => {
     const { FEATURE_BLOCKED_MESSAGE } = await import('../middleware');
     expect(FEATURE_BLOCKED_MESSAGE).toBe(
       'Hindi pa available ang feature na ito. Stay tuned!'

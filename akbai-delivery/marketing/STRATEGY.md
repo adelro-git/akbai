@@ -61,7 +61,7 @@ Seven distribution strategies evaluated for AKBai's Phase 0B context. Scored on 
 | # | Strategy | Fit | Priority | Rationale |
 |---|----------|-----|----------|-----------|
 | 1 | **Free Tools ("Tool is Marketing")** | 9/10 | M1-M2 -- #1 priority | BIR Deadline Checker, 8% Tax Calculator. These tools ARE the product preview. Every user who checks a deadline is a warm lead. Zero marginal cost. Shareable. |
-| 2 | **Programmatic SEO** | 8/10 | M2-M4 | Taglish BIR articles targeting long-tail keywords ("paano mag-file ng 1701Q"). Filipino MSME space is SEO-underserved. 5-6 articles can rank within weeks. Compounds over time. |
+| 2 | **Programmatic SEO** | 8/10 | M2-M4 | Conversational Filipino BIR articles targeting long-tail keywords ("paano mag-file ng 1701Q" — users search in Taglish, we answer in conversational Filipino). Filipino MSME space is SEO-underserved. 5-6 articles can rank within weeks. Compounds over time. |
 | 3 | **Answer Engine Optimization (AEO)** | 7/10 | M2 (bundle with SEO) | Structure articles for AI citation (FAQ schema, direct answers). When MSMEs ask ChatGPT/Gemini about BIR, AKBai content gets cited. Low effort add-on to SEO. |
 | 4 | **Shareable Viral Artifacts** | 7/10 | M4 | BIR deadline infographics, tax cheat sheets, exportable expense summaries. These spread naturally in FB groups. Requires more design effort -- defer until tools + SEO are running. |
 | 5 | **Content Repurposing Engine** | 6/10 | M3 | One blog article → FB post → TikTok script → email → carousel. Maximizes content ROI for solo founder. Worth setting up once M2 content is flowing. |
@@ -82,7 +82,7 @@ Build standalone free tools that deliver immediate value and capture waitlist em
 Each tool ends with: "Gusto mo ng automatic reminders? Join the waitlist."
 
 ### Action 2: SEO + AEO Foundation (M2-M4)
-Publish 5-6 Taglish articles targeting validated keywords:
+Publish 5-6 conversational Filipino articles targeting validated keywords (Taglish search queries, conversational Filipino content):
 
 | Keyword | Search Intent | Article Type |
 |---------|--------------|--------------|

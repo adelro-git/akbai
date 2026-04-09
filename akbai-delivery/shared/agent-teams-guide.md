@@ -62,7 +62,7 @@ The key difference: `/build` on M/L features spawns a coordinated team. You inte
 2. Is it a NEW feature?           → build-po (scope validation)
 3. New tables?                    → build-data
 4. Claude API/prompts?            → build-ai
-5. Significant Taglish copy?      → build-marketing
+5. Significant conversational Filipino copy?      → build-marketing
 6. Auth/payments/PII?             → review-security
 7. Always:                        → build-architect + build-engineer + build-qa
 ```
@@ -142,7 +142,7 @@ All four (including devops lead) must report GREEN before deploy proceeds.
 | `build-ux` | ux-designer | Any UI work |
 | `build-po` | product-owner | New features |
 | `build-ai` | ai-engineer | Claude API features |
-| `build-marketing` | marketing-lead | Content-heavy Taglish |
+| `build-marketing` | marketing-lead | Content-heavy conversational Filipino |
 | `review-security` | security-compliance | Auth, payments, PII |
 | `deploy-devops` | devops-engineer | Deploy workflows |
 | `deploy-ops` | ops-lead | Operational readiness |
@@ -158,9 +158,9 @@ All four (including devops lead) must report GREEN before deploy proceeds.
 ```
 **Team:** po + architect + ai + engineer + qa
 - `po` validates: Pro-only, MCTD 5/5, direct Maria Moment
-- `ai` designs: morning briefing prompt, Taglish greeting patterns
+- `ai` designs: morning briefing prompt, conversational Filipino greeting patterns
 - `engineer` implements: cron trigger, API route, chat bubbles
-- `qa` tests: UTC+8 timezone, Pro tier gate, Taglish output
+- `qa` tests: UTC+8 timezone, Pro tier gate, conversational Filipino output
 
 ### Build 6: Deadline Watcher (BIR Calendar)
 ```

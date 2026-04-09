@@ -124,7 +124,7 @@ describe('sanitizeInput — injection pattern coverage', () => {
     expect(result.injectionDetected).toBe(false);
   });
 
-  it('does not flag Taglish business question', () => {
+  it('does not flag conversational Filipino business question', () => {
     const result = sanitizeInput('Paano ko malalaman kung kailangan ko mag-file ng VAT?');
     expect(result.injectionDetected).toBe(false);
   });

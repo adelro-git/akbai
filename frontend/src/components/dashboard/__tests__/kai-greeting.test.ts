@@ -65,7 +65,7 @@ describe('KaiGreeting — greeting logic', () => {
     expect(greeting).toContain('Maria');
   });
 
-  it('should use Taglish copy (not English-only)', () => {
+  it('should use conversational Filipino copy (not English-only)', () => {
     mockHour = 9;
     const greeting = generateGreeting('Maria');
     expect(greeting).toContain('Magandang');

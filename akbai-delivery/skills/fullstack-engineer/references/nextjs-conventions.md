@@ -246,7 +246,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata = {
   title: 'AKBai — Katuwang ng Negosyo Mo',
-  description: 'Your AI Business Partner. In Taglish.',
+  description: 'Your AI Business Partner. In conversational Filipino.',
   manifest: '/manifest.json',
   themeColor: '#fdf9f2',
 };

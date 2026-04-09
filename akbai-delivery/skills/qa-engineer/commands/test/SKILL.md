@@ -4,7 +4,7 @@ description: >
   Generate test suite for specified feature. Covers unit tests (Jest) for business logic and Zod schemas,
   integration tests for API routes with Supabase mocking, and E2E tests (Playwright) for user flows.
   AI-specific tests include prompt regression, guardrail triggers, and confidence thresholds.
-  Philippine-context test data: ₱ amounts, Filipino names, Taglish strings, GCash screenshots, thermal receipts.
+  Philippine-context test data: ₱ amounts, Filipino names, conversational Filipino strings, GCash screenshots, thermal receipts.
   Trigger on "/test [scope]" where scope is feature name and test types needed (unit/integration/e2e or all).
 ---
 
@@ -18,11 +18,11 @@ Read the shared context files:
 - `/AKBai/akbai-delivery/shared/project-context.md` — personas (Maria, Jose, Ana, Andoy), product phases, tiers
 - `/AKBai/akbai-delivery/shared/tech-stack.md` — Next.js 14, TypeScript strict, Supabase, Zod, testing stack (Jest + Vitest, Playwright)
 - `/AKBai/akbai-delivery/shared/glossary.md` — product terms, Filipino business context, BIR, tax concepts
-- `/AKBai/akbai-delivery/shared/brand-context.md` — KA voice, Taglish tone for test assertions
+- `/AKBai/akbai-delivery/shared/brand-context.md` — KA voice, conversational Filipino tone for test assertions
 
 Then read the qa-engineer references:
 - `references/test-strategy.md` — testing pyramid, coverage targets, test naming conventions
-- `references/regression-library.md` — Taglish tone regression tests, prompt consistency tests, AI guardrail test cases
+- `references/regression-library.md` — conversational Filipino tone regression tests, prompt consistency tests, AI guardrail test cases
 - `references/test-checklist.md` — required test scenarios by feature type (receipt scanning, BIR compliance, chat, payments)
 
 ---
@@ -520,7 +520,7 @@ test.describe('Resibo Scanner Feature', () => {
     // Try to save
     await page.click('button:has-text("Save")');
 
-    // Should show Taglish offline message
+    // Should show conversational Filipino offline message
     await expect(page.locator('text=Offline ka ngayon')).toBeVisible();
     await expect(page.locator('text=I-save natin pagkabalik online')).toBeVisible();
 
@@ -533,7 +533,7 @@ test.describe('Resibo Scanner Feature', () => {
   });
 });
 
-test.describe('KA Chat - Taglish Tone Consistency', () => {
+test.describe('KA Chat - conversational Filipino Tone Consistency', () => {
   test.beforeEach(async ({ page }) => {
     // Login
     await page.goto('http://localhost:3000/login');
@@ -543,7 +543,7 @@ test.describe('KA Chat - Taglish Tone Consistency', () => {
     await page.waitForURL('**/dashboard');
   });
 
-  test('should respond to KA chat in warm, Taglish tone', async ({ page }) => {
+  test('should respond to KA chat in warm, conversational Filipino tone', async ({ page }) => {
     // Open KA chat
     await page.click('[data-testid="ka-chat-button"]');
 
@@ -554,7 +554,7 @@ test.describe('KA Chat - Taglish Tone Consistency', () => {
     // Wait for response
     await page.waitForSelector('[data-testid="ka-response"]');
 
-    // Verify Taglish tone (warm, uses peso sign, uses first name)
+    // Verify conversational Filipino tone (warm, uses peso sign, uses first name)
     const response = await page.locator('[data-testid="ka-response"]').innerText();
     expect(response).toMatch(/₱\d+,?\d+/);  // Peso sign with amounts
     expect(response).not.toMatch(/Certainly/);  // No corporate filler
@@ -595,7 +595,7 @@ test.describe('KA Chat - Taglish Tone Consistency', () => {
     // Click "Flag as Wrong"
     await page.click('button:has-text("Flag as Wrong")');
 
-    // Should show confirmation toast (Taglish)
+    // Should show confirmation toast (conversational Filipino)
     await expect(page.locator('text=Thanks! Tine-train namin si Kai')).toBeVisible();
   });
 });
@@ -606,7 +606,7 @@ test.describe('KA Chat - Taglish Tone Consistency', () => {
 - Include Philippine context (GCash, Shopee, thermal receipts, etc.)
 - Test mobile-first (375px viewport)
 - Test error states and edge cases (offline, slow network)
-- Test Taglish tone consistency in responses
+- Test conversational Filipino tone consistency in responses
 - Use data-testid for stable selectors (not brittle CSS)
 
 **Coverage targets:** All user-critical flows (happy path + main error cases)
@@ -615,10 +615,10 @@ test.describe('KA Chat - Taglish Tone Consistency', () => {
 
 For features involving Claude API (Reply Drafter, KA Chat, Morning Briefing):
 
-#### Taglish Tone Regression Tests
+#### conversational Filipino Tone Regression Tests
 
 ```typescript
-describe('KA Taglish Tone Regression', () => {
+describe('KA conversational Filipino Tone Regression', () => {
   const toneRegressions = [
     {
       input: 'How much did I earn this month?',
@@ -638,7 +638,7 @@ describe('KA Taglish Tone Regression', () => {
   ];
 
   toneRegressions.forEach(({ input, shouldContain, shouldNotContain }) => {
-    it(`should respond to "${input}" with correct Taglish tone`, async () => {
+    it(`should respond to "${input}" with correct conversational Filipino tone`, async () => {
       const response = await callKAChat(input);
 
       // Check required tone elements
@@ -753,7 +753,7 @@ Generate summary:
   - Accessibility: [count] tests
 
 ## AI-Specific Tests
-- **Taglish tone regression:** [count] test cases
+- **conversational Filipino tone regression:** [count] test cases
 - **Confidence threshold validation:** [count] tests
 - **Guardrail / out-of-scope handling:** [count] tests
 
@@ -889,10 +889,10 @@ it('should call Claude Haiku for receipt OCR', async () => {
 });
 ```
 
-### Testing Taglish Tone
+### Testing conversational Filipino Tone
 
 ```typescript
-it('should use warm Taglish tone (no corporate filler)', async () => {
+it('should use warm conversational Filipino tone (no corporate filler)', async () => {
   const response = await callKAChat('Magkano ang sales ko?');
   expect(response).toMatch(/₱[\d,]+/);  // Peso sign present
   expect(response).not.toMatch(/certainly|as an ai|your earnings/i);  // No corporate speak
@@ -925,7 +925,7 @@ it('should use warm Taglish tone (no corporate filler)', async () => {
 - [ ] E2E: notification trigger at correct time
 
 ### For KA Chat / Reasoning
-- [ ] Taglish tone regression (20+ test cases)
+- [ ] conversational Filipino tone regression (20+ test cases)
 - [ ] Prompt injection defense (user input not in system)
 - [ ] RLS on conversation history (user only sees own)
 - [ ] Confidence thresholds (flag low-confidence responses)
@@ -969,7 +969,7 @@ Before handing off tests to fullstack-engineer:
 - [ ] All E2E tests passing
 - [ ] Coverage meets targets (unit 100% business logic, integration 80%)
 - [ ] Test data uses Philippine personas and amounts (₱)
-- [ ] Taglish messages match brand-context.md tone rules
+- [ ] conversational Filipino messages match brand-context.md tone rules
 - [ ] RLS policies verified in tests
 - [ ] Zod schemas tested for all edge cases
 - [ ] AI-specific tests (tone, guardrails, confidence) included

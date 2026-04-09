@@ -1,25 +1,25 @@
 ---
 name: /copy
 description: >
-  Write Taglish UI copy for specified context — chat bubbles, labels, error messages,
+  Write conversational Filipino UI copy for specified context — chat bubbles, labels, error messages,
   CTAs, notifications, empty states, onboarding text. Generates 2–3 tone variants per
   element with character counts and persona appropriateness checks. Triggers: "write copy",
   "button text", "error message", "notification", "empty state", "CTA", "chat bubble",
-  "label", "placeholder", "microcopy", "Taglish copy", "help text".
+  "label", "placeholder", "microcopy", "conversational Filipino copy", "help text".
 ---
 
-# /copy — Write Taglish UI Copy
+# /copy — Write conversational Filipino UI Copy
 
-Generate Taglish UI copy for chat bubbles, buttons, notifications, error messages, empty states, and all user-facing text in AKBai.
+Generate conversational Filipino UI copy for chat bubbles, buttons, notifications, error messages, empty states, and all user-facing text in AKBai.
 
 ## Before Starting
 
 Read these shared context files:
 - `/AKBai/akbai-delivery/shared/brand-context.md` — Voice pillars, tone calibration by context, Kai says/never says
-- `/AKBai/akbai-delivery/shared/glossary.md` — Taglish terms, product names (Resibo Scanner, Saan Napunta, etc.)
+- `/AKBai/akbai-delivery/shared/glossary.md` — conversational Filipino terms, product names (Resibo Scanner, Saan Napunta, etc.)
 - `/AKBai/akbai-delivery/shared/project-context.md` — Personas (Maria, Jose, Ana, Andoy), BIR disclaimer requirement
-- `../references/taglish-manual.md` — **Authoritative source** for how Kai speaks. Real-world Taglish examples. Use this first.
-- `../references/taglish-copy-guide.md` — Fallback if manual not available. Tone patterns and do/don't examples.
+- `../references/conversational-filipino-manual.md` — **Authoritative source** for how Kai speaks. Real-world conversational Filipino examples. Use this first.
+- `../references/conversational-filipino-copy-guide.md` — Fallback if manual not available. Tone patterns and do/don't examples.
 
 Also read: `/AKBai/akbai-delivery/skills/ux-designer/SKILL.md` (Chat + Card patterns, microcopy constraints).
 
@@ -35,10 +35,10 @@ Ask or infer:
 - **Is it financial/BIR-related?** (Requires disclaimer + "po" usage)
 - **Does it need a CTA?** (Button text? Link text?)
 
-### 2. Read Taglish References
+### 2. Read conversational Filipino References
 
-1. **First:** `taglish-manual.md` — Look for examples matching your use case. If found, follow the pattern exactly.
-2. **Fallback:** `taglish-copy-guide.md` — Use tone calibration table + do/don't examples.
+1. **First:** `conversational-filipino-manual.md` — Look for examples matching your use case. If found, follow the pattern exactly.
+2. **Fallback:** `conversational-filipino-copy-guide.md` — Use tone calibration table + do/don't examples.
 3. **Last resort:** `brand-context.md` §8 Voice Examples — Study Kai says/never says.
 
 ### 3. Generate 2–3 Copy Variants
@@ -87,7 +87,7 @@ For each variant, provide:
 - **BIR/Financial:** N/A
 ```
 
-### 5. Apply Taglish Rules Rigorously
+### 5. Apply conversational Filipino Rules Rigorously
 
 **Every variant must pass these checks:**
 
@@ -225,7 +225,7 @@ Present copy variants in a table structure for clarity:
 
 | Variant | Copy | Char | Tone | Personas | Notes |
 |---------|------|------|------|----------|-------|
-| A (Casual) | "Heads up! BIR 1701Q mo, 3 days na lang. Ready na ba? Tara, i-check natin." | 75 | Urgent but encouraging | ✓ All | Taglish with action verb "tara" |
+| A (Casual) | "Heads up! BIR 1701Q mo, 3 days na lang. Ready na ba? Tara, i-check natin." | 75 | Urgent but encouraging | ✓ All | conversational Filipino with action verb "tara" |
 | B (Balanced) | "Reminder: BIR 1701Q due in 3 days. Check your filing checklist here." | 68 | Professional, actionable | ✓ All | Clear, link-ready |
 | C (Formal) | "Action required: BIR 1701Q filing due 22 March. Review requirements po." | 70 | Urgent, respectful | ✓ Andoy, Maria | "Po" for respect on compliance |
 
@@ -267,7 +267,7 @@ Present copy variants in a table structure for clarity:
 
 ## Tips for Success
 
-1. **Read taglish-manual.md first.** If it exists, use it as the primary source for tone and phrasing.
+1. **Read conversational-filipino-manual.md first.** If it exists, use it as the primary source for tone and phrasing.
 2. **Test persona fit.** Read each variant aloud as if you're Andoy (40–55, traditional retail mindset). Would he feel talked down to?
 3. **Mobile-first always.** If copy looks long, break into 2 bubbles instead of 1 long wall of text.
 4. **"Po" is a respect marker, not filler.** Use it strategically on BIR topics, when asking for personal data, or when addressing older personas.

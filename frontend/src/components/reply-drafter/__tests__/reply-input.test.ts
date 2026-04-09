@@ -29,19 +29,19 @@ describe('ReplyInput — specification', () => {
     expect(values).toContain('casual');
   });
 
-  it('should have Taglish context label', () => {
+  it('should have conversational Filipino context label', () => {
     const contextLabel = 'Ano ang background nito?';
     expect(contextLabel).toContain('Ano ang');
     expect(contextLabel).toContain('background');
   });
 
-  it('should have Taglish placeholder for message input', () => {
+  it('should have conversational Filipino placeholder for message input', () => {
     const placeholder = 'I-paste dito ang message ng customer mo...';
     expect(placeholder).toContain('I-paste');
     expect(placeholder).toContain('customer');
   });
 
-  it('should have Taglish loading state text', () => {
+  it('should have conversational Filipino loading state text', () => {
     const loadingText = 'Si Kai ay nagdi-draft...';
     expect(loadingText).toContain('Kai');
     expect(loadingText).toContain('draft');

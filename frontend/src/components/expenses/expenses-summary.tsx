@@ -18,7 +18,7 @@ export default function ExpensesSummary({ totalIncome, totalExpenses, net }: Exp
       {/* Net amount — big number */}
       <div className="mb-3">
         <p className="text-on-surface-variant text-xs font-semibold uppercase tracking-wider mb-1">
-          Net this month
+          Net ngayong buwan
         </p>
         <p
           className={`text-2xl font-extrabold ${

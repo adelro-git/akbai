@@ -101,8 +101,8 @@ describe('FreeTierBanner — tier filtering', () => {
   });
 });
 
-describe('FreeTierBanner — Taglish copy', () => {
-  it('warning message uses Taglish', () => {
+describe('FreeTierBanner — conversational Filipino copy', () => {
+  it('warning message uses conversational Filipino', () => {
     const state = getBannerState(8, 'free');
     // Contains Filipino: "na lang ang tanong mo"
     expect(state.message).toContain('na lang ang tanong mo');
@@ -110,7 +110,7 @@ describe('FreeTierBanner — Taglish copy', () => {
     expect(state.message).toContain('upgrade to Pro');
   });
 
-  it('block message uses Taglish', () => {
+  it('block message uses conversational Filipino', () => {
     const state = getBannerState(10, 'free');
     // Filipino: "Naka-max ka na" and "bukas ulit tayo"
     expect(state.message).toContain('Naka-max ka na');

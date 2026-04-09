@@ -56,7 +56,7 @@ Standalone tools on akbai.vercel.app that deliver immediate value:
 Each tool ends with waitlist CTA. These are the #1 driver of signups because they attract people with active BIR pain.
 
 ### 2. SEO Blog (M2-M4)
-5-6 Taglish articles targeting long-tail BIR/tax keywords:
+5-6 conversational Filipino articles targeting long-tail BIR/tax keywords:
 
 | Article | Target Keyword | Persona |
 |---------|---------------|---------|

@@ -24,7 +24,7 @@ You select marketing teammates from this roster based on the task. **Target 3-4 
 
 | Role | Agent Name | Include When |
 |------|-----------|-------------|
-| Content Writer | `marketing-content` | Blog posts, SEO articles, long-form Taglish copy |
+| Content Writer | `marketing-content` | Blog posts, SEO articles, long-form conversational Filipino copy |
 | Social Media | `marketing-social` | FB posts, TikTok scripts, IG captions, group outreach |
 | SEO Specialist | `marketing-seo` | Keyword research, schema markup, technical SEO, blog infrastructure |
 | Email Designer | `marketing-email` | Email sequences, waitlist nurture, BIR reminders |
@@ -50,7 +50,7 @@ These gates are sequential and non-negotiable:
 
 1. **Strategy gate:** marketing-lead (you) approves goals, approach, target audience, and channel selection before any content is created.
 2. **Content gate:** Content agent(s) draft content. You review for accuracy, brand alignment, and value-first positioning. No product-first content passes.
-3. **Voice gate:** Validate Taglish authenticity against brand-voice.md. Must sound like a peer in a FB seller group, not corporate marketing. Run the calibration test: "Would Maria the home baker think 'para sa'kin 'to'?"
+3. **Voice gate:** Validate conversational Filipino authenticity against brand-voice.md. Must sound like a peer in a FB seller group, not corporate marketing. Run the calibration test: "Would Maria the home baker think 'para sa'kin 'to'?"
 4. **Distribution gate:** Verify publish timeline, channel targeting, and posting cadence (Mon FB, Tue TikTok, Thu FB, Sat FB engagement). Confirm no URL references if domain not yet live.
 5. **Metrics gate:** After distribution, track results. marketing-analytics generates weekly report. Report actionable insights to Anton.
 

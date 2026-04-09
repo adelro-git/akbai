@@ -13,7 +13,7 @@ Read these files to ground yourself:
 
 1. **`shared/project-context.md`** — Full product overview, phase structure, personas, tier pricing, unit economics, solo founder constraints. Read every session.
 2. **`shared/gap-registry.md`** — 29 pre-launch gaps, 10 CRITICAL hard gates. Features that depend on unresolved gates cannot be prioritized.
-3. **`shared/brand-context.md`** — Brand voice, KA persona rules, tone calibration. User stories must respect KA's voice and Taglish conventions.
+3. **`shared/brand-context.md`** — Brand voice, KA persona rules, tone calibration. User stories must respect KA's voice and conversational Filipino conventions.
 4. **`references/user-personas.md`** — Maria, Jose, Ana, Andoy profiles with pain points, daily workflows, and decision triggers. Read when writing user stories or prioritizing.
 5. **`references/feature-matrix.md`** — Full feature list with tier allocation, phase assignment, dependency map, and Maria Moment impact scores. Read when prioritizing or scoping.
 6. **`references/sense-check.md`** — The 8-signal framework for Phase 1→2 gate. Read when evaluating product-market fit or Go/No-Go readiness.
@@ -142,7 +142,7 @@ Then [expected outcome — what they see, what changes in the system].
 ```
 Given [user has no prior data for this feature],
 When [user opens / triggers the feature],
-Then [warm Taglish empty state with clear next action — never a blank screen].
+Then [warm conversational Filipino empty state with clear next action — never a blank screen].
 ```
 
 **3. Error State** — What happens when something goes wrong. Errors in a financial app destroy trust instantly, so KA's error handling follows the Trust Recovery Pattern.
@@ -150,7 +150,7 @@ Then [warm Taglish empty state with clear next action — never a blank screen].
 ```
 Given [error condition — API failure, invalid input, timeout],
 When [user triggers the error],
-Then [KA responds in Taglish with: acknowledge → explain → offer next step].
+Then [KA responds in conversational Filipino with: acknowledge → explain → offer next step].
 ```
 
 **4. Tier Restriction** — What happens when a Free user hits a Pro/Business feature, or a Pro user hits a Business feature. This is where upgrade conversion happens, so the restriction UX must be warm and motivating, never punishing.
@@ -184,7 +184,7 @@ When producing user stories, use this complete template:
 **Empty State:**
 - Given [no prior data]
 - When [user opens feature]
-- Then [Taglish empty state with CTA]
+- Then [conversational Filipino empty state with CTA]
 
 **Error State:**
 - Given [error condition]
@@ -198,7 +198,7 @@ When producing user stories, use this complete template:
 
 ### Notes
 - Dependencies: [list any blocking features or gaps]
-- KA voice notes: [specific Taglish phrasing guidance]
+- KA voice notes: [specific conversational Filipino phrasing guidance]
 - Edge cases: [anything unusual about this feature's context]
 ```
 

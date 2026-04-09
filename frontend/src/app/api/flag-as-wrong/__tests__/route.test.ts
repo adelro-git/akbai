@@ -77,7 +77,7 @@ describe('POST /api/flag-as-wrong', () => {
     });
   });
 
-  it('should return success with Taglish confirmation for valid data', async () => {
+  it('should return success with conversational Filipino confirmation for valid data', async () => {
     // Setup: insert succeeds
     const flagChain = mockChain();
     flagChain.insert.mockResolvedValue({ error: null });

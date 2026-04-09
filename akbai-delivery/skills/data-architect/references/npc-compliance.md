@@ -121,7 +121,7 @@ These controls are built into AKBai's architecture from the start — not bolted
 - [ ] No PII in browser console logs (production)
 - [ ] No PII in Sentry error reports (scrub before sending)
 - [ ] No PII in PostHog analytics events
-- [ ] User-facing error messages in Taglish, never exposing system internals
+- [ ] User-facing error messages in conversational Filipino, never exposing system internals
 - [ ] Session expiry with graceful re-authentication (gap D6)
 
 ### AI Layer
@@ -151,7 +151,7 @@ These controls are built into AKBai's architecture from the start — not bolted
 
 ### What Users Must Know Before Data Collection
 
-The Privacy Policy must clearly state, in Taglish:
+The Privacy Policy must clearly state, in conversational Filipino:
 
 1. **What data is collected** — name, email, phone, business details, BIR TIN, transactions, receipts, chat history
 2. **Why it's collected** — to provide AI-powered business management, BIR deadline tracking, financial insights
@@ -299,7 +299,7 @@ Hour 0: Breach detected or suspected
   │
   ├─ Hours 24-48: Notification preparation
   │    ├─ Finalize NPC notification
-  │    ├─ Prepare user communications (Taglish, warm but transparent)
+  │    ├─ Prepare user communications (conversational Filipino, warm but transparent)
   │    └─ Test the fix
   │
   └─ Hour 72 (HARD DEADLINE): Submit to NPC
@@ -319,7 +319,7 @@ The NPC notification must include:
 6. Measures taken to mitigate harm
 7. Contact information of DPO
 
-### User Breach Notification Template (Taglish)
+### User Breach Notification Template (conversational Filipino)
 
 ```
 Subject: Mahalagang Paalala Tungkol sa Iyong AKBai Account

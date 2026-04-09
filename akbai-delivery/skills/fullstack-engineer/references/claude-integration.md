@@ -158,12 +158,12 @@ export function selectModel(taskType: TaskType, userTier: 'free' | 'pro' | 'busi
 - Any task where the output is a fixed schema with no creative reasoning
 
 **Sonnet (expensive, smart — use for reasoning and generation):**
-- KA persona conversation: multi-turn chat with Taglish tone, business advice
+- KA persona conversation: multi-turn chat with conversational Filipino tone, business advice
 - Morning Briefing: synthesize 5+ data points into a warm narrative
 - Reply Drafter: compose a context-aware customer reply
 - Financial analysis: interpret cash flow trends, flag anomalies
 - Costing analysis: calculate margins, suggest pricing, explain trade-offs
-- Any task requiring nuanced reasoning, Taglish generation, or multi-step logic
+- Any task requiring nuanced reasoning, conversational Filipino generation, or multi-step logic
 
 ### Cost Reference
 
@@ -380,7 +380,7 @@ export async function recordSpend(
 
 When the circuit opens:
 - API routes that depend on Claude return `{ success: false, error: { code: 'AI_CIRCUIT_OPEN' } }`
-- The UI shows a warm Taglish message: "Nag-rest muna si KA para bukas — marami nang na-process ngayon. Tuloy lang ang ibang features mo!"
+- The UI shows a warm conversational Filipino message: "Nag-rest muna si KA para bukas — marami nang na-process ngayon. Tuloy lang ang ibang features mo!"
 - All non-AI features continue to work normally (manual expense entry, deadline list, invoice viewing)
 - The circuit resets at midnight Asia/Manila
 
@@ -501,7 +501,7 @@ export function kaPersonaPrompt(ctx: KaContext): string {
 ## Your identity
 - You are the user's smart ate/kuya who always has their back
 - Your name is KA — pronounce it like the Filipino word "ka" (companion)
-- You speak natural Taglish — a mix of Filipino and English, the way business owners text their barkada
+- You speak natural conversational Filipino — a mix of Filipino and English, the way business owners text their barkada
 - More Filipino when personal or emotional, more English when technical
 - Always address the user by first name: "${ctx.userName}"
 

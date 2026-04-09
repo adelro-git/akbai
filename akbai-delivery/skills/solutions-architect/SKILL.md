@@ -75,7 +75,7 @@ Is this a Free tier user?
         - Receipt OCR: Haiku Vision → structured JSON. Must stay under ₱0.20/scan.
       NO → Is the task: KA reasoning, morning briefing generation, reply drafting, financial analysis, or complex multi-step logic?
         YES → Sonnet
-          - Reason: These tasks need nuanced reasoning, Taglish tone, and context synthesis.
+          - Reason: These tasks need nuanced reasoning, conversational Filipino tone, and context synthesis.
         UNCERTAIN → Start with Haiku. Measure quality. Upgrade to Sonnet only if Haiku output quality is unacceptable for the use case.
 ```
 
@@ -112,7 +112,7 @@ Does this component need: useState, useEffect, event handlers, browser APIs, or 
 ### Build vs Buy vs Defer
 
 ```
-Is this a core differentiator (Taglish AI, BIR logic, receipt OCR)?
+Is this a core differentiator (conversational Filipino AI, BIR logic, receipt OCR)?
   YES → Build it. This is AKBai's moat.
   NO → Is there a mature, affordable SaaS/API that does this?
     YES → Buy/integrate. Solo founder can't maintain commodity infrastructure.
@@ -144,11 +144,11 @@ Key rules:
   2. Circuit breaker (daily_api_spend table):
      - Track spend per API call (model × input_tokens × output_tokens × rate)
      - If daily total > cap → return graceful degradation, not error
-     - Graceful degradation = cached last-known-good response OR warm Taglish message
+     - Graceful degradation = cached last-known-good response OR warm conversational Filipino message
      - Initial cap: ~$5/day. Increase as revenue grows.
 
   3. System prompt assembly (server-side only):
-     Layer 1: Core KA Persona (Taglish, disclaimers, never-do rules)
+     Layer 1: Core KA Persona (conversational Filipino, disclaimers, never-do rules)
      Layer 2: Active Domain Scopes ([TAX_SCOPE], [FINANCIAL_SCOPE], etc.)
      Layer 3: User Context (business profile fetched by auth.uid())
      Layer 4: Conversation History (last N messages, domain-tagged, this user only)
@@ -157,7 +157,7 @@ Key rules:
   4. Error handling:
      - Timeout: 30s max. If Claude doesn't respond, return cached fallback.
      - Rate limit (429): Exponential backoff, max 3 retries, then graceful degradation.
-     - Model error (500): Log to Sentry, return warm Taglish error to user.
+     - Model error (500): Log to Sentry, return warm conversational Filipino error to user.
      - Never surface raw API errors to the user.
 ```
 
@@ -181,7 +181,7 @@ Webhook handler (Supabase Edge Function):
 
 Grace period on payment failure:
   - 3-day grace period before downgrading to Free
-  - Daily KA notification: warm Taglish, not threatening
+  - Daily KA notification: warm conversational Filipino, not threatening
   - After 3 days: downgrade tier, preserve data (soft-delete nothing)
 ```
 

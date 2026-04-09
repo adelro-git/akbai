@@ -85,7 +85,7 @@ CREATE TABLE public.users (
 
   -- Settings
   timezone TEXT DEFAULT 'Asia/Manila',
-  preferred_language TEXT DEFAULT 'tl-en',  -- Taglish
+  preferred_language TEXT DEFAULT 'tl-en',  -- conversational Filipino
 
   -- Standard columns
   deleted_at TIMESTAMPTZ,

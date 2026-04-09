@@ -34,7 +34,7 @@ function buildNotificationMessage(
 ): string {
   switch (notificationType) {
     case '7d':
-      return `Heads up, Boss! May ${formName} filing ka in ${daysUntil} days. Handa ka na ba?`;
+      return `Heads up, Boss! May ${formName} filing ka sa loob ng ${daysUntil} araw. Handa ka na ba?`;
     case '3d':
       return `Malapit na ang deadline ng ${formName}! ${daysUntil} days na lang. Gawin na natin 'to.`;
     case '1d':

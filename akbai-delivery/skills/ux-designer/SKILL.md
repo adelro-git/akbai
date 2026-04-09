@@ -1,15 +1,16 @@
 ---
 name: ux-designer
 description: >
-  AKBai's UX design system — Chat + Card hybrid UI, Taglish copywriting, mobile-first PWA
+  AKBai's UX design system — Chat + Card hybrid UI, conversational Filipino copywriting, mobile-first PWA
   patterns, accessibility, and user flow design. MUST read before: designing screens or flows,
   writing KA chat bubble copy, creating empty states or error messages, specifying card layouts,
   designing onboarding, building wireframes, specifying touch targets or gestures, writing
-  Taglish microcopy, designing offline behavior, or planning camera integration. Triggers:
-  "UX", "wireframe", "copy", "Taglish copy", "user flow", "empty state", "error message",
+  conversational Filipino microcopy, designing offline behavior, or planning camera integration. Triggers:
+  "UX", "wireframe", "copy", "conversational Filipino copy", "user flow", "empty state", "error message",
   "design", "mobile design", "card layout", "chat bubble", "onboarding flow", "swipe",
   "touch target", "screen", "mockup", "navigation", "bottom nav", "accessibility", "WCAG",
-  "offline UI", "loading state", "KA says", "microcopy", "CTA text", "button label".
+  "offline UI", "loading state", "KA says", "microcopy", "CTA text", "button label",
+  "Taglish copy" (historical alias for conversational Filipino copy).
   If the task involves what users see, tap, or read in AKBai's interface, use this skill.
 ---
 
@@ -23,18 +24,18 @@ You design every screen, flow, card, chat bubble, and interaction in AKBai. The 
 - `project-context.md` — Feature list (§5), KA persona rules (§8), personas (§2), tier structure (§4)
 - `brand-context.md` — Color system, typography scale, voice pillars, tone calibration, KA says/never says
 - `tech-stack.md` — Frontend stack (Next.js 14, Tailwind, Shadcn/UI), file conventions, PWA setup
-- `glossary.md` — Product terms (every feature has a Filipino name), Taglish vocabulary
+- `glossary.md` — Product terms (every feature has a Filipino name), conversational Filipino vocabulary
 - `gap-registry.md` — Design gates and pre-launch requirements
 
 **2. Read the relevant reference file** from this skill's `references/` folder:
 - `references/ux-flows.md` — 8 core UX flows from onboarding through reply drafting, with screen-by-screen specs
-- `references/taglish-copy-guide.md` — KA voice rules, 10 do/don't examples, tone calibration by context, microcopy patterns
-- `references/taglish-manual.md` — **The authoritative Taglish do's and don'ts manual.** Curated real-world examples of natural Taglish vs awkward/wrong Taglish. This is the single source of truth for how KA speaks — when it exists, it overrides any conflicting guidance in other files. If this file is missing or empty, fall back to `taglish-copy-guide.md` and the shared `brand-context.md`.
+- `references/conversational-filipino-copy-guide.md` — KA voice rules, 10 do/don't examples, tone calibration by context, microcopy patterns
+- `references/conversational-filipino-manual.md` — **The authoritative conversational Filipino do's and don'ts manual.** Curated real-world examples of natural conversational Filipino vs awkward/wrong phrasing. This is the single source of truth for how KA speaks — when it exists, it overrides any conflicting guidance in other files. If this file is missing or empty, fall back to `conversational-filipino-copy-guide.md` and the shared `brand-context.md`.
 - `references/mobile-first.md` — PWA constraints, touch targets, card layout system, offline behavior, camera integration
-- `references/screen-mockups.html` — **7 static HTML/Tailwind prototypes** (Chat, Login, Deadline Watcher, Saan Napunta Dashboard, Main Dashboard, Kilala Kita Steps 1 & 3). Visual source of truth for color system, layout patterns, component styling, and Taglish copy in context.
+- `references/screen-mockups.html` — **7 static HTML/Tailwind prototypes** (Chat, Login, Deadline Watcher, Saan Napunta Dashboard, Main Dashboard, Kilala Kita Steps 1 & 3). Visual source of truth for color system, layout patterns, component styling, and conversational Filipino copy in context.
 - `references/design-system.md` — **The authoritative design system specification.** Creative north star ("Sun-Drenched Atelier"), color token system, elevation rules (No-Line Rule, Tonal Layering, Ambient Shadows), component guidelines. This is the visual source of truth for how AKBai looks and feels.
 
-Read the specific reference file that matches your task. If designing an onboarding screen, start with `ux-flows.md`. If writing error messages or any user-facing copy, **always** start with `taglish-manual.md` (falling back to `taglish-copy-guide.md` if the manual isn't ready yet). If specifying layout or interactions, start with `mobile-first.md`.
+Read the specific reference file that matches your task. If designing an onboarding screen, start with `ux-flows.md`. If writing error messages or any user-facing copy, **always** start with `conversational-filipino-manual.md` (falling back to `conversational-filipino-copy-guide.md` if the manual isn't ready yet). If specifying layout or interactions, start with `mobile-first.md`.
 
 ---
 
@@ -104,11 +105,11 @@ Every Card follows this structure:
 
 ---
 
-## Taglish Copy — The Quick Rules
+## Conversational Filipino Copy — The Quick Rules
 
-**Always check `references/taglish-manual.md` first** — it contains the curated do's and don'ts with real examples. If that file isn't available yet, use `references/taglish-copy-guide.md` as the fallback. Here are the rules you need for every design decision:
+**Always check `references/conversational-filipino-manual.md` first** — it contains the curated do's and don'ts with real examples. If that file isn't available yet, use `references/conversational-filipino-copy-guide.md` as the fallback. Here are the rules you need for every design decision:
 
-**Default language is Taglish.** Not English with Filipino sprinkled in — genuine Taglish the way Maria texts her barkada.
+**Default language is conversational Filipino.** Not English with Filipino sprinkled in — genuine conversational Filipino the way Maria texts her barkada.
 
 **"Po" usage**: Natural, not mechanical. Use on BIR topics, when delivering financial confirmations, and when KA is asking permission. Never use it on every sentence — that sounds like a government hotline.
 
@@ -122,7 +123,7 @@ Every Card follows this structure:
 
 ### Copy Anti-Patterns — Things That Kill Trust
 
-These mistakes come up repeatedly and each one pushes users away. The Taglish manual (`references/taglish-manual.md`) has the full list with examples, but here are the ones that matter most for UX decisions:
+These mistakes come up repeatedly and each one pushes users away. The conversational Filipino manual (`references/conversational-filipino-manual.md`) has the full list with examples, but here are the ones that matter most for UX decisions:
 
 **Never mention BIR penalties or fines in KA's voice.** KA is a partner, not the BIR. Mentioning "₱1,500 penalty" or "you might get fined" makes KA feel like a threat. Instead, focus on the positive action: "I-file na natin bago mag-deadline?" KA motivates through encouragement, never fear.
 
@@ -132,7 +133,7 @@ These mistakes come up repeatedly and each one pushes users away. The Taglish ma
 
 **Never write formal Filipino.** "Maaari po ba ninyong i-verify ang inyong..." sounds like a government form. "I-check mo lang ito" sounds like a friend.
 
-**Never front-load Filipino if the concept is clearer in English.** "Receipt" is clearer than "resibo" for some users — but "resibo" is what people actually say. Use what sounds natural in the Taglish mix, not what's technically correct in either language. When in doubt, check the manual.
+**Never front-load Filipino if the concept is clearer in English.** "Receipt" is clearer than "resibo" for some users — but "resibo" is what people actually say. Use what sounds natural in the conversational Filipino mix, not what's technically correct in either language. When in doubt, check the manual.
 
 ---
 
@@ -192,7 +193,7 @@ When you produce UX work, deliver it in one of these formats depending on what's
 
 **Wireframe/mockup description**: ASCII art or structured text layout showing element placement, card structure, and copy. Include dimensions for touch targets and spacing.
 
-**Copy deck**: All microcopy for a feature — chat bubbles, card titles, button labels, empty states, error messages, success confirmations, tooltips. Delivered as a table with context column. Reference `references/taglish-copy-guide.md` for voice rules.
+**Copy deck**: All microcopy for a feature — chat bubbles, card titles, button labels, empty states, error messages, success confirmations, tooltips. Delivered as a table with context column. Reference `references/conversational-filipino-copy-guide.md` for voice rules.
 
 **Interaction spec**: What happens on tap, swipe, long-press. Include animation behavior, state transitions, and accessibility labels. Reference `references/mobile-first.md` for constraints.
 

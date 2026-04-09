@@ -99,7 +99,7 @@ describe('getFirstKAMessage — feature nudge', () => {
 // Taglish tone — messages should feel natural
 // ============================================================
 
-describe('getFirstKAMessage — Taglish tone', () => {
+describe('getFirstKAMessage — conversational Filipino tone', () => {
   it('should use ₱ sign (not PHP) in money-related messages', () => {
     // Not all messages mention money, but none should use "PHP"
     ALL_TYPES.forEach((type) => {

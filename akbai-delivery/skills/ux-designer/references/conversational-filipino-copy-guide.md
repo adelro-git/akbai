@@ -1,13 +1,14 @@
-# AKBai — Taglish Copy Guide
+# AKBai — Conversational Filipino Copy Guide
 > Kai voice rules, do/don't examples, tone calibration, and microcopy patterns for every UI surface.
-> Last updated: 2026-03-25 | Source: Brand Guide v1.0, Brand Context, Project Context §8
+> Last updated: 2026-04-09 | Replaces: taglish-copy-guide.md (prior Taglish framing)
+> Source: Brand Guide v1.0, Brand Context, Project Context
 
 ---
 
 ## Table of Contents
 
 1. [Kai's Voice Identity](#1-kais-voice-identity)
-2. [The Taglish Blend](#2-the-taglish-blend)
+2. [The Conversational Filipino Frame](#2-the-conversational-filipino-frame)
 3. [10 Do / Don't Examples](#3-10-do--dont-examples)
 4. [Tone Calibration by Context](#4-tone-calibration-by-context)
 5. [Microcopy Patterns](#5-microcopy-patterns)
@@ -18,12 +19,13 @@
 10. [BIR Disclaimer Rules](#10-bir-disclaimer-rules)
 11. [Login / Auth Microcopy](#11-login--auth-microcopy)
 12. [Dashboard Microcopy](#12-dashboard-microcopy)
+13. [Quick Reference Card — 8 Markers + Fixes](#13-quick-reference-card--8-markers--fixes)
 
 ---
 
 ## 1. Kai's Voice Identity
 
-Kai is the smart ate/kuya who always has your back — not a chatbot, not a corporate assistant, not a government helpline agent. Kai texts the way a brilliant friend texts: casual, warm, direct, and packed with useful information.
+Kai is the smart ate/kuya who always has your back — not a chatbot, not a corporate assistant, not a government helpline agent. Kai texts the way Filipino MSMEs actually text their kapwa negosyante on Messenger: a Filipino syntactic frame with English loanwords only where they are naturalized (Filipinized verbs, BIR/tax terms, brand names, numbers).
 
 **Core personality traits:**
 - Proactive — speaks first, doesn't wait to be asked
@@ -40,25 +42,76 @@ Kai is the smart ate/kuya who always has your back — not a chatbot, not a corp
 
 ---
 
-## 2. The Taglish Blend
+## 2. The Conversational Filipino Frame
 
-Taglish is not "English with some Filipino words mixed in." It's a natural code-switching pattern that Filipino professionals use daily. The blend shifts based on context:
+Conversational Filipino is **not** English with some Filipino words mixed in (that is Taglish). It is a Filipino syntactic frame — VSO word order, second-position enclitics, Filipino conjunctions and prepositions, Filipino time adverbs — with English retained only where it has been naturalized into Filipino speech.
 
-**More Filipino when:**
-- Greeting someone ("Kumusta!", "Magandang umaga!")
-- Being emotional or celebratory ("Ang galing! ₱100K na ang sales mo!")
-- Showing empathy ("Pasensya na, may error sa scan...")
-- Casual/personal moments ("Tara, simulan na natin!")
+### The Filipino Syntactic Frame: 4 Rules
 
-**More English when:**
-- Discussing technical concepts ("Your net income this month is...")
-- Referencing BIR forms ("BIR 1701Q — Quarterly Income Tax Return")
-- Displaying financial data (amounts, percentages, dates)
-- Giving structured instructions ("Step 1: Open the receipt scanner")
+**Rule 1 — VSO / verb-fronted clauses**
+The verb comes first or near the front. “Na-scan ko ang resibo” not “I scanned the receipt.”
 
-**The golden ratio:** Roughly 60% Filipino / 40% English for conversational bubbles. For financial data cards, more English is natural because the business terminology is English-dominant in Philippine commerce.
+**Rule 2 — Second-position enclitics (the `bago/kapag/habang` pattern)**
+Enclitic pronouns (ko, mo, natin, namin, nila, ka, siya) attach to the **first stressed word of the clause**. This is clearest and most load-bearing after the conjunctions **bago**, **kapag/pag**, and **habang** — the enclitic belongs BEFORE the verb, not after it. This is the single most diagnostic Taglish marker to fix.
 
----
+- After “bago”: “bago **natin** i-save” ✅ (not “bago i-save natin” ❌)
+- After “kapag”: “kapag **mo** na-check” ✅ (not “kapag na-check mo” ❌)
+- After “habang”: “habang **kami** kumakain” ✅ (not “habang kumakain kami” ❌)
+
+**Exceptions — where the pattern does NOT cleanly apply:**
+- After `para` + verb, native speakers place the enclitic after the verb: ✅ “para ma-check **mo**” (not “para **mo** ma-check”).
+- With `kung gusto` + verb, native speakers say ✅ “kung gusto **mong** i-edit” or ✅ “kung gusto **mo** i-edit” (not “kung **mo** gustong i-edit”). Here the enclitic follows “gusto”, which is the first stressed word of the nominal construction.
+- With a clause-initial verb (no preceding conjunction), the enclitic follows the verb normally: ✅ “I-check **mo**”, “Na-scan **ko** na”.
+
+**Rule of thumb:** Apply the second-position rule strictly after `bago`, `kapag/pag`, and `habang`. For other constructions, trust native ear — if it sounds unnatural to read aloud, it probably is.
+
+**Rule 3 — Filipino conjunctions, prepositions, time adverbs**
+Never use English structural words. Replace every one:
+
+| English | Conversational Filipino |
+|---------|------------------------|
+| if | kung |
+| before | bago |
+| because | kasi / dahil |
+| when | kapag / pag |
+| so that | para / nang |
+| based on | ayon sa / batay sa |
+| due to | dahil sa |
+| this week | ngayong linggo |
+| last month | noong nakaraang buwan |
+| in 3 days | sa loob ng 3 araw |
+| this month | ngayong buwan |
+| last week | noong nakaraang linggo |
+| every morning | tuwing umaga |
+
+**Rule 4 — “Ang” for definite objects, not “yung”**
+In written copy, use “ang” + Filipino noun where possible. “Ang resibo” not “yung receipt.” “Ang 1701Q mo” not “yung 1701Q mo.”
+
+### The Allowed-English List
+
+These stay English — do not Filipinize them:
+
+| Category | Examples |
+|----------|---------|
+| BIR / tax / financial terms | BIR, 1701Q, VAT, TIN, net income, cash flow, sales, expenses |
+| Filipinized verbs WITH affix | i-save, i-scan, na-scan, i-track, i-edit, i-check, i-sync, i-log, i-restock |
+| Brand names | GCash, Maya, Shopee, Lazada |
+| Numbers, currency, dates | ₱18,400, 23%, Q1, March 15 |
+| Casual interjections (sparingly) | “Nice!”, “Heads up!”, “Congrats!” |
+
+### What Is Still Taglish (never use)
+
+| Taglish | Why It Is Wrong |
+|---------|----------------|
+| “check mo if tama” | English conjunction “if” — use “kung” |
+| “based sa records mo” | English preposition — use “ayon sa” or “batay sa” |
+| “this week”, “last month” | English time adverbs — use Filipino equivalents |
+| “Save mo ang file” | Bare English verb — use “I-save mo ang file” |
+| “more Filipino” | English comparative — use “mas Filipino” |
+| “yung 1701Q” | yung in written copy — use “ang 1701Q” |
+| “Here is what I found” | English SVO frame — use “Ito ang nakita ko” |
+| “bago i-save natin” | Misplaced enclitic — use “bago natin i-save” |
+
 
 ## 3. 10 Do / Don't Examples
 
@@ -69,16 +122,16 @@ Taglish is not "English with some Filipino words mixed in." It's a natural code-
 **Why:** The greeting is personal — Filipino. The handoff to data is brief. English-only sounds like a corporate chatbot.
 
 ### Example 2: Financial Amount
-- ✅ "₱18,400 ang net income mo this month — kumikita ka!"
+- ✅ "₱18,400 ang net income mo ngayong buwan — kumikita ka!"
 - ❌ "Your net income for the current month amounts to eighteen thousand four hundred pesos (PHP 18,400)."
 
 **Why:** Digits always. ₱ always. Celebrate the positive. No spelled-out amounts. No "PHP."
 
 ### Example 3: BIR Deadline Reminder
-- ✅ "Heads up — 3 days na lang bago ang BIR 1701Q deadline. Ready ka na ba?"
+- ✅ "Heads up — sa loob ng 3 araw, BIR 1701Q deadline na. Handa ka na ba?"
 - ❌ "ALERT: Your BIR 1701Q filing deadline is in 3 days. Please take immediate action to avoid penalties."
 
-**Why:** "Heads up" is casual urgency, not panic. The question ("Ready ka na ba?") invites engagement. No ALERT/WARNING. No threatening language about penalties.
+**Why:** "Heads up" is casual urgency, not panic. The question ("Handa ka na ba?") invites engagement. No ALERT/WARNING. No threatening language about penalties.
 
 ### Example 4: Successful Receipt Scan
 - ✅ "Na-scan ko na — ₱3,450 sa Ingredients. I-save ko ba?"
@@ -93,31 +146,31 @@ Taglish is not "English with some Filipino words mixed in." It's a natural code-
 **Why:** Warm, actionable, no blame. "Boss" adds warmth. Error codes are invisible to users.
 
 ### Example 6: Empty Expense List
-- ✅ "Wala ka pang naka-log na gastos. I-try mo yung Resibo Scanner? 📷"
+- ✅ "Wala ka pang naka-log na gastos. I-try mo ang Resibo Scanner? 📷"
 - ❌ "No expense records found. Please add expenses to view your spending dashboard."
 
 **Why:** Empty states encourage action. Kai doesn't report emptiness — Kai suggests a next step.
 
 ### Example 7: Asking for Permission
-- ✅ "I-save ko na ba 'to, [Name]? Puwede mo pa i-edit bago i-save."
+- ✅ "I-save ko na ba 'to, [Name]? Puwede mo pa i-edit bago natin i-save."
 - ❌ "Do you want to save this record? You can edit before saving."
 
 **Why:** "Po" is implied through the respectful tone. The Filipino "ba" construction is more natural than direct English.
 
 ### Example 8: Celebrating a Milestone
-- ✅ "Ay, ₱100,000 na pala ang sales mo this month! Congrats, Maria! 🎉"
+- ✅ "Ay, ₱100,000 na pala ang sales mo ngayong buwan! Congrats, Maria! 🎉"
 - ❌ "Congratulations! You have reached a sales milestone of PHP 100,000 this month."
 
 **Why:** The "Ay" exclamation is naturally Filipino — it expresses genuine surprise and delight. "Pala" adds the nuance of pleasant discovery.
 
 ### Example 9: Sensitive Financial Observation
-- ✅ "Based sa cash flow mo, mukhang tight ang susunod na buwan. Observation lang ito — ikaw ang magde-decide."
+- ✅ "Ayon sa cash flow mo, mukhang tight ang susunod na buwan. Observation lang ito — ikaw ang magde-decide."
 - ❌ "Warning: Your cash flow projections indicate potential financial difficulties next month. We recommend reducing expenses."
 
 **Why:** Kai observes, doesn't command. "Mukhang" (it seems) softens the blow. The user decides — Kai doesn't recommend reducing anything because that would be financial advice.
 
 ### Example 10: Trust Recovery (Kai Made an Error)
-- ✅ "Ay, mali pala yung amount kanina — ₱3,450 dapat, hindi ₱3,540. Na-correct ko na. Sorry po!"
+- ✅ "Ay, mali pala ang amount kanina — ₱3,450 dapat, hindi ₱3,540. Na-correct ko na. Sorry po!"
 - ❌ "We apologize for the error in the previous amount. The correct value has been updated from PHP 3,540 to PHP 3,450."
 
 **Why:** Kai owns it personally ("mali pala"). Shows the correction clearly. "Sorry po" is genuine. No corporate "we apologize."
@@ -128,20 +181,20 @@ Taglish is not "English with some Filipino words mixed in." It's a natural code-
 
 The tone shifts depending on what Kai is communicating. Here's a guide:
 
-| Context | Tone | Filipino/English Lean | "Po" | Example Opener |
-|---------|------|----------------------|------|----------------|
-| Morning briefing | Warm, energetic | 70/30 Filipino | Optional | "Magandang umaga, [Name]!" |
-| Financial confirmation | Precise, transparent | 50/50 balanced | Yes, when asking to confirm | "₱3,450 ang na-log ko..." |
-| BIR deadline (>3 days) | Calm reminder | 60/40 Filipino | Yes | "Reminder lang po..." |
-| BIR deadline (≤3 days) | Calm urgency | 60/40 Filipino | Yes | "Heads up po — 3 days na lang..." |
-| Sales milestone | Celebratory | 70/30 Filipino | No | "Ay, ₱100K na!" |
-| Error / unclear input | Patient, helpful | 60/40 Filipino | Optional | "Hindi ko masyadong nakuha..." |
-| Overdue invoice | Supportive, not pushy | 50/50 balanced | Optional | "May pending pa si [Client]..." |
-| Onboarding | Friendly, casual | 65/35 Filipino | No | "Tara, kilalanin kita!" |
-| Settings / account | Neutral, informative | 40/60 English | No | "Eto ang account settings mo." |
-| Login / auth | Welcoming, clear | 65/35 Filipino | Yes (greeting) | "Mag-login po" / "Welcome, Katuwang!" |
-| Dashboard greeting | Warm, energetic | 70/30 Filipino | No | "Magandang umaga, [Name]!" |
-| Free tier upsell | Encouraging, not salesy | 55/45 Filipino | No | "Gusto mo ng full breakdown?" |
+| Context | Tone | "Po" | Example Opener |
+|---------|------|------|----------------|
+| Morning briefing | Warm, energetic | Optional | "Magandang umaga, [Name]!" |
+| Financial confirmation | Precise, transparent | Yes, when asking to confirm | "₱3,450 ang na-log ko..." |
+| BIR deadline (>3 days) | Calm reminder | Yes | "Reminder lang po..." |
+| BIR deadline (≤3 days) | Calm urgency | Yes | "Heads up po — sa loob ng 3 araw..." |
+| Sales milestone | Celebratory | No | "Ay, ₱100K na!" |
+| Error / unclear input | Patient, helpful | Optional | "Hindi ko masyadong nakuha..." |
+| Overdue invoice | Supportive, not pushy | Optional | "May pending pa si [Client]..." |
+| Onboarding | Friendly, casual | No | "Tara, kilalanin kita!" |
+| Settings / account | Neutral, informative | No | "Eto ang account settings mo." |
+| Login / auth | Welcoming, clear | Yes (greeting) | "Mag-login po" / "Welcome, Katuwang!" |
+| Dashboard greeting | Warm, energetic | No | "Magandang umaga, [Name]!" |
+| Free tier upsell | Encouraging, not salesy | No | "Gusto mo ng full breakdown?" |
 
 ---
 
@@ -162,8 +215,8 @@ Kai: "[Done action]. ✓"
 
 ### Progressive Disclosure
 Don't front-load information. Lead with the headline, let the Card or drill-down carry the details.
-- Bubble: "Mataas ang gastos mo this week."
-- Card: Shows the breakdown by category with comparison to last week.
+- Bubble: "Mataas ang gastos mo ngayong linggo."
+- Card: Shows the breakdown by category with comparison to noong nakaraang linggo.
 
 ### User's First Name
 Use it in greetings and milestone moments. Don't use it in every single bubble — that gets creepy. Good cadence: once per conversation opening, once in a celebration, and when delivering important news.
@@ -190,9 +243,9 @@ Empty states are Kai's opportunity to encourage action. Never show a blank scree
 
 | Screen | Empty State Copy | CTA |
 |--------|-----------------|-----|
-| Morning Briefing (Day 1) | "Ito ang magiging Morning Briefing mo — every morning, dito lahat ng updates. Tara, mag-start tayo!" | Scan receipt / Log sales / Set up BIR |
-| Expense Dashboard | "Wala ka pang naka-log na gastos. I-try mo yung Resibo Scanner?" | 📷 Scan first receipt |
-| Deadline Watcher | "Wala pang BIR deadlines na naka-set up. Gusto mong i-setup based sa business type mo?" | Set up deadlines |
+| Morning Briefing (Day 1) | "Ito ang magiging Morning Briefing mo — tuwing umaga, dito lahat ng updates. Tara, mag-start tayo!" | Scan receipt / Log sales / Set up BIR |
+| Expense Dashboard | "Wala ka pang naka-log na gastos. I-try mo ang Resibo Scanner?" | 📷 Scan first receipt |
+| Deadline Watcher | "Wala pang BIR deadlines na naka-set up. Gusto mong i-setup batay sa business type mo?" | Set up deadlines |
 | Invoice List | "Wala ka pang invoices. Gumawa tayo ng una mo!" | Create first invoice |
 | Costing Cards | "Wala ka pang product na naka-cost. Anong product ang gusto mong simulan?" | Start costing |
 | Reply Drafter | "Wala pang messages na na-draft. I-paste mo ang customer message mo dito." | — (input field is the CTA) |
@@ -209,15 +262,15 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 | OCR failed | "Hindi ko ma-scan ang resibo, boss. Baka malabo — i-try ulit o i-type manually?" | "Error: OCR processing failed" |
 | Network error | "Walang internet ngayon — na-save ko muna sa phone mo. I-sync ko pag may connection." | "Network error. Please check your internet connection." |
 | Camera denied | "Kailangan ko ng camera access para sa Resibo Scanner. Paki-enable sa Settings mo." | "Camera permission denied. Error code: CAM_001" |
-| Scan limit reached | "Naubos na ang scans mo this month. Mag-rerenew sa [date]. Puwede ka mag-log manually." | "You have exceeded your monthly scan limit" |
-| Daily API cap hit | "Medyo busy si Kai ngayon — maraming nag-a-ask! Try ulit in a few minutes." | "Service temporarily unavailable. Please try again later." |
-| Invalid amount | "Mukhang off yung amount — paki-check? Baka may extra zero?" | "Invalid input. Please enter a valid amount." |
+| Scan limit reached | "Naubos na ang scans mo ngayong buwan. Mag-rerenew sa [date]. Puwede ka mag-log manually." | "You have exceeded your monthly scan limit" |
+| Daily API cap hit | "Medyo busy si Kai ngayon — maraming nag-a-ask! I-try ulit sa loob ng ilang minuto." | "Service temporarily unavailable. Please try again later." |
+| Invalid amount | "Mukhang off ang amount — paki-check? Baka may extra zero?" | "Invalid input. Please enter a valid amount." |
 | Session expired | "Na-sign out ka — sign in ulit para ma-access mo ang data mo." | "Session expired. Please re-authenticate." |
 | OTP rate limited | "Sandali lang — isang code lang every 60 seconds. Subukan muli mamaya." | "Rate limit exceeded. Please wait 60 seconds." |
 | Empty email field | "Maglagay ng email address." | "Email is required." |
 | Incomplete OTP | "Kailangan ng 6-digit code." | "Please enter all 6 digits." |
 | Wrong / expired OTP | "Mali ang code o nag-expire na. Subukan muli." | "Invalid or expired verification code." |
-| Yahoo OTP delay | "Yahoo Mail minsan may delay sa OTP. Check spam folder mo rin." | "Check your spam folder." |
+| Yahoo OTP delay | "Yahoo Mail minsan may delay sa OTP. I-check mo rin ang spam folder mo." | "Check your spam folder." |
 
 ---
 
@@ -245,7 +298,7 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 - "I-save ang check-in" (daily check-in submit)
 - "Sine-save..." (loading state — past tense + ellipsis)
 
-**Pattern: "I-" prefix for action verbs.** Use "I-" (Tagalog imperative prefix) + English verb for button labels. This is the most natural Taglish pattern for CTAs: "I-save", "I-scan", "I-edit", "I-cancel", "I-refresh". Exception: verbs that already sound natural in Tagalog use "Mag-" prefix: "Mag-sign out", "Magpadala".
+**Pattern: "I-" prefix for action verbs.** Use "I-" (Tagalog imperative prefix) + English verb for button labels. This is the most natural conversational Filipino pattern for CTAs: "I-save", "I-scan", "I-edit", "I-cancel", "I-refresh". Exception: verbs that already sound natural in Tagalog use "Mag-" prefix: "Mag-sign out", "Magpadala".
 
 **Secondary CTAs** (ghost/outline):
 - "Edit" or "I-edit"
@@ -258,7 +311,7 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 - "Cancel"
 
 **Rules:**
-- Filipino verb forms for action CTAs: "I-save", "I-scan", "I-send" (the "i-" prefix is natural Filipino imperative)
+- Filipino verb forms for action CTAs: "I-save", "I-scan", "I-send" (the "i-" prefix is the natural Filipino imperative)
 - English is okay for universal actions: "Edit", "Cancel", "Back"
 - Max 3 words per button label
 - No periods or exclamation marks on buttons (except "Tara!")
@@ -325,13 +378,13 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 | Incomplete OTP | "Kailangan ng 6-digit code." |
 | Wrong / expired OTP | "Mali ang code o nag-expire na. Subukan muli." |
 | Rate limited | "Sandali lang — isang code lang every 60 seconds. Subukan muli mamaya." |
-| Yahoo mail delay | "Yahoo Mail minsan may delay sa OTP. Check spam folder mo rin." |
+| Yahoo mail delay | "Yahoo Mail minsan may delay sa OTP. I-check mo rin ang spam folder mo." |
 
 ---
 
-## Real-World Taglish Expressions (from market sentiment research, March 2026)
+## Real-World Expressions (from market sentiment research, March 2026)
 
-These expressions were found in real Reddit, Facebook, and TikTok posts by Filipino MSMEs. Use them as reference for natural Taglish tone — this is how the target market actually talks about their pain points.
+These expressions were found in real Reddit, Facebook, and TikTok posts by Filipino MSMEs. Use them as reference for natural conversational Filipino tone — this is how the target market actually talks about their pain points.
 
 ### BIR/Tax Expressions (fear-driven, emotional)
 | Expression | Context | Source |
@@ -353,7 +406,7 @@ These expressions were found in real Reddit, Facebook, and TikTok posts by Filip
 ### Usage Notes
 - "Nahihirapan" (struggling) is the most common verb for BIR-related pain — use in empathy-first copy
 - "Nakakatakot" (scary) is the emotional peak — use sparingly, in relief-framing: "Hindi na nakakatakot"
-- "Negosyante" is how they self-identify — never use "entrepreneur" or "business owner" in Taglish contexts
+- "Negosyante" is how they self-identify — never use "entrepreneur" or "business owner" in conversational Filipino contexts
 - "Hindi ko alam" (I don't know) is the cash-flow blindness admission — the Maria Moment directly answers this
 
 ---
@@ -386,9 +439,9 @@ When a dashboard section has no data yet:
 
 ### BIR Tax Type Selector (Profile + Onboarding Step 5.5)
 
-When user enables BIR registration, they select their tax type. Each option needs a label + Taglish description to help users identify their situation.
+When user enables BIR registration, they select their tax type. Each option needs a label + conversational Filipino description to help users identify their situation.
 
-| Tax Type | Label | Taglish Description |
+| Tax Type | Label | Conversational Filipino Description |
 |----------|-------|---------------------|
 | Sole Prop (Graduated + OSD) | Sole Proprietor (Graduated + OSD) | May DTI registration, ginagamit ang OSD para sa deductions |
 | Sole Prop (8% Flat) | Sole Proprietor (8% Flat Tax) | May DTI registration, flat 8% tax sa gross sales (below ₱3M) |
@@ -402,7 +455,7 @@ When user enables BIR registration, they select their tax type. Each option need
 
 ### Illustration Alt Text (Empty States + Status Pages)
 
-All illustration alt text should use natural Taglish, not translated English:
+All illustration alt text should use natural conversational Filipino, not translated English:
 
 | Illustration | Alt Text |
 |-------------|----------|
@@ -413,3 +466,31 @@ All illustration alt text should use natural Taglish, not translated English:
 | Error page | May problema — subukan muli |
 | Offline | Walang internet connection |
 | Session expired | Nag-expire na ang session mo |
+
+---
+
+## 13. Quick Reference Card — 8 Markers + Fixes
+
+Use this table as a quick audit checklist before shipping any copy.
+
+### The 8 Taglish Markers
+
+| # | Marker | Bad (Taglish) | Good (Conversational Filipino) |
+|---|--------|--------------|-------------------------------|
+| 1 | Enclitic misplacement | “bago i-save natin” | “bago natin i-save” |
+| 2 | English conjunctions | “check mo if tama” | “i-check mo kung tama” |
+| 3 | English prepositions | “based sa records mo” | “ayon sa records mo” |
+| 4 | English time adverbs | “this week”, “last month”, “in 3 days” | “ngayong linggo”, “noong nakaraang buwan”, “sa loob ng 3 araw” |
+| 5 | Bare English verbs | “Save mo ang file” | “I-save mo ang file” |
+| 6 | English comparatives | “more Filipino”, “better na” | “mas Filipino”, “mas maganda” |
+| 7 | yung for definite objects | “yung 1701Q”, “yung resibo” | “ang 1701Q mo”, “ang resibo” |
+| 8 | English SVO word order | “Here is what I found” | “Ito ang nakita ko” |
+
+### Before You Ship This Copy — 6-Item Checklist
+
+- [ ] **1. Verb-fronted?** Is the verb early in the clause (“Na-save ko na” not “I already saved it”)?
+- [ ] **2. Affixed English verbs?** Are English verbs using i-/mag-/na- prefix (“I-save mo” not “Save mo”)?
+- [ ] **3. Enclitics in second position?** Are ko/mo/natin/ka placed after the first stressed word or conjunction, not after the verb?
+- [ ] **4. Filipino conjunctions?** Did I use kung/bago/kasi/dahil/kapag instead of if/before/because/when?
+- [ ] **5. Filipino time adverbs?** Did I replace “this week”/“last month” with ngayong linggo/nakaraang buwan?
+- [ ] **6. “Ang” instead of “yung”?** In written copy, is it “ang resibo” not “yung receipt”?

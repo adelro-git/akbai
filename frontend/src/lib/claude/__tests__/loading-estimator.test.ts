@@ -69,7 +69,7 @@ describe('getEstimatedWait', () => {
     }
   });
 
-  it('longWaitMessageTl contains Taglish text for all features', () => {
+  it('longWaitMessageTl contains conversational Filipino text for all features', () => {
     const estimate = getEstimatedWait('general_chat', 'free');
     expect(estimate.longWaitMessageTl).toContain('Medyo matagal');
     expect(estimate.longWaitMessageTl).toContain('sandali');

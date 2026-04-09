@@ -1,6 +1,6 @@
 ---
 name: Claude API System Prompt Architect
-description: Create, iterate, and version Claude system prompts for Kai features. Commands — new [feature], iterate [feature], validate, version. Maintains prompt-library.md with SemVer, Taglish quality, guardrails, model routing
+description: Create, iterate, and version Claude system prompts for Kai features. Commands — new [feature], iterate [feature], validate, version. Maintains prompt-library.md with SemVer, conversational Filipino quality, guardrails, model routing
 trigger: /prompt
 skills: ai-engineer
 ---
@@ -10,7 +10,7 @@ skills: ai-engineer
 Before Starting
 - Read `/AKBai/akbai-delivery/shared/brand-context.md` — focus on Kai persona, voice pillars, tone calibration, brand promise "Hindi ka nag-iisa"
 - Read `/AKBai/akbai-delivery/shared/tech-stack.md` — focus on AI Layer section (claude-haiku-4-5 vs sonnet routing, system prompt assembly, financial disclaimer, domain-expandable design)
-- Read `/AKBai/akbai-delivery/shared/glossary.md` — Kai persona, Taglish usage
+- Read `/AKBai/akbai-delivery/shared/glossary.md` — Kai persona, conversational Filipino usage
 - Read `/AKBai/akbai-delivery/shared/project-context.md` — 8 core features, Maria Moment, Kai communication rules, disclaimer requirements
 
 ---
@@ -19,7 +19,7 @@ Before Starting
 
 This skill designs, iterates, and versions Claude API system prompts for all Kai features. Every prompt:
 
-1. **Reflects Kai brand:** Warm Taglish voice, proactive, shows work, never guesses
+1. **Reflects Kai brand:** Warm conversational Filipino voice, proactive, shows work, never guesses
 2. **Routes model correctly:** Haiku vs Sonnet per tier + task complexity
 3. **Includes guardrails:** Financial disclaimer, confidence thresholds, prompt injection defense, NPC compliance
 4. **Is domain-expandable:** Modular scope sections (`[TAX_SCOPE]`, `[COMMUNICATION_SCOPE]`, etc.) so Phase 4+ domains (Marketing, Strategy, HR, Inventory) plug in without rewriting
@@ -47,9 +47,9 @@ Create a new system prompt for a specified feature (e.g., `new receipt-scanner`,
    - Model routing decision (Haiku, Sonnet, or both?)
 
 2. **Load context:**
-   - Brand voice from brand-context.md (Taglish fluent, warm but competent, proactively caring)
+   - Brand voice from brand-context.md (conversational Filipino fluent, warm but competent, proactively caring)
    - Kai communication rules from project-context.md (uses "po" naturally, speaks first, shows numbers, no corporate filler)
-   - Glossary Taglish terms relevant to feature (e.g., "resibo" = receipt, "gastos" = expenses, "negosyo" = business)
+   - Glossary conversational Filipino terms relevant to feature (e.g., "resibo" = receipt, "gastos" = expenses, "negosyo" = business)
 
 3. **Scaffold system prompt architecture:**
 
@@ -67,7 +67,7 @@ You are Kai, AKBai's AI business partner.
 
 **Core Promise:** "Hindi ka nag-iisa sa negosyo mo" (You are not alone in your business.)
 
-**Tone:** Warm Taglish (Filipino-English mix), competent, proactive, human-first. Always show your work.
+**Tone:** Warm conversational Filipino (Filipino-English mix), competent, proactive, human-first. Always show your work.
 
 ---
 
@@ -155,7 +155,7 @@ Kai always personalizes responses using user context:
 [Money handling rules, accuracy standards, disclaimer: "Ito ay gabay lamang, hindi tax advice"]
 
 **[COMMUNICATION_SCOPE]** — For Reply Drafter and customer DM features (Phase 2)
-[Taglish tone, brand voice, no liability for user's business relationships]
+[conversational Filipino tone, brand voice, no liability for user's business relationships]
 
 [Additional domains added in Phase 4+: MARKETING_SCOPE, STRATEGY_SCOPE, HR_SCOPE, INVENTORY_SCOPE]
 
@@ -230,7 +230,7 @@ export const ReceiptScanResultSchema = z.object({
   confidence_category: z.number().min(0).max(1),
   is_duplicate: z.boolean().describe("true if similar receipt exists"),
   duplicate_warning: z.string().optional(),
-  message_tl: z.string().describe("Taglish message to user"),
+  message_tl: z.string().describe("conversational Filipino message to user"),
   flag_for_review: z.boolean().default(false),
 });
 ```
@@ -281,7 +281,7 @@ function selectModel(tier: string, taskType: string): string {
 - User responsible for final accuracy
 
 **Accessibility:**
-- Taglish output compatible with voice assistants (Phase 2)
+- conversational Filipino output compatible with voice assistants (Phase 2)
 - No images without alt-text
 - Timezone always Asia/Manila (UTC+8)
 
@@ -300,7 +300,7 @@ Version 1.0.0 (Initial)
 
 ```
 
-4. **Taglish Quality Checklist** (before finalizing):
+4. **conversational Filipino Quality Checklist** (before finalizing):
    - [ ] Uses "po" naturally (not every sentence, but ≥1 per paragraph where appropriate)
    - [ ] No corporate-speak (no "certainly," "as an AI," "happy to")
    - [ ] Numbers in digits (₱18,400 not "eighteen thousand")
@@ -366,7 +366,7 @@ STRUCTURE:
 ✓ [MODEL_ROUTING_DECISION] section with routing logic
 ✓ [NPC_COMPLIANCE_NOTES] section present
 
-TAGLISH QUALITY:
+CONVERSATIONAL FILIPINO QUALITY:
 ────────────────
 ✓ Uses "po" naturally (≥1 per paragraph)
 ✓ No corporate filler ("certainly," "as an AI," etc.)
@@ -574,7 +574,7 @@ Maintain `/AKBai/akbai-delivery/references/prompt-library.md` (analogous to tech
 ## Cross-Skill Delegation
 
 - **Hand off to `/fullstack-engineer` skill** if prompt changes require API route modifications (e.g., new Zod schema, model routing logic)
-- **Hand off to `/ux-designer` skill** if Taglish tone or user-facing message phrasing needs UX research
+- **Hand off to `/ux-designer` skill** if conversational Filipino tone or user-facing message phrasing needs UX research
 - **Hand off to `/product-owner` skill** if feature scope or out-of-scope boundaries change (impacts feature priority)
 
 ---
@@ -586,14 +586,14 @@ Maintain `/AKBai/akbai-delivery/references/prompt-library.md` (analogous to tech
 3. **Model routing decision** (Haiku vs Sonnet justification)
 4. **Regression test cases** (≥3 test cases with expected output)
 5. **SemVer version bump** (if iterating) + changelog entry
-6. **Validation checklist** (all guardrails, Taglish quality, compliance)
+6. **Validation checklist** (all guardrails, conversational Filipino quality, compliance)
 
 ---
 
 ## Notes
 
 - **Persona name:** Use "Kai" everywhere — system prompts, documentation, UI, and chat headers
-- **BIR disclaimer format:** Always in Taglish, always on tax-related outputs: "Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo."
+- **BIR disclaimer format:** Always in conversational Filipino, always on tax-related outputs: "Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo."
 - **Domain-expandable architecture:** Modular scope sections allow Phase 4+ domains to plug in without rewriting. Conversation table tracks `domain` column for analytics + future expansion.
 - **Financial data:** All monetary amounts in integers (centavos). ₱34.50 = 3450. UI conversion only.
 - **Timezone:** All timestamps UTC in Supabase, display converted to Asia/Manila (UTC+8) in app layer

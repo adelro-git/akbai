@@ -318,7 +318,7 @@
     <div class="gap-item"><span class="gap-tag">CRITICAL</span><span><strong>OR number generation legality</strong> — BIR requires sequentially numbered Official Receipts from a registered OR series. Auto-generating receipt numbers needs legal sign-off before Automated Self-Invoicing ships.</span></div>
     <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Dependency monitoring</strong> — Anthropic API, Supabase, Xendit each need health checks + graceful in-app fallback messages. Note: Claude Haiku Vision replaces Claude Haiku Vision — single dependency instead of two.</span></div>
     <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Data backup strategy</strong> — Supabase point-in-time recovery needs explicit enablement on the paid plan + a tested restore procedure.</span></div>
-    <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Session expiry UX</strong> — graceful Taglish re-auth prompt when session expires mid-use, not a raw error state.</span></div>
+    <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Session expiry UX</strong> — graceful conversational Filipino re-auth prompt when session expires mid-use, not a raw error state.</span></div>
     <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Incident response runbook</strong> — what happens at 2AM on a BIR deadline day when the app goes down? Solo founder needs a written protocol even if it's just: detect → post status → rollback → fix.</span></div>
     <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>Beta-to-paid transition</strong> — Phase 0C pilot users paying ₱99–₱199 need a defined migration path when Phase 1 launches at ₱399. Loyalty rate? Auto-upgrade? No mention in roadmap.</span></div>
     <div class="gap-item"><span class="gap-tag warn">IMPORTANT</span><span><strong>PWA installation UX</strong> — no App Store listing means "Add to Home Screen" is non-obvious. Landing page and onboarding need an explicit install guide step.</span></div>
@@ -330,7 +330,7 @@
   
 <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
 <h3 style="color: #856404; margin-top: 0;">⚠️ AI Scope Boundaries &amp; Financial Disclaimer</h3>
-<p><strong>IN SCOPE:</strong> BIR compliance guidance, receipt/expense tracking, cash flow summaries, Taglish business communications, payment reminders, business onboarding, data bootstrap.</p>
+<p><strong>IN SCOPE:</strong> BIR compliance guidance, receipt/expense tracking, cash flow summaries, conversational Filipino business communications, payment reminders, business onboarding, data bootstrap.</p>
 <p><strong>OUT OF SCOPE (redirect gracefully):</strong> Investment advice, legal disputes, audit services, medical queries, HR disputes, personal finance unrelated to MSME operations.</p>
 <p><strong>Financial Disclaimer (embedded in system prompt):</strong> "Paalala: Ang guidance na ito ay informational lang. I-verify mo sa iyong accountant o CPA bago mag-file." This disclaimer auto-appends to all tax-sensitive responses.</p>
 <p><strong>In-App Disclaimer:</strong> A persistent disclaimer banner must be visible in the chat UI at all times: "AKBai provides informational guidance only — hindi ito professional financial or tax advice."</p>
@@ -378,13 +378,13 @@ flowchart TD
         KK3 --> DB{Existing records?}
         DB -->|Upload CSV / XLSX| DB_A[File parsed · Column mapping\nPreview shown for confirmation\nKA becomes source of truth]
         DB -->|GCash / Maya screenshots| DB_B[OCR extracts: amount · date · ref\nEditable confirmation UI\nSame flow as Saan Napunta?]
-        DB -->|No data — Quick Start| DB_C[Guided first transaction in Taglish chat\nWarm acknowledgment after first entry\nDashboard shows first data point immediately]
+        DB -->|No data — Quick Start| DB_C[Guided first transaction in conversational Filipino chat\nWarm acknowledgment after first entry\nDashboard shows first data point immediately]
 
         DB_A --> KK4
         DB_B --> KK4
         DB_C --> KK4
 
-        KK4[Step 4 · AI Deepdive 3–5 min\n3 open Taglish questions · 1 follow-up each\nAnswers captured verbatim for tone-matching]
+        KK4[Step 4 · AI Deepdive 3–5 min\n3 open conversational Filipino questions · 1 follow-up each\nAnswers captured verbatim for tone-matching]
         KK4 --> KK5[Step 5 · Silent AI Synthesis user never sees\nClaude API call → structured JSON profile\nStored in Supabase scoped to auth.uid\nbir_opt_in · data_source · tone profile · baseline snapshot]
     end
 
@@ -422,7 +422,7 @@ flowchart TD
       <div class="mermaid">
 flowchart TD
     OPEN([User opens app]) --> SESSION{Session valid?}
-    SESSION -->|Expired| REAUTH[Taglish re-auth prompt\nI-verify lang ulit ang email mo]
+    SESSION -->|Expired| REAUTH[conversational Filipino re-auth prompt\nI-verify lang ulit ang email mo]
     REAUTH --> SESSION
     SESSION -->|Valid| DASH
 
@@ -458,7 +458,7 @@ flowchart TD
     AI_CALL --> AI_WAIT{Response time}
     AI_WAIT -->|3–10s normal| TYPING[Typing indicator shown\nNag-iisip pa ako…]
     AI_WAIT -->|Timeout / error| AI_FB[Graceful fallback message\nSubukan ulit in a moment]
-    TYPING --> AI_RESP[AI Response displayed in Taglish\nBIR responses always include disclaimer]
+    TYPING --> AI_RESP[AI Response displayed in conversational Filipino\nBIR responses always include disclaimer]
     AI_RESP --> FLAG{User flags wrong?}
     FLAG -->|Yes| FLAG_Q[Logged to review queue in Supabase\nAnton reviews weekly]
     FLAG -->|No| CONT[Continue conversation]
@@ -472,7 +472,7 @@ flowchart TD
       </div>
     </div>
     <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Fallback / error state — always shows graceful Taglish message</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Fallback / error state — always shows graceful conversational Filipino message</div>
       <div class="legend-item"><div class="legend-dot" style="background:#F9CA24"></div>Warning / confirmation prompt</div>
       <div class="legend-item"><div class="legend-dot" style="background:#BDC3C7"></div>Hidden from informal sellers (bir_opt_in = false)</div>
     </div>
@@ -495,8 +495,8 @@ flowchart TD
 flowchart TD
     FREE[Free User in App]
     FREE --> LIMIT{Free limit hit?}
-    LIMIT -->|Needs receipt scanning\nFree tier: 0 scans| BUMP_R[Upgrade prompt — Taglish\nReceipt scanning unlocked sa Pro\n50 scans/mo: receipts + notebook photos + unlimited messages\nI-upgrade para sa full features]
-    LIMIT -->|Daily query limit reached 10/day| BUMP_M[Upgrade prompt — Taglish\nNaubos na ang iyong free messages ngayon\nI-upgrade sa Pro para walang limitasyon]
+    LIMIT -->|Needs receipt scanning\nFree tier: 0 scans| BUMP_R[Upgrade prompt — conversational Filipino\nReceipt scanning unlocked sa Pro\n50 scans/mo: receipts + notebook photos + unlimited messages\nI-upgrade para sa full features]
+    LIMIT -->|Daily query limit reached 10/day| BUMP_M[Upgrade prompt — conversational Filipino\nNaubos na ang iyong free messages ngayon\nI-upgrade sa Pro para walang limitasyon]
     LIMIT -->|Not yet hit| FREE
 
     BUMP_R --> UPGRADE{Upgrade?}
@@ -504,7 +504,7 @@ flowchart TD
     UPGRADE -->|No| STAY_FREE[Return to app\nFree limits remain]
     UPGRADE -->|Yes| CHECKOUT[Xendit checkout\nPro: ₱399 · ₱449 · ₱499 per mo Y1-Y3\nBusiness: ₱899 · ₱999 · ₱1099 per mo Y1-Y3\nGCash/Maya 1.5% · Card 2.9%]
     CHECKOUT --> PAY_OK{Payment success?}
-    PAY_OK -->|Yes| PRO[Pro features unlocked\nWelcome message in Taglish\nReferral prompt triggered — first win moment]
+    PAY_OK -->|Yes| PRO[Pro features unlocked\nWelcome message in conversational Filipino\nReferral prompt triggered — first win moment]
     PAY_OK -->|No| RETRY[Retry prompt + manual GCash option\nConcierge fallback if payment rails unavailable]
     RETRY --> PAY_OK
 
@@ -550,11 +550,11 @@ flowchart TD
       <div class="section-num">4</div>
       <div>
         <div class="section-title">UX Flow 4 — Daily End-of-Day Check-In</div>
-        <div class="section-sub">All tiers, in-app only. Evening prompt to log daily sales and expenses in Taglish. Supports text entry, receipt photos (Pro), and notebook photos (Pro/Business).</div>
+        <div class="section-sub">All tiers, in-app only. Evening prompt to log daily sales and expenses in conversational Filipino. Supports text entry, receipt photos (Pro), and notebook photos (Pro/Business).</div>
       </div>
     </div>
     <div class="review-note">
-      📌 <strong>Design notes:</strong> Language: Taglish throughout. Minimal fields — just total sales + total expenses (advanced breakdown optional). Completion target: 60 seconds. No push notifications in Phase 2; check-in only surfaces when app is opened.
+      📌 <strong>Design notes:</strong> Language: conversational Filipino throughout. Minimal fields — just total sales + total expenses (advanced breakdown optional). Completion target: 60 seconds. No push notifications in Phase 2; check-in only surfaces when app is opened.
     </div>
     <div class="diagram-wrap">
       <div class="mermaid">
@@ -806,7 +806,7 @@ flowchart TD
         </thead>
         <tbody>
           <tr>
-            <td class="feature">Daily Check-In (Taglish)</td>
+            <td class="feature">Daily Check-In (Conversational Filipino)</td>
             <td>Yes (text only)</td>
             <td>Yes (text + photo upload)</td>
             <td>Yes (text + photo + auto-note from GSheets)</td>
@@ -1146,9 +1146,9 @@ flowchart TD
         <div style="font-weight:700;color:#e94560;">Step 2</div>
         <div>Check <strong>Taxumo blog</strong>, <strong>JuanTax blog</strong>, and <strong>AccountaholicsPH</strong> Facebook page for any BIR interpretation updates or community alerts about enforcement changes.</div>
         <div style="font-weight:700;color:#e94560;">Step 3</div>
-        <div>If a new regulation is found: read the full text, summarize the impact on MSMEs, and draft the Taglish explanation that AKBai should give when asked.</div>
+        <div>If a new regulation is found: read the full text, summarize the impact on MSMEs, and draft the conversational Filipino explanation that AKBai should give when asked.</div>
         <div style="font-weight:700;color:#e94560;">Step 4</div>
-        <div>Update the <strong>BIR knowledge base document</strong> in the system prompt context. Run 5-10 Taglish test queries in the Anthropic Console to verify the updated response is accurate and natural-sounding.</div>
+        <div>Update the <strong>BIR knowledge base document</strong> in the system prompt context. Run 5-10 conversational Filipino test queries in the Anthropic Console to verify the updated response is accurate and natural-sounding.</div>
         <div style="font-weight:700;color:#e94560;">Step 5</div>
         <div>Update the <strong>bir_calendar</strong> table in Supabase if any deadlines have changed (holidays, extensions, new filing requirements).</div>
         <div style="font-weight:700;color:#e94560;">Step 6</div>

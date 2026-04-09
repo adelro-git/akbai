@@ -65,7 +65,7 @@ describe('ReplyDraftRequestSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('accepts Taglish message with peso sign', () => {
+  it('accepts conversational Filipino message with peso sign', () => {
     const result = ReplyDraftRequestSchema.safeParse({
       customerMessage: 'Magkano po ang ₱500 set? Available pa ba?',
     });

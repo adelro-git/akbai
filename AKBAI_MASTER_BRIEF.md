@@ -14,7 +14,7 @@ business logic, pillar features, or AI reasoning layers.
 **BUILD THIS:**
 - Next.js 14 PWA shell, mobile-first
 - User auth (signup, login, sessions via Supabase Auth magic link / email OTP)
-- Basic Taglish chat interface UI shell (text input, message bubbles, Kai persona styling)
+- Basic conversational Filipino chat interface UI shell (text input, message bubbles, Kai persona styling)
 - Database schema (users, ka_conversations, business_profiles — with RLS on every table)
 - One working Claude Sonnet 4 API endpoint at /api/chat (server-side only, no client API key exposure)
 - Vercel deployment config (or Cloudflare Pages — see Section 4 for canonical choice)
@@ -36,7 +36,7 @@ business logic, pillar features, or AI reasoning layers.
 
 ## 1. Product Summary
 
-AKBai — "Katuwang ng Negosyo Mo" (Your Business Partner) — is a mobile-first Progressive Web App that serves as an AI business partner for Filipino micro, small, and medium enterprises (MSMEs). The product targets 1.1 million digitally-active Filipino business owners whose primary pain points are manual receipt tracking, BIR (Bureau of Internal Revenue) compliance anxiety, zero cash-flow visibility, and hours lost to customer DM management. AKBai is not a chatbot. Its AI persona, "Kai" (short for Katuwang — partner), speaks first, proactively surfaces business insights, and communicates in natural Taglish (Filipino-English code-switching).
+AKBai — "Katuwang ng Negosyo Mo" (Your Business Partner) — is a mobile-first Progressive Web App that serves as an AI business partner for Filipino micro, small, and medium enterprises (MSMEs). The product targets 1.1 million digitally-active Filipino business owners whose primary pain points are manual receipt tracking, BIR (Bureau of Internal Revenue) compliance anxiety, zero cash-flow visibility, and hours lost to customer DM management. AKBai is not a chatbot. Its AI persona, "Kai" (short for Katuwang — partner), speaks first, proactively surfaces business insights, and communicates in natural conversational Filipino — a Filipino syntactic frame (VSO word order, second-position enclitic pronouns, Filipino conjunctions and particles) with English retained only for technical/BIR terms, Filipinized verbs (i-save, i-scan, na-scan), brand names, and numbers.
 
 The product is built by a solo founder (Anton del Rosario) working evenings and weekends alongside a day job at Globe Telecom. Sprint capacity is 10–15 hours per two-week sprint. The monetization model uses three tiers: Free (₱0, Haiku-only, 10 queries/day), Pro (₱399/month, 50 receipt scans, full Sonnet access), and Business (₱899/month, 80 scans, multi-seat). Unit economics are strong: Pro LTV of ₱9,975, blended CAC of ₱110, LTV/CAC ratio of 91x, with break-even projected at Month 7 and Year 1 net profit target of ₱110,303.
 
@@ -88,7 +88,7 @@ The project is currently in Phase 0A (Legal Foundation). No code has been writte
 │   │   ├── project-context.md           ← Full product briefing (~220 lines)
 │   │   ├── tech-stack.md                ← Canonical stack reference (Next.js 14, Supabase, Claude API, etc.)
 │   │   ├── gap-registry.md              ← 29 pre-launch gaps, 10 CRITICAL hard gates
-│   │   ├── glossary.md                  ← Product, business, technical, and Taglish terms
+│   │   ├── glossary.md                  ← Product, business, technical, and Filipino language terms
 │   │   └── brand-context.md             ← Brand identity, voice pillars, colors, typography
 │   ├── skills/                          ← 12 role-based AI skills
 │   │   ├── ai-engineer/                 ← Claude API integration, system prompt architecture
@@ -99,10 +99,10 @@ The project is currently in Phase 0A (Legal Foundation). No code has been writte
 │   │   ├── ops-lead/                    ← Operations playbook execution
 │   │   ├── product-owner/              ← Feature prioritization, Sense Check Gate
 │   │   ├── project-manager/             ← Sprint planning, gap tracking
-│   │   ├── qa-engineer/                 ← Testing strategy, Taglish prompt regression
+│   │   ├── qa-engineer/                 ← Testing strategy, conversational Filipino prompt regression
 │   │   ├── security-compliance/         ← NPC/RA 10173, data privacy, RLS audit
 │   │   ├── solutions-architect/         ← System design, domain-expandable architecture
-│   │   └── ux-designer/                 ← Mobile-first UI, PWA install UX, Taglish empty states
+│   │   └── ux-designer/                 ← Mobile-first UI, PWA install UX, conversational Filipino empty states
 │   └── commands/                        ← 15 slash commands (incremental build)
 │
 └── Archive/                             ← Previous versions of all documents (do NOT reference for builds)
@@ -242,7 +242,7 @@ The akbai-delivery plugin has 12 role-based skills in `akbai-delivery/skills/` a
 
 **PM decision checklist (which agents to include):**
 1. Touches UI? → `build-ux` | 2. New feature? → `build-po` | 3. New tables? → `build-data`
-4. Claude API? → `build-ai` | 5. Taglish copy? → `build-marketing` | 6. Auth/PII? → `review-security`
+4. Claude API? → `build-ai` | 5. Significant conversational Filipino copy? → `build-marketing` | 6. Auth/PII? → `review-security`
 7. Always: `build-architect` + `build-engineer` + `build-qa`
 
 S-features (bug fixes, config) skip teams and run sequentially. For the full usage guide, see `akbai-delivery/shared/agent-teams-guide.md`.
@@ -255,7 +255,7 @@ Each skill has a SKILL.md file in `akbai-delivery/skills/[skill-name]/SKILL.md`.
 
 These decisions have been locked after 14 roadmap iterations, 7 ops playbook versions, and extensive market research. They are non-negotiable:
 
-1. **Taglish is the product language.** All user-facing text is natural Filipino-English code-switching. Not fully English. Not fully Tagalog. This is how the target market communicates.
+1. **Conversational Filipino is the product language.** All user-facing text uses a Filipino syntactic frame: VSO word order, second-position enclitic pronouns (e.g., "bago natin i-save", not "bago i-save natin"), Filipino conjunctions (kung, bago, kasi, dahil, kapag) not English ones (if, before, because, when), Filipino prepositions (ayon sa, batay sa) not "based sa", and Filipino time adverbs (ngayong linggo, nakaraang buwan) not "this week/last month". English is retained only for technical/BIR terms (1701Q, VAT, net income), Filipinized verbs with i-/mag-/na- affixes (i-save, i-scan, na-scan, i-track), brand names (GCash, Maya, Shopee), and numbers/currency/dates. Not fully English, not fully formal Tagalog, and critically — not Taglish (English SVO with Filipino vocabulary sprinkled in). This is how the target MSME market communicates naturally.
 
 2. **Kai speaks first.** The AI is proactive, not reactive. It sends the morning briefing before being asked. It flags the BIR deadline before the user remembers. This is the core product differentiator.
 
@@ -319,12 +319,20 @@ Emergent should produce a working scaffold with these 6 components. Check each b
   6. Returns the Kai response to the client
   - Basic Kai system prompt to use:
     ```
-    You are Kai, the AI business partner inside AKBai. You speak in natural Taglish
-    (Filipino-English mix). You are warm, competent, and proactive. Use "po" naturally.
-    Keep messages short — max 2 lines per response. Use digits for numbers (₱18,400 not
-    "eighteen thousand"). Call the user by their first name when known. Never say
-    "Certainly!", "As an AI...", or any robotic filler. You are a brilliant kababayan
-    colleague, not a corporate chatbot.
+    You are Kai, the AI business partner inside AKBai. You speak in natural conversational
+    Filipino — Filipino syntactic frame (VSO word order, second-position enclitic pronouns
+    like "bago natin i-save" not "bago i-save natin"), Filipino conjunctions (kung, bago,
+    kasi, dahil, kapag) not English ones, Filipino prepositions (ayon sa, batay sa) not
+    "based sa", and Filipino time adverbs (ngayong linggo, nakaraang buwan, sa loob ng 3
+    araw) not "this week/last month/in 3 days". Use "ang" not "yung" for definite objects.
+    Keep English only for: BIR/tax/financial terms (1701Q, VAT, net income), Filipinized
+    verbs with affixes (i-save, i-scan, na-scan, i-track, i-edit), brand names (GCash,
+    Maya, Shopee), and numbers. Never bare English verbs without Filipino affix. You are
+    warm, competent, and proactive. Use "po" naturally. Heavy on particles: ba, naman,
+    kasi, pala, lang, nga, sana, pa, na. Keep messages short — max 2 lines per response.
+    Use digits for numbers (₱18,400 not "eighteen thousand"). Call the user by their first
+    name when known. Never say "Certainly!", "As an AI...", or any robotic filler. You
+    are a brilliant kababayan colleague, not a corporate chatbot.
     ```
 
 - [ ] **Deployment config** — Vercel or Cloudflare Pages deployment configuration. Include `.env.example` with all environment variable stubs listed in Section 4. Ensure the app builds and deploys successfully.
@@ -337,7 +345,7 @@ The scaffold is complete when:
 3. After authenticating, they land on a chat screen
 4. They can type a message and tap send
 5. The message is sent to Claude Sonnet 4 via `/api/chat`
-6. A Taglish response from Kai appears in a styled chat bubble
+6. A conversational Filipino response from Kai appears in a styled chat bubble
 7. The conversation persists in Supabase (refresh the page → messages are still there)
 8. The PWA can be installed via "Add to Home Screen" (manifest + service worker are present)
 
@@ -414,7 +422,7 @@ These are all Phase 1 builds that will be done incrementally after the scaffold 
 | Product context | `/AKBai/akbai-delivery/shared/project-context.md` | Full product briefing (~220 lines) |
 | Tech stack | `/AKBai/akbai-delivery/shared/tech-stack.md` | Canonical stack choices with rationale |
 | Gap registry | `/AKBai/akbai-delivery/shared/gap-registry.md` | 29 gaps, 10 CRITICAL hard gates |
-| Glossary | `/AKBai/akbai-delivery/shared/glossary.md` | All product, business, tech, Taglish terms |
+| Glossary | `/AKBai/akbai-delivery/shared/glossary.md` | All product, business, tech, Filipino language terms |
 | Brand context | `/AKBai/akbai-delivery/shared/brand-context.md` | Colors, typography, voice, positioning |
 | Roadmap v14 | `/AKBai/project/AKBai_Complete_Roadmap_v14.pdf` | Full roadmap, feature specs, Build 0 scope |
 | Financial Model v5 | `/AKBai/project/AKBai_Financial_Model_v5.xlsx` | Unit economics, projections |

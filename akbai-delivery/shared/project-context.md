@@ -27,7 +27,7 @@ AKBai is NOT a chatbot. It is a proactive AI business partner — "Kai" (from Ka
 
 **Market validation (March 2026):** All four pain points confirmed by real-world sentiment research:
 - **BCG "Heart of Hustle" (July 2025, n=3,098 MSMEs with DTI):** 77% want digital tools, only 16% use any. 74% say "business not big enough" for tools. MSMEs represent 99.5% of PH businesses, 60%+ of workforce.
-- **Reddit/Facebook sentiment:** BIR anxiety is visceral — users describe "anxiety disorder," fear of "incarceration," ₱1K/year penalties for missed filings. Real Taglish expressions: "nakakatakot," "nahihirapan," "nalilito."
+- **Reddit/Facebook sentiment:** BIR anxiety is visceral — users describe "anxiety disorder," fear of "incarceration," ₱1K/year penalties for missed filings. Real Filipino expressions: "nakakatakot," "nahihirapan," "nalilito."
 - **CPA Australia (May 2025):** Filipino SMEs lag regional peers in digital adoption. 69% of those who invested in tech saw improved profitability (vs 56% regional avg).
 - **Competitor signal:** A CPA on r/BusinessPH is actively researching "a software/digital product to make filing easier" — confirms the gap.
 - Full research: `shared/market-sentiment-research.md`
@@ -82,7 +82,7 @@ AKBai is NOT a chatbot. It is a proactive AI business partner — "Kai" (from Ka
 
 Build order (Build 0 → Build 8):
 
-0. **Build 0: AI Scope Definition & System Prompt Architecture** — HARD GATE before Build 1. Defines in-scope/out-of-scope boundaries, financial disclaimer, Taglish tone, domain-expandable prompt structure with modular scope sections. See Post-Implementation Vision v1 for Phase 4+ expansion.
+0. **Build 0: AI Scope Definition & System Prompt Architecture** — HARD GATE before Build 1. Defines in-scope/out-of-scope boundaries, financial disclaimer, conversational Filipino tone, domain-expandable prompt structure with modular scope sections. See Post-Implementation Vision v1 for Phase 4+ expansion.
 1. **Kilala Kita** — 5-step hybrid onboarding. Sets business type, income range, primary pain, BIR consent, data bootstrap. Powers all Kai personalization.
 2. **Dashboard** — Business health at a glance. Cash position, sales trends, BIR deadlines, task list. Home tab of PWA.
 3. **Resibo Scanner** — Camera → Claude Haiku Vision → structured expense card. Cost: ₱0.16/scan.
@@ -111,13 +111,13 @@ Build order (Build 0 → Build 8):
 ### Phase 0B — Demand Validation (Weeks 4–10)
 - 100+ waitlist signups (zero paid ads)
 - Brand identity complete (Kai visual system)
-- 5–6 SEO Taglish articles published
+- 5–6 SEO articles published (Taglish search queries, conversational Filipino prose)
 - 10 founder interviews completed
 - Gate: 100 waitlist signups
 
 ### Phase 0C — Paid Pilot (Optional, Weeks 8–12)
 - 5-user paid pilot at ₱99–₱199 to validate willingness to pay
-- Validates: payment flow, support load, Taglish AI accuracy
+- Validates: payment flow, support load, conversational Filipino AI accuracy
 - Gate: 3+ users willing to continue paying at Phase 1 pricing
 - Transition plan: loyalty rate or grandfathering for pilot users (see Gap D8)
 - **Note:** Phase 0C may run concurrently with late Phase 0B or early Phase 1. Skip if Phase 0B demand signals are strong enough.
@@ -135,7 +135,7 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - **Phase 2 targets:** 200 registered users, 80 paying subscribers (Pro + Business), ₱30K–₱50K MRR
 
 ### Phase 3 — Agent Builder Platform (Month 12+)
-- Custom AI behaviors via Taglish conversation ("Every time I receive payment over ₱5,000, remind me to issue an OR")
+- Custom AI behaviors via conversational Filipino chat ("Every time I receive payment over ₱5,000, remind me to issue an OR")
 - Scale tier launch (₱1,499/mo), unlimited behaviors + API integrations
 - **Phase 3 targets:** 500+ users, 200 paying, ₱100K–₱200K MRR
 
@@ -144,8 +144,8 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Build 7 Complete (2026-04-05)
-> Build 0 shipped (2026-03-20). Build 1 frontend (Sprint 3, 2026-03-22). Build 2 complete (Sprint 5, 2026-03-25). Sprint 6: Design Gates 2 & 3 closed, UX gaps B1/B2/D6 resolved, first-run polish. Sprint 7: Build 4 (Saan Napunta/Expenses) shipped. Sprint 8+9: Build 5 (Ang Umaga Mo) + Build 6 (Deadline Watcher) + Build 7 (Reply Drafter) shipped. Sprint 10: Build 5 completed (reconciliation), illustrations wired, 6 dev-mode bugs fixed. 761 tests passing. All 8 Design Gates resolved.
+> Current: Phase 0A — Sprint 11 Complete (2026-04-09)
+> Build 0 shipped (2026-03-20). Build 1 frontend (Sprint 3, 2026-03-22). Build 2 complete (Sprint 5, 2026-03-25). Sprint 6: Design Gates 2 & 3 closed, UX gaps B1/B2/D6 resolved, first-run polish. Sprint 7: Build 4 (Saan Napunta/Expenses) shipped. Sprint 8+9: Build 5 (Ang Umaga Mo) + Build 6 (Deadline Watcher) + Build 7 (Reply Drafter) shipped. Sprint 10: Build 5 completed (reconciliation), illustrations wired, 6 dev-mode bugs fixed. Sprint 11 (2026-04-09): Conversational Filipino voice revision — shifted primary voice from "Taglish" to "conversational Filipino" across ~130 files (CLAUDE.md, master brief, brand-context, skill/agent files, core-persona.ts, landing page, brand book HTML, project HTML docs). Rewrote copy guides with new 8-marker syntactic checklist. Added 9 regression tests for conversational Filipino markers. 770 tests passing. All 8 Design Gates resolved.
 
 ### What's Built
 - **Build 0 — AI Scope Definition** (2026-03-20): `/frontend/src/lib/claude/` module
@@ -154,7 +154,7 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - Guardrails: BIR disclaimer (17 triggers), input sanitizer (7 injection patterns), output filter (`guardrails.ts`)
   - Circuit breaker: daily spend caps ($5 global, $0.50/user), free tier 10-query limit (`circuit-breaker.ts`)
   - Cost estimator for pre-call budget checks (`cost-estimator.ts`)
-  - Taglish error messages with trust recovery pattern (`errors.ts`)
+  - Conversational Filipino error messages with trust recovery pattern (`errors.ts`)
   - Supabase migration: `daily_api_spend` table + `increment_daily_spend` RPC
   - Refactored `/api/chat/route.ts` with Zod validation + full guardrails pipeline
   - Vitest setup with 31 regression tests (all passing)
@@ -170,7 +170,7 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 
 - **Sprint 3 — Build 1 Frontend + Infrastructure** (2026-03-22):
   - UTC+8 timezone enforcement: shared `@/lib/timezone` module with `toManila()`, `getManilaToday()`, `formatManilaDate()` — Gap A3 resolved (ADR-006)
-  - Kilala Kita onboarding UI: 5-step wizard (6 components), mobile-first light theme (dark mode available), Taglish copy, `useRef`+`onClick` pattern — Gap B3 resolved
+  - Kilala Kita onboarding UI: 5-step wizard (6 components), mobile-first light theme (dark mode available), conversational Filipino copy, `useRef`+`onClick` pattern — Gap B3 resolved
   - Onboarding schema: migration 005 (`onboarding_fields`), `/api/onboarding` route, Zod validation, 28 first-response templates
   - Onboarding rate-limit exemption: `checkCircuitBreaker()` `onboardingCompleted` param — Gap E3 resolved (ADR-008)
   - Sentry error monitoring: `@sentry/nextjs` client+server configs, `global-error.tsx`, source map uploads — Gap A4 resolved (ADR-007)
@@ -180,7 +180,7 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 
 - **Sprint 4 — PostHog, Email, Dashboard Shell, OCR Pipeline** (2026-03-25):
   - PostHog analytics: `posthog-provider.tsx`, `lib/posthog/events.ts` (5 typed events), `lib/posthog/server.ts`, ADR-009 — Gap A5 resolved
-  - Email module: `lib/email/templates.ts` (branded Taglish magic link + confirmation), `lib/email/verify.ts` (Yahoo PH detection), `smtp-setup-guide.md` — Gap D1 downgraded to IMPORTANT
+  - Email module: `lib/email/templates.ts` (branded conversational Filipino magic link + confirmation), `lib/email/verify.ts` (Yahoo PH detection), `smtp-setup-guide.md` — Gap D1 downgraded to IMPORTANT
   - Build 2 Dashboard shell: `kai-greeting.tsx`, `dashboard-card.tsx`, `empty-state-card.tsx`, `bottom-nav.tsx`, migration 006 (`daily_check_in`), `/api/dashboard` with UTC+8 greeting
   - OCR pipeline: `lib/ocr/` (types, schemas, prompts, parse-receipt with Haiku-first + Sonnet fallback), `/api/ocr`, spike runner — Gap E1 pipeline built, awaiting test images
   - Login page redesigned to match `screen-mockups.html` — Gap A1 (Auth) resolved
@@ -192,13 +192,13 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - Profile/Settings: `/profile` page, `/api/profile` (GET+PATCH), dark mode toggle — Gap B4 resolved
   - Feature Flags: `lib/feature-flags/` (4 files) — Design Gate 6 IN PROGRESS
   - PWA: manifest.json enhanced, sw.js v2, `/offline` page — Design Gate 5 IN PROGRESS
-  - Branding: local logos, white CTA text, light-first default, dark mode contrast, Taglish copy (22 files)
+  - Branding: local logos, white CTA text, light-first default, dark mode contrast, conversational Filipino copy (22 files)
   - 405 tests passing (68 new + 3 fixed, 0 failures)
 
 - **Sprint 6 — Design Gate Closure + UX Quality** (2026-03-26):
   - Design Gate 2: `disclaimer-banner.tsx`, `flag-button.tsx`, `/api/flag-as-wrong`, migration 008 (flag_as_wrong_reports)
   - Design Gate 3: 25-case prompt regression test suite (`prompt-regression.test.ts`)
-  - Gap B1: `loading-estimator.ts` + Taglish wait estimate in chat loading
+  - Gap B1: `loading-estimator.ts` + conversational Filipino wait estimate in chat loading
   - Gap B2: `free-tier-banner.tsx` + `queriesUsedToday` in chat API
   - Gap D6: `session-expiry-modal.tsx`, `session-watcher.ts`, `session-guard.tsx` in layout
   - First-run: welcome tour, Iba pa text field, income labels cleaned, login logo upgrade
@@ -207,7 +207,7 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 
 - **Sprint 7 — Build 4 (Saan Napunta / Expenses)** (2026-03-26):
   - Transactions table (migration 009), reconciliation prep (migration 010)
-  - Expense categories with Taglish labels (`lib/expenses/`)
+  - Expense categories with conversational Filipino labels (`lib/expenses/`)
   - `/api/expenses` CRUD + aggregation, `/expenses` page UI
   - Category chart, transaction list, add-transaction modal, month picker
   - Check-in → expenses integration
@@ -236,7 +236,7 @@ Kai is AKBai's AI personality — the smart ate/kuya who always has your back. N
 
 Every user-facing output must follow these rules:
 
-**Voice:** Warm, hyper-competent, Taglish (Filipino-English mix). Like a brilliant kababayan colleague who happens to know everything about business and taxes.
+**Voice:** Warm, hyper-competent, conversational Filipino (Filipino syntactic frame with English retained for technical/BIR terms, Filipinized verbs, brand names, and numbers). Like a brilliant kababayan colleague who happens to know everything about business and taxes.
 
 **Rules:**
 - Uses "po" naturally — not every sentence, but when appropriate for warmth

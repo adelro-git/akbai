@@ -19,7 +19,7 @@ AKBai is built by a solo founder with 10–15 hours per sprint. The testing stra
 ### Layer 1: Unit Tests (Vitest)
 **Purpose:** Test pure business logic with no external dependencies.
 **Speed:** < 10ms per test. Full unit suite < 5 seconds.
-**Current count (as of Sprint 6+7):** 559 tests passing across 26+ files (Vitest), 0 failures. Sprint 6 added 25-case prompt regression test suite (`prompt-regression.test.ts`, Design Gate 3) covering 5 groups: persona integrity, Taglish compliance, feature prompts, guardrails, integration — all deterministic, no API calls. Sprint 5 added 68 new tests + fixed 3 pre-existing failures: 21 check-in/dashboard, 26 profile, 13 feature-flags, 8 PWA/offline. Sprint 4 added 129: 40 email, 43 dashboard, 46 OCR.
+**Current count (as of Sprint 6+7):** 559 tests passing across 26+ files (Vitest), 0 failures. Sprint 6 added 25-case prompt regression test suite (`prompt-regression.test.ts`, Design Gate 3) covering 5 groups: persona integrity, conversational Filipino compliance (8 syntactic markers — enclitic placement, Filipino conjunctions, Filipino prepositions, Filipino time adverbs, affixed English verbs, Filipino comparatives, `ang` vs `yung` for definite objects, Filipino SVO/VSO word order), feature prompts, guardrails, integration — all deterministic, no API calls. Sprint 5 added 68 new tests + fixed 3 pre-existing failures: 21 check-in/dashboard, 26 profile, 13 feature-flags, 8 PWA/offline. Sprint 4 added 129: 40 email, 43 dashboard, 46 OCR.
 **When to use:** Any function that takes input and returns output without side effects.
 
 **Primary targets:**
@@ -32,7 +32,7 @@ AKBai is built by a solo founder with 10–15 hours per sprint. The testing stra
 - Timezone conversions (UTC ↔ Asia/Manila, midnight boundary)
 - Query counter logic (daily limit tracking, midnight reset in Manila time)
 - Notification sequence generation (7-day, 3-day, 1-day before deadline)
-- Email templates (17 tests — HTML rendering, placeholder injection, Taglish copy)
+- Email templates (17 tests — HTML rendering, placeholder injection, conversational Filipino copy)
 - Email provider detection (23 tests — domain parsing, provider-specific SMTP config)
 - Dashboard API + components (43 tests — API route validation, summary card rendering, data aggregation)
 - OCR pipeline (46 tests — Zod schema validation, image format/size validation, model fallback from Sonnet → Haiku)
@@ -264,13 +264,13 @@ Every PR that touches these areas MUST include corresponding test updates:
 | RLS policy change | Integration test in `rls-isolation.test.ts` |
 | OCR pipeline or Zod schema | Unit tests in `ocr-schema-validation.test.ts` |
 | Tier permission logic | Unit tests in `tier-permissions.test.ts` |
-| System prompt change | Run Taglish regression library (20–30 cases) |
+| System prompt change | Run Conversational Filipino regression library (20–30 cases) |
 
 ---
 
 ## 6. System Prompt Regression Testing
 
-This is a special testing category because it tests AI behavior, not deterministic code. The Design Gate (Roadmap v14) requires a 20–30 case Taglish regression test library.
+This is a special testing category because it tests AI behavior, not deterministic code. The Design Gate (Roadmap v14) requires a 20–30 case Conversational Filipino regression test library.
 
 ### What to Regression Test
 
@@ -280,7 +280,15 @@ After any system prompt change:
 2. **BIR disclaimer presence** — Does every tax-related response include the disclaimer?
 3. **Confidence flagging** — Are uncertain OCR fields still flagged?
 4. **Prompt injection defense** — Can a user input override KA's persona or extract the system prompt?
-5. **Taglish blend** — Is the Filipino-English mix natural? Does it use "po" appropriately?
+5. **Conversational Filipino — 8 syntactic markers** — The library must detect and reject each of these Taglish leak patterns:
+   1. **Enclitic misplacement** — "bago i-save natin" → should be "bago natin i-save" (second-position enclitic before the verb after a conjunction)
+   2. **English conjunctions** — `if`/`before`/`because`/`when` → should be `kung`/`bago`/`kasi` or `dahil`/`kapag`
+   3. **English prepositions** — `based sa` → should be `ayon sa` or `batay sa`
+   4. **English time adverbs** — `this week`/`last month` → should be `ngayong linggo`/`nakaraang buwan`
+   5. **Bare English verbs** — `Save mo` → should be `I-save mo` (affixed Filipinized form)
+   6. **English comparatives** — `more Filipino` → should be `mas Filipino`
+   7. **`yung` for definite objects** — `yung receipt` → should be `ang resibo`
+   8. **English SVO word order** — "Here's what I found" → should be "Ito ang nakita ko" (Filipino VSO / topic-first)
 6. **Length constraint** — Are chat responses staying within 2-line bubble max?
 7. **First name usage** — Does KA use the user's first name when available?
 8. **No corporate filler** — Zero instances of "Certainly!", "As an AI...", "I'd be happy to"
@@ -289,7 +297,7 @@ After any system prompt change:
 
 ```json
 {
-  "test_id": "taglish-001",
+  "test_id": "conv-fil-001",
   "category": "voice-consistency",
   "user_input": "Magkano ang gastos ko this week?",
   "user_context": { "name": "Maria", "tier": "pro", "business_type": "food_seller" },
@@ -297,12 +305,15 @@ After any system prompt change:
     { "type": "contains_name", "expected": "Maria" },
     { "type": "no_corporate_filler", "blocked_phrases": ["Certainly", "As an AI", "I'd be happy to"] },
     { "type": "uses_peso_sign", "format": "₱ followed by digits" },
-    { "type": "max_lines", "max": 4 }
+    { "type": "max_lines", "max": 4 },
+    { "type": "no_english_time_adverbs", "blocked": ["this week", "last month", "next week"], "expected_alternatives": ["ngayong linggo", "nakaraang buwan", "sa susunod na linggo"] },
+    { "type": "no_english_prepositions", "blocked": ["based sa", "based on"], "expected_alternatives": ["ayon sa", "batay sa"] },
+    { "type": "enclitic_placement", "rule": "second-position enclitic before verb after conjunction" }
   ]
 }
 ```
 
-These tests are semi-automated — the assertions check measurable properties (presence of name, absence of filler phrases, ₱ format), but human review is still needed for subjective Taglish quality. Run the library after every prompt version bump.
+These tests are semi-automated — the assertions check measurable properties (presence of name, absence of filler phrases, ₱ format, detection of the 8 Taglish leak markers), but human review is still needed for subjective conversational Filipino quality. Run the library after every prompt version bump.
 
 ---
 

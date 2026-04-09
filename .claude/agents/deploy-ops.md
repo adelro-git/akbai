@@ -23,8 +23,8 @@ Anton has maybe 5 minutes on his phone in the morning and 2-4 hour build session
 ## Operational Readiness Checklist
 
 ### Post-Build Readiness (after feature implementation)
-- [ ] Error states handled — user-facing errors are Taglish and actionable
-- [ ] Loading states present — with Taglish wait messages
+- [ ] Error states handled — user-facing errors are conversational Filipino and actionable
+- [ ] Loading states present — with conversational Filipino wait messages
 - [ ] Monitoring configured — Sentry tracking new API routes/components
 - [ ] Deployment guide updated — if new env vars or config changes
 - [ ] Support playbook covers new feature — Tier 1/2/3 triage for this feature's failure modes

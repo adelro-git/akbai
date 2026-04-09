@@ -4,19 +4,19 @@
     {
       "id": 1,
       "prompt": "Write me a Facebook post for Negosyante PH about the upcoming 1701Q deadline. I want it to be genuinely helpful — teach them something, don't just advertise AKBai. The deadline is April 15.",
-      "expected_output": "A Taglish FB value post following the teach-first formula: hook about the 1701Q deadline, educational body with specific BIR details (forms, penalties, what to prepare), BIR disclaimer, and a soft CTA. Should feel like a peer helping peers, not a brand posting an ad.",
+      "expected_output": "A conversational Filipino FB value post following the teach-first formula: hook about the 1701Q deadline, educational body with specific BIR details (forms, penalties, what to prepare), BIR disclaimer, and a soft CTA. Should feel like a peer helping peers, not a brand posting an ad.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "I need to position AKBai against Taxumo in a blog post. Not a takedown — I respect what they do. But I want MSME owners to understand why AKBai is different. Help me write the comparison section.",
-      "expected_output": "A respectful competitive comparison in Taglish that acknowledges Taxumo's strengths (tax filing, eFPS integration), then positions AKBai's differentiation: integrated 5-pillar suite vs tax-only, ₱399 vs ₱499-999 pricing, Taglish-native vs English-dominant. Real numbers, no trash-talk.",
+      "expected_output": "A respectful competitive comparison in conversational Filipino that acknowledges Taxumo's strengths (tax filing, eFPS integration), then positions AKBai's differentiation: integrated 5-pillar suite vs tax-only, ₱399 vs ₱499-999 pricing, conversational Filipino-native vs English-dominant. Real numbers, no trash-talk.",
       "files": []
     },
     {
       "id": 3,
       "prompt": "Draft a 5-email waitlist nurture sequence for AKBai. I want each email to teach something useful — not just hype. These are Filipino MSME owners who signed up because they're interested in BIR help and business tools.",
-      "expected_output": "A 5-email sequence over ~14 days. Each email has a Taglish subject line, teaches something genuinely useful (BIR tips, expense tracking advice, founder story), and builds toward launch anticipation. Katuwang voice throughout — warm, specific, never salesy. Includes BIR disclaimer where relevant.",
+      "expected_output": "A 5-email sequence over ~14 days. Each email has a conversational Filipino subject line, teaches something genuinely useful (BIR tips, expense tracking advice, founder story), and builds toward launch anticipation. Katuwang voice throughout — warm, specific, never salesy. Includes BIR disclaimer where relevant.",
       "files": []
     }
   ]

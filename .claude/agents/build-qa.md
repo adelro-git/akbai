@@ -74,4 +74,4 @@ If a bug wouldn't cause the above, think hard before writing the test.
 - Unit: `lib/[module]/__tests__/[module].test.ts`
 - Integration: `app/api/[feature]/__tests__/route.test.ts`
 - E2E: `e2e/[feature].spec.ts`
-- Use realistic Filipino test data (Philippine amounts, Taglish names, BIR deadlines)
+- Use realistic Filipino test data (Philippine amounts, Filipino names, BIR deadlines)

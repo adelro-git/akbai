@@ -84,7 +84,7 @@ describe('validateReplyInput', () => {
     expect(result.valid).toBe(true);
   });
 
-  it('accepts Taglish messages with special characters', () => {
+  it('accepts conversational Filipino messages with special characters', () => {
     const result = validateReplyInput('Magkano po ang ₱500 set? Available pa ba? 🙏');
     expect(result.valid).toBe(true);
   });
@@ -103,7 +103,7 @@ describe('validateReplyOutput', () => {
     expect(result.reason).toBeUndefined();
   });
 
-  it('accepts natural Taglish business reply', () => {
+  it('accepts natural conversational Filipino business reply', () => {
     const result = validateReplyOutput(
       'Hello po! Salamat sa inquiry. Ang price po ng 1 dozen cupcakes is ₱850. Puwede po kayo mag-order hanggang Friday.'
     );

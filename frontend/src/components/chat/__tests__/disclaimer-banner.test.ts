@@ -22,7 +22,7 @@ describe('DisclaimerBanner — content requirements', () => {
     expect(DISCLAIMER_TEXT).toContain('hindi ito professional financial or tax advice');
   });
 
-  it('should include Taglish copy (not English-only)', () => {
+  it('should include conversational Filipino copy (not English-only)', () => {
     // "hindi ito" is Filipino, confirming Taglish blend
     expect(DISCLAIMER_TEXT).toContain('hindi ito');
     // Should NOT be corporate English only

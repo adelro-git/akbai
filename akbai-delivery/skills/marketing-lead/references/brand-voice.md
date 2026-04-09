@@ -18,8 +18,8 @@ AKBai's brand voice is called "Katuwang" — the voice of a smart, warm, hyper-c
 
 ## Voice Pillars
 
-### 1. Taglish — Like a Real Negosyante Talks
-The voice is the natural Taglish you hear in Filipino FB seller groups, GC threads, and market stalls — where Tagalog carries the conversation and English comes in naturally for business terms, technical words, and numbers. Not conyo English-with-Filipino-sprinkles (that feels elitist and foreign to the target audience). Not pure formal Filipino either (nobody talks like that in business).
+### 1. Conversational Filipino — Like a Real Negosyante Talks
+The voice is the natural conversational Filipino you hear in Filipino FB seller groups, GC threads, and market stalls — where Tagalog grammar carries the conversation and English comes in naturally for business terms, technical words, and numbers. (Users commonly use Taglish in their own messaging; AKBai's voice is structured conversational Filipino — more disciplined than casual Taglish, but still warm.) Not conyo English-with-Filipino-sprinkles (that feels elitist and foreign to the target audience). Not pure formal Filipino either (nobody talks like that in business).
 
 The goal: when Maria the home baker reads the content, she should think "ah, para sa'kin 'to" — not "sino 'to, ang linis naman mag-English."
 
@@ -92,7 +92,7 @@ Comment BETA kung gusto mo subukan.
 Introducing AKBai — the revolutionary AI-powered business management platform designed to seamlessly optimize your BIR compliance workflow! Our cutting-edge technology leverages advanced machine learning to ensure you never miss a deadline again. Sign up now for early access to this game-changing solution!
 ```
 
-**DON'T (conyo version):**
+**DON'T (too English / conyo version):**
 ```
 Did you know there are 20 BIR tax deadlines you need to track every year?
 
@@ -103,7 +103,7 @@ So I built a tool that automatically reminds you — 7 days, 3 days, 1 day befor
 Comment BETA if you want to try it.
 ```
 
-Why the first works: natural Taglish flow, real story, real numbers (20 deadlines, ₱5,000 penalty, 15 sellers), teaches something useful, soft CTA. It reads like a real person posting in a FB seller group. The corporate version fails because it's jargon soup. The conyo version fails because it's too polished and English-dominant — Maria wouldn't feel like this was written for her.
+Why the first works: natural conversational Filipino flow, real story, real numbers (20 deadlines, ₱5,000 penalty, 15 sellers), teaches something useful, soft CTA. It reads like a real person posting in a FB seller group. The corporate version fails because it's jargon soup. The conyo version fails because it's too polished and English-dominant — Maria wouldn't feel like this was written for her.
 
 ### SEO Blog Content
 
@@ -209,7 +209,7 @@ On any content discussing tax specifics:
 | Channel | Tone | Notes |
 |---------|------|-------|
 | FB MSME groups | Casual, helpful, peer-to-peer | You're a member helping other members, not a brand posting ads |
-| SEO blog | Educational, authoritative but warm | Longer-form, still Taglish, more structured |
+| SEO blog | Educational, authoritative but warm | Longer-form, still conversational Filipino, more structured |
 | TikTok/IG | Punchy, energetic, visual | 15-60 sec, Anton's face or screen recordings |
 | Email | Personal, direct, valuable | Like a DM from a friend who has useful info |
 | Landing page | Clear, benefit-focused, specific | Real numbers, real features, real screenshots |

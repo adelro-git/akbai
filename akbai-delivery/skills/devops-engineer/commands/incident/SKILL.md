@@ -1,6 +1,6 @@
 ---
 name: incident
-description: "Emergency incident response protocol for P0/P1/P2 production issues (data breach, service down, degraded). Assess severity, generate immediate mitigation steps (first 15 min), communication templates in Taglish (warm tone), root cause investigation checklist, NPC 72-hour breach notification checklist (RA 10173), post-incident review template. Solo founder: handles 2AM BIR deadline day outages, escalation paths when Anton is at day job, automated vs manual response decisions. Trigger keywords: incident, production issue, outage, down, broken, error spike, data breach, payment failure, emergency, urgent, P0, P1, P2, something's wrong, app is broken, users are complaining."
+description: "Emergency incident response protocol for P0/P1/P2 production issues (data breach, service down, degraded). Assess severity, generate immediate mitigation steps (first 15 min), communication templates in conversational Filipino (warm tone), root cause investigation checklist, NPC 72-hour breach notification checklist (RA 10173), post-incident review template. Solo founder: handles 2AM BIR deadline day outages, escalation paths when Anton is at day job, automated vs manual response decisions. Trigger keywords: incident, production issue, outage, down, broken, error spike, data breach, payment failure, emergency, urgent, P0, P1, P2, something's wrong, app is broken, users are complaining."
 ---
 
 # /incident — Emergency Response Protocol
@@ -12,7 +12,7 @@ description: "Emergency incident response protocol for P0/P1/P2 production issue
 You are Anton's 24/7 incident commander. When AKBai breaks at 2AM on a BIR deadline day, when Xendit payments go down, when user data is exposed — this workflow gets executed immediately. Anton may be asleep, offline, or stuck in Globe meetings. The protocol is designed to:
 
 1. **Stabilize production** (first 15 minutes)
-2. **Notify affected users** in warm Taglish
+2. **Notify affected users** in warm conversational Filipino
 3. **Investigate root cause** (forensics + logs)
 4. **Notify authorities if data breach** (NPC 72-hour window)
 5. **Document and recover** (post-incident review)
@@ -23,7 +23,7 @@ You are Anton's 24/7 incident commander. When AKBai breaks at 2AM on a BIR deadl
 
 **Read the shared context files** (takes 2 minutes):
 - `/AKBai/akbai-delivery/shared/project-context.md` § 1, 8–9 (product, KA voice, compliance)
-- `/AKBai/akbai-delivery/shared/brand-context.md` (Taglish tone, voice pillars, examples)
+- `/AKBai/akbai-delivery/shared/brand-context.md` (conversational Filipino tone, voice pillars, examples)
 - `/AKBai/akbai-delivery/shared/gap-registry.md` § Category D (operational gaps, D7 incident runbook)
 
 **Reference files in this skill:**
@@ -222,7 +222,7 @@ ACTIONS REQUIRED:
 
 2. [ ] **Notify affected users (not all users)**
    - If receipt scanner is slow: post to #akbai-support chat
-   - Message in Taglish: "Receipt scanner ay nagslow down — working on it!"
+   - Message in conversational Filipino: "Receipt scanner ay nagslow down — working on it!"
    - Offer workaround if available
 
 3. [ ] **Monitor for escalation to P1**
@@ -234,7 +234,7 @@ ACTIONS REQUIRED:
 
 ## Step 4: User Communication (P0 & P1 Only)
 
-Use these Taglish templates. Follow brand-context.md voice pillars: warm, competent, proactive.
+Use these conversational Filipino templates. Follow brand-context.md voice pillars: warm, competent, proactive.
 
 ### P0 Data Breach — Initial User Notification
 
@@ -440,7 +440,7 @@ Use this checklist to diagnose what actually happened:
     - How exposure happened (honest, non-technical summary)
     - What actions they should take (password reset recommended)
     - Contact: akbai-privacy@[domain] for questions
-  - Taglish tone: apologetic, transparent, action-oriented
+  - conversational Filipino tone: apologetic, transparent, action-oriented
 
 - [ ] **Document timeline in Slack**
   - #akbai-ops channel (private)
@@ -608,7 +608,7 @@ Mandatory: NPC notification, user communication, detailed postmortem
 
 ---
 
-## Taglish Communication Guidelines
+## conversational Filipino Communication Guidelines
 
 **DO:**
 - Use user's first name ("Maria, the issue is fixed")

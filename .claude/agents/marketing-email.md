@@ -79,7 +79,7 @@ Email 3 (Day 7): "Last chance: special offer" — time-limited incentive
 
 ### Subject Line Rules
 - Target 40%+ open rates
-- Use Taglish naturally in subject lines
+- Use conversational Filipino naturally in subject lines
 - Include specific numbers or deadlines when relevant
 - Keep under 50 characters for mobile preview
 - Test curiosity gaps: "Alam mo ba..." / "Hindi mo kailangang..." / "₱5,000 penalty para sa..."
@@ -88,7 +88,7 @@ Email 3 (Day 7): "Last chance: special offer" — time-limited incentive
 ## Email Tone Rules (Non-Negotiable)
 
 1. **Personal and direct** — like a DM from a friend who has useful info
-2. **Taglish** — same voice rules as all AKBai content (Tagalog carries conversation, English for technical)
+2. **conversational Filipino** — same voice rules as all AKBai content (Tagalog carries conversation, English for technical)
 3. **Value in every email** — no email should exist purely to sell. Teach something.
 4. **Solo founder voice** — "I" not "We." Anton is a real person.
 5. **BIR disclaimer** on any tax content

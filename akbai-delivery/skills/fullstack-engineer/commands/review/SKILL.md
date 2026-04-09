@@ -16,7 +16,7 @@ Read the shared context files:
 - `/AKBai/akbai-delivery/shared/project-context.md` — product, constraints, solo-founder survivability principle
 - `/AKBai/akbai-delivery/shared/tech-stack.md` — canonical Next.js 14, TypeScript strict, Supabase, Claude API stack
 - `/AKBai/akbai-delivery/shared/gap-registry.md` — hard gates and compliance gaps
-- `/AKBai/akbai-delivery/shared/glossary.md` — product terms, KA persona, Taglish rules
+- `/AKBai/akbai-delivery/shared/glossary.md` — product terms, KA persona, conversational Filipino rules
 - `/AKBai/akbai-delivery/shared/brand-context.md` — KA voice, tone calibration by context
 
 Then read the fullstack-engineer references:
@@ -108,7 +108,7 @@ Check against tech-stack.md §Development Conventions (error pattern: `{ success
 - ✓ error object has `{ code: string, message: string, message_tl: string }`
 - ✓ All throw statements inside try-catch
 - ✓ HTTP status codes match error type (401 for auth, 429 for rate limit, 500 for internal, etc.)
-- ✓ Console errors in English, user-facing messages in Taglish (message_tl)
+- ✓ Console errors in English, user-facing messages in conversational Filipino (message_tl)
 
 **Client Components:**
 - ✓ useMutation() has onError callback
@@ -137,7 +137,7 @@ Check against gap-registry.md §Category B (UX Gaps B1, B5):
 
 **UI Completeness:**
 - ✓ Every page/component with async data has a loading state (spinner, skeleton, disabled buttons)
-- ✓ Empty state message shown when no data (Taglish, e.g., "Wala pang data. Mag-upload ka ng receipt para makapagsimula.")
+- ✓ Empty state message shown when no data (conversational Filipino, e.g., "Wala pang data. Mag-upload ka ng receipt para makapagsimula.")
 - ✓ Error state shown with actionable message (e.g., "May problema sa network. Mag-retry ka in a few seconds.")
 - ✓ All Claude API calls show animated thinking indicator (gap-registry.md B1)
 
@@ -187,7 +187,7 @@ useQuery({
 });
 ```
 
-#### 3f. Taglish Copy Quality
+#### 3f. conversational Filipino Copy Quality
 
 Check against brand-context.md (KA voice, tone calibration):
 
@@ -204,7 +204,7 @@ Example issues:
 // BAD - corporate tone
 const message = "Your receipt has been successfully processed and stored.";
 
-// GOOD - Taglish, warm
+// GOOD - conversational Filipino, warm
 const message = "Na-scan ko na yung receipt mo — check mo if tama lahat bago i-save natin.";
 ```
 
@@ -358,7 +358,7 @@ const { data: profile } = await supabase
   .single();
 
 const response = await anthropic.messages.create({
-  system: `You are KA, a business partner for ${profile.business_name}. You speak Taglish...`,  // Safe: only business_name
+  system: `You are KA, a business partner for ${profile.business_name}. You speak conversational Filipino...`,  // Safe: only business_name
   messages: [{ role: 'user', content: userQuery }],  // User input here
 });
 ```
@@ -471,7 +471,7 @@ Format:
 - Missing error states (loading, empty, error)
 - Suboptimal TanStack Query cache keys
 - Missing unit/integration tests for this feature
-- Non-standard Taglish tone in user-facing copy
+- Non-standard conversational Filipino tone in user-facing copy
 
 Format:
 ```
@@ -525,7 +525,7 @@ Provide a structured report:
 - **Error handling:** ✓ / ⚠ [detail]
 - **RLS coverage:** ✓ / ⚠ [detail]
 - **Input validation:** ✓ / ⚠ [detail]
-- **Taglish tone:** ✓ / ⚠ [detail]
+- **conversational Filipino tone:** ✓ / ⚠ [detail]
 
 ## Recommendations
 [Summary of what to fix before merge]
@@ -607,7 +607,7 @@ export async function POST(req: Request) {
 }
 ```
 
-### Taglish: Corporate Tone
+### conversational Filipino: Corporate Tone
 
 **Issue:** User-facing message too formal.
 ```typescript
@@ -647,7 +647,7 @@ Before declaring a review complete, verify:
 - [ ] Error handling on all async operations
 - [ ] Loading/empty/error states implemented
 - [ ] TanStack Query patterns correct (cache keys, stale time)
-- [ ] Taglish tone appropriate and consistent
+- [ ] conversational Filipino tone appropriate and consistent
 
 ### Security
 - [ ] RLS policies on all tables

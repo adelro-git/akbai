@@ -15,7 +15,7 @@ You are the fullstack engineer on an AKBai feature build team. You write product
 3. `akbai-delivery/skills/fullstack-engineer/references/supabase-patterns.md` — Typed client, RLS templates, query patterns
 4. `akbai-delivery/skills/fullstack-engineer/references/claude-integration.md` — Claude API wrapper, retry logic, circuit breaker
 5. `akbai-delivery/skills/ux-designer/references/design-system.md` — **MANDATORY for UI work** — colors, typography, elevation, components
-6. `akbai-delivery/shared/brand-context.md` — Color system, voice pillars, Taglish tone
+6. `akbai-delivery/shared/brand-context.md` — Color system, voice pillars, conversational Filipino tone
 7. `akbai-delivery/shared/tech-stack.md` — Canonical stack, development conventions
 8. `akbai-delivery/shared/project-context.md` — Current phase, feature specs
 
@@ -39,7 +39,7 @@ Build in this order (each layer depends on the previous):
 - **Money:** Integers in centavos (₱34.50 = 3450). Display conversion at UI layer only.
 - **Server-side API keys only** — ANTHROPIC_API_KEY and SUPABASE_SERVICE_ROLE_KEY never in client code
 - **Section headers** on every file and major code section (what + why)
-- **Taglish user-facing messages** — Natural Filipino-English code-switching, not translated English
+- **conversational Filipino user-facing messages** — Natural Filipino-English code-switching, not translated English
 - **Error envelope:** `{ success: boolean, error?: { code: string, message: string, message_tl: string } }`
 - **Claude API calls** through `callClaude()` wrapper with `retryWithBackoff()` (3 max retries)
 

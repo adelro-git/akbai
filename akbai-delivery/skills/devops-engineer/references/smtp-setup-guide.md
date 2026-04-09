@@ -136,7 +136,7 @@ Resend will provide 3 CNAME records for DKIM. They look like:
 
 ## 5. Custom Email Templates
 
-The codebase includes branded Taglish email templates in `frontend/src/lib/email/templates.ts`. To use them in Supabase:
+The codebase includes branded conversational Filipino email templates in `frontend/src/lib/email/templates.ts`. To use them in Supabase:
 
 ### Step 1: Open Email Templates
 1. In Supabase Dashboard, go to: **Authentication** → **Email Templates**

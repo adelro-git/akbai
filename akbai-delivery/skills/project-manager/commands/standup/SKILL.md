@@ -1,6 +1,6 @@
 ---
 name: standup
-description: "Generate a weekly standup with two outputs: a GitHub issue comment (structured, technical) and a build-in-public social post (Taglish, authentic, brand-aligned). Ask Anton for: what shipped this week, what's planned next, any blockers, and key metrics. Use brand-context.md for KA voice and tone. Keep standup brief — 5 minutes to review. Trigger when user asks: standup, weekly update, progress report, status, shipped this week, or public update."
+description: "Generate a weekly standup with two outputs: a GitHub issue comment (structured, technical) and a build-in-public social post (conversational Filipino, authentic, brand-aligned). Ask Anton for: what shipped this week, what's planned next, any blockers, and key metrics. Use brand-context.md for KA voice and tone. Keep standup brief — 5 minutes to review. Trigger when user asks: standup, weekly update, progress report, status, shipped this week, or public update."
 ---
 
 # /standup — Weekly Standup Generator
@@ -10,7 +10,7 @@ description: "Generate a weekly standup with two outputs: a GitHub issue comment
 You are helping Anton communicate weekly progress in two formats: a technical GitHub update and an authentic build-in-public social post. Read these files:
 
 1. **`shared/project-context.md`** — Product overview, phase, unit economics, KA persona (§8)
-2. **`shared/brand-context.md`** — Brand voice (Pillar: Taglish-Fluent, Warm but Competent, Proactively Caring), KA persona = "Kai", messaging rules
+2. **`shared/brand-context.md`** — Brand voice (Pillar: Conversational Filipino, Warm but Competent, Proactively Caring), KA persona = "Kai", messaging rules
 3. **`shared/gap-registry.md`** — Current gaps and CRITICAL blockers (context for what's blocking progress)
 4. **`references/sprint-templates.md`** — For reference on sprint terminology if needed
 
@@ -85,13 +85,13 @@ Completed AI Scope design (Build 0 pre-req) and submitted BIR Certificate of Reg
 
 ### Step 4: Generate Build-in-Public Social Post
 
-**Audience:** Filipino MSME community (potential users, Taglish-fluent)
+**Audience:** Filipino MSME community (potential users, conversational Filipino-fluent)
 **Tone:** Warm, authentic, celebrates progress without revealing proprietary details
 **Channels:** Can be posted to Twitter/X, LinkedIn, Instagram caption, or shared in public communities
 **Length:** 4–6 sentences max, or a short thread (2–3 tweets)
 
 **Rules:**
-- Use Taglish naturally — Filipino when personal/warm, English when technical/specific
+- Use conversational Filipino naturally — Filipino when personal/warm, English when technical/specific
 - Mention the problem being solved (not the feature) — "Hindi na nag-aalala si Maria..." not "We built receipt scanning"
 - Celebrate small wins authentically — don't oversell
 - Use first person ("I'm building...", "we learned...") — build-in-public tone
@@ -149,7 +149,7 @@ Build 0 architecture complete. System prompt modular scope sections finalized. P
 
 Before outputting, check the social post against `shared/brand-context.md`:
 
-- [ ] Uses Taglish naturally (not too formal, not too casual)
+- [ ] Uses conversational Filipino naturally (not too formal, not too casual)
 - [ ] Warm tone — like talking to a friend, not a press release
 - [ ] Shows competence (cites facts, not hype)
 - [ ] Proactively caring (ties to user's pain point, not feature)
@@ -183,7 +183,7 @@ Let Anton review and edit before posting. These are his words — you're just he
 
 ## Brand Voice Pillars (from brand-context.md)
 
-### Pillar 1: Taglish-Fluent
+### Pillar 1: Conversational Filipino
 - Natural mix of Filipino and English (more Tagalog when personal, more English when technical)
 - Say the user's name (Maria, Jose, Ana, Andoy)
 - Use "po" naturally when appropriate for warmth
@@ -245,7 +245,7 @@ If Anton provides metrics or context you're unsure how to frame:
 - [ ] Links included where relevant
 
 **Social post:**
-- [ ] Taglish tone (natural, not forced)
+- [ ] conversational Filipino tone (natural, not forced)
 - [ ] References the user's pain point or Maria/target user
 - [ ] One learning or insight (not just feature list)
 - [ ] CTA if appropriate
