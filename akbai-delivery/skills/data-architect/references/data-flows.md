@@ -89,10 +89,10 @@ User captures photo (client, 'use client' component)
 
 **Error paths:**
 - Image too large → client-side compression retry, then error message
-- OCR fails → `receipts.status = 'failed'`, warm Taglish error to user
+- OCR fails → `receipts.status = 'failed'`, warm conversational Filipino error to user
 - Duplicate detected → `receipts.status = 'flagged'`, user confirms or discards
 - Circuit breaker tripped → graceful degradation, receipt saved but not processed (queue for later)
-- Scan limit reached → warm Taglish upgrade prompt
+- Scan limit reached → warm conversational Filipino upgrade prompt
 
 ---
 
@@ -326,7 +326,7 @@ Xendit webhook → POST /functions/v1/xendit-webhook
   │        status='past_due',
   │        grace_period_end=now() + interval '3 days',
   │        grace_notifications_sent=0
-  │      Queue KA notification (warm Taglish, not threatening)
+  │      Queue KA notification (warm conversational Filipino, not threatening)
   │
   │    subscription.cancelled:
   │      UPDATE subscriptions SET
@@ -406,7 +406,7 @@ Daily cron (5:30AM PHT) — generates briefings for all active Pro/Business user
   ├─ Send to Claude Sonnet for briefing generation:
   │    System prompt: KA persona, user context, briefing template
   │    Input: structured data from above
-  │    Output: Taglish briefing card (2-3 short paragraphs)
+  │    Output: conversational Filipino briefing card (2-3 short paragraphs)
   │
   ├─ Store briefing:
   │    Insert into ka_conversations
@@ -499,7 +499,7 @@ User sends message in chat UI
   │    │    role='user', content=message, domain=detected_domain
   │    │
   │    ├─ Assemble system prompt (5 layers):
-  │    │    1. Core KA Persona (Taglish, disclaimers, never-do rules)
+  │    │    1. Core KA Persona (conversational Filipino, disclaimers, never-do rules)
   │    │    2. Active Domain Scopes ([TAX_SCOPE], etc.)
   │    │    3. User Context:
   │    │       SELECT * FROM users WHERE id = auth.uid()

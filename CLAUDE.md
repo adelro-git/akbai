@@ -13,7 +13,7 @@ These files ground every skill and command:
 - `akbai-delivery/shared/tech-stack.md` — Canonical stack (Next.js 16, Supabase, Claude API, Xendit)
 - `akbai-delivery/shared/gap-registry.md` — 29 gaps, 10 CRITICAL hard gates
 - `akbai-delivery/shared/sprint-history.md` — Sprint plans, retros, velocity, unresolved action items (living document)
-- `akbai-delivery/shared/glossary.md` — Product, business, technical, Taglish terms
+- `akbai-delivery/shared/glossary.md` — Product, business, technical, conversational Filipino terms
 - `akbai-delivery/shared/brand-context.md` — Brand identity, voice pillars, colors, typography
 
 ## Skill System & Agent Teams
@@ -36,7 +36,7 @@ For full usage guide, see: `akbai-delivery/shared/agent-teams-guide.md`
 2. Is it a NEW feature? → `build-po`
 3. New tables? → `build-data`
 4. Claude API/prompts? → `build-ai`
-5. Significant Taglish copy? → `build-marketing`
+5. Significant conversational Filipino copy? → `build-marketing`
 6. Auth/payments/PII? → `review-security`
 7. Always: `build-architect` + `build-engineer` + `build-qa`
 
@@ -50,7 +50,7 @@ For full usage guide, see: `akbai-delivery/shared/agent-teams-guide.md`
 | `build-ux` | ux-designer | UI/design system review |
 | `build-po` | product-owner | Scope validation, MCTD scoring |
 | `build-ai` | ai-engineer | System prompts, Kai persona |
-| `build-marketing` | marketing-lead | Taglish copy, brand pillars |
+| `build-marketing` | marketing-lead | Conversational Filipino copy, brand pillars |
 | `review-security` | security-compliance | RLS audit, NPC, auth |
 | `deploy-devops` | devops-engineer | CI/CD, deployment |
 | `deploy-ops` | ops-lead | Operational readiness |
@@ -67,7 +67,7 @@ For full usage guide, see: `akbai-delivery/shared/agent-teams-guide.md`
 | qa-engineer | skills/qa-engineer/ | test, QA, regression, coverage, Vitest, Playwright |
 | security-compliance | skills/security-compliance/ | NPC, BIR, privacy, RLS audit, data classification |
 | devops-engineer | skills/devops-engineer/ | deploy, CI/CD, monitoring, Sentry, incident |
-| ux-designer | skills/ux-designer/ | UI copy, Taglish, empty states, mobile-first, PWA install UX |
+| ux-designer | skills/ux-designer/ | UI copy, conversational Filipino, empty states, mobile-first, PWA install UX |
 | marketing-lead | skills/marketing-lead/ | GTM, waitlist, content, SEO, build-in-public |
 | product-owner | skills/product-owner/ | feature prioritization, sense check, phase gate assessment |
 | ops-lead | skills/ops-lead/ | operations, metrics, MRR, support playbook, daily rhythm |
@@ -77,7 +77,7 @@ For full usage guide, see: `akbai-delivery/shared/agent-teams-guide.md`
 2. **Soft-delete only** — `deleted_at TIMESTAMPTZ NULL` on every table. No hard deletes.
 3. **TypeScript strict** — No `any` types. Zod schemas on all API inputs.
 4. **Server-side API keys only** — ANTHROPIC_API_KEY and SUPABASE_SERVICE_ROLE_KEY never in client code.
-5. **Taglish UI copy** — Natural Filipino-English code-switching. No corporate filler.
+5. **Conversational Filipino UI copy** — Filipino syntactic frame (VSO word order, second-position enclitic pronouns, Filipino conjunctions/prepositions/time adverbs) + English retained only for technical/BIR terms, Filipinized verbs with i-/mag-/na- affixes (i-save, i-scan, na-scan), brand names, and numbers. No English SVO constructions, no "check mo if" (use "kung"), no "based sa" (use "ayon sa"), no "this week/last month" (use "ngayong linggo/nakaraang buwan"), no "yung" for definite objects (use "ang"), no bare English verbs. Enclitics go after the first stressed word: "bago natin i-save", not "bago i-save natin". No corporate filler, no formal Tagalog.
 6. **Mobile-first, light theme default** — Surface (#fdf9f2) background, dark mode available. Plus Jakarta Sans font.
 7. **Kai speaks first** — Proactive AI, not reactive chatbot.
 8. **No tax advice** — BIR disclaimer on all tax-related outputs.
@@ -100,7 +100,7 @@ decision, or discovering something that changes how we work), UPDATE the relevan
 | Tech stack decision changed | `shared/tech-stack.md` — update with rationale |
 | New test pattern established | `skills/qa-engineer/references/test-strategy.md` — add pattern |
 | Deployment config changed | `skills/devops-engineer/references/deployment-guide.md` — update |
-| New Taglish pattern discovered | `skills/ux-designer/references/taglish-copy-guide.md` — add example |
+| New conversational Filipino pattern discovered | `skills/ux-designer/references/conversational-filipino-copy-guide.md` — add example |
 | Sprint planned (`/sprint`) | `shared/sprint-history.md` — append sprint plan entry (automated by command) |
 | Sprint completed (`/retro`) | `shared/sprint-history.md` — update sprint outcomes, append retro, update velocity (automated by command) |
 | Sprint completed | MANDATORY: Run post-sprint update checklist (see below). Update ALL relevant skill SKILL.md and reference files before closing the sprint. |
@@ -116,7 +116,7 @@ After every sprint retro, check ALL of the following. For each "Yes", update the
 - [ ] Did we add new tests or establish test patterns? → Update `skills/qa-engineer/references/test-strategy.md`
 - [ ] Did we change deployment config or env vars? → Update `skills/devops-engineer/references/deployment-guide.md`
 - [ ] Did we write or change AI prompts? → Update `skills/ai-engineer/references/prompt-library.md`
-- [ ] Did we discover Taglish copy patterns? → Update `skills/ux-designer/references/taglish-copy-guide.md`
+- [ ] Did we discover conversational Filipino copy patterns? → Update `skills/ux-designer/references/conversational-filipino-copy-guide.md`
 - [ ] Did we make architecture decisions? → Update `skills/solutions-architect/references/architecture-decisions.md`
 - [ ] Did the development workflow itself change? → Update PM skill files and sprint templates
 

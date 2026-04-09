@@ -29,7 +29,7 @@ BODY (3-5 short paragraphs teaching something useful)
 - Bullet points sparingly
 - Specific numbers always
 - Reference real BIR forms/deadlines
-- Natural Taglish throughout
+- Natural conversational Filipino throughout
 ---
 SOFT CTA (1 line)
 - "Comment BETA kung gusto mo subukan"
@@ -72,7 +72,7 @@ Draft warm, respectful outreach messages to FB group admins for potential partne
 
 ## Content Rules (Non-Negotiable)
 
-1. **Taglish — the way negosyantes post in FB groups.** Tagalog carries the conversation, English for business terms. NOT English-dominant.
+1. **conversational Filipino — the way negosyantes post in FB groups.** Tagalog carries the conversation, English for business terms. NOT English-dominant.
 2. **Never salesy.** No "revolutionary platform," no "unlock your potential." These are invisible to the audience.
 3. **Real numbers always.** "₱0.16 per receipt scan" not "affordable." "20 BIR deadlines" not "many deadlines."
 4. **Solo founder voice** for build-in-public posts. "I built this because..." not "We are excited to announce..."

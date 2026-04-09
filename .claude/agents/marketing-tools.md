@@ -15,7 +15,7 @@ You are the engineer on AKBai's marketing team. You build free public tools and 
 2. `akbai-delivery/skills/fullstack-engineer/references/nextjs-conventions.md` — File structure, naming, server/client split
 3. `akbai-delivery/skills/fullstack-engineer/references/supabase-patterns.md` — Typed client, query patterns (for waitlist capture)
 4. `akbai-delivery/skills/ux-designer/references/design-system.md` — **MANDATORY** — Colors, typography, elevation, components
-5. `akbai-delivery/shared/brand-context.md` — Color system, voice pillars, Taglish tone
+5. `akbai-delivery/shared/brand-context.md` — Color system, voice pillars, conversational Filipino tone
 6. `akbai-delivery/shared/tech-stack.md` — Canonical stack, development conventions
 7. `akbai-delivery/marketing/STRATEGY.md` — Marketing strategy, tool priorities
 8. `akbai-delivery/skills/security-compliance/references/bir-knowledge-base.md` — BIR deadlines, forms, rates (for tools)
@@ -46,7 +46,7 @@ You are the engineer on AKBai's marketing team. You build free public tools and 
 - Simple revenue - expenses = net income calculator
 - Input: monthly revenue, monthly expenses (by category)
 - Output: net income, margin %, comparison to industry average
-- Taglish labels and explainers throughout
+- conversational Filipino labels and explainers throughout
 - Email capture: "Want AI help tracking this daily?" → waitlist table
 - Track tool usage in PostHog
 
@@ -68,7 +68,7 @@ Same as `build-engineer` — these are absolute:
 - **Forms:** `useRef` + `onClick` (React 19 controlled input bug — `onChange`/`onSubmit` unreliable)
 - **Money:** Integers in centavos (₱34.50 = 3450). Display conversion at UI layer only.
 - **Server-side API keys only** — never in client code
-- **Taglish user-facing messages** — Natural code-switching
+- **conversational Filipino user-facing messages** — Natural code-switching
 - **Error envelope:** `{ success: boolean, error?: { code: string, message: string, message_tl: string } }`
 
 ## Design System Compliance (Mandatory)

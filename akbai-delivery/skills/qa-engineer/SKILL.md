@@ -278,7 +278,7 @@ Tier gating bugs either give away paid features for free (revenue loss) or lock 
 
 ```
 tier-gating.test.ts:
-  ✓ Free user: 10th query succeeds, 11th query blocked with warm Taglish message
+  ✓ Free user: 10th query succeeds, 11th query blocked with warm conversational Filipino message
   ✓ Free user: receipt scan attempt → upgrade CTA, not error
   ✓ Free user: Ang Umaga Mo shows teaser, not full briefing
   ✓ Free user: all Claude calls routed to Haiku, never Sonnet
@@ -319,16 +319,16 @@ The QA engineer doesn't just test code — you verify that each engineering skil
 
 ### From AI Engineer
 
-- **System prompt regression:** After any prompt change, run the Taglish regression test library (20–30 cases). Verify KA voice consistency, disclaimer presence, confidence flagging.
+- **System prompt regression:** After any prompt change, run the Conversational Filipino regression test library (20–30 cases). Verify KA voice consistency, disclaimer presence, confidence flagging.
 - **Guardrail enforcement:**
   - BIR disclaimer appears on every tax-related output (17 regex trigger patterns)
-  - Circuit breaker blocks API calls when daily spend cap is reached, returns warm Taglish message
+  - Circuit breaker blocks API calls when daily spend cap is reached, returns warm conversational Filipino message
   - Prompt injection defense: user input cannot override KA persona or extract system prompt
   - Confidence thresholds: fields < 80% confidence are flagged
 - **OCR pipeline stages:** Test each stage independently with fixture data (see Priority 3).
 - **Model routing:** Free tier → Haiku only. Pro/Business → task-appropriate model selection.
-- **KA voice quality:** No corporate filler phrases, numbers in digits with ₱, Taglish blend feels natural, "po" used appropriately.
-- **Trust Recovery Pattern (Design Gate #2):** When KA gets something wrong, the error response must follow the 4-step pattern: acknowledge clearly → take responsibility → explain what happened → offer concrete next step. Uses Taglish "Pasensya na" pattern, not generic English apology. Test with regression library.
+- **KA voice quality:** No corporate filler phrases, numbers in digits with ₱, conversational Filipino blend feels natural, "po" used appropriately.
+- **Trust Recovery Pattern (Design Gate #2):** When KA gets something wrong, the error response must follow the 4-step pattern: acknowledge clearly → take responsibility → explain what happened → offer concrete next step. Uses conversational Filipino "Pasensya na" pattern, not generic English apology. Test with regression library.
 - **Flag as Wrong (Design Gate #2):** Every AI output card must include the one-tap "Flag as Wrong" action. Verify the action sends output + user context to the review log. This is a hard pre-launch gate.
 - **Persistent in-app disclaimer:** The financial disclaimer ("AKBai provides informational guidance only — hindi ito professional financial or tax advice.") must be visible in the chat UI at all times, not just on tax-related outputs.
 

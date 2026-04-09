@@ -115,7 +115,7 @@ The 5-step Kilala Kita flow progressively builds KA's understanding of the user.
 
 ## 2. First KA Messages After Onboarding
 
-> These are **static Taglish templates**, NOT Claude API calls.
+> These are **static conversational Filipino templates**, NOT Claude API calls.
 > The critical first impression must be consistent, human-crafted, and demonstrate that KA "gets" the user.
 > Implementation: `getFirstKAMessage(businessType, primaryPainPoint)` lookup table.
 
@@ -233,7 +233,7 @@ The 5-step Kilala Kita flow progressively builds KA's understanding of the user.
 
 ### Automatic CPA Recommendation Triggers
 
-| Trigger | Threshold | KA Message (Taglish) | Business Types |
+| Trigger | Threshold | KA Message (conversational Filipino) | Business Types |
 |---------|-----------|---------------------|---------------|
 | VAT threshold warning (80%) | Cumulative annual revenue ≥ ₱2,400,000 | "Malapit ka na sa ₱3M VAT threshold, [Name]. Maganda nang kumonsulta sa CPA para sa VAT planning." | All |
 | VAT threshold critical (90%) | Cumulative annual revenue ≥ ₱2,700,000 | "₱2.7M na ang annual revenue mo — malapit na sa ₱3M. Kailangan mo na ng CPA para sa VAT registration." | All |
@@ -331,5 +331,5 @@ On version increment, the system prompt should re-assemble with fresh business c
 - `akbai-delivery/skills/ux-designer/references/ux-flows.md` §1 — Kilala Kita 5-step flow
 - `akbai-delivery/skills/ai-engineer/references/bir-knowledge-base.md` §1–5 — BIR forms, deadlines, rates
 - `akbai-delivery/skills/ai-engineer/references/msme-business-knowledge.md` §1–9 — Business profiles, taxonomy
-- `akbai-delivery/skills/ux-designer/references/taglish-copy-guide.md` — Voice rules, tone calibration
+- `akbai-delivery/skills/ux-designer/references/conversational-filipino-copy-guide.md` — Voice rules, tone calibration
 - `context_update.md` — Original spec for this file

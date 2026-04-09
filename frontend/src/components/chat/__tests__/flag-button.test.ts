@@ -51,11 +51,11 @@ describe('FlagButton — reason options', () => {
     expect(found?.label).toBe('Wrong info');
   });
 
-  it('should include "Iba pa" (Other) as a Taglish option', () => {
+  it('should include "Iba pa" (Other) as a conversational Filipino option', () => {
     const found = FLAG_REASONS.find((r) => r.value === 'other');
     expect(found).toBeDefined();
     expect(found?.label).toBe('Iba pa');
-    // Confirm it's Taglish, not English "Other"
+    // Confirm it's conversational Filipino, not English "Other"
     expect(found?.label).not.toBe('Other');
   });
 });
@@ -132,8 +132,8 @@ describe('FlagButton — API contract', () => {
 // ============================================================
 
 describe('FlagButton — design system compliance', () => {
-  it('should use CTA label "I-report" following Taglish CTA pattern', () => {
-    // Per taglish-copy-guide §9: "I-" prefix for action verbs
+  it('should use CTA label "I-report" following conversational Filipino CTA pattern', () => {
+    // Per conversational-filipino-copy-guide §9: "I-" prefix for action verbs
     const submitLabel = 'I-report';
     expect(submitLabel).toMatch(/^I-/);
     expect(submitLabel).toBe('I-report');
@@ -144,7 +144,7 @@ describe('FlagButton — design system compliance', () => {
     expect(loadingLabel).toContain('...');
   });
 
-  it('should show Taglish success state "Na-report na"', () => {
+  it('should show conversational Filipino success state "Na-report na"', () => {
     const successLabel = 'Na-report na';
     expect(successLabel).toContain('Na-');
     expect(successLabel).toContain('na');

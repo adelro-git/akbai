@@ -59,7 +59,7 @@ Every tool that shows tax-related information must display:
 
 ### Phase 2: Value Bombing (Week 3-4)
 - Answer 3-5 BIR/tax questions per week with genuinely helpful responses.
-- Use the Katuwang voice -- Taglish, warm, specific numbers, BIR disclaimer included.
+- Use the Katuwang voice -- conversational Filipino, warm, specific numbers, BIR disclaimer included.
 - Zero mentions of AKBai. Pure value.
 - Track which answers get the most engagement (saves, comments, thank-yous).
 
@@ -124,7 +124,7 @@ Pro tip: Kung GCash ka madalas, i-screenshot mo rin yung transaction history eve
 See content-calendar.md Section 3 for full structure. Key points:
 
 - 1,200-1,800 words per article
-- Taglish (Tagalog flow + English technical terms)
+- Conversational Filipino (Tagalog flow + English technical terms)
 - H1: Keyword-rich title
 - Include FAQ section (3-5 questions) -- this powers AEO
 - Add FAQ JSON-LD schema to each article
@@ -199,7 +199,7 @@ Sent to entire waitlist before major BIR deadlines:
 
 ### Email Rules
 - From name: "Anton from AKBai" (personal, not corporate)
-- Taglish subject lines always
+- conversational Filipino subject lines always
 - Unsubscribe link in every email (legal requirement)
 - BIR disclaimer on tax-related emails
 - Track: open rate, click rate, unsubscribe rate per email

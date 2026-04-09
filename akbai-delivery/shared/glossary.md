@@ -20,15 +20,15 @@
 | **Invoice Cards** | Create, send, track invoices. PDF export. Pro/Business feature. |
 | **Costing Cards** | Ingredient costing, margin calculator for food sellers and bakers. Pro/Business feature. |
 | **Reply Drafter** | Kai drafts customer DM replies. Phase 1: manual copy-paste. Phase 2: Meta Messenger API. |
-| **Maria Moment** | The target first-value moment: user opens AKBai and sees something true about their business they didn't know before. E.g., "Kumikita ka. ₱18,400 ang net mo this month." |
+| **Maria Moment** | The target first-value moment: user opens AKBai and sees something true about their business they didn't know before. E.g., "Kumikita ka. ₱18,400 ang net mo ngayong buwan." |
 | **Flag as Wrong** | One-tap action on every AI output card. Sends output + user context to a review log. Hard pre-launch gate — must ship with Phase 1. |
 | **Sense Check Gate** | Month 6 Go/No-Go checkpoint based on 8 signals. Gate between Phase 1 and Phase 2. Three outcomes: GREEN (proceed), YELLOW (2–4 weeks more), RED (return to user interviews). |
-| **Trust Recovery Pattern** | Pre-designed Kai response pattern for when Kai gets something wrong. Taglish format: acknowledge → take responsibility → explain → offer next step. Design gate. |
+| **Trust Recovery Pattern** | Pre-designed Kai response pattern for when Kai gets something wrong. Conversational Filipino format: acknowledge → take responsibility → explain → offer next step. Design gate. |
 | **Circuit Breaker** | Daily Claude API spend cap tracked in Supabase (daily_api_spend table). Hard cap ~$5/day initially. Returns graceful degradation response, not error. |
 | **Concierge GCash** | Manual GCash collection fallback for first 20–50 users if Xendit KYC is still pending at launch. |
 | **Build 0** | AI Scope Definition & System Prompt Architecture. HARD GATE before Build 1. Defines in-scope/out-of-scope boundaries, financial disclaimer, domain-expandable prompt structure. New in Roadmap v13. |
 | **Domain-expandable architecture** | System prompt uses modular scope sections so Phase 4+ domains can be added without rewriting existing prompts. Conversations domain-tagged. Out-of-scope redirects logged. |
-| **Custom Behaviors (Phase 3)** | User-taught AI rules via Taglish conversation. E.g., "Every time I receive payment over ₱5,000, remind me to issue an OR." Pro: 3 behaviors, Business: 10, Scale: unlimited. |
+| **Custom Behaviors (Phase 3)** | User-taught AI rules via conversational Filipino chat. E.g., "Every time I receive payment over ₱5,000, remind me to issue an OR." Pro: 3 behaviors, Business: 10, Scale: unlimited. |
 | **Daily Check-In** | Evening in-app modal (default 8PM). 60-second habit — captures daily sales + expenses. All tiers. From Ops Roadmap v6. |
 | **Weekly Reconciliation** | Every Friday at 9AM. Surfaces missing days from past 7, batch-fill flow. All tiers. |
 | **Monthly Reconciliation** | Last day of month. Full summary card: income, expenses, net profit. Shareable to WhatsApp/PDF. |
@@ -46,7 +46,7 @@
 | **Pro Annual** | ₱2,499/year (~48% discount vs monthly ₱4,788). Do NOT actively promote in Phase 1 — collect 3 months retention data first. |
 | **Scale Tier** | ₱1,499/month. Phase 3. All Business features + unlimited custom behaviors + API integrations + cross-channel outbound + priority support. |
 | **Scan pool** | Shared monthly allowance covering receipt scans + notebook photo uploads. Pro: 50/mo. Business: 80/mo. |
-| **Free tier query cap** | 10 AI queries/day for Free users. Resets at midnight. Not advertised — only surfaced when reached. Warm Taglish message shown at limit. |
+| **Free tier query cap** | 10 AI queries/day for Free users. Resets at midnight. Not advertised — only surfaced when reached. Warm conversational Filipino message shown at limit. |
 
 ---
 
@@ -76,11 +76,12 @@
 
 ---
 
-## Filipino Language Terms (Taglish Context)
+## Filipino Language Terms
 
 | Term | Usage in AKBai |
 |------|---------------|
-| **Taglish** | Filipino-English code-switching. Kai's natural voice. Not a stylistic choice — it's how target users actually communicate. |
+| **Conversational Filipino** | Kai's primary voice (Sprint 8+). A Filipino syntactic frame: VSO word order, second-position enclitic pronouns ("bago natin i-save", not "bago i-save natin"), Filipino conjunctions (kung, bago, kasi, dahil, kapag), Filipino prepositions (ayon sa, batay sa), Filipino time adverbs (ngayong linggo, nakaraang buwan). English retained only for technical/BIR terms (1701Q, VAT), Filipinized verbs with i-/mag-/na- affixes (i-save, i-scan), brand names, and numbers. See `skills/ux-designer/references/conversational-filipino-copy-guide.md`. |
+| **Taglish** | Filipino-English code-switching using an English syntactic frame (SVO word order, English conjunctions/prepositions, bare English verbs) with Filipino vocabulary sprinkled in. Historically described as AKBai's voice through Sprint 7, but replaced by conversational Filipino in Sprint 8 after research showed Taglish skews urban/college/conyo and feels corporate to the MSME target demographic. Kai now **avoids** Taglish syntactic markers: "check mo if" (use "kung"), "based sa" (use "ayon sa"), "this week" (use "ngayong linggo"), "bago i-save natin" (use "bago natin i-save"). |
 | **Po** | Filipino honorific (respect marker). Kai uses it naturally — not every sentence, but when appropriate. Always on BIR topics. |
 | **Kumikita** | "Earning / profitable." E.g., "Kumikita ka." — Kai's way of saying you're profitable. |
 | **Magkano** | "How much." Common in transaction entry prompts. |

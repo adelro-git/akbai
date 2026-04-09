@@ -1,12 +1,12 @@
-// AKBai Build 0 — Taglish error messages with trust recovery pattern
+// AKBai Build 0 — conversational Filipino error messages with trust recovery pattern
 
 export const KA_ERROR_MESSAGES = {
   global_cap:
     'Marami nang na-process natin today — bukas ulit tayo, okay? Puwede mo pa ring i-check ang records mo.',
   user_cap:
-    'Naka-max ka na for today — bukas ulit! Check mo muna ang dashboard mo habang naghihintay.',
+    'Naka-max ka na for today — bukas ulit! I-check mo muna ang dashboard mo habang naghihintay.',
   free_tier_limit:
-    'Naka-10 queries ka na for today — bukas ulit tayo! Kung gusto mo ng unlimited, check mo ang Pro plan natin.',
+    'Naka-10 queries ka na for today — bukas ulit tayo! Kung gusto mo ng unlimited, i-check mo ang Pro plan natin.',
   api_error:
     'Pasensya na po, may konting problema. Subukan mo ulit in a few seconds.',
   api_key_missing:

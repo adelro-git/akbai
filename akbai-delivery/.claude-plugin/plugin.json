@@ -63,7 +63,7 @@
     },
     "copy": {
       "skill": "ux-designer",
-      "description": "Write Taglish UI copy with tone variants and persona checks"
+      "description": "Write conversational Filipino UI copy with tone variants and persona checks"
     },
     "compliance": {
       "skill": "security-compliance",

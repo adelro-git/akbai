@@ -280,7 +280,7 @@ Estimated days to gate: 14 days (vs. 4 weeks target = 2 weeks slack)
 2. ✅ Phase 0B Gate Kickoff
    - 100 waitlist signups target
    - Brand identity complete
-   - Launch 5–6 SEO Taglish articles
+   - Launch 5–6 SEO conversational Filipino articles
 
 3. ✅ Monitoring Setup (A4, A5)
    - Sentry integration
@@ -291,7 +291,7 @@ Estimated days to gate: 14 days (vs. 4 weeks target = 2 weeks slack)
 
 1. ✅ Build 0 AI Scope Definition & System Prompt
    - Modular scope sections ([TAX_SCOPE], [COMMUNICATION_SCOPE], etc.)
-   - Taglish style guide + prompt regression tests
+   - conversational Filipino style guide + prompt regression tests
    - KA error acknowledgement pattern
    - Domain-expandable architecture prep
 
@@ -365,7 +365,7 @@ ai-engineer:      1.0 day  (E1 OCR spike, Build 0 scope prep)
 fullstack-eng:    8.0 days (A1 Auth, B3 onboarding recovery, C1 dedup, E3 rate-limit)
 ops-lead:         8.0 days (A2 Privacy/ToS, D1 OTP, D11 retention, D5 backup, Phase 0B)
 solutions-arch:   3.0 days (Build 0 design gates, architecture review)
-ux-designer:      2.0 days (B1–B7 UX gaps, design system, Taglish style guide)
+ux-designer:      2.0 days (B1–B7 UX gaps, design system, conversational Filipino style guide)
 security-comp:    1.0 day  (D3 OR numbering legal, RLS audit)
 ```
 
@@ -506,7 +506,7 @@ PHASE 0A Legal Foundation
 
 PHASE 0B Demand Validation
 ├── Brand Identity (from kit)
-├── SEO Taglish Articles
+├── SEO conversational Filipino Articles
 └── Founder Interviews (10 needed)
 
 Phase 0C Paid Pilot (Optional)
@@ -516,7 +516,7 @@ PHASE 1 BUILD 0 — AI Scope (Hard Gate)
 ├── E1 OCR Spike ← (tech validation)
 ├── Build 0 AI Scope Design
 ├── Design Gates 1–8 (trust, offline, flags, data isolation, domain expansion)
-└── Taglish Style Guide + Regression Tests
+└── conversational Filipino Style Guide + Regression Tests
 
 PHASE 1 BUILD 1 — Kilala Kita
 ├── B3 Onboarding Recovery
@@ -570,7 +570,7 @@ PHASE 1 LAUNCH
 - **PITR:** Point-in-Time Recovery — database restore capability
 - **OTP:** One-Time Password (authentication)
 - **OCR:** Optical Character Recognition (receipt scanning)
-- **Taglish:** Filipino-English mix (AKBai's voice)
+- **conversational Filipino:** Filipino-English mix (AKBai's voice)
 
 ---
 

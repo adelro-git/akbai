@@ -55,7 +55,7 @@ const TEMPLATES: Record<string, FirstResponse> = {
   // ── freelance_creative ──
   freelance_creative_receipt_tracking: {
     message:
-      '[Name], yung software subscriptions at internet mo — business expense yan. I-log natin para sa tax deductions mo.',
+      '[Name], ang software subscriptions at internet mo — business expense yan. I-log natin para sa tax deductions mo.',
     featureNudge: 'resibo_scanner',
   },
   freelance_creative_bir_compliance: {
@@ -121,7 +121,7 @@ const TEMPLATES: Record<string, FirstResponse> = {
   // ── Phase 2: food_carinderia ──
   food_carinderia_receipt_tracking: {
     message:
-      '[Name], sa karinderya alam ko — palengke every morning, lahat walang resibo. I-log natin kahit estimate lang muna.',
+      '[Name], sa karinderya alam ko — palengke tuwing umaga, lahat walang resibo. I-log natin kahit estimate lang muna.',
     featureNudge: 'resibo_scanner',
   },
   food_carinderia_bir_compliance: {

@@ -1,5 +1,5 @@
 // AKBai Build 0 — AI loading state wait estimator (Gap B1)
-// Provides feature-specific wait time estimates with Taglish messages
+// Provides feature-specific wait time estimates with conversational Filipino messages
 
 import type { KAFeature, UserTier } from './types';
 

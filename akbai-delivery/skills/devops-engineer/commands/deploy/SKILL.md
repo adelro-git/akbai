@@ -75,7 +75,7 @@ Ask Anton (or check directly if you have access):
 - [ ] **iOS Safari PWA test** — on iPhone, open preview URL, can add to home screen, app loads offline
 - [ ] **Android Chrome PWA test** — on Android, open preview URL, can install, app loads offline
 - [ ] **Morning Briefing cache works** — if Ang Umaga Mo (morning briefing) is cached, it loads instantly even if network is slow
-- [ ] **Offline message displays** — if offline, Taglish "Offline ka ngayon" message appears, no blank screen
+- [ ] **Offline message displays** — if offline, conversational Filipino "Offline ka ngayon" message appears, no blank screen
 
 ### 8. Financial Data Safeguards
 - [ ] **Circuit breaker / daily spend cap verified** — Claude API spend is capped at ~$5/day (prevents runaway costs if a loop occurs). Current spend is tracked in Supabase `daily_api_spend` table.

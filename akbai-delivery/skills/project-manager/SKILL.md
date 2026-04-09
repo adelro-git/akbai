@@ -150,7 +150,7 @@ When something is stuck, route it to the right specialist skill:
 | AI prompt engineering, model routing | **ai-engineer** | "Build 0 system prompt architecture" |
 | Data modeling, schema design | **data-architect** | "Design the webhook_events idempotency table" |
 | QA, testing strategy | **qa-engineer** | "Write Playwright tests for onboarding flow" |
-| Marketing, content, SEO | **marketing-lead** | "Draft 5 Taglish SEO articles for Phase 0B" |
+| Marketing, content, SEO | **marketing-lead** | "Draft 5 conversational Filipino SEO articles for Phase 0B" |
 
 When escalating, provide the specialist with: what the blocker is, why it matters (which gate/task it blocks), and the deadline (when does the sprint end).
 
@@ -237,7 +237,7 @@ Validated in Sprint 4 (worktree isolation), upgraded in Sprint 8 (agent teams).
 
 **Live testing (mandatory — added Sprint 5).** After merge and automated tests pass, Anton runs the dev server and spends 15-30 min clicking through the app. Sprint 5 proved that live testing surfaces branding, UX, and design system violations that code review and automated tests miss entirely (17+ violations found in Sprint 5). This step is non-negotiable.
 
-**Design system compliance (mandatory — added Sprint 5).** Every agent doing UI work must read `skills/ux-designer/references/design-system.md` in addition to the feature's SKILL.md. Sprint 5 revealed that agents produce functional but visually non-compliant components when they only read SKILL.md — wrong button text colors, hardcoded hex values, missing Taglish copy. Agent prompts for UI tasks must explicitly include design-system.md and brand-context.md.
+**Design system compliance (mandatory — added Sprint 5).** Every agent doing UI work must read `skills/ux-designer/references/design-system.md` in addition to the feature's SKILL.md. Sprint 5 revealed that agents produce functional but visually non-compliant components when they only read SKILL.md — wrong button text colors, hardcoded hex values, missing conversational Filipino copy. Agent prompts for UI tasks must explicitly include design-system.md and brand-context.md.
 
 **Anton's role.** Anton shifts from "developer" to "reviewer + tester + decision-maker." His sprint time is spent on:
 - Reviewing agent PRs and code changes
@@ -269,7 +269,7 @@ When a task benefits from coordinated parallel work (teammates need to communica
 | Security & Compliance | `review-security` | Auth, payments, PII, RLS changes |
 | DevOps Engineer | `deploy-devops` | Deploy, CI/CD, monitoring |
 | Ops Lead | `deploy-ops` | Post-build readiness, deploy verification |
-| Marketing Lead | `build-marketing` | Content-heavy Taglish features |
+| Marketing Lead | `build-marketing` | Content-heavy conversational Filipino features |
 | Team Lead (PM) | `team-lead` | ALWAYS the team lead |
 
 **Decision checklist for PM (target 4-5 teammates, max 6):**
@@ -277,7 +277,7 @@ When a task benefits from coordinated parallel work (teammates need to communica
 2. Is it a NEW feature (not a fix)? → `build-po`
 3. New tables? → `build-data`
 4. Claude API/prompts? → `build-ai`
-5. Significant Taglish copy? → `build-marketing`
+5. Significant conversational Filipino copy? → `build-marketing`
 6. Auth/payments/PII? → `review-security`
 7. Always: `build-architect` + `build-engineer` + `build-qa`
 

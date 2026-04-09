@@ -12,13 +12,13 @@ import { describe, it, expect } from 'vitest';
 // ============================================================
 
 describe('ReplyCard — specification', () => {
-  it('should have Taglish copy button label', () => {
+  it('should have conversational Filipino copy button label', () => {
     const copyLabel = 'I-copy ang reply';
     expect(copyLabel).toContain('I-copy');
     expect(copyLabel).toContain('reply');
   });
 
-  it('should have Taglish copied confirmation', () => {
+  it('should have conversational Filipino copied confirmation', () => {
     const copiedLabel = 'Na-copy na!';
     expect(copiedLabel).toContain('Na-copy');
   });
@@ -57,7 +57,7 @@ describe('ReplyCard — specification', () => {
 describe('ReplyCard — reply labels', () => {
   const REPLY_LABELS = ['Maikling reply', 'Mas detalyadong reply'];
 
-  it('should have Taglish labels for reply options', () => {
+  it('should have conversational Filipino labels for reply options', () => {
     expect(REPLY_LABELS[0]).toContain('Maikling');
     expect(REPLY_LABELS[1]).toContain('detalyadong');
   });

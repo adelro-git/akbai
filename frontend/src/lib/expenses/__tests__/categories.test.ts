@@ -67,7 +67,7 @@ describe('getCategoryDef', () => {
 });
 
 describe('getCategoryLabel', () => {
-  it('returns Taglish label for known category', () => {
+  it('returns conversational Filipino label for known category', () => {
     expect(getCategoryLabel('transport')).toContain('Pamasahe');
   });
 

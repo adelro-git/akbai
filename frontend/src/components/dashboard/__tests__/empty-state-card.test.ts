@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
 // ============================================================
-// Test EmptyStateCard Taglish copy content
+// Test EmptyStateCard conversational Filipino copy content
 // Without @testing-library we verify the empty state messages
-// match the Taglish copy guide requirements.
+// match the conversational Filipino copy guide requirements.
 // ============================================================
 
 interface EmptyStateConfig {
@@ -27,22 +27,22 @@ const EMPTY_STATES: EmptyStateConfig[] = [
   },
 ];
 
-describe('EmptyStateCard — Taglish copy', () => {
-  it('should have Taglish empty state for Resibo Scanner', () => {
+describe('EmptyStateCard — conversational Filipino copy', () => {
+  it('should have conversational Filipino empty state for Resibo Scanner', () => {
     const resibo = EMPTY_STATES.find((e) => e.id === 'resibo-scanner');
     expect(resibo).toBeDefined();
     expect(resibo?.emptyState).toContain('resibo');
     expect(resibo?.emptyState).toContain('Mag-scan');
   });
 
-  it('should have Taglish empty state for Saan Napunta', () => {
+  it('should have conversational Filipino empty state for Saan Napunta', () => {
     const expenses = EMPTY_STATES.find((e) => e.id === 'saan-napunta');
     expect(expenses).toBeDefined();
     expect(expenses?.emptyState).toContain('Wala pang');
     expect(expenses?.emptyState).toContain('receipts');
   });
 
-  it('should have Taglish empty state for BIR Deadlines', () => {
+  it('should have conversational Filipino empty state for BIR Deadlines', () => {
     const bir = EMPTY_STATES.find((e) => e.id === 'bir-deadlines');
     expect(bir).toBeDefined();
     expect(bir?.emptyState).toContain('Wala pang');
@@ -59,7 +59,7 @@ describe('EmptyStateCard — Taglish copy', () => {
   });
 
   it('should have encouraging action-oriented copy', () => {
-    // Per taglish-copy-guide: empty states encourage action
+    // Per conversational-filipino-copy-guide: empty states encourage action
     for (const state of EMPTY_STATES) {
       // Each should either suggest an action or be encouraging
       const hasAction =
@@ -100,7 +100,7 @@ describe('EmptyStateCard — dashboard card structure', () => {
     expect(chatCard?.hasData).toBe(true);
   });
 
-  it('should use Taglish titles', () => {
+  it('should use conversational Filipino titles', () => {
     const saanCard = CARDS.find((c) => c.id === 'saan-napunta');
     expect(saanCard?.title).toBe('Saan Napunta?');
   });

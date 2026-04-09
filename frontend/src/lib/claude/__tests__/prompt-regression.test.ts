@@ -21,8 +21,8 @@ describe('Group 1: Persona Integrity', () => {
     userContext: null,
   });
 
-  it('assembled prompt for general_chat contains Taglish rules', () => {
-    expect(generalChatPrompt).toContain('Taglish');
+  it('assembled prompt for general_chat contains conversational Filipino rules', () => {
+    expect(generalChatPrompt).toContain('conversational Filipino');
     expect(generalChatPrompt).toContain('po');
   });
 
@@ -50,12 +50,14 @@ describe('Group 1: Persona Integrity', () => {
 
 // --- Group 2: Taglish Compliance (5 tests) ---
 
-describe('Group 2: Taglish Compliance', () => {
+describe('Group 2: Conversational Filipino Compliance', () => {
   it('core persona prompt contains Filipino greeting patterns', () => {
     // Morning briefing feature prompt contains "Magandang umaga" greeting pattern
     expect(FEATURE_PROMPTS.morning_briefing).toContain('Magandang umaga');
-    // Core persona references Taglish as the communication mode
-    expect(CORE_PERSONA_PROMPT).toContain('Taglish');
+    // Core persona references conversational Filipino as the communication mode
+    expect(CORE_PERSONA_PROMPT).toContain('conversational Filipino');
+    // And explicitly rejects Taglish as the voice
+    expect(CORE_PERSONA_PROMPT).toContain('Never speak Taglish');
   });
 
   it('assembled prompt instructs NOT to use prohibited English phrases', () => {
@@ -319,5 +321,87 @@ describe('Group 5: Integration Tests', () => {
     // Sonnet should be more expensive than Haiku for same tokens
     const haikuSame = estimateCost('claude-haiku-4-5-20251001', 2000, 1024);
     expect(sonnetCost).toBeGreaterThan(haikuSame);
+  });
+});
+
+// --- Group 6: Conversational Filipino Syntactic Markers (8 tests) ---
+// These tests enforce the 8 Taglish markers identified in the 2026-04-09
+// voice rewrite. Each test asserts that CORE_PERSONA_PROMPT instructs Kai
+// AGAINST the English Taglish pattern AND FOR the Filipino alternative.
+// Tests operate at the prompt-construction level (no Claude API calls).
+
+describe('Group 6: Conversational Filipino Syntactic Markers', () => {
+  it('Marker 1: enclitics come before verb after conjunctions (bago natin i-save)', () => {
+    // The prompt must teach second-position enclitic placement
+    expect(CORE_PERSONA_PROMPT).toContain('Second-position enclitic');
+    expect(CORE_PERSONA_PROMPT).toContain('bago natin i-save');
+    // And must flag the wrong form
+    expect(CORE_PERSONA_PROMPT).toContain('bago i-save natin');
+  });
+
+  it('Marker 2: uses Filipino conjunctions ("kung", not "if")', () => {
+    expect(CORE_PERSONA_PROMPT).toContain('"kung" not "if"');
+    expect(CORE_PERSONA_PROMPT).toContain('"bago" not "before"');
+    expect(CORE_PERSONA_PROMPT).toContain('"kasi"/"dahil" not "because"');
+    expect(CORE_PERSONA_PROMPT).toContain('"kapag"/"pag" not "when"');
+    expect(CORE_PERSONA_PROMPT).toContain('"habang" not "while"');
+  });
+
+  it('Marker 3: uses Filipino prepositions ("ayon sa", not "based sa")', () => {
+    expect(CORE_PERSONA_PROMPT).toContain('"ayon sa" or "batay sa" not "based sa"');
+    expect(CORE_PERSONA_PROMPT).toContain('"dahil sa" not "due to"');
+    expect(CORE_PERSONA_PROMPT).toContain('"mula sa" not "from"');
+    expect(CORE_PERSONA_PROMPT).toContain('"para sa" not "for the"');
+  });
+
+  it('Marker 4: uses Filipino time adverbs ("ngayong linggo", not "this week")', () => {
+    expect(CORE_PERSONA_PROMPT).toContain('"ngayong linggo" not "this week"');
+    expect(CORE_PERSONA_PROMPT).toContain('"nakaraang buwan" not "last month"');
+    expect(CORE_PERSONA_PROMPT).toContain('"sa loob ng 3 araw" not "in 3 days"');
+    expect(CORE_PERSONA_PROMPT).toContain('"tuwing umaga" not "every morning"');
+  });
+
+  it('Marker 5: affixes English verbs with i-/mag-/na- (no bare "Save mo")', () => {
+    // Must teach affixation
+    expect(CORE_PERSONA_PROMPT).toContain('Affix English verbs');
+    expect(CORE_PERSONA_PROMPT).toContain('i-/mag-/na-');
+    // Must show correct and incorrect examples
+    expect(CORE_PERSONA_PROMPT).toContain('I-save mo');
+    expect(CORE_PERSONA_PROMPT).toContain('Na-scan');
+    // Must flag the bare verb anti-patterns
+    expect(CORE_PERSONA_PROMPT).toContain('"Save mo"');
+    expect(CORE_PERSONA_PROMPT).toContain('"Scan ko"');
+  });
+
+  it('Marker 6: uses "mas" for comparatives, not "more"', () => {
+    expect(CORE_PERSONA_PROMPT).toContain('"mas"');
+    expect(CORE_PERSONA_PROMPT).toContain('mas mabilis');
+    expect(CORE_PERSONA_PROMPT).toContain('not "more fast"');
+    // And explicitly in NEVER block
+    expect(CORE_PERSONA_PROMPT).toContain('Never use "more" for comparatives');
+  });
+
+  it('Marker 7: uses "ang" not "yung" for definite objects in written output', () => {
+    expect(CORE_PERSONA_PROMPT).toContain('"ang" not "yung"');
+    expect(CORE_PERSONA_PROMPT).toContain('"ang resibo"');
+    expect(CORE_PERSONA_PROMPT).toContain('Never use "yung"');
+  });
+
+  it('Marker 8: enforces Filipino VSO frame, no English SVO leakage', () => {
+    // Must teach VSO word order
+    expect(CORE_PERSONA_PROMPT).toContain('VSO word order');
+    expect(CORE_PERSONA_PROMPT).toContain('verb fronted');
+    expect(CORE_PERSONA_PROMPT).toContain('not English SVO');
+    // Must explicitly ban Taglish
+    expect(CORE_PERSONA_PROMPT).toContain('Never speak Taglish');
+  });
+
+  it('User input understanding: Kai receives text shortcuts but never mirrors them', () => {
+    // Must still understand vowel-dropped input
+    expect(CORE_PERSONA_PROMPT).toContain('bkt=bakit');
+    expect(CORE_PERSONA_PROMPT).toContain('mgkno=magkano');
+    // But must not mirror them in output
+    expect(CORE_PERSONA_PROMPT).toContain('NEVER mirror them');
+    expect(CORE_PERSONA_PROMPT).toContain('conversational Filipino, not text speak');
   });
 });

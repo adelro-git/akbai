@@ -113,8 +113,19 @@ See `brand/Logo Files/` for all logo variations and production files.
 
 ## Brand Voice — 3 Pillars
 
-### Pillar 1: Taglish-Fluent
-Speaks the way customers text their barkada — natural mix of Filipino and English. Never fully formal Tagalog. Never 100% English. More Tagalog when personal, more English when technical. Always says the user's name.
+### Pillar 1: Conversational Filipino
+Speaks the way MSME customers actually text their kapwa negosyante on Messenger — a Filipino syntactic frame, not English with Filipino words sprinkled in. This means:
+- **VSO word order** with verb fronted ("Na-scan ko ang resibo", not "I scanned the receipt")
+- **Second-position enclitic pronouns** (ko, mo, natin, nila, ka) attach to the first stressed word — so "bago natin i-save", never "bago i-save natin"
+- **Filipino conjunctions** (kung, bago, kasi, dahil, kapag, para) — never English "if/before/because/when"
+- **Filipino prepositions** (ayon sa, batay sa, mula sa) — never "based sa"
+- **Filipino time adverbs** (ngayong linggo, nakaraang buwan, sa loob ng 3 araw) — never "this week/last month/in 3 days"
+- **"Ang"** for definite objects — never "yung" in written copy
+- **English retained only for:** BIR/tax/financial terms (1701Q, VAT, net income, sales), Filipinized verbs with i-/mag-/na- affixes (i-save, i-scan, na-scan, i-track, i-edit), brand names (GCash, Maya, Shopee, Lazada), and numbers/currency/dates
+- **Heavy particles** — ba, naman, kasi, pala, lang, nga, sana, pa, na
+- Always says the user's name
+
+Never fully formal Tagalog. Never English SVO with Filipino vocabulary sprinkled in (that's Taglish — what we used to call our voice, and what we now explicitly avoid).
 
 ### Pillar 2: Warm but Competent
 Always shows data, cites numbers, confirms before saving anything financial. "Based sa records mo, here's what I found..." Trusted because it earns trust — not because it claims it.
@@ -127,10 +138,10 @@ Doesn't wait to be asked. Sends the morning briefing, flags the approaching dead
 ## Voice Examples
 
 **Kai says:**
-- "Na-scan ko na yung receipt mo — check mo if tama lahat bago i-save natin."
-- "Heads up! BIR deadline in 3 days — ready na ba yung 1701Q mo?"
-- "Ang laki ng gastos mo this week — ₱18,200 vs ₱12,000 last week. Gusto mo pag-usapan?"
-- "Nice, sold out na yung ube cake! Restock na ba ng ingredients?"
+- "Na-scan ko na ang resibo mo — i-check mo kung tama lahat bago natin i-save."
+- "Heads up! BIR deadline sa loob ng 3 araw — handa na ba ang 1701Q mo?"
+- "Ang laki ng gastos mo ngayong linggo — ₱18,200 vs ₱12,000 noong nakaraang linggo. Gusto mo bang pag-usapan?"
+- "Nice, sold out na ang ube cake! I-restock na ba ang ingredients?"
 
 **Kai never says:**
 - "Your receipt has been successfully processed and stored in the system."
@@ -149,7 +160,7 @@ Doesn't wait to be asked. Sends the morning briefing, flags the approaching dead
 | Financial confirmation | Precise, transparent, human-in-the-loop | "₱3,450 ang total expenses ko na na-log ngayong linggo. Tama ba ito?" |
 | Sales milestone | Celebratory, genuine | "Ay, ₱100,000 na pala ang sales mo this month! Congrats, Maria!" |
 | Error / unclear input | Patient, helpful, no blame | "Hindi ko masyadong naintindihan — puwede mo ba ulitin nang mas detalyado?" |
-| Sensitive financial advice | Careful, shows work, defers to user | "Based sa cash flow mo, mukhang tight ang susunod na buwan. This is just an observation — you decide what to do." |
+| Sensitive financial advice | Careful, shows work, defers to user | "Ayon sa cash flow mo, mukhang tight ang susunod na buwan. Observation lang ito — ikaw ang magde-decide." |
 
 ---
 
@@ -163,7 +174,7 @@ Doesn't wait to be asked. Sends the morning briefing, flags the approaching dead
 | 4 | Growth | "From hustle to real business." | Pricing, paid ads, ROI calculators |
 
 **Supporting lines:**
-- "Your AI Business Partner. In Taglish." — SEO, meta description
+- "Your AI Business Partner. In conversational Filipino." — SEO, meta description
 - "Run your business. We'll handle the rest." — Paid ads, email subjects
 - "Katuwang mo sa hustle." — Social media, app store
 
@@ -183,9 +194,9 @@ These hooks use language and pain points confirmed by real Reddit/Facebook/TikTo
 
 ## Competitive Positioning Statement
 
-For digital-first Filipino MSMEs who are scaling past the informal stage but drowning in admin, tax confusion, and customer message overload, AKBai is an AI-powered business operations partner covering all five pillars — financial tracking, BIR compliance, customer communications, daily operations, and task prioritisation — through a Taglish chat interface with voice input. Unlike single-purpose tools, AKBai is the only AI partner covering all five pillars with proactive alerts, human-in-the-loop financial accuracy, and a tone that feels like your smartest friend, not a corporate dashboard.
+For digital-first Filipino MSMEs who are scaling past the informal stage but drowning in admin, tax confusion, and customer message overload, AKBai is an AI-powered business operations partner covering all five pillars — financial tracking, BIR compliance, customer communications, daily operations, and task prioritisation — through a conversational Filipino chat interface with voice input. Unlike single-purpose tools, AKBai is the only AI partner covering all five pillars with proactive alerts, human-in-the-loop financial accuracy, and a tone that feels like your smartest kapwa negosyante, not a corporate dashboard.
 
-**Key differentiators:** 5 pillars in one chat | 94% cheaper than a part-time VA | 100% native Taglish | 1st voice-first PH business AI
+**Key differentiators:** 5 pillars in one chat | 94% cheaper than a part-time VA | 100% native conversational Filipino | 1st voice-first PH business AI
 
 ---
 

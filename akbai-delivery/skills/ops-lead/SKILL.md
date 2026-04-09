@@ -147,7 +147,7 @@ Log flagged interaction
   → Pull full context (user input, KA output, system prompt state, user profile)
   → Determine root cause: prompt issue vs data issue vs model limitation
   → Apply fix (prompt update, data correction, or edge case handling)
-  → Add regression test to the Taglish test library
+  → Add regression test to the conversational Filipino test library
   → If pattern detected (3+ similar flags), escalate to ai-engineer skill
 ```
 
@@ -173,7 +173,7 @@ Step 1: Assess severity
   → Are payments affected? → Check Xendit dashboard
 
 Step 2: Communicate
-  → If user-facing: draft a Taglish status message for in-app or social
+  → If user-facing: draft a conversational Filipino status message for in-app or social
   → Tone: calm, transparent, no corporate-speak. "May technical issue kami ngayon — inaayos na namin. Babalik kami agad."
 
 Step 3: Fix

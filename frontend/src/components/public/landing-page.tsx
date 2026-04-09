@@ -125,7 +125,7 @@ const painPoints = [
     imageAlt: 'Stressed business owner surrounded by receipts, not knowing if profitable',
     title: 'Hindi mo alam kung kumikita ka?',
     description:
-      'Busy ka sa negosyo pero di mo alam kung tumutubo ba talaga. Kai tracks your cash flow daily — para laging clear ang picture.',
+      'Busy ka sa negosyo pero \'di mo alam kung tumutubo ba talaga. Tine-track ni Kai ang cash flow mo araw-araw — para laging clear ang picture.',
   },
 ] as const
 
@@ -139,7 +139,7 @@ const steps = [
   {
     step: '2',
     title: 'Umagang Kai Ganda!',
-    description: 'Every morning, briefing mula kay Kai — deadlines, reminders, at insights na relevant sa negosyo mo.',
+    description: 'Tuwing umaga, briefing mula kay Kai — deadlines, reminders, at insights para sa negosyo mo.',
   },
   {
     step: '3',
@@ -154,7 +154,7 @@ const pillars = [
     icon: IconFinance,
     title: 'Financial Tracking',
     tagline: 'Saan Napunta ang Pera?',
-    description: 'Cash flow visibility, expense categorization, at receipt scanning — lahat kasama sa Pro.',
+    description: 'Makikita mo ang cash flow mo, nakaayos ang mga gastos, at na-sca-scan ang mga resibo — lahat kasama sa Pro.',
     accent: 'from-primary-container/10 to-transparent',
   },
   {
@@ -242,7 +242,7 @@ const boldStats = [
 const badges = [
   { text: '5 Pillars', subtext: 'Finance, Tax, Comms, Ops, Tasks' },
   { text: '97% Mas Mura', subtext: 'vs hiring a bookkeeper' },
-  { text: '100% Taglish', subtext: 'speaks your language' },
+  { text: '100% Filipino', subtext: 'wika mo ang ginagamit' },
 ] as const
 
 function formatPrice(centavos: number): string {
@@ -370,10 +370,6 @@ export default function LandingPage() {
           <div className="flex flex-col items-center gap-10 md:flex-row md:gap-8 lg:gap-12">
             {/* Left: Text + CTA */}
             <div className="flex-shrink-0 md:w-[35%] text-center md:text-left">
-              <p className="landing-section-label mb-6">
-                Your AI Business Partner
-              </p>
-
               <h1
                 className="text-4xl font-extrabold leading-[1.1] text-on-surface sm:text-5xl md:text-5xl lg:text-6xl"
                 style={{ letterSpacing: '-0.02em' }}
@@ -562,9 +558,9 @@ export default function LandingPage() {
                 <span className="text-gradient-honey">AI partner</span> mo
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-on-surface-variant sm:text-base md:text-lg">
-                AKBai is your AI-powered business platform &mdash; at si Kai ang persona ng AI assistant mo.
-                Hindi siya chatbot na naghihintay ng tanong. Si Kai, siya ang unang babati sa&rsquo;yo tuwing umaga,
-                i-papaalala sa&rsquo;yo ang deadlines, at mag-track ng finances mo. Parang business partner na laging naka-abang.
+                Ang AKBai ay iyong AI-powered business platform &mdash; at si Kai ang mukha ng AI assistant mo.
+                Hindi siya chatbot na naghihintay ng tanong. Si Kai ang unang babati sa&rsquo;yo tuwing umaga,
+                mag-papaalala sa&rsquo;yo ng mga deadlines, at mag-ta-track ng finances mo. Parang business partner na laging naka-abang.
               </p>
             </div>
           </div>
@@ -912,7 +908,7 @@ export default function LandingPage() {
               sa negosyo mo.
             </h2>
             <p className="mx-auto mt-5 max-w-md text-base text-on-surface-variant sm:mt-6 sm:text-lg">
-              Join the waitlist at maging isa sa unang mag-try ng AKBai &mdash;
+              Sumali sa waitlist at maging isa sa unang mag-try ng AKBai &mdash;
               your AI-powered na katuwang sa hustle.
             </p>
           </div>

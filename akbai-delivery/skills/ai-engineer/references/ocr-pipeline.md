@@ -7,7 +7,7 @@
 
 - **QA agent**: Uses the 6-stage pipeline (§2) to trace where a scan failure occurred. Each stage has documented failure modes and expected error messages — QA can write test cases for each failure path. The edge cases (§7) are a QA test matrix: crumpled receipts, missing dates, handwritten amounts, GCash screenshots, thermal fade, partial cutoff, multiple receipts. The deduplication logic (§8) needs its own test case set. When a user reports "wrong total," QA traces the pipeline: was it Stage 3 (Haiku extraction error), Stage 4 (Zod validation let a bad value through), or Stage 5 (confidence scoring didn't flag it)?
 - **PM agent**: Uses the cost model (§9) for budget reporting: per-scan cost (₱0.16), monthly cost per tier, and AI as percentage of revenue. Uses the pipeline architecture diagram (§1) for sprint reports describing what was delivered. The monthly cost table is directly quotable in investor updates.
-- **Fullstack-engineer**: This is the implementation blueprint. The step-by-step flow (§2) maps directly to code: Step 3 → Supabase Storage upload function, Step 4 → API route at `/api/resibo/scan`, Step 5 → Zod schema from §5, Step 7 → save route at `/api/resibo/save`. The error handling table (§10) provides exact console log messages and user-facing Taglish messages for each failure mode.
+- **Fullstack-engineer**: This is the implementation blueprint. The step-by-step flow (§2) maps directly to code: Step 3 → Supabase Storage upload function, Step 4 → API route at `/api/resibo/scan`, Step 5 → Zod schema from §5, Step 7 → save route at `/api/resibo/save`. The error handling table (§10) provides exact console log messages and user-facing conversational Filipino messages for each failure mode.
 
 ---
 
@@ -488,7 +488,7 @@ await supabase.rpc('increment_daily_spend', {
 
 ## 10. Error Handling
 
-Every failure mode has a warm, Taglish user-facing message and an English console log.
+Every failure mode has a warm, conversational Filipino user-facing message and an English console log.
 
 | Error | Console Log | User Message (KA) |
 |-------|------------|-------------------|

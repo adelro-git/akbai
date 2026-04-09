@@ -71,7 +71,7 @@ describe('ChatRequestSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('accepts Taglish message with special characters', () => {
+  it('accepts conversational Filipino message with special characters', () => {
     const result = ChatRequestSchema.safeParse({
       message: 'Magkano ang gastos ko sa ₱? Paki-check ang 1701Q ko.',
     });

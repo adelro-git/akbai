@@ -17,7 +17,7 @@ describe('SessionExpiryModal — copy', () => {
     'Oops, nag-expire ang session mo. Mag-login ulit para makapag-continue.';
   const EXPECTED_CTA = 'Mag-login ulit';
 
-  it('should have Taglish expiry message', () => {
+  it('should have conversational Filipino expiry message', () => {
     expect(EXPECTED_MESSAGE).toContain('nag-expire');
     expect(EXPECTED_MESSAGE).toContain('session');
     expect(EXPECTED_MESSAGE).toContain('Mag-login');
@@ -25,7 +25,7 @@ describe('SessionExpiryModal — copy', () => {
     expect(EXPECTED_MESSAGE).not.toContain('Session expired. Please re-authenticate');
   });
 
-  it('should have Taglish CTA button label', () => {
+  it('should have conversational Filipino CTA button label', () => {
     expect(EXPECTED_CTA).toBe('Mag-login ulit');
     expect(EXPECTED_CTA).not.toBe('Login');
     expect(EXPECTED_CTA).not.toBe('Sign in');

@@ -66,7 +66,7 @@ const PAIN_TO_FEATURES: Record<string, { primary: FeatureHighlight; supporting: 
     primary: {
       icon: <CustomerMessages size={28} className="text-primary" />,
       title: 'Si Kai ang katuwang mo sa messages',
-      description: 'Pa-draft kay Kai ang replies sa customers mo — professional at Taglish.',
+      description: 'Pa-draft kay Kai ang replies sa customers mo — professional at natural Filipino.',
       href: '/chat',
     },
     supporting: [

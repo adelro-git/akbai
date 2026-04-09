@@ -43,7 +43,7 @@ No competitor covers more than one pillar.
 - **What they do:** Cloud-based tax preparation and BIR compliance
 - **Strengths:** Free tier available, BIR form generation
 - **Weaknesses:** English-only, tax-focused only, limited MSME features, no AI capabilities
-- **AKBai angle:** "JuanTax generates forms. AKBai understands your business and reminds you before the deadline — in Taglish."
+- **AKBai angle:** "JuanTax generates forms. AKBai understands your business and reminds you before the deadline — in conversational Filipino."
 
 ### ChatGenie / SOFI AI
 - **What they do:** E-commerce chatbots and customer communication automation
@@ -62,7 +62,7 @@ No competitor covers more than one pillar.
 - **What they do:** Full accounting software (international products)
 - **Pricing:** $15-30/month (₱850-1,700+) — significantly more expensive
 - **Strengths:** Full-featured accounting, established globally, accountant-friendly
-- **Weaknesses:** Expensive for micro-businesses, English-only, complex interface not designed for non-accountants, no BIR-specific features, no Taglish
+- **Weaknesses:** Expensive for micro-businesses, English-only, complex interface not designed for non-accountants, no BIR-specific features, no conversational Filipino
 - **AKBai angle:** "QuickBooks costs 2-4x more and requires accounting knowledge. AKBai speaks your language and is designed for business owners, not accountants."
 
 ### Generic AI (ChatGPT, Gemini)
@@ -89,7 +89,7 @@ These are the framings to use in public-facing content. They focus entirely on A
 - AKBai's integration means insights across functions: "Your expenses went up 40% this month — check if it's because of that bulk ingredients order."
 - Framing: "Before AKBai, this didn't exist. You either hired an accountant or pieced it together yourself."
 
-### 3. Taglish-Native (Cultural moat)
+### 3. Conversational Filipino-Native (Cultural moat)
 - Only 64% of Filipino MSMEs are comfortable with English-only interfaces
 - AKBai understands Filipino business culture from the ground up — not translated, native
 - Cultural context matters: understands GCash flows, BIR anxiety, sari-sari economics
@@ -118,7 +118,7 @@ These are the framings to use in public-facing content. They focus entirely on A
 | Cash flow tracking | Yes | Tax data only | No | Sales only | Full |
 | Customer comms | AI reply drafting | No | Core focus | No | No |
 | Daily briefing | Yes (Ang Umaga Mo) | No | No | No | No |
-| Taglish-native | Yes | Partial | No | No | No |
+| Conversational Filipino-native | Yes | Partial | No | No | No |
 | Price (monthly) | ₱399 | ₱499-999 | Free-₱499 | Free | ₱850-1,700 |
 | Target user | All MSMEs | Tax-focused | E-commerce | Sari-sari | SMEs |
 
@@ -138,7 +138,7 @@ Real-world data that strengthens every competitive angle. Use these in content t
 - BCG's own four MSME archetypes (manufacturers, retailers, sari-sari, food) map directly to AKBai's personas
 
 ### Competitive Signal — CPA Building Same Product
-A CPA posted on r/BusinessPH: "I'm doing research for **a software/digital product to make filing easier for small businesses** to comply with BIR requirements." This confirms the gap is real and visible to industry insiders. AKBai's moat: 5-pillar coverage (not just BIR), Taglish-native, AI-first (not form-first), proactive (not reactive).
+A CPA posted on r/BusinessPH: "I'm doing research for **a software/digital product to make filing easier for small businesses** to comply with BIR requirements." This confirms the gap is real and visible to industry insiders. AKBai's moat: 5-pillar coverage (not just BIR), conversational Filipino-native, AI-first (not form-first), proactive (not reactive).
 
 ### Real Pricing Comparison (from Reddit r/taxPH)
 - Accounting firm: ₱5,000 tax filing + ₱5,000 bookkeeping + ₱1,800 receipt encoding = **₱11,800/month**
@@ -159,6 +159,6 @@ Full research with Reddit/Facebook/TikTok quotes: `shared/market-sentiment-resea
 1. **Never name competitors in public-facing content.** Use "compared to what's on the market," "most existing tools," "the alternatives out there," etc. The competitive-brief details are for your strategic brain, not for publishing.
 2. **Focus on AKBai's story, not the market's shortcomings.** Frame it as "here's what AKBai does and why it matters" — not "here's what everyone else can't do."
 3. **Use specific numbers — your own.** "₱399/mo" and "₱0.16/scan" are compelling on their own. You don't need to put someone else's price next to yours. But "compared to what most tools charge" is fine.
-4. **The Taglish angle stands on its own.** "Built for Filipino businesses from the ground up" — no need to say who wasn't.
+4. **The conversational Filipino angle stands on its own.** "Built for Filipino businesses from the ground up" — no need to say who wasn't.
 5. **"Integrated" and "all-in-one" are the core words.** "The only integrated AI business partner for Filipino MSMEs" should appear in every competitive context.
 6. **If users ask about specific competitors:** You can acknowledge them respectfully and factually, but keep the focus on what makes AKBai different. "That's a solid tool for tax filing. AKBai covers tax plus four other areas in one place — that's what makes it different."

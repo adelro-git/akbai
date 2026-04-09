@@ -19,11 +19,11 @@
     {
       "id": 2,
       "prompt": "I'm implementing Build 0 — the AI Scope Definition for AKBai. I need the full system prompt architecture: how the prompt gets assembled server-side, the core KA persona block, the modular domain scopes (tax, financial, communication), and how new Phase 4+ domains get added without rewriting existing prompts. Also include the BIR disclaimer rules and prompt injection defenses. This needs to be production-ready.",
-      "expected_output": "A comprehensive system prompt architecture document covering: 5-layer assembly order (Core Identity → Domain Scope → Feature → User Context → History → Message), complete KA persona prompt with Taglish voice rules and 'never do' boundaries, three Phase 1 domain scope modules (TAX_SCOPE, FINANCIAL_SCOPE, COMMUNICATION_SCOPE), BIR disclaimer trigger logic, prompt injection defense instructions, and clear instructions for Phase 4+ domain expansion.",
+      "expected_output": "A comprehensive system prompt architecture document covering: 5-layer assembly order (Core Identity → Domain Scope → Feature → User Context → History → Message), complete KA persona prompt with conversational Filipino voice rules and 'never do' boundaries, three Phase 1 domain scope modules (TAX_SCOPE, FINANCIAL_SCOPE, COMMUNICATION_SCOPE), BIR disclaimer trigger logic, prompt injection defense instructions, and clear instructions for Phase 4+ domain expansion.",
       "files": [],
       "expectations": [
         "Defines a multi-layer prompt assembly order (at least: persona, scope, feature, user context)",
-        "Includes KA persona block with Taglish voice rules and prohibited behaviors",
+        "Includes KA persona block with conversational Filipino voice rules and prohibited behaviors",
         "BIR disclaimer text is present and trigger conditions are specified",
         "Includes at least TAX_SCOPE with in-scope and out-of-scope boundaries",
         "Includes prompt injection defense (handling of 'ignore instructions' type attacks)",
@@ -33,11 +33,11 @@
     },
     {
       "id": 3,
-      "prompt": "KA's morning briefing (Ang Umaga Mo) is sounding too robotic — it reads like a dashboard dump instead of a warm kababayan greeting. Here's what it currently outputs: 'Good morning Maria. Yesterday income: PHP 5,200. Yesterday expenses: PHP 3,100. Net: PHP 2,100. BIR deadline: 1701Q due April 25. Tasks: none.' Fix the prompt so it sounds like the KA persona — warm Taglish, proactive, ₱ formatting, short sentences, encouraging. Also make sure the BIR disclaimer is there and it handles days with no transactions gracefully.",
-      "expected_output": "A revised morning briefing prompt that transforms the robotic output into warm Taglish KA voice. Should include: personalized Taglish greeting with user's name and day of week, ₱-formatted numbers (₱5,200 not PHP 5,200), natural Taglish prose instead of label-value pairs, calm BIR deadline alert (not alarming), graceful empty-day handling, encouraging sign-off, and BIR disclaimer when tax content is present.",
+      "prompt": "KA's morning briefing (Ang Umaga Mo) is sounding too robotic — it reads like a dashboard dump instead of a warm kababayan greeting. Here's what it currently outputs: 'Good morning Maria. Yesterday income: PHP 5,200. Yesterday expenses: PHP 3,100. Net: PHP 2,100. BIR deadline: 1701Q due April 25. Tasks: none.' Fix the prompt so it sounds like the KA persona — warm conversational Filipino, proactive, ₱ formatting, short sentences, encouraging. Also make sure the BIR disclaimer is there and it handles days with no transactions gracefully.",
+      "expected_output": "A revised morning briefing prompt that transforms the robotic output into warm conversational Filipino KA voice. Should include: personalized conversational Filipino greeting with user's name and day of week, ₱-formatted numbers (₱5,200 not PHP 5,200), natural conversational Filipino prose instead of label-value pairs, calm BIR deadline alert (not alarming), graceful empty-day handling, encouraging sign-off, and BIR disclaimer when tax content is present.",
       "files": [],
       "expectations": [
-        "Revised prompt produces Taglish output (mix of Filipino and English, not pure English)",
+        "Revised prompt produces conversational Filipino output (mix of Filipino and English, not pure English)",
         "Numbers use ₱ sign (not PHP or Php)",
         "Includes warm personalized greeting with user first name",
         "Handles zero-transaction days gracefully (not shaming)",

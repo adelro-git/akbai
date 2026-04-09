@@ -631,3 +631,104 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 **Actual Anton Hours:** ~2.5 hrs (testing + review + bug triage + retro)
 **Sprint Outcome:** DONE — Build 5 complete, Builds 5-7 hardened, 6 dev-mode bugs fixed
+
+---
+
+### Sprint 11 — 2026-04-09 (Conversational Filipino Voice Revision)
+
+**Phase:** 0A — Brand Voice Recalibration (non-build sprint)
+**Sprint Goal:** Shift AKBai's primary brand voice from "Taglish" to "conversational Filipino" across all documentation, skill files, agent definitions, live system prompts, and the public landing page. Triggered by user review flagging Taglish as mismatched for the MSME target demographic.
+**Capacity:** 1 session, agent-team parallel execution
+
+**Context:**
+A user review suggested conversational Filipino would better serve the 30–50 y/o MSME target (sari-sari operators, home bakers, provincial sellers) than Taglish. Independent linguistic research confirmed the concern and uncovered a **deeper syntactic issue**: the distinction is not vocabulary but word order and enclitic placement. "bago i-save natin" is Taglish (English SVO thinking); "bago natin i-save" is conversational Filipino (Filipino second-position enclitic per Wackernagel's Law). This meant ~70% of existing Kai voice examples contained Taglish syntactic markers and needed real rewriting — not a relabel.
+
+**The 8 Taglish markers now explicitly banned in Kai's output:**
+1. Enclitic misplacement after conjunctions (`bago i-save natin` → `bago natin i-save`)
+2. English conjunctions (`if/before/because/when` → `kung/bago/kasi/dahil/kapag`)
+3. English prepositions (`based sa` → `ayon sa` / `batay sa`)
+4. English time adverbs (`this week/last month/in 3 days` → `ngayong linggo/nakaraang buwan/sa loob ng 3 araw`)
+5. Bare English verbs without Filipino affix (`save mo` → `i-save mo`)
+6. English comparatives (`more Filipino` → `mas Filipino`)
+7. `yung` for definite objects in written output (`yung resibo` → `ang resibo`)
+8. English SVO word order (`Here's what I found` → `Ito ang nakita ko`)
+
+**English is retained only for:** BIR/tax terms (1701Q, VAT, net income), Filipinized verbs with i-/mag-/na- affixes, brand names (GCash, Maya, Shopee), numbers/currency/dates, sparing casual interjections.
+
+**Execution model — 9 parallel layers:**
+
+| Layer | Scope | Executor |
+|---|---|---|
+| 1 | Core definitions — CLAUDE.md Rule 5, AKBAI_MASTER_BRIEF §1/§6/§7/§8, brand-context.md Pillar 1 + Voice Examples, glossary.md, project-context.md | main thread |
+| 2 | Rewrote + renamed copy guides: `taglish-copy-guide.md` → `conversational-filipino-copy-guide.md` (489 lines) and `taglish-manual.md` → `conversational-filipino-manual.md` (234 lines). Added §13 Quick Reference Card with the 8-marker checklist. Dropped misleading "60/40 ratio" framing. | build-ux agent |
+| 3 | Extended `filipino-text-vernacular.md` — 3 terminology fixes + new §10 (what Kai should NOT use), §11 (voice toolkit summary), §12 (regional awareness — Bisaya/Cebuano input handling) | build-ux agent |
+| 4-6 | Terminology sweep across 40+ skill files, agent definitions, and reference docs. Gap registry G2/G3/G8 renamed. | build-engineer agent + main thread |
+| 7 | **Runtime behavior change** — rewrote `core-persona.ts` voice rules with full Filipino syntactic frame. Added 9 new regression tests in `prompt-regression.test.ts` Group 6 (one per marker). Bumped `prompt-library.md` to v1.1.0 and synced §1 body to match live prompt. Updated `features.ts` feature prompts (general_chat, morning_briefing, reply_drafter) | build-ai agent + main thread |
+| 8a | 10 landing-page fixes including critical `100% Taglish` → `100% Filipino` badge, removed "Your AI Business Partner" English supertitle, rewrote Meet Kai body, fixed "this week"/"every morning" time adverbs, "Join" → "Sumali" | build-engineer agent |
+| 8b | ~60 edits across `brand/AKBai Brand Book.html`, `Archive/AKBai_Competitive_Brief_v2.html`, `Archive/AKBai_Operations_Playbook_v7.html`, `Archive/AKBai_Post_Implementation_Vision_v1.html`, `project/AKBai_Plugin_Strategy_v1.html`, `project/AKBai_Skills_Utilization_Guide_v1.html`, 5 marketing markdowns | build-marketing agent + main thread |
+| 9 | 9 user-visible frontend fixes across 7 components (step-bir-consent, errors.ts, chat-interface, first-responses, notifications, welcome-tour, expenses-summary) + 26 test description renames across 20 test files | build-engineer agent |
+| Audit | team-lead cross-layer consistency audit. Found critical drift: `prompt-library.md` §1 body was still v1.0.0 Taglish text despite v1.1.0 header. Also flagged 15 command-skill files that had been missed. All P0 items fixed. | team-lead agent + main thread |
+
+**Files modified:** ~130+ across docs, skills, agents, frontend code, HTML artifacts
+**Files renamed:** 2 (`taglish-copy-guide.md` → `conversational-filipino-copy-guide.md`, `taglish-manual.md` → `conversational-filipino-manual.md`)
+**Files created:** 0 (vernacular reference file already existed, extended in place)
+
+**Tests:** 770/770 passing (52 test files). Added 9 new regression tests for the 8 Taglish markers. Updated 26 test description strings to say "conversational Filipino" instead of "Taglish". No test assertions changed — the live runtime instruction `"Never speak Taglish"` is still asserted against in prompt-regression Group 2.
+
+**Critical corrections caught during execution:**
+
+1. **First-pass mistake (caught by user review):** Initial plan treated this as a terminology relabel — "most examples are already correct, just change the label." User correction `"bago i-save natin" is very Taglish. Conversational Filipino would be "bago natin i-save"` forced a full syntactic audit and rewrite. ~70% of existing Kai voice examples had at least one Taglish marker and needed real fixes, not relabeling.
+
+2. **Enclitic rule over-correction (caught by Anton during plan review):** The first draft of the copy guide Rule 2 prescribed `"para mo ma-check"` and `"kung mo gustong i-edit"` — both grammatically unusual. Corrected to: strict second-position rule applies only after `bago`, `kapag/pag`, and `habang`. After `para + verb` → native speakers place enclitic after verb (`para ma-check mo`). With `kung gusto + verb` → native form is `kung gusto mong i-edit` or `kung gusto mo i-edit`. Rule of thumb documented: trust native ear.
+
+3. **prompt-library.md §1 drift (caught by team-lead audit):** The header was bumped to v1.1.0 but the prompt code block was still the v1.0.0 Taglish version, including a `"Based sa trend..."` canonical example (line 72) that directly violated the new "based sa" ban. Most load-bearing drift in the entire revision — would have caused every future prompt-library reader to see conflicting guidance. Fixed by syncing the §1 body to match `frontend/src/lib/claude/prompts/core-persona.ts` verbatim.
+
+4. **15 command-skill files missed by initial sweep (caught by team-lead audit):** The build-engineer Layers 4-6 agent swept `akbai-delivery/skills/*/SKILL.md` but missed `akbai-delivery/skills/*/commands/*/SKILL.md` (a subfolder layer down). Main thread finished the sweep during audit-fix pass covering ui-copy, prompt, test, review, incident, gap-check, standup command files + 4 cross-cutting reference files (data-flows, npc-compliance, claude-integration, nextjs-conventions).
+
+**What was built:**
+- New canonical reference: `conversational-filipino-copy-guide.md` (489 lines) with 8-marker Quick Reference Card
+- Rewritten authoritative manual: `conversational-filipino-manual.md` (234 lines)
+- Extended `filipino-text-vernacular.md` with 3 new sections (§10 banned patterns, §11 voice toolkit, §12 regional awareness)
+- New regression test group: `prompt-regression.test.ts` Group 6 (9 tests, one per marker + user-input understanding)
+- Live system prompt rewrite: `core-persona.ts` with full Filipino syntactic frame rules
+- Landing page brand-consistency fix: badge now reads "100% Filipino" instead of "100% Taglish"
+- Updated canonical external documents: Brand Book HTML, Competitive Brief v2 HTML, Operations Playbook v7 HTML, Post Implementation Vision v1 HTML
+
+**Parallel Streams:**
+- Main thread: Layers 1, 8b, 4-6 cleanup, team-lead audit P0 fixes
+- Stream A (build-ux): Layer 2 — copy guide rename + rewrite
+- Stream B (build-ux): Layer 3 — vernacular extension
+- Stream C (build-engineer): Layers 4-6 — skill/agent sweep
+- Stream D (build-ai): Layer 7 — core-persona.ts + tests
+- Stream E (build-engineer): Layer 8a — landing page rewrite
+- Stream F (build-marketing): Layer 8b — project docs audit (applied by main thread after)
+- Stream G (build-engineer): Layer 9 — frontend component audit
+- Stream H (team-lead): Final consistency audit across all layers
+
+**Actual Anton Hours:** ~1 session (planning + correction + review + commit)
+**Sprint Outcome:** DONE — 770/770 tests passing, ~130 files touched, zero runtime regressions, canonical voice definition consistent across CLAUDE.md / master brief / brand-context / copy-guide / manual / vernacular / core-persona.ts / prompt-library.md / landing-page.tsx
+
+**Deferred / known limitations:**
+- **PDF regeneration:** `brand/AKBai Brand Book.pdf`, `Archive/AKBai_Competitive_Brief_v2.pdf`, and `Archive/AKBai_Operations_Playbook_v7.pdf` still reference the old Taglish framing. HTML sources updated but PDFs need to be re-exported. Non-blocking — kept in view.
+- **PDF-only docs:** `project/AKBai_Complete_Roadmap_v14.pdf`, `project/AKBai_Market_Research_v1.pdf`, `project/AKBai_Operations_Roadmap_v6.pdf`, and `project/AKBai_Post_Implementation_Vision_v1.pdf` were not edited because editable sources (docx/html) could not be located. Deferred for manual review.
+- **Behavioral smoke test:** The new regression tests operate at the prompt-construction level (deterministic CI), not against real Claude output. A 7-scenario behavioral spot-check against the live chat endpoint is recommended as a pre-ship validation (~15 min manual test). Non-blocking.
+- **`features.ts` reply_drafter customer-matching rule** deliberately kept nuanced: Kai understands Taglish input from customer DMs but replies in conversational Filipino to model the warmer voice. This is the only place "Taglish" survives as a descriptive input category.
+
+**Retro — what went well:**
+- **Parallel agent-team execution** — 7 concurrent specialized agents compressed what would have been a multi-day serial edit into a single session. Agent-teams guide pattern validated.
+- **Team-lead audit caught critical drift** — without the cross-layer audit, the `prompt-library.md` §1 v1.1.0/v1.0.0 drift and 15 missed command-skill files would have shipped silently. The audit layer is load-bearing for large multi-agent revisions.
+- **User correction feedback loop** — the `"bago i-save natin"` correction reshaped the entire scope early (before execution), preventing a terminology-only rewrite that would have shipped Taglish examples under a conversational Filipino label.
+
+**Retro — what didn't:**
+- **Agent permission blocks** — the Layers 4-6 build-engineer agent hit permission errors on `.claude/agents/*.md` files and had to be finished manually by the main thread. Need to pre-authorize the `.claude/` subtree for build-engineer agents or route those files through a differently-permissioned agent.
+- **Initial scope miscalibration** — the first plan draft assumed this was a relabel. Took a user correction to force a linguistic audit. Lesson: for voice/tone changes, ALWAYS run a native-speaker review on example copy before assuming it's "already correct."
+- **Layer 8b agent didn't apply edits** — build-marketing agent produced a thorough audit report but incorrectly concluded it couldn't edit HTML files. Main thread had to apply all ~60 HTML edits serially. Lesson: give agents explicit permission/capability confirmation for HTML editing.
+
+**Action items (opened this sprint):**
+
+| # | Owner | Action | Status |
+|---|-------|--------|--------|
+| 1 | Anton | Behavioral smoke test: run 7 Kai scenarios against live chat, validate against 8-marker checklist | OPEN — Pre-ship validation (~15 min) |
+| 2 | Anton | Decide PDF regeneration strategy: regenerate from HTML sources OR accept PDF drift until next rev cycle | OPEN — Non-blocking |
+| 3 | Anton | Locate `.docx` sources for `project/*.pdf` files OR decide to freeze them as historical | OPEN — Non-blocking |
+| 4 | Anton | Pre-authorize `.claude/` subtree edits for build-engineer agent to prevent future permission blocks in multi-agent sweeps | OPEN — Sprint 12 |

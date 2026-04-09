@@ -6,9 +6,9 @@
 
 ## Keyword Strategy
 
-**Approach:** Target Taglish and English long-tail keywords that Filipino MSMEs actually search for. The Philippine MSME SEO space is severely underserved -- most BIR content is either government legalese or CPA firm advertising. Taglish content that genuinely helps ranks fast.
+**Approach:** Target Taglish and English long-tail search queries (users SEARCH in Taglish; our CONTENT is conversational Filipino) that Filipino MSMEs actually search for. The Philippine MSME SEO space is severely underserved -- most BIR content is either government legalese or CPA firm advertising. Taglish content that genuinely helps ranks fast.
 
-**Content language:** Taglish -- Tagalog carries the conversational flow, English for technical/business terms. This matches how our audience actually searches and reads.
+**Content language:** Conversational Filipino -- Filipino syntactic frame carries the conversational flow, English retained for technical/BIR terms, Filipinized verbs, and brand names. This matches how our audience reads naturally. Note: users SEARCH in Taglish (that's the query language), but our CONTENT is written in conversational Filipino.
 
 ---
 
@@ -21,7 +21,7 @@ These keywords were validated through market sentiment research (Reddit, Faceboo
 | Field | Value |
 |-------|-------|
 | **Est. Monthly Volume** | 5,000+ (seasonal spikes before filing deadlines) |
-| **Difficulty** | Low -- few quality Taglish results |
+| **Difficulty** | Low -- few quality conversational Filipino results |
 | **Search Intent** | Informational -- "when do I need to file?" |
 | **Target Persona** | All (Ana, Jose, Maria) |
 | **Planned Article** | "Complete BIR Deadline Calendar 2026 -- Lahat ng Deadline na Kailangan Mo Malaman" |
@@ -36,7 +36,7 @@ These keywords were validated through market sentiment research (Reddit, Faceboo
 | Field | Value |
 |-------|-------|
 | **Est. Monthly Volume** | 2,000+ (seasonal: May, Aug, Nov) |
-| **Difficulty** | Low-Medium -- some CPA firm content exists but not in Taglish |
+| **Difficulty** | Low-Medium -- some CPA firm content exists but not in conversational Filipino |
 | **Search Intent** | How-to -- "show me step by step" |
 | **Target Persona** | Ana (freelancer), Jose (online seller) |
 | **Planned Article** | "Paano Mag-File ng 1701Q: Complete Guide para sa Freelancers at Online Sellers" |

@@ -28,7 +28,7 @@ describe('magicLinkTemplate', () => {
     expect(html).toContain('#fdf9f2'); // surface background
   });
 
-  it('includes Taglish copy', () => {
+  it('includes conversational Filipino copy', () => {
     const html = magicLinkTemplate(testLink);
     expect(html).toContain('Mag-sign in ka sa AKBai');
     expect(html).toContain('Mag-login sa AKBai');
@@ -86,7 +86,7 @@ describe('confirmationTemplate', () => {
     expect(html).toContain(testLink);
   });
 
-  it('includes welcome Taglish copy', () => {
+  it('includes welcome conversational Filipino copy', () => {
     const html = confirmationTemplate(testLink);
     expect(html).toContain('Welcome sa AKBai!');
     expect(html).toContain('I-confirm ang Email');

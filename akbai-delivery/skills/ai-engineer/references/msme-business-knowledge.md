@@ -353,7 +353,7 @@ Buy wholesale inventory (cash out) → Stock shelves → Sell retail daily (cash
 7. BIR registration step-by-step guide — HIGH demand
 
 **Tools currently being recommended in communities:**
-Manager.io (free), Google Sheets (default), Wave (free), Taxumo, JuanTax, Oojeema. No existing tool combines tax guidance + bookkeeping + BIR compliance in Taglish with a proactive AI voice.
+Manager.io (free), Google Sheets (default), Wave (free), Taxumo, JuanTax, Oojeema. No existing tool combines tax guidance + bookkeeping + BIR compliance in conversational Filipino with a proactive AI voice.
 
 ### Digital Literacy Profile
 | Skill | Level | Notes |

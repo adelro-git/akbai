@@ -92,7 +92,7 @@ describe('offline page', () => {
   const pagePath = join(__dirname, '..', 'page.tsx');
   const pageSource = readFileSync(pagePath, 'utf-8');
 
-  it('renders with expected Taglish message', () => {
+  it('renders with expected conversational Filipino message', () => {
     expect(pageSource).toContain('Walang internet connection');
     expect(pageSource).toContain(
       'I-check ang WiFi o data mo, tapos i-refresh.'

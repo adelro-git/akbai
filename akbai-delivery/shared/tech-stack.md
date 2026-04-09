@@ -203,7 +203,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 **TypeScript:** Strict mode. No `any`. All API responses typed via Zod schemas.
 **Components:** Server Components default. `'use client'` only when needed (interactivity, hooks).
 **Error handling:** Every API route returns `{ success: boolean, data?: T, error?: { code: string, message: string, message_tl?: string } }`.
-**User-facing errors:** Taglish, warm, actionable. Console errors: English.
+**User-facing errors:** Conversational Filipino, warm, actionable. Console errors: English.
 **Money handling:** All monetary amounts stored as integers in centavos (₱34.50 = 3450). Display conversion to peso format happens at the UI layer only. Never use floating-point for money.
 **Testing:** Vitest (unit), Playwright (e2e). No tests for simple CRUD — focus on BIR logic, OCR, RLS, payment flows.
 **Git:** Feature branches, PR to main, Vercel preview per PR. No direct pushes to main.
@@ -239,7 +239,7 @@ All user-facing timestamps use **UTC+8 (Asia/Manila)**. Use the shared `@/lib/ti
 - Knowledge base designed as tagged collection, not flat file — new domains plug into same retrieval architecture
 
 **System prompt assembly (server-side only, 6 layers):**
-1. Core KA Persona — shared identity, Taglish style, disclaimer rules
+1. Core KA Persona — shared identity, conversational Filipino style, disclaimer rules
 2. Active Domain Scopes — modular sections loaded per conversation context ([TAX_SCOPE], [FINANCIAL_SCOPE], etc.)
 3. Feature Context — feature-specific instructions injected per active screen/flow
 4. User Context — business profile fetched by auth.uid()
@@ -278,4 +278,4 @@ All user-facing timestamps use **UTC+8 (Asia/Manila)**. Use the shared `@/lib/ti
 | Images (receipts, logos) | Cache-first | Receipt images don't change after upload |
 | HTML pages | Network-first | Ensure latest UI; fall back to app shell offline |
 
-**Offline minimum:** Cached Morning Briefing + Taglish "Offline ka ngayon" message + queued mutations via TanStack Persister.
+**Offline minimum:** Cached Morning Briefing + conversational Filipino "Offline ka ngayon" message + queued mutations via TanStack Persister.

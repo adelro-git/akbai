@@ -134,7 +134,7 @@ import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrap
 ```
 
 **Rules:**
-- Always use Taglish alt text (see taglish-copy-guide.md)
+- Always use conversational Filipino alt text (see conversational-filipino-copy-guide.md)
 - Use `category` prop for automatic sizing — avoid custom `width`/`height` unless necessary
 - Dark mode handled automatically (`dark:brightness-[0.85] dark:saturate-[0.9]`)
 - Don't use Lucide icons for empty states if a WebP illustration exists — illustrations are warmer and more on-brand

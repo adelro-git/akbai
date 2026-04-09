@@ -145,12 +145,12 @@ Walang maling sagot — curious lang ako kasi gusto ko malaman kung may better w
 
 ### Article Structure (1,200-1,800 words)
 ```
-# [H1: Keyword-rich Taglish title]
+# [H1: Keyword-rich conversational Filipino title]
 
 [Opening paragraph: 2-3 sentences addressing the pain directly. Empathize.]
 
 ## [H2: Section covering the "what"]
-[Explain the topic. Use Taglish. Include specific BIR forms, numbers, dates.]
+[Explain the topic. Use conversational Filipino. Include specific BIR forms, numbers, dates.]
 
 ## [H2: Section covering the "how"]
 [Step-by-step guide. Numbered steps. Screenshots if possible.]
@@ -181,7 +181,7 @@ CTA (3 seconds): "Follow for more BIR tips para sa negosyo mo"
 ### Format B: Screen Recording Demo (30-60 sec)
 ```
 HOOK: "Watch this — tinanong ko yung AI ko kung [specific BIR/business question]"
-BODY: Screen recording of AKBai answering the question in Taglish
+BODY: Screen recording of AKBai answering the question in conversational Filipino
 CTA: "Comment BETA if gusto mo subukan"
 ```
 
@@ -259,13 +259,13 @@ These are the 20 annual BIR deadlines. Plan content 2 weeks before each deadline
 
 ## 7. Micro-Influencer Outreach Scripts (Phase 2)
 
-Target: 5-10 creators who are themselves MSME owners and post about business/hustle content in Taglish. Not traditional influencers — real business owners with 5K-50K followers.
+Target: 5-10 creators who are themselves MSME owners and post about business/hustle content in Taglish (that's the observed market behavior on social). Not traditional influencers — real business owners with 5K-50K followers.
 
 ### DM Script — Initial Outreach
 ```
 Hi [Name]! Napansin ko yung content mo about [specific post/topic] — super helpful for fellow negosyante.
 
-I'm Anton, and I'm building AKBai — an AI business partner for Filipino MSMEs. Think of it like having a smart katulong for BIR deadlines, receipt tracking, and daily business updates — lahat in Taglish.
+I'm Anton, and I'm building AKBai — an AI business partner for Filipino MSMEs. Think of it like having a smart katulong for BIR deadlines, receipt tracking, and daily business updates — lahat sa conversational Filipino.
 
 Hindi ko hinihingi na mag-post ka about it — gusto ko lang i-offer ang free Business tier account (₱899/mo value) for you to try. Kung useful siya sa negosyo mo and you naturally want to share it, amazing. Kung hindi, no worries at all.
 
@@ -343,7 +343,7 @@ Target: Admins of Negosyante PH, Online Sellers PH, Freelancers PH, and similar 
 ```
 Hi [Name]! I'm Anton — I've been a member of [Group Name] for [X weeks/months] and I've been answering BIR and tax questions in the group.
 
-I'm building AKBai — an AI business partner that helps Filipino MSMEs track expenses, handle BIR deadlines, and get daily business updates, lahat in Taglish. Solo founder, building this after my day job.
+I'm building AKBai — an AI business partner that helps Filipino MSMEs track expenses, handle BIR deadlines, and get daily business updates, lahat sa conversational Filipino. Solo founder, building this after my day job.
 
 I'd love to offer you a permanent free Business tier account (₱899/mo value) — not as a promo deal, but because I think you'd genuinely find it useful for your own business, and your feedback would be invaluable.
 

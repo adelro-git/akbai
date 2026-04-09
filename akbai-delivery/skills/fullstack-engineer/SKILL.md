@@ -28,7 +28,7 @@ Every implementation starts with orientation, not typing. Follow these three ste
 - `tech-stack.md` — canonical stack, file structure, development conventions
 - `gap-registry.md` — 26 gaps including 8 CRITICAL hard gates your code must account for
 - `brand-context.md` — color system, typography, tone calibration
-- `glossary.md` — Taglish terms, BIR terms, product terms
+- `glossary.md` — conversational Filipino terms, BIR terms, product terms
 
 ## Scaffolding Order
 
@@ -176,7 +176,7 @@ interface Transaction {
 
 ### Error Handling
 
-Every API route returns the standard envelope: `{ success: true, data: T }` or `{ success: false, error: { code, message, message_tl? } }`. The error codes are documented in the solutions-architect's `references/api-design.md`. User-facing error messages (`message_tl`) are always Taglish — warm, specific, and actionable. Console/log messages are English.
+Every API route returns the standard envelope: `{ success: true, data: T }` or `{ success: false, error: { code, message, message_tl? } }`. The error codes are documented in the solutions-architect's `references/api-design.md`. User-facing error messages (`message_tl`) are always conversational Filipino — warm, specific, and actionable. Console/log messages are English.
 
 Build a helper to keep this consistent:
 
@@ -202,7 +202,7 @@ export function apiError(
 
 ### Loading States
 
-Every component that fetches data needs three states: loading, error, and empty. Philippine LTE means users will see loading states regularly, so they need to feel intentional, not broken. Use the brand's Warm Honey color for loading indicators. Empty states are always Taglish and encouraging.
+Every component that fetches data needs three states: loading, error, and empty. Philippine LTE means users will see loading states regularly, so they need to feel intentional, not broken. Use the brand's Warm Honey color for loading indicators. Empty states are always conversational Filipino and encouraging.
 
 ```typescript
 // Pattern for a data-fetching component
@@ -214,7 +214,7 @@ return <ActualContent data={data} />;
 
 ### User-Facing Text
 
-All user-facing text is Taglish — the natural Filipino-English mix that target users actually speak. Follow the KA voice rules from `brand-context.md`. Technical labels (button text, form labels) can lean more English. Emotional moments (success, error, encouragement) lean more Filipino. Numbers are always digits with ₱ sign. Never "PHP" or "Php".
+All user-facing text is conversational Filipino — the natural Filipino-English mix that target users actually speak. Follow the KA voice rules from `brand-context.md`. Technical labels (button text, form labels) can lean more English. Emotional moments (success, error, encouragement) lean more Filipino. Numbers are always digits with ₱ sign. Never "PHP" or "Php".
 
 ### Mobile-First
 
@@ -327,7 +327,7 @@ These are mistakes agents have made in past sprints. **Check every item before s
 | **React 19 controlled inputs** | Use `useRef` + `onClick` for form inputs, NOT `onChange` / `onSubmit`. React 19 has a known bug where controlled inputs lose state mid-typing. This is documented in CLAUDE.md — read it. | Sprint 5, 6 |
 | **Hardcoded colors** | NEVER use hex values (`#fdf9f2`, `#F59E0B`, etc.) in components. Always use MD3 CSS variables via Tailwind tokens (`bg-surface`, `text-on-primary`, `bg-primary-container`). Read `skills/ux-designer/references/design-system.md` for the full token list. | Sprint 4, 5 |
 | **CTA button text color** | Primary CTA buttons use `text-on-primary` (white), NOT `text-on-primary-container`. This was wrong across the entire app for 2 sprints before live testing caught it. | Sprint 5 |
-| **Taglish personalization depth** | When building features that reference the user's business type or pain point, personalize the content — don't use generic copy. Check `kilala-kita-context.md` for pain-point-specific templates and routes. | Sprint 6 |
+| **conversational Filipino personalization depth** | When building features that reference the user's business type or pain point, personalize the content — don't use generic copy. Check `kilala-kita-context.md` for pain-point-specific templates and routes. | Sprint 6 |
 | **Design system mandatory reading** | If your task involves ANY UI work, you MUST read `skills/ux-designer/references/design-system.md` in addition to your task's SKILL.md. Agents that skip this produce functional but visually non-compliant components. | Sprint 5 |
 | **Bottom nav visibility** | Bottom nav should be hidden on pages where it overlaps with input fields (e.g., `/chat`). Check whether your page has a fixed-bottom input before including BottomNav. | Sprint 6 |
 | **Dev bypass must persist to real DB** | When `SKIP_AUTH=true`, API routes must still write to the real database using `createServiceClient()` (service role, bypasses RLS). NEVER return mock data or use in-memory arrays. Principle: "skip auth, not skip persistence." In-memory dev bypasses create bugs invisible to automated tests — only caught by live testing. | Sprint 10 |

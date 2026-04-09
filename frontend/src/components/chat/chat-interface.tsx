@@ -103,7 +103,7 @@ export default function ChatInterface({
           id: `err-${Date.now()}`,
           role: 'assistant',
           content:
-            'Pasensya na, hindi makakonekta. Check mo ang iyong internet connection.',
+            'Pasensya na, hindi makakonekta. I-check mo ang iyong internet connection.',
           created_at: new Date().toISOString(),
         },
       ])

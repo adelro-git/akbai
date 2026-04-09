@@ -29,7 +29,7 @@ export default function StepBirConsent({ onComplete, loading, firstName }: StepB
           </li>
           <li className="flex items-start gap-2">
             <span className="text-teal mt-0.5">✓</span>
-            <span>Tax form recommendations based sa negosyo mo</span>
+            <span>Tax form recommendations ayon sa negosyo mo</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-teal mt-0.5">✓</span>

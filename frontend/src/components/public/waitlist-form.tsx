@@ -97,7 +97,7 @@ export default function WaitlistForm({ section }: WaitlistFormProps) {
           disabled={status === 'loading'}
           className="min-h-[44px] min-w-[44px] whitespace-nowrap rounded-xl bg-gradient-to-r from-primary-container to-secondary-container px-6 py-3.5 text-sm font-semibold text-white shadow-ambient transition-all hover:shadow-ambient-lg active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {status === 'loading' ? 'Sending...' : 'Mag-Sign Up sa Waitlist'}
+          {status === 'loading' ? 'Sending...' : 'Sumali sa Waitlist'}
         </button>
       </div>
       {status === 'error' && errorMessage && (

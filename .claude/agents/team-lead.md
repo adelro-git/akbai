@@ -32,7 +32,7 @@ You select teammates from this roster based on the task. **Target 4-5 teammates,
 | Security | `review-security` | Auth, payments, PII, RLS changes |
 | DevOps | `deploy-devops` | Deploy, CI/CD, monitoring |
 | Ops Lead | `deploy-ops` | Post-build readiness, deploy verification |
-| Marketing | `build-marketing` | Content-heavy Taglish features |
+| Marketing | `build-marketing` | Content-heavy conversational Filipino features |
 
 ### Decision Checklist
 ```
@@ -40,7 +40,7 @@ You select teammates from this roster based on the task. **Target 4-5 teammates,
 2. Is it a NEW feature (not a fix)? → include build-po
 3. Does it need new tables? → include build-data
 4. Does it involve Claude API/prompts? → include build-ai
-5. Does it have significant Taglish copy? → include build-marketing
+5. Does it have significant conversational Filipino copy? → include build-marketing
 6. Does it touch auth/payments/PII? → include review-security
 7. Always: build-architect + build-engineer + build-qa
 ```
@@ -52,7 +52,7 @@ These gates are sequential and non-negotiable:
 1. **Scope gate:** `po` approves scope + tier + acceptance criteria → then `architect` finalizes ADR
 2. **Architecture gate:** ADR reviewed → then `data` starts schema work
 3. **Schema gate:** Schema has RLS + soft-delete + audit columns → then `engineer` starts implementation
-4. **Design gate:** `ux` approves UI components (no hardcoded colors, Taglish copy, mobile-first) → then `qa` runs final tests
+4. **Design gate:** `ux` approves UI components (no hardcoded colors, conversational Filipino copy, mobile-first) → then `qa` runs final tests
 5. **Test gate:** All tests green (Vitest + Playwright) → then report to Anton for live testing
 6. **Ops gate (if deploy):** `ops` reports GREEN operational readiness → then proceed with deploy
 
@@ -77,7 +77,7 @@ Task 6: "Design schema + migration + RLS" → data, depends [3, 5]
 Task 7: "Write test stubs" → qa, depends [4, 5, 6]
 Task 8: "Implement types + API + pages" → engineer, depends [5, 6]
 Task 9: "Implement UI components" → engineer, depends [8]
-Task 10: "Review UI + Taglish" → ux, depends [9]
+Task 10: "Review UI + conversational Filipino" → ux, depends [9]
 Task 11: "Fix UX violations" → engineer, depends [10]
 Task 12: "Run full test suite" → qa, depends [7, 11]
 Task 13: "Fix failures" → engineer, depends [12] (if needed)
@@ -89,7 +89,7 @@ Task 14: "Compile deliverables" → pm (you), depends [12 or 13]
 Task 1: "Generate ADR" → architect, no deps
 Task 2: "Write test stubs" → qa, depends [1]
 Task 3: "Implement feature" → engineer, depends [1]
-Task 4: "Review UI + Taglish" → ux, depends [3]
+Task 4: "Review UI + conversational Filipino" → ux, depends [3]
 Task 5: "Fix violations + run tests" → engineer, depends [2, 4]
 Task 6: "Final test run" → qa, depends [5]
 ```
