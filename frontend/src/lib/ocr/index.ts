@@ -23,3 +23,5 @@ export type {
   SupportedMimeType,
 } from './types';
 export { MAX_IMAGE_SIZE_BYTES, SUPPORTED_MIME_TYPES } from './types';
+export { generateReceiptHash, checkDuplicate, checkReceiptDuplicate } from './dedup';
+export type { DuplicateTransaction, DedupResult } from './dedup';
