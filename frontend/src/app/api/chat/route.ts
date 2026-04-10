@@ -1,3 +1,16 @@
+/**
+ * Chat API — POST /api/chat
+ * Feature: Kai Chat (Build 2) + Reply Drafter integration (Sprint 12)
+ * Role: Main chat endpoint. Handles general chat AND reply-drafting requests
+ *       within the same conversation thread.
+ *
+ * Reply Drafter integration: When the user's message is detected as a
+ * reply-drafting request (customer message paste + intent keywords),
+ * the chat route applies reply-drafter guardrails (no impersonation,
+ * no unauthorized commitments, no financial advice) to the output.
+ * The lib/reply-drafter/ guardrails and intent detector are reused.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/lib/supabase/server';
@@ -18,6 +31,12 @@ import {
 } from '@/lib/claude';
 import { ChatRequestSchema } from '@/lib/claude/schemas';
 import type { KAFeature, UserTier, UserContext } from '@/lib/claude';
+import {
+  detectReplyDraftIntent,
+  REPLY_DISCLAIMER,
+  validateReplyOutput,
+  SAFE_FALLBACK_MESSAGE,
+} from '@/lib/reply-drafter';
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,13 +86,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { message, feature } = parsed.data;
+    const { message, feature: requestedFeature } = parsed.data;
 
     // --- Input Sanitization ---
     const { sanitizedInput, injectionDetected } = sanitizeInput(message);
     if (injectionDetected) {
       console.warn(`[Chat] Injection attempt from user ${user.id}`);
     }
+
+    // --- Reply-Draft Intent Detection (Sprint 12) ---
+    // If the user's message looks like a reply-drafting request,
+    // override the feature to 'reply_drafter' so we get the right
+    // system prompt (communication scope + reply drafter feature block).
+    const isReplyDraft =
+      requestedFeature === 'reply_drafter' || detectReplyDraftIntent(sanitizedInput);
+    const feature: KAFeature = isReplyDraft ? 'reply_drafter' : (requestedFeature as KAFeature);
 
     // --- Load User Context ---
     let tier: UserTier = 'free';
@@ -120,8 +147,8 @@ export async function POST(req: NextRequest) {
     }
 
     // --- Model Selection ---
-    const selectedModel = selectModel(tier, feature as KAFeature);
-    const maxTokens = getMaxTokens(feature as KAFeature);
+    const selectedModel = selectModel(tier, feature);
+    const maxTokens = getMaxTokens(feature);
 
     // --- API Key Check ---
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -199,7 +226,7 @@ export async function POST(req: NextRequest) {
 
     // --- Prompt Assembly ---
     const systemPrompt = assembleSystemPrompt({
-      feature: feature as KAFeature,
+      feature,
       userContext,
     });
 
@@ -216,12 +243,13 @@ export async function POST(req: NextRequest) {
         ).data;
 
     // Save user message (skip in dev bypass — no real user in DB)
+    const conversationDomain = isReplyDraft ? 'communication' : 'general';
     if (!SKIP_AUTH) {
       await supabase.from('ka_conversations').insert({
         user_id: user.id,
         role: 'user',
         content: sanitizedInput.trim(),
-        domain: 'general',
+        domain: conversationDomain,
       });
     }
 
@@ -250,7 +278,22 @@ export async function POST(req: NextRequest) {
         : KA_ERROR_MESSAGES.api_error;
 
     // --- Output Guardrails ---
-    const filteredResponse = filterOutput(rawResponse);
+    let filteredResponse = filterOutput(rawResponse);
+
+    // --- Reply-Draft Output Guardrails (Sprint 12) ---
+    // When this was a reply-drafting request, apply additional validation:
+    // no impersonation, no unauthorized commitments, no financial advice.
+    if (isReplyDraft) {
+      const replyValidation = validateReplyOutput(filteredResponse);
+      if (!replyValidation.valid) {
+        console.warn(`[Chat] Reply-draft output guardrail triggered: ${replyValidation.reason}`);
+        filteredResponse = SAFE_FALLBACK_MESSAGE;
+      } else {
+        // Append the reply-draft disclaimer so users know to review before sending
+        filteredResponse = `${filteredResponse}\n\n${REPLY_DISCLAIMER}`;
+      }
+    }
+
     const finalResponse = applyBIRDisclaimer(filteredResponse, 'chat');
 
     // --- Record Spend & Save Response (skip in dev bypass) ---
@@ -261,7 +304,7 @@ export async function POST(req: NextRequest) {
           response.usage.input_tokens,
           response.usage.output_tokens
         );
-        await recordSpend(serviceSupabase, user.id, actualCost, feature as KAFeature);
+        await recordSpend(serviceSupabase, user.id, actualCost, feature);
       } catch (spendError) {
         console.error('[Chat] Failed to record spend — API call succeeded but cost not tracked', spendError);
       }
@@ -270,7 +313,7 @@ export async function POST(req: NextRequest) {
         user_id: user.id,
         role: 'assistant',
         content: finalResponse,
-        domain: 'general',
+        domain: conversationDomain,
       });
     }
 
