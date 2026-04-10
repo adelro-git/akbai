@@ -16,6 +16,7 @@ import {
   calculateActualCost,
   KA_ERROR_MESSAGES,
 } from '@/lib/claude';
+import { identifyDependencyError, getDependencyFallback } from '@/lib/health';
 import { ChatRequestSchema } from '@/lib/claude/schemas';
 import type { KAFeature, UserTier, UserContext } from '@/lib/claude';
 
@@ -293,13 +294,18 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     console.error('Chat API error:', error instanceof Error ? error.message : error);
     console.error('Chat API stack:', error instanceof Error ? error.stack : 'no stack');
+
+    // --- Dependency-Specific Fallback: Show a targeted message based on which service failed ---
+    const errorType = identifyDependencyError(error);
+    const fallbackMessage = getDependencyFallback(errorType);
+
     return NextResponse.json(
       {
         success: false,
         error: {
           code: 'SERVER_ERROR',
-          message: KA_ERROR_MESSAGES.api_error,
-          message_tl: KA_ERROR_MESSAGES.api_error,
+          message: fallbackMessage,
+          message_tl: fallbackMessage,
         },
       },
       { status: 500 }
