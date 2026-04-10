@@ -9,6 +9,7 @@ import { BIR_TAX_TYPE_LABELS, type BirTaxType } from '@/lib/deadlines/types';
 import { trackSignedOut } from '@/lib/posthog/events';
 import ProfileEditForm from './profile-edit-form';
 import ThemeToggle from './theme-toggle';
+import InstallGuide from '@/components/pwa/install-guide';
 
 interface ProfileViewProps {
   displayName: string | null;
@@ -205,6 +206,15 @@ export default function ProfileView({
               </p>
             </div>
           )}
+        </section>
+
+        {/* ─── PWA Install Section ─── */}
+        <section
+          className="bg-surface-container rounded-2xl p-4"
+          aria-label="Install AKBai"
+          data-testid="section-install"
+        >
+          <InstallGuide showDismiss={false} variant="settings" />
         </section>
 
         {/* ─── App Section ─── */}

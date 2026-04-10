@@ -8,6 +8,7 @@ import StepIncomeRange from './step-income-range';
 import StepPainPoint from './step-pain-point';
 import StepBirConsent from './step-bir-consent';
 import StepBirTaxType from './step-bir-tax-type';
+import InstallGuide from '@/components/pwa/install-guide';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import { trackOnboardingStarted, trackOnboardingCompleted } from '@/lib/posthog/events';
 import type { OnboardingState, BusinessType, IncomeRange, PainPoint } from '@/lib/kilala-kita';
@@ -172,7 +173,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
 
   const progressPct = Math.min(((currentStep - 1) / 5) * 100, 100);
 
-  // Step 6: Show first Kai message then redirect based on painpoint
+  // Step 6: Show first Kai message then offer PWA install (optional)
   if (currentStep === 6 && firstMessage) {
     const painpointRedirect: Record<string, string> = {
       bir_compliance: '/deadlines',
@@ -188,7 +189,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         <div className="flex justify-center">
           <IllustrationWrapper
             src="onboarding/ready.webp"
-            alt="You're all set!"
+            alt="Handa na ang lahat!"
             category="onboarding"
           />
         </div>
@@ -198,13 +199,44 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         </div>
         <button
           type="button"
-          onClick={() => {
-            router.push(redirectTo);
-            router.refresh();
-          }}
-          className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all"
+          onClick={() => setCurrentStep(6.5)}
+          className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all min-h-[44px]"
         >
           Simulan na natin!
+        </button>
+      </div>
+    );
+  }
+
+  // Step 6.5: Optional PWA install guide — non-blocking, user can skip
+  if (currentStep === 6.5) {
+    const painpointRedirect: Record<string, string> = {
+      bir_compliance: '/deadlines',
+      receipt_tracking: '/expenses',
+      customer_messages: '/chat',
+      knowing_earnings: '/dashboard',
+    };
+    const redirectTo = painpointRedirect[savedData.primary_pain ?? ''] ?? '/dashboard';
+
+    const goToDashboard = () => {
+      router.push(redirectTo);
+      router.refresh();
+    };
+
+    return (
+      <div className="flex flex-col gap-6 animate-in fade-in duration-500" data-testid="onboarding-install-step">
+        <InstallGuide
+          onDismiss={goToDashboard}
+          showDismiss={true}
+          variant="onboarding"
+        />
+        <button
+          type="button"
+          onClick={goToDashboard}
+          className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all min-h-[44px]"
+          data-testid="onboarding-continue-btn"
+        >
+          Tara na sa dashboard!
         </button>
       </div>
     );
