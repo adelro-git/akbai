@@ -732,3 +732,36 @@ A user review suggested conversational Filipino would better serve the 30–50 y
 | 2 | Anton | Decide PDF regeneration strategy: regenerate from HTML sources OR accept PDF drift until next rev cycle | OPEN — Non-blocking |
 | 3 | Anton | Locate `.docx` sources for `project/*.pdf` files OR decide to freeze them as historical | OPEN — Non-blocking |
 | 4 | Anton | Pre-authorize `.claude/` subtree edits for build-engineer agent to prevent future permission blocks in multi-agent sweeps | OPEN — Sprint 12 |
+
+### Sprint 12 — 2026-04-10 to 2026-04-12 (Tech Debt + Architecture Cleanup + Gap Closure)
+
+**Phase:** 0A — Tech Debt + Architecture Cleanup
+**Sprint Goal:** Close 2 outstanding retro action items (dev bypass audit + Reply Drafter chat integration), resolve 4 gaps (C1, B7, D9, D4, E2), and prep Build 8 schema — all autonomous agent execution with Anton review on April 12.
+**Capacity:** ~2.3 hrs Anton Time (single review session on April 12)
+
+**Tasks:**
+
+| # | Task | Agent Size | Anton Time | Status | Stream | Notes |
+|---|------|-----------|------------|--------|--------|-------|
+| 1 | Dev bypass audit — fix all API routes | M | XS (0.25hr) | PLANNED | A | Retro action #1 — createServiceClient() |
+| 2 | Reply Drafter → Kai Chat integration | L | S (0.5hr) | PLANNED | B | Retro action #2 — remove standalone page |
+| 3 | Build 8 prep — Costing/Invoice schema design | S | S (0.5hr) | PLANNED | Sequential | Draft only, no migration executed |
+| 4 | Anton review session | — | S (0.5hr) | PLANNED | Sequential | April 12 — review all PRs |
+| 5 | Receipt deduplication (Gap C1) | M | XS (0.1hr) | PLANNED | C | Hash-based dedup ±30 min |
+| 6 | PWA install guide — iOS + Android (Gaps B7+D9) | M | XS (0.25hr) | PLANNED | D | Platform-specific install instructions |
+| 7 | Meta API dummy webhook (Gap E2) | S | XS (0.1hr) | PLANNED | D | Start Meta App Review clock |
+| 8 | Dependency health checks (Gap D4) | S | XS (0.1hr) | PLANNED | E | /api/health + graceful fallbacks |
+
+**Total Anton Time:** ~2.3 hrs / 6 hrs capacity
+
+**Parallel Streams:**
+- **Stream A** (`claude/sprint12-devbypass`): Task 1 — API route audit
+- **Stream B** (`claude/sprint12-replychat`): Task 2 — Reply Drafter → Chat
+- **Stream C** (`claude/sprint12-dedup`): Task 5 — Receipt deduplication
+- **Stream D** (`claude/sprint12-pwa`): Tasks 6 + 7 — PWA install guide + Meta webhook
+- **Stream E** (`claude/sprint12-health`): Task 8 — Health checks
+- **Sequential:** Task 3 — Build 8 schema design (after merge)
+- **Sequential:** Task 4 — Anton reviews (April 12)
+
+**Actual Anton hours:** TBD — updated during retro
+**Sprint outcome:** IN PROGRESS

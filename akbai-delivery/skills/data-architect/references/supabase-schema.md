@@ -1,6 +1,6 @@
 # AKBai — Supabase Schema Reference
 > Living document. Update this file whenever a table is created, modified, or deprecated.
-> Last updated: 2026-03-26 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
+> Last updated: 2026-04-10 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
 
 ---
 
@@ -28,6 +28,7 @@
 20. [Relationship Diagram](#20-relationship-diagram)
 21. [Index Strategy Summary](#21-index-strategy-summary)
 22. [Timezone Handling (Gap A3)](#22-timezone-handling-gap-a3)
+23. [Build 8 (DRAFT)](#23-build-8-draft--awaiting-review)
 
 > **Migration order matters.** Tables are listed in FK dependency order — receipts before transactions (because transactions.receipt_id references receipts.id). Run migrations sequentially by number.
 
@@ -1315,4 +1316,49 @@ WHERE deadline_date BETWEEN
   ((now() AT TIME ZONE 'Asia/Manila')::date + interval '7 days')
   AND status IN ('upcoming', 'notified')
   AND deleted_at IS NULL;
+```
+
+---
+
+## 23. Build 8 (DRAFT — Awaiting Review)
+
+> Status: Schema design drafted 2026-04-10. Awaiting Anton's review before migration creation.
+> Full design: `references/build8-schema-draft.md`
+
+### Planned Tables
+
+| Table | Migration | Purpose | Money Convention |
+|-------|-----------|---------|-----------------|
+| `costing_cards` | 015 | Product cost breakdown header (margin calculator) | INTEGER centavos |
+| `costing_card_items` | 015 | Line items within a costing card (ingredients, labor, overhead) | INTEGER centavos |
+| `invoices` | 016 | Invoice header with client info, status lifecycle, PDF export | INTEGER centavos |
+| `invoice_items` | 016 | Line items within an invoice (optional FK to costing_cards) | INTEGER centavos |
+| `payments` | 017 | Payment records with Xendit idempotency key (resolves Gap D2 CRITICAL) | INTEGER centavos |
+
+### Key Design Decisions
+- **Centavos integers** for all money columns (consistent with Sprint 7 transactions)
+- **Separate line items tables** instead of JSONB (queryable, type-safe, CHECK constraints)
+- **No `business_id`** on new tables (Phase 1 simplicity, add via migration for Phase 2)
+- **`payments` table** with `xendit_payment_id` UNIQUE index for webhook dedup (D2 gate)
+- **`invoices` supersedes section 6** — the original invoices schema was never migrated
+- **`invoice_items.costing_card_id`** optional FK links invoices to costing cards for margin visibility
+
+### RLS Summary
+All 5 tables: standard 3-policy pattern (SELECT/INSERT/UPDATE own). `payments` has SELECT-only for clients (INSERT/UPDATE via service role webhook handler).
+
+### Index Summary
+| Table | Key Indexes |
+|-------|------------|
+| costing_cards | user_id, user_id+category |
+| costing_card_items | costing_card_id, user_id |
+| invoices | user_id, user_id+status, user_id+date, user_id+number (unique), due_date+status (overdue detection) |
+| invoice_items | invoice_id, user_id |
+| payments | user_id, xendit_payment_id (unique, D2), invoice_id, subscription_id, user_id+paid_at |
+
+### Relationship Additions
+```
+auth.users
+    +-- 1:N -- costing_cards -- 1:N -- costing_card_items
+    +-- 1:N -- invoices -- 1:N -- invoice_items (optional FK to costing_cards)
+    +-- 1:N -- payments (links to invoices and/or subscriptions)
 ```
