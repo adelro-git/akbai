@@ -57,14 +57,30 @@ export async function GET() {
     userId = DEV_USER.id;
     userEmail = DEV_USER.email ?? null;
 
+    // Dev bypass — query real DB with service client to bypass RLS
+    const svc = createServiceClient();
+
+    const { data: devUserData } = await svc
+      .from('users')
+      .select('display_name')
+      .eq('id', userId)
+      .single();
+
+    const { data: devProfile } = await svc
+      .from('business_profiles')
+      .select('business_name, business_type, income_range, bir_registered, bir_tax_type')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .single();
+
     const response: ProfileData = {
-      display_name: 'Boss',
+      display_name: devUserData?.display_name ?? null,
       email: userEmail,
-      business_name: 'Dev Business',
-      business_type: 'food_baking',
-      income_range: 'below_50k',
-      bir_registered: false,
-      bir_tax_type: null,
+      business_name: devProfile?.business_name ?? null,
+      business_type: devProfile?.business_type ?? null,
+      income_range: devProfile?.income_range ?? null,
+      bir_registered: devProfile?.bir_registered ?? false,
+      bir_tax_type: devProfile?.bir_tax_type ?? null,
       profile_version: 1,
     };
 

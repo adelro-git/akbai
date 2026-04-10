@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 
 // ============================================================
@@ -86,30 +87,31 @@ export async function POST(req: NextRequest) {
     const { message_id, reason, comment } = parsed.data;
 
     // --- Insert flag report ---
-    if (!SKIP_AUTH) {
-      const { error: insertError } = await supabase
-        .from('flag_as_wrong_reports')
-        .insert({
-          user_id: userId,
-          message_id,
-          reason: reason ?? null,
-          user_comment: comment ?? null,
-          status: 'open',
-        });
+    // Dev bypass uses service client to bypass RLS; auth path uses normal client
+    const db = SKIP_AUTH ? createServiceClient() : supabase;
 
-      if (insertError) {
-        console.error('[FlagAsWrong] Insert error:', insertError.message);
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'DB_ERROR',
-              message_tl: 'Hindi ma-save ang report. Subukan muli.',
-            },
+    const { error: insertError } = await db
+      .from('flag_as_wrong_reports')
+      .insert({
+        user_id: userId,
+        message_id,
+        reason: reason ?? null,
+        user_comment: comment ?? null,
+        status: 'open',
+      });
+
+    if (insertError) {
+      console.error('[FlagAsWrong] Insert error:', insertError.message);
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'DB_ERROR',
+            message_tl: 'Hindi ma-save ang report. Subukan muli.',
           },
-          { status: 500 }
-        );
-      }
+        },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({

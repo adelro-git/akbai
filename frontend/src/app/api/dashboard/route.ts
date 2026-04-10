@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { toManila, getManilaToday } from '@/lib/timezone';
-import { addDevTransaction, softDeleteDevTransactionsByRef, setDevCheckIn, getDevCheckIn } from '@/lib/dev-store';
 
 // ============================================================
 // Types
@@ -126,39 +126,28 @@ export async function GET() {
 
   if (SKIP_AUTH) {
     userId = DEV_USER.id;
+  } else {
+    // Auth check
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    // Dev bypass — return mock dashboard data with persisted check-in
-    const greeting = generateGreeting('Boss');
-    const devCheckIn = getDevCheckIn();
-    const response: DashboardResponse = {
-      greeting,
-      userName: 'Boss',
-      businessName: 'Dev Business',
-      businessType: 'food_baking',
-      todayCheckIn: devCheckIn,
-      dashboardCards: getDashboardCards(),
-    };
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+        { status: 401 }
+      );
+    }
 
-    return NextResponse.json({ success: true, data: response });
+    userId = user.id;
   }
 
-  // Auth check
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    return NextResponse.json(
-      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
-      { status: 401 }
-    );
-  }
-
-  userId = user.id;
+  // Dev bypass uses service client to bypass RLS; auth path uses normal client
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
 
   // Fetch user profile
-  const { data: userData } = await supabase
+  const { data: userData } = await db
     .from('users')
     .select('display_name')
     .eq('id', userId)
@@ -167,7 +156,7 @@ export async function GET() {
   userName = userData?.display_name ?? 'Boss';
 
   // Fetch business profile
-  const { data: businessProfile } = await supabase
+  const { data: businessProfile } = await db
     .from('business_profiles')
     .select('business_name, business_type')
     .eq('user_id', userId)
@@ -176,7 +165,7 @@ export async function GET() {
 
   // Check if user has checked in today
   const today = getManilaToday();
-  const { data: todayCheckIn } = await supabase
+  const { data: todayCheckIn } = await db
     .from('daily_check_in')
     .select('id, mood, kai_greeting, check_in_date, sales_amount, expenses_amount')
     .eq('user_id', userId)
@@ -210,92 +199,25 @@ export async function POST(req: NextRequest) {
 
   if (SKIP_AUTH) {
     userId = DEV_USER.id;
+  } else {
+    // Auth check
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    // Validate body
-    let body: unknown;
-    try {
-      body = await req.json();
-    } catch {
+    if (authError || !user) {
       return NextResponse.json(
-        { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Mali ang request format.' } },
-        { status: 400 }
+        { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+        { status: 401 }
       );
     }
 
-    const parsed = CheckInSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json(
-        { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Mali ang data.', details: parsed.error.flatten().fieldErrors } },
-        { status: 400 }
-      );
-    }
-
-    // Dev bypass — return mock success + create transactions in shared dev store
-    const greeting = generateGreeting('Boss');
-    const today = getManilaToday();
-    const checkinId = 'dev-checkin-001';
-
-    // Create transactions from check-in financial data (shared dev store)
-    if (parsed.data.sales_amount || parsed.data.expenses_amount) {
-      softDeleteDevTransactionsByRef(checkinId);
-
-      if (parsed.data.sales_amount && parsed.data.sales_amount > 0) {
-        addDevTransaction({
-          type: 'income',
-          amount: parsed.data.sales_amount,
-          category: 'check_in_sales',
-          description: `Daily check-in sales (${today})`,
-          transaction_date: today,
-          source: 'check_in',
-          source_ref_id: checkinId,
-        });
-      }
-
-      if (parsed.data.expenses_amount && parsed.data.expenses_amount > 0) {
-        addDevTransaction({
-          type: 'expense',
-          amount: parsed.data.expenses_amount,
-          category: parsed.data.expense_category ?? 'other_expense',
-          description: `Daily check-in gastos (${today})`,
-          transaction_date: today,
-          source: 'check_in',
-          source_ref_id: checkinId,
-        });
-      }
-    }
-
-    const checkInData = {
-      id: checkinId,
-      mood: parsed.data.mood ?? null,
-      kai_greeting: greeting,
-      check_in_date: today,
-      sales_amount: parsed.data.sales_amount ?? null,
-      expenses_amount: parsed.data.expenses_amount ?? null,
-    };
-
-    // Persist in dev store so GET returns it
-    setDevCheckIn(checkInData);
-
-    return NextResponse.json({
-      success: true,
-      data: { ...checkInData, user_id: userId },
-    });
+    userId = user.id;
   }
 
-  // Auth check
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    return NextResponse.json(
-      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
-      { status: 401 }
-    );
-  }
-
-  userId = user.id;
+  // Dev bypass uses service client to bypass RLS; auth path uses normal client
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
 
   // Validate body
   let body: unknown;
@@ -324,19 +246,19 @@ export async function POST(req: NextRequest) {
   }
 
   // Get user's name for greeting
-  const { data: userData } = await supabase
+  const { data: postUserData } = await db
     .from('users')
     .select('display_name')
     .eq('id', userId)
     .single();
 
-  userName = userData?.display_name ?? 'Boss';
+  userName = postUserData?.display_name ?? 'Boss';
 
   const greeting = generateGreeting(userName);
   const today = getManilaToday();
 
   // Upsert check-in (one per user per day) — includes financial fields
-  const { data: checkIn, error: insertError } = await supabase
+  const { data: checkIn, error: insertError } = await db
     .from('daily_check_in')
     .upsert(
       {
@@ -363,7 +285,7 @@ export async function POST(req: NextRequest) {
   // Create transactions from check-in financial data so they appear in Saan Napunta.
   // Soft-delete existing check-in transactions for this check-in to avoid duplicates on re-submit.
   if (checkIn && (parsed.data.sales_amount || parsed.data.expenses_amount)) {
-    await supabase
+    await db
       .from('transactions')
       .update({ deleted_at: new Date().toISOString() })
       .eq('user_id', userId)
@@ -399,7 +321,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (txRows.length > 0) {
-      await supabase.from('transactions').insert(txRows);
+      await db.from('transactions').insert(txRows);
     }
   }
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { getManilaToday } from '@/lib/timezone';
 import {
@@ -7,12 +8,6 @@ import {
   UpdateTransactionSchema,
   ExpensesQuerySchema,
 } from '@/lib/expenses/schemas';
-import {
-  getActiveDevTransactions,
-  addDevTransaction,
-  softDeleteDevTransaction,
-  type DevTransaction,
-} from '@/lib/dev-store';
 
 // ============================================================
 // Types
@@ -47,37 +42,6 @@ interface ExpensesResponse {
 }
 
 // ============================================================
-// Dev-mode helpers
-// ============================================================
-
-function devComputeSummary(rows: TransactionRow[]) {
-  let totalIncome = 0;
-  let totalExpenses = 0;
-  const catMap = new Map<string, { total: number; count: number }>();
-
-  for (const tx of rows) {
-    if (tx.type === 'income') {
-      totalIncome += tx.amount;
-    } else {
-      totalExpenses += tx.amount;
-    }
-    const existing = catMap.get(tx.category);
-    if (existing) {
-      existing.total += tx.amount;
-      existing.count += 1;
-    } else {
-      catMap.set(tx.category, { total: tx.amount, count: 1 });
-    }
-  }
-
-  const byCategory: CategorySummary[] = Array.from(catMap.entries())
-    .map(([category, { total, count }]) => ({ category, total, count }))
-    .sort((a, b) => b.total - a.total);
-
-  return { total_income: totalIncome, total_expenses: totalExpenses, net: totalIncome - totalExpenses, by_category: byCategory };
-}
-
-// ============================================================
 // GET — List transactions with optional filters + aggregation
 // ============================================================
 
@@ -105,39 +69,28 @@ export async function GET(req: NextRequest) {
 
   if (SKIP_AUTH) {
     userId = DEV_USER.id;
-    // Dev bypass — return from shared in-memory store
-    let filtered: TransactionRow[] = getActiveDevTransactions();
-    if (filters.type) filtered = filtered.filter(tx => tx.type === filters.type);
-    if (filters.category) filtered = filtered.filter(tx => tx.category === filters.category);
-    if (filters.month) {
-      const [yr, mo] = filters.month.split('-').map(Number);
-      const from = `${filters.month}-01`;
-      const lastDay = new Date(yr, mo, 0).getDate();
-      const to = `${filters.month}-${String(lastDay).padStart(2, '0')}`;
-      filtered = filtered.filter(tx => tx.transaction_date >= from && tx.transaction_date <= to);
+  } else {
+    // Auth check
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+        { status: 401 }
+      );
     }
-    filtered.sort((a, b) => b.transaction_date.localeCompare(a.transaction_date) || b.created_at.localeCompare(a.created_at));
-    const response: ExpensesResponse = { transactions: filtered, summary: devComputeSummary(filtered) };
-    return NextResponse.json({ success: true, data: response });
+
+    userId = user.id;
   }
 
-  // Auth check
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    return NextResponse.json(
-      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
-      { status: 401 }
-    );
-  }
-
-  userId = user.id;
+  // Dev bypass uses service client to bypass RLS; auth path uses normal client
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
 
   // Build query
-  let query = supabase
+  let query = db
     .from('transactions')
     .select('id, type, amount, category, description, transaction_date, source, source_ref_id, created_at')
     .eq('user_id', userId)
@@ -257,34 +210,27 @@ export async function POST(req: NextRequest) {
 
   if (SKIP_AUTH) {
     userId = DEV_USER.id;
-    const newTx = addDevTransaction({
-      type: data.type,
-      amount: data.amount,
-      category: data.category,
-      description: data.description ?? null,
-      transaction_date: data.transaction_date ?? getManilaToday(),
-      source: data.source ?? 'manual',
-      source_ref_id: data.source_ref_id ?? null,
-    });
-    return NextResponse.json({ success: true, data: newTx }, { status: 201 });
+  } else {
+    // Auth check
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+        { status: 401 }
+      );
+    }
+
+    userId = user.id;
   }
 
-  // Auth check
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+  // Dev bypass uses service client to bypass RLS; auth path uses normal client
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
 
-  if (authError || !user) {
-    return NextResponse.json(
-      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
-      { status: 401 }
-    );
-  }
-
-  userId = user.id;
-
-  const { data: tx, error: insertError } = await supabase
+  const { data: tx, error: insertError } = await db
     .from('transactions')
     .insert({
       user_id: userId,
@@ -351,32 +297,29 @@ export async function PATCH(req: NextRequest) {
     );
   }
 
+  let patchUserId: string;
+
   if (SKIP_AUTH) {
-    const all = getActiveDevTransactions();
-    const tx = all.find(t => t.id === txId);
-    if (!tx) {
-      return NextResponse.json({ success: false, error: { code: 'NOT_FOUND', message_tl: 'Hindi makita.' } }, { status: 404 });
+    patchUserId = DEV_USER.id;
+  } else {
+    // Auth check
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+        { status: 401 }
+      );
     }
-    const d = parsed.data;
-    if (d.amount !== undefined) tx.amount = d.amount;
-    if (d.category !== undefined) tx.category = d.category;
-    if (d.description !== undefined) tx.description = d.description;
-    if (d.transaction_date !== undefined) tx.transaction_date = d.transaction_date;
-    return NextResponse.json({ success: true, data: tx });
+
+    patchUserId = user.id;
   }
 
-  // Auth check
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    return NextResponse.json(
-      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
-      { status: 401 }
-    );
-  }
+  // Dev bypass uses service client to bypass RLS; auth path uses normal client
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
 
   const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
   const d = parsed.data;
@@ -385,11 +328,11 @@ export async function PATCH(req: NextRequest) {
   if (d.description !== undefined) updateData.description = d.description;
   if (d.transaction_date !== undefined) updateData.transaction_date = d.transaction_date;
 
-  const { data: tx, error: updateError } = await supabase
+  const { data: tx, error: updateError } = await db
     .from('transactions')
     .update(updateData)
     .eq('id', txId)
-    .eq('user_id', user.id)
+    .eq('user_id', patchUserId)
     .is('deleted_at', null)
     .select('id, type, amount, category, description, transaction_date, source, source_ref_id, created_at')
     .single();
@@ -421,29 +364,35 @@ export async function DELETE(req: NextRequest) {
     );
   }
 
+  let deleteUserId: string;
+
   if (SKIP_AUTH) {
-    softDeleteDevTransaction(txId);
-    return NextResponse.json({ success: true, data: { id: txId, deleted: true } });
+    deleteUserId = DEV_USER.id;
+  } else {
+    // Auth check
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
+        { status: 401 }
+      );
+    }
+
+    deleteUserId = user.id;
   }
 
-  // Auth check
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+  // Dev bypass uses service client to bypass RLS; auth path uses normal client
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
 
-  if (authError || !user) {
-    return NextResponse.json(
-      { success: false, error: { code: 'UNAUTHORIZED', message_tl: 'Kailangan mag-login muna.' } },
-      { status: 401 }
-    );
-  }
-
-  const { error: deleteError } = await supabase
+  const { error: deleteError } = await db
     .from('transactions')
     .update({ deleted_at: new Date().toISOString() })
     .eq('id', txId)
-    .eq('user_id', user.id)
+    .eq('user_id', deleteUserId)
     .is('deleted_at', null);
 
   if (deleteError) {

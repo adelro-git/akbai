@@ -59,13 +59,6 @@ export async function GET() {
 
     if (SKIP_AUTH) {
       userId = DEV_USER.id;
-      tier = 'pro'; // Dev mode simulates pro tier for briefing access
-      userContext = {
-        firstName: 'Boss',
-        businessType: 'food_baking',
-        tier: 'pro',
-        birRegistered: false,
-      };
     } else {
       const {
         data: { user: authUser },
@@ -87,40 +80,50 @@ export async function GET() {
       }
 
       userId = authUser.id;
+    }
 
-      // --- Load user profile data ---
-      const { data: profile } = await supabase
-        .from('business_profiles')
-        .select('business_type, bir_registered')
-        .eq('user_id', userId)
-        .is('deleted_at', null)
-        .single();
+    // Dev bypass uses service client to bypass RLS; auth path uses normal client
+    const db = SKIP_AUTH ? createServiceClient() : supabase;
 
-      const { data: userData } = await supabase
-        .from('users')
-        .select('display_name, onboarding_completed, feature_flags')
-        .eq('id', userId)
-        .single();
+    // --- Load user profile data ---
+    const { data: profileData } = await db
+      .from('business_profiles')
+      .select('business_type, bir_registered')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .single();
 
-      onboardingCompleted = userData?.onboarding_completed ?? false;
+    const { data: userData } = await db
+      .from('users')
+      .select('display_name, onboarding_completed, feature_flags')
+      .eq('id', userId)
+      .single();
 
-      const { data: subscription } = await supabase
-        .from('subscriptions')
-        .select('tier')
-        .eq('user_id', userId)
-        .is('deleted_at', null)
-        .single();
+    onboardingCompleted = userData?.onboarding_completed ?? false;
 
-      tier = (subscription?.tier as UserTier) ?? 'free';
+    const { data: subscriptionData } = await db
+      .from('subscriptions')
+      .select('tier')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .single();
 
-      userContext = {
-        firstName: userData?.display_name ?? null,
-        businessType: profile?.business_type ?? null,
-        tier,
-        birRegistered: profile?.bir_registered ?? false,
-      };
+    tier = (subscriptionData?.tier as UserTier) ?? 'free';
 
-      // --- Feature Flag Check ---
+    // Dev mode simulates pro tier for briefing access when no subscription exists
+    if (SKIP_AUTH && tier === 'free') {
+      tier = 'pro';
+    }
+
+    userContext = {
+      firstName: userData?.display_name ?? null,
+      businessType: profileData?.business_type ?? null,
+      tier,
+      birRegistered: profileData?.bir_registered ?? false,
+    };
+
+    // --- Feature Flag Check ---
+    if (!SKIP_AUTH) {
       const featureFlags = (userData?.feature_flags ?? {}) as Record<string, boolean>;
       if (featureFlags[FLAGS.MORNING_BRIEFING_ENABLED] === false) {
         const response: MorningBriefingResponse = {
@@ -147,24 +150,22 @@ export async function GET() {
     // --- Cache Check: look for today's briefing ---
     const today = getManilaToday();
 
-    if (!SKIP_AUTH) {
-      const { data: cached } = await supabase
-        .from('daily_check_in')
-        .select('briefing_content, briefing_generated_at')
-        .eq('user_id', userId)
-        .eq('check_in_date', today)
-        .is('deleted_at', null)
-        .not('briefing_content', 'is', null)
-        .single();
+    const { data: cached } = await db
+      .from('daily_check_in')
+      .select('briefing_content, briefing_generated_at')
+      .eq('user_id', userId)
+      .eq('check_in_date', today)
+      .is('deleted_at', null)
+      .not('briefing_content', 'is', null)
+      .single();
 
-      if (cached?.briefing_content) {
-        const response: MorningBriefingResponse = {
-          available: true,
-          briefing: cached.briefing_content,
-          cached: true,
-        };
-        return NextResponse.json({ success: true, data: response });
-      }
+    if (cached?.briefing_content) {
+      const response: MorningBriefingResponse = {
+        available: true,
+        briefing: cached.briefing_content,
+        cached: true,
+      };
+      return NextResponse.json({ success: true, data: response });
     }
 
     // --- Time Window Check ---
@@ -258,7 +259,7 @@ export async function GET() {
     }
 
     // --- Aggregate Data ---
-    const context = await aggregateBriefingData(supabase, userId);
+    const context = await aggregateBriefingData(db, userId);
 
     // --- Assemble System Prompt ---
     const systemPrompt = assembleSystemPrompt({
@@ -292,35 +293,34 @@ export async function GET() {
     const filteredResponse = filterOutput(rawResponse);
     const finalResponse = applyBIRDisclaimer(filteredResponse, 'card');
 
-    // --- Record Spend (skip in dev bypass) ---
-    if (!SKIP_AUTH && serviceSupabase) {
+    // --- Record Spend ---
+    const spendClient = serviceSupabase ?? (SKIP_AUTH ? createServiceClient() : null);
+    if (spendClient) {
       try {
         const actualCost = calculateActualCost(
           selectedModel,
           response.usage.input_tokens,
           response.usage.output_tokens
         );
-        await recordSpend(serviceSupabase, userId, actualCost, FEATURE);
+        await recordSpend(spendClient, userId, actualCost, FEATURE);
       } catch (spendError) {
         console.error('[MorningBriefing] Failed to record spend', spendError);
       }
     }
 
     // --- Cache Result: upsert into daily_check_in ---
-    if (!SKIP_AUTH) {
-      await supabase
-        .from('daily_check_in')
-        .upsert(
-          {
-            user_id: userId,
-            check_in_date: today,
-            briefing_content: finalResponse,
-            briefing_generated_at: new Date().toISOString(),
-            kai_greeting: '', // required column, briefing-only check-ins use empty string
-          },
-          { onConflict: 'user_id,check_in_date' }
-        );
-    }
+    await db
+      .from('daily_check_in')
+      .upsert(
+        {
+          user_id: userId,
+          check_in_date: today,
+          briefing_content: finalResponse,
+          briefing_generated_at: new Date().toISOString(),
+          kai_greeting: '', // required column, briefing-only check-ins use empty string
+        },
+        { onConflict: 'user_id,check_in_date' }
+      );
 
     const briefingResponse: MorningBriefingResponse = {
       available: true,

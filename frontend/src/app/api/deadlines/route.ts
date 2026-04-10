@@ -23,12 +23,6 @@ import type {
 } from '@/lib/deadlines/types';
 
 // ============================================================
-// Dev-mode in-memory store for deadlines
-// ============================================================
-
-let devDeadlines: (DeadlineRow & { deleted_at: string | null })[] = [];
-
-// ============================================================
 // Helpers — urgency calculation
 // ============================================================
 
