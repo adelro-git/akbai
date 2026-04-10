@@ -61,7 +61,7 @@ function getDashboardCards(data: DashboardData): CardDef[] {
     {
       id: 'quick-chat',
       title: 'Quick Chat with Kai',
-      description: 'Kausapin si Kai',
+      description: 'Kausapin si Kai — puwede ring mag-draft ng reply',
       href: '/chat',
       icon: 'message-circle',
       emptyState: '',
@@ -105,15 +105,8 @@ function getDashboardCards(data: DashboardData): CardDef[] {
         ? `${data.expenseCount} transactions`
         : undefined,
     },
-    {
-      id: 'reply-drafter',
-      title: 'Reply Drafter',
-      description: 'Draft reply sa customer mo',
-      href: '/reply-drafter',
-      icon: 'message-square',
-      emptyState: 'I-draft ni Kai ang reply mo',
-      hasData: true,
-    },
+    // Reply Drafter removed as standalone card (Sprint 12) —
+    // reply drafting is now handled within Kai Chat via intent detection.
   ];
 }
 

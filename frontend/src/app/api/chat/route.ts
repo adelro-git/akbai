@@ -8,7 +8,7 @@
  * reply-drafting request (customer message paste + intent keywords),
  * the chat route applies reply-drafter guardrails (no impersonation,
  * no unauthorized commitments, no financial advice) to the output.
- * The lib/reply-drafter/ guardrails and prompt helpers are reused.
+ * The lib/reply-drafter/ guardrails and intent detector are reused.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -32,50 +32,11 @@ import {
 import { ChatRequestSchema } from '@/lib/claude/schemas';
 import type { KAFeature, UserTier, UserContext } from '@/lib/claude';
 import {
+  detectReplyDraftIntent,
+  REPLY_DISCLAIMER,
   validateReplyOutput,
   SAFE_FALLBACK_MESSAGE,
 } from '@/lib/reply-drafter';
-
-// ============================================================
-// Reply-Draft Intent Detection — determines if the user's message
-// is asking Kai to draft a reply to a customer message.
-// Uses keyword matching + structural heuristics (quoted text, etc.)
-// ============================================================
-
-const REPLY_DRAFT_KEYWORDS: RegExp[] = [
-  /\b(?:draft|gawa|i-draft|mag-draft)\b.*\breply\b/i,
-  /\breply\b.*\b(?:draft|gawa|i-draft|mag-draft)\b/i,
-  /\b(?:i-reply|mag-reply|sagutin|i-sagot|replyan)\b/i,
-  /\b(?:pano|paano)\b.*\b(?:reply|sagot|respond)\b/i,
-  /\b(?:help|tulungan)\b.*\b(?:reply|sagot|respond)\b/i,
-  /\bcustomer\b.*\b(?:message|msg|chat|DM|dm)\b/i,
-  /\b(?:message|msg|chat|DM|dm)\b.*\bcustomer\b/i,
-  /\b(?:reply|sagot|respond)\b.*\b(?:customer|buyer|client)\b/i,
-  /\b(?:customer|buyer|client)\b.*\b(?:reply|sagot|respond)\b/i,
-];
-
-/** Heuristic: message contains quoted text (likely a pasted customer message). */
-const QUOTED_TEXT_PATTERN = /[""\u201C\u201D]([^""\u201C\u201D]{10,}?)[""\u201C\u201D]/;
-
-/**
- * Detect if the user intends to draft a reply to a customer message.
- * Returns true when keywords + structural cues indicate reply-drafting intent.
- */
-function detectReplyDraftIntent(message: string): boolean {
-  // Check explicit keyword patterns
-  const hasKeyword = REPLY_DRAFT_KEYWORDS.some((pattern) => pattern.test(message));
-  if (hasKeyword) return true;
-
-  // Check for quoted customer message with reply-adjacent context
-  const hasQuotedText = QUOTED_TEXT_PATTERN.test(message);
-  const hasReplyWord = /\b(?:reply|sagot|respond|i-reply|replyan)\b/i.test(message);
-  if (hasQuotedText && hasReplyWord) return true;
-
-  return false;
-}
-
-const REPLY_DISCLAIMER =
-  'Ito ay draft lang — i-review at i-edit mo bago i-send sa customer mo.';
 
 export async function POST(req: NextRequest) {
   try {
