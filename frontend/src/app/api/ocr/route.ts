@@ -1,13 +1,15 @@
 // ============================================================
-// API Route: OCR Receipt Scan (Sprint 4 — Gap E1 Spike)
+// API Route: OCR Receipt Scan (Sprint 4 — Gap E1 Spike, updated Sprint 12)
 // Endpoint: POST /api/ocr
-// Version: 0.1.0 (spike)
-// Last changed: 2026-03-24
+// Version: 0.2.0
+// Last changed: 2026-04-10
 //
 // Purpose: Accept a receipt image upload and return structured extraction.
-// Input: FormData with 'image' file
-// Output: ReceiptParseResult
-// Guardrails: Auth check, file size (10MB), MIME type, circuit breaker
+//          Now includes duplicate detection (Gap C1): after OCR parsing,
+//          checks for existing transactions with same hash within ±30 min.
+// Input: FormData with 'image' file, optional 'force_save' flag
+// Output: ReceiptParseResult with optional dedup info
+// Guardrails: Auth check, file size (10MB), MIME type, circuit breaker, dedup
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -21,6 +23,7 @@ import {
 } from '@/lib/claude';
 import type { UserTier } from '@/lib/claude';
 import { parseReceipt, estimateOcrCost, calculateOcrCost } from '@/lib/ocr';
+import { generateReceiptHash, checkDuplicate } from '@/lib/ocr/dedup';
 import { SUPPORTED_MIME_TYPES, MAX_IMAGE_SIZE_BYTES } from '@/lib/ocr/types';
 
 export async function POST(req: NextRequest) {
@@ -219,7 +222,66 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true, data: result });
+    // --- Dedup Check (Gap C1): Flag duplicates before saving ---
+    // Check if force_save was set (user confirmed save despite duplicate)
+    const forceSave = formData.get('force_save') === 'true';
+    let dedupInfo: {
+      is_duplicate: boolean;
+      existing_transaction: Record<string, unknown> | null;
+      receipt_hash: string | null;
+    } = { is_duplicate: false, existing_transaction: null, receipt_hash: null };
+
+    if (result.success && !forceSave) {
+      const totalCentavos =
+        typeof result.fields.total.value === 'number'
+          ? result.fields.total.value
+          : 0;
+      const dateStr =
+        typeof result.fields.date.value === 'string'
+          ? result.fields.date.value
+          : '';
+      const merchantStr =
+        typeof result.fields.merchant.value === 'string'
+          ? result.fields.merchant.value
+          : '';
+
+      if (totalCentavos > 0 && dateStr) {
+        const receiptHash = generateReceiptHash(
+          totalCentavos,
+          dateStr,
+          merchantStr
+        );
+        dedupInfo.receipt_hash = receiptHash;
+
+        try {
+          // Use service client for dedup check (works in both auth and dev bypass)
+          const dedupClient = SKIP_AUTH
+            ? createServiceClient()
+            : supabase;
+
+          const existingTx = await checkDuplicate(
+            dedupClient,
+            user.id,
+            receiptHash,
+            new Date()
+          );
+
+          if (existingTx) {
+            dedupInfo.is_duplicate = true;
+            dedupInfo.existing_transaction =
+              existingTx as unknown as Record<string, unknown>;
+          }
+        } catch (dedupError) {
+          // Fail open — don't block scan if dedup check fails
+          console.error('[OCR] Dedup check failed (proceeding):', dedupError);
+        }
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: { ...result, dedup: dedupInfo },
+    });
   } catch (error: unknown) {
     console.error('[OCR] API error:', error instanceof Error ? error.message : error);
     console.error('[OCR] Stack:', error instanceof Error ? error.stack : 'no stack');
