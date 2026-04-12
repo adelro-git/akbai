@@ -10,6 +10,7 @@ import { trackSignedOut } from '@/lib/posthog/events';
 import ProfileEditForm from './profile-edit-form';
 import ThemeToggle from './theme-toggle';
 import InstallGuide from '@/components/pwa/install-guide';
+import NotificationSettings from './notification-settings';
 
 interface ProfileViewProps {
   displayName: string | null;
@@ -207,6 +208,9 @@ export default function ProfileView({
             </div>
           )}
         </section>
+
+        {/* ─── Notification Settings Section ─── */}
+        <NotificationSettings />
 
         {/* ─── PWA Install Section ─── */}
         <section
