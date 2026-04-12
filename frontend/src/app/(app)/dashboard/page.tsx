@@ -54,6 +54,7 @@ interface DashboardData {
   expenseCount: number;
   nextDeadlineDate: string | null;
   overdueCount: number;
+  costingCardCount: number;
 }
 
 function getDashboardCards(data: DashboardData): CardDef[] {
@@ -107,6 +108,18 @@ function getDashboardCards(data: DashboardData): CardDef[] {
     },
     // Reply Drafter removed as standalone card (Sprint 12) —
     // reply drafting is now handled within Kai Chat via intent detection.
+    {
+      id: 'costing-cards',
+      title: 'Costing Cards',
+      description: 'Magkano talaga ang gastos at margin mo?',
+      href: '/costing',
+      icon: 'calculator',
+      emptyState: 'Alamin ang totoong gastos ng produkto mo!',
+      hasData: data.costingCardCount > 0,
+      summary: data.costingCardCount > 0
+        ? `${data.costingCardCount} costing card${data.costingCardCount !== 1 ? 's' : ''}`
+        : undefined,
+    },
   ];
 }
 
@@ -212,6 +225,16 @@ export default async function DashboardPage() {
 
   expenseCount = txCount ?? 0;
 
+  // --- Fetch costing card count for Costing Cards card (Build 8A) ---
+  let costingCardCount = 0;
+  const { count: ccCount } = await db
+    .from('costing_cards')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .is('deleted_at', null);
+
+  costingCardCount = ccCount ?? 0;
+
   // --- Fetch deadline summary for BIR Deadlines card (Build 6) ---
   const { data: nextDeadline } = await db
     .from('bir_deadlines')
@@ -240,7 +263,7 @@ export default async function DashboardPage() {
   overdueCount = odCount ?? 0;
 
   const greeting = generateGreeting(userName);
-  const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount });
+  const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount, costingCardCount });
 
   return (
     <PageBackground variant="dashboard">
