@@ -2,7 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MorningBriefing, CustomerMessages, ResiboScanner, ProfileUser } from '@/components/illustrations/svg';
+import { MorningBriefing, CustomerMessages, ResiboScanner, CashFlow, ProfileUser } from '@/components/illustrations/svg';
+
+// ============================================================
+// Nav Items — 5-item mobile bottom nav (max for mobile UX).
+// Home, Chat, Resibo, Gastos, Profile. Secondary features
+// (Costing, Invoices, Deadlines) accessible from dashboard cards.
+// ============================================================
 
 interface NavItem {
   label: string;
@@ -15,6 +21,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Home', href: '/dashboard', icon: MorningBriefing, testId: 'nav-home' },
   { label: 'Chat', href: '/chat', icon: CustomerMessages, testId: 'nav-chat' },
   { label: 'Resibo', href: '/scan', icon: ResiboScanner, testId: 'nav-scan' },
+  { label: 'Gastos', href: '/expenses', icon: CashFlow, testId: 'nav-expenses' },
   { label: 'Profile', href: '/profile', icon: ProfileUser, testId: 'nav-profile' },
 ];
 
