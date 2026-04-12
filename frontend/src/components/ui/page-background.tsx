@@ -8,7 +8,7 @@
 
 import Image from 'next/image';
 
-type PageVariant = 'login' | 'dashboard' | 'onboarding' | 'chat' | 'expenses' | 'deadlines' | 'profile' | 'offline' | 'scan';
+type PageVariant = 'login' | 'dashboard' | 'onboarding' | 'chat' | 'expenses' | 'deadlines' | 'profile' | 'offline' | 'scan' | 'invoices';
 
 interface PageBackgroundProps {
   variant: PageVariant;
@@ -25,6 +25,7 @@ const BACKGROUND_MAP: Record<PageVariant, { src: string; lightOpacity: number; d
   deadlines: { src: 'backgrounds/deadlines-bir.webp', lightOpacity: 0.12, darkOpacity: 0.06 },
   profile: { src: 'backgrounds/profile-banner.webp', lightOpacity: 0.14, darkOpacity: 0.07 },
   scan: { src: 'features/scan-in-progress.webp', lightOpacity: 0.10, darkOpacity: 0.05 },
+  invoices: { src: 'backgrounds/expenses-financial.webp', lightOpacity: 0.10, darkOpacity: 0.05 },
   offline: null,
 };
 

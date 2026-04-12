@@ -54,6 +54,8 @@ interface DashboardData {
   expenseCount: number;
   nextDeadlineDate: string | null;
   overdueCount: number;
+  invoicePendingCount: number;
+  invoiceOverdueCount: number;
 }
 
 function getDashboardCards(data: DashboardData): CardDef[] {
@@ -105,6 +107,20 @@ function getDashboardCards(data: DashboardData): CardDef[] {
         ? `${data.expenseCount} transactions`
         : undefined,
     },
+    {
+      id: 'invoices',
+      title: 'Mga Invoice',
+      description: 'Gumawa at i-track ang mga invoice',
+      href: '/invoices',
+      icon: 'file-text',
+      emptyState: 'Gumawa ng invoice para sa mga customer mo!',
+      hasData: data.invoicePendingCount > 0 || data.invoiceOverdueCount > 0,
+      summary: data.invoiceOverdueCount > 0
+        ? `${data.invoiceOverdueCount} overdue!`
+        : data.invoicePendingCount > 0
+          ? `${data.invoicePendingCount} pending`
+          : undefined,
+    },
     // Reply Drafter removed as standalone card (Sprint 12) —
     // reply drafting is now handled within Kai Chat via intent detection.
   ];
@@ -129,6 +145,8 @@ export default async function DashboardPage() {
   let expenseCount = 0;
   let nextDeadlineDate: string | null = null;
   let overdueCount = 0;
+  let invoicePendingCount = 0;
+  let invoiceOverdueCount = 0;
 
   // --- Check-in data (Task 1) ---
   let todayCheckIn: {
@@ -239,8 +257,27 @@ export default async function DashboardPage() {
 
   overdueCount = odCount ?? 0;
 
+  // --- Fetch invoice counts for Invoice card (Build 8) ---
+  const { count: invPendingCount } = await db
+    .from('invoices')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .in('status', ['draft', 'sent'])
+    .is('deleted_at', null);
+
+  invoicePendingCount = invPendingCount ?? 0;
+
+  const { count: invOverdueCount } = await db
+    .from('invoices')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('status', 'overdue')
+    .is('deleted_at', null);
+
+  invoiceOverdueCount = invOverdueCount ?? 0;
+
   const greeting = generateGreeting(userName);
-  const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount });
+  const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount, invoicePendingCount, invoiceOverdueCount });
 
   return (
     <PageBackground variant="dashboard">
