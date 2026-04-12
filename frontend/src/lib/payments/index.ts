@@ -22,3 +22,12 @@ export type {
   RecordCashPaymentPayload,
   UpdatePaymentStatusPayload,
 } from './schemas';
+
+// --- Payment Recording ---
+export {
+  recordPayment,
+  linkPaymentToInvoice,
+  linkPaymentToSubscription,
+} from './record-payment';
+
+export type { RecordPaymentResult } from './record-payment';
