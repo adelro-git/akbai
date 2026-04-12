@@ -230,19 +230,26 @@ export async function POST(req: NextRequest) {
   // Dev bypass uses service client to bypass RLS; auth path uses normal client
   const db = SKIP_AUTH ? createServiceClient() : supabase;
 
+  // --- Build insert payload (OCR-sourced fields are optional) ---
+  const insertPayload: Record<string, unknown> = {
+    user_id: userId,
+    type: data.type,
+    amount: data.amount,
+    category: data.category,
+    description: data.description ?? null,
+    transaction_date: data.transaction_date ?? getManilaToday(),
+    source: data.source ?? 'manual',
+    source_ref_id: data.source_ref_id ?? null,
+  };
+
+  // OCR-sourced transactions include merchant_name and receipt_hash (Build 3)
+  if (data.merchant_name) insertPayload.merchant_name = data.merchant_name;
+  if (data.receipt_hash) insertPayload.receipt_hash = data.receipt_hash;
+
   const { data: tx, error: insertError } = await db
     .from('transactions')
-    .insert({
-      user_id: userId,
-      type: data.type,
-      amount: data.amount,
-      category: data.category,
-      description: data.description ?? null,
-      transaction_date: data.transaction_date ?? getManilaToday(),
-      source: data.source ?? 'manual',
-      source_ref_id: data.source_ref_id ?? null,
-    })
-    .select('id, type, amount, category, description, transaction_date, source, source_ref_id, created_at')
+    .insert(insertPayload)
+    .select('id, type, amount, category, description, transaction_date, source, source_ref_id, merchant_name, receipt_hash, created_at')
     .single();
 
   if (insertError) {

@@ -29,6 +29,9 @@ export const CreateTransactionSchema = z
       .optional(),
     source: TransactionSourceEnum.optional(), // defaults to 'manual'
     source_ref_id: z.string().uuid().optional(),
+    // --- OCR-sourced fields (Build 3: Resibo Scanner) ---
+    merchant_name: z.string().max(200).optional(),
+    receipt_hash: z.string().optional(),
   })
   .refine(
     (data) => {
