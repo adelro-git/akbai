@@ -140,9 +140,9 @@ describe('FLAGS', () => {
     expect(FLAGS.DARK_MODE_ENABLED).toBe('dark_mode_enabled');
   });
 
-  it('has exactly 6 flags', async () => {
+  it('has exactly 8 flags', async () => {
     const { FLAGS } = await import('../flags');
-    expect(Object.keys(FLAGS)).toHaveLength(6);
+    expect(Object.keys(FLAGS)).toHaveLength(8);
   });
 });
 

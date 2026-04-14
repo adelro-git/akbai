@@ -17,6 +17,12 @@ export const FLAGS = {
   DARK_MODE_ENABLED: 'dark_mode_enabled',
   DEADLINE_WATCHER_ENABLED: 'deadline_watcher_enabled',
   REPLY_DRAFTER_ENABLED: 'reply_drafter_enabled',
+  // Build 8 features — deprioritized per PO decision (2026-04).
+  // Backend code + schema (migrations 015/016/017) + API routes + pages
+  // all retained. Flags default FALSE so dashboard cards are hidden.
+  // Flip to TRUE via admin panel to re-enable for a user.
+  COSTING_CARDS_ENABLED: 'costing_cards_enabled',
+  INVOICES_ENABLED: 'invoices_enabled',
 } as const satisfies Record<string, string>;
 
 /** Union type of all known flag key names */

@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { toManila, getManilaToday } from '@/lib/timezone';
+import { getFeatureFlag } from '@/lib/feature-flags';
+import { FLAGS } from '@/lib/feature-flags/flags';
 import DashboardTracker from '@/components/dashboard/dashboard-tracker';
 import KaiGreeting from '@/components/dashboard/kai-greeting';
 import DashboardCard from '@/components/dashboard/dashboard-card';
@@ -59,8 +61,13 @@ interface DashboardData {
   invoiceOverdueCount: number;
 }
 
-function getDashboardCards(data: DashboardData): CardDef[] {
-  return [
+interface CardVisibility {
+  costingCardsEnabled: boolean;
+  invoicesEnabled: boolean;
+}
+
+function getDashboardCards(data: DashboardData, visibility: CardVisibility): CardDef[] {
+  const cards: CardDef[] = [
     {
       id: 'quick-chat',
       title: 'Quick Chat with Kai',
@@ -108,7 +115,14 @@ function getDashboardCards(data: DashboardData): CardDef[] {
         ? `${data.expenseCount} transactions`
         : undefined,
     },
-    {
+    // Reply Drafter removed as standalone card (Sprint 12) —
+    // reply drafting is now handled within Kai Chat via intent detection.
+  ];
+
+  // Build 8 features gated behind feature flags (deprioritized 2026-04).
+  // Backend/schema/routes/pages retained; cards only render when flag is ON.
+  if (visibility.invoicesEnabled) {
+    cards.push({
       id: 'invoices',
       title: 'Mga Invoice',
       description: 'Gumawa at i-track ang mga invoice',
@@ -121,10 +135,11 @@ function getDashboardCards(data: DashboardData): CardDef[] {
         : data.invoicePendingCount > 0
           ? `${data.invoicePendingCount} pending`
           : undefined,
-    },
-    // Reply Drafter removed as standalone card (Sprint 12) —
-    // reply drafting is now handled within Kai Chat via intent detection.
-    {
+    });
+  }
+
+  if (visibility.costingCardsEnabled) {
+    cards.push({
       id: 'costing-cards',
       title: 'Costing Cards',
       description: 'Magkano talaga ang gastos at margin mo?',
@@ -135,8 +150,10 @@ function getDashboardCards(data: DashboardData): CardDef[] {
       summary: data.costingCardCount > 0
         ? `${data.costingCardCount} costing card${data.costingCardCount !== 1 ? 's' : ''}`
         : undefined,
-    },
-  ];
+    });
+  }
+
+  return cards;
 }
 
 // ============================================================
@@ -299,8 +316,17 @@ export default async function DashboardPage() {
 
   invoiceOverdueCount = invOverdueCount ?? 0;
 
+  // --- Feature flag gates for Build 8 cards (deprioritized 2026-04) ---
+  const [costingCardsEnabled, invoicesEnabled] = await Promise.all([
+    getFeatureFlag(userId, FLAGS.COSTING_CARDS_ENABLED),
+    getFeatureFlag(userId, FLAGS.INVOICES_ENABLED),
+  ]);
+
   const greeting = generateGreeting(userName);
-  const dashboardCards = getDashboardCards({ conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount, costingCardCount, invoicePendingCount, invoiceOverdueCount });
+  const dashboardCards = getDashboardCards(
+    { conversationCount, birRegistered, expenseCount, nextDeadlineDate, overdueCount, costingCardCount, invoicePendingCount, invoiceOverdueCount },
+    { costingCardsEnabled, invoicesEnabled },
+  );
 
   return (
     <PageBackground variant="dashboard">
