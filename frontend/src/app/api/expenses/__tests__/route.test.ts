@@ -26,6 +26,7 @@ const mockChain = () => {
     lte: vi.fn(),
     single: vi.fn(),
     order: vi.fn(),
+    limit: vi.fn(),
   };
   Object.values(chain).forEach((fn) => fn.mockReturnValue(chain));
   return chain;

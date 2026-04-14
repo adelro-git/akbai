@@ -8,6 +8,33 @@ import {
   UpdateTransactionSchema,
   ExpensesQuerySchema,
 } from '@/lib/expenses/schemas';
+import type { SupabaseClient } from '@supabase/supabase-js';
+
+// ============================================================
+// Schema capability probe — cached at module load
+// Detects whether migration 014 (merchant_name, receipt_hash) has been applied.
+// If columns are missing, we gracefully omit them from INSERT payloads
+// and return-SELECTs so expense saves still work.
+// ============================================================
+
+let receiptColumnsAvailable: boolean | null = null;
+
+async function hasReceiptColumns(db: SupabaseClient): Promise<boolean> {
+  if (receiptColumnsAvailable !== null) return receiptColumnsAvailable;
+  const { error } = await db
+    .from('transactions')
+    .select('id, merchant_name, receipt_hash')
+    .limit(1);
+  if (error && /merchant_name|receipt_hash/.test(error.message)) {
+    console.warn(
+      '[api/expenses] migration 014 (receipt_dedup) not applied — merchant_name/receipt_hash columns missing. Run: frontend/supabase/migrations/014_receipt_dedup.sql'
+    );
+    receiptColumnsAvailable = false;
+  } else {
+    receiptColumnsAvailable = true;
+  }
+  return receiptColumnsAvailable;
+}
 
 // ============================================================
 // Types
@@ -243,16 +270,31 @@ export async function POST(req: NextRequest) {
   };
 
   // OCR-sourced transactions include merchant_name and receipt_hash (Build 3)
-  if (data.merchant_name) insertPayload.merchant_name = data.merchant_name;
-  if (data.receipt_hash) insertPayload.receipt_hash = data.receipt_hash;
+  // Only include them if migration 014 has been applied (column probe)
+  const receiptCols = await hasReceiptColumns(db);
+  if (receiptCols) {
+    if (data.merchant_name) insertPayload.merchant_name = data.merchant_name;
+    if (data.receipt_hash) insertPayload.receipt_hash = data.receipt_hash;
+  } else if (data.merchant_name) {
+    // Graceful fallback: fold merchant into description so OCR scans still save
+    const prefix = `[${data.merchant_name}]`;
+    insertPayload.description = data.description
+      ? `${prefix} ${data.description}`
+      : prefix;
+  }
+
+  const returnCols = receiptCols
+    ? 'id, type, amount, category, description, transaction_date, source, source_ref_id, merchant_name, receipt_hash, created_at'
+    : 'id, type, amount, category, description, transaction_date, source, source_ref_id, created_at';
 
   const { data: tx, error: insertError } = await db
     .from('transactions')
     .insert(insertPayload)
-    .select('id, type, amount, category, description, transaction_date, source, source_ref_id, merchant_name, receipt_hash, created_at')
+    .select(returnCols)
     .single();
 
   if (insertError) {
+    console.error('[api/expenses POST] insert failed:', insertError);
     return NextResponse.json(
       { success: false, error: { code: 'DB_ERROR', message_tl: 'Hindi ma-save. Subukan muli.' } },
       { status: 500 }
