@@ -38,16 +38,16 @@ export default function ThemeToggle() {
       <button
         type="button"
         onClick={toggle}
-        className={`relative w-11 h-6 rounded-full transition-colors ${
-          dark ? 'bg-primary-container' : 'bg-surface-container-high border border-outline-variant/30'
+        className={`relative inline-flex items-center h-7 w-12 shrink-0 rounded-full transition-colors ${
+          dark ? 'bg-primary-container' : 'bg-surface-container-high'
         }`}
         role="switch"
         aria-checked={dark}
         data-testid="theme-toggle"
       >
         <span
-          className={`absolute top-0.5 w-5 h-5 rounded-full bg-surface-container-lowest shadow transition-transform ${
-            dark ? 'translate-x-[22px]' : 'translate-x-0.5'
+          className={`inline-block h-5 w-5 rounded-full bg-surface-container-lowest shadow transition-transform ${
+            dark ? 'translate-x-6' : 'translate-x-1'
           }`}
         />
       </button>

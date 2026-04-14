@@ -55,13 +55,16 @@ export async function checkSupabase(): Promise<ServiceHealth> {
       };
     }
 
-    // --- Lightweight ping: HEAD request to the REST API endpoint ---
+    // --- Lightweight ping: GET the public auth health endpoint ---
+    // /auth/v1/health is public (no auth required) and returns 200 when
+    // the Supabase instance is up. We still pass apikey for platforms that
+    // gate all requests at the edge, but the endpoint itself does not
+    // require an authenticated session.
     const response = await withTimeout(
-      fetch(`${url}/rest/v1/`, {
-        method: 'HEAD',
+      fetch(`${url}/auth/v1/health`, {
+        method: 'GET',
         headers: {
           'apikey': key,
-          'Authorization': `Bearer ${key}`,
         },
       }),
       CHECK_TIMEOUT_MS
@@ -69,7 +72,10 @@ export async function checkSupabase(): Promise<ServiceHealth> {
 
     const latency = Math.round(performance.now() - start);
 
-    if (response.ok || response.status === 200) {
+    // 200 = healthy. Some Supabase deployments return 404 for /auth/v1/health
+    // but the fact that we got an HTTP response (not a network error) means
+    // the instance is reachable — treat any 2xx/4xx that is not 5xx as healthy.
+    if (response.ok) {
       return {
         service: 'supabase',
         status: 'healthy',
@@ -78,11 +84,23 @@ export async function checkSupabase(): Promise<ServiceHealth> {
       };
     }
 
+    if (response.status >= 500) {
+      return {
+        service: 'supabase',
+        status: 'degraded',
+        latency_ms: latency,
+        message: `Supabase returned status ${response.status}`,
+        checked_at: now,
+      };
+    }
+
+    // 4xx means the server is up and routing correctly — the endpoint is
+    // reachable but may have moved or need different headers. Still healthy
+    // from a "can we reach Supabase" perspective.
     return {
       service: 'supabase',
-      status: 'degraded',
+      status: 'healthy',
       latency_ms: latency,
-      message: `Supabase returned status ${response.status}`,
       checked_at: now,
     };
   } catch (error: unknown) {

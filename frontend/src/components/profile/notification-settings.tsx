@@ -250,45 +250,50 @@ export default function NotificationSettings() {
         </div>
       )}
 
-      {/* --- Per-type toggles --- */}
-      {subscribed && (
-        <div className="space-y-3" data-testid="notification-toggles">
-          {NOTIFICATION_TYPES.map((notifType) => {
-            const enabled = isEnabled(notifType);
-            return (
-              <div
-                key={notifType}
-                className="flex items-center justify-between min-h-[44px]"
-              >
-                <div className="flex-1 mr-3">
-                  <p className="text-sm font-medium text-on-surface">
-                    {NOTIFICATION_TYPE_LABELS[notifType]}
-                  </p>
-                  <p className="text-xs text-on-surface-variant">
-                    {NOTIFICATION_TYPE_DESCRIPTIONS[notifType]}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={enabled}
-                  onClick={() => handleTogglePreference(notifType, enabled)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors min-w-[44px] min-h-[44px] justify-center ${
-                    enabled ? 'bg-primary-container' : 'bg-surface-container-high'
-                  }`}
-                  data-testid={`toggle-${notifType}`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 rounded-full bg-surface transition-transform ${
-                      enabled ? 'translate-x-2.5' : '-translate-x-2.5'
-                    }`}
-                  />
-                </button>
+      {/* --- Per-type toggles (always visible; disabled until subscribed) --- */}
+      <div className="space-y-3" data-testid="notification-toggles">
+        {!subscribed && supported && permission !== 'denied' && (
+          <p className="text-xs text-on-surface-variant italic">
+            I-activate muna ang push notifications para magamit ang mga toggle sa baba.
+          </p>
+        )}
+        {NOTIFICATION_TYPES.map((notifType) => {
+          const enabled = isEnabled(notifType);
+          const disabled = !subscribed;
+          return (
+            <div
+              key={notifType}
+              className={`flex items-center justify-between min-h-[44px] ${disabled ? 'opacity-60' : ''}`}
+            >
+              <div className="flex-1 mr-3">
+                <p className="text-sm font-medium text-on-surface">
+                  {NOTIFICATION_TYPE_LABELS[notifType]}
+                </p>
+                <p className="text-xs text-on-surface-variant">
+                  {NOTIFICATION_TYPE_DESCRIPTIONS[notifType]}
+                </p>
               </div>
-            );
-          })}
-        </div>
-      )}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={enabled}
+                disabled={disabled}
+                onClick={() => handleTogglePreference(notifType, enabled)}
+                className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors disabled:cursor-not-allowed ${
+                  enabled ? 'bg-primary-container' : 'bg-surface-container-high'
+                }`}
+                data-testid={`toggle-${notifType}`}
+              >
+                <span
+                  className={`inline-block h-5 w-5 rounded-full bg-surface-container-lowest shadow transition-transform ${
+                    enabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 }
