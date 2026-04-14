@@ -20,24 +20,53 @@ import DeadlineEmpty from './deadline-empty';
 
 interface GroupedDeadlines {
   overdue: DeadlineWithUrgency[];
-  upcoming: DeadlineWithUrgency[];
+  dueSoon: DeadlineWithUrgency[];   // 0–7 days away (urgent window)
+  upcoming: DeadlineWithUrgency[];  // >7 days away
   filed: DeadlineWithUrgency[];
 }
 
 function groupDeadlines(deadlines: DeadlineWithUrgency[]): GroupedDeadlines {
-  const groups: GroupedDeadlines = { overdue: [], upcoming: [], filed: [] };
+  const groups: GroupedDeadlines = { overdue: [], dueSoon: [], upcoming: [], filed: [] };
 
   for (const dl of deadlines) {
     if (dl.status === 'filed') {
       groups.filed.push(dl);
     } else if (dl.urgency === 'overdue' || dl.days_until < 0) {
       groups.overdue.push(dl);
+    } else if (dl.urgency === 'urgent' || dl.days_until <= 7) {
+      groups.dueSoon.push(dl);
     } else {
       groups.upcoming.push(dl);
     }
   }
 
+  // Sort each bucket by due_date ascending so the most imminent items surface first
+  groups.overdue.sort((a, b) => a.due_date.localeCompare(b.due_date));
+  groups.dueSoon.sort((a, b) => a.days_until - b.days_until);
+  groups.upcoming.sort((a, b) => a.days_until - b.days_until);
+
   return groups;
+}
+
+// ============================================================
+// Build a Taglish banner message for the most urgent deadline
+// ============================================================
+
+function buildUrgentBanner(dueSoon: DeadlineWithUrgency[]): string | null {
+  if (dueSoon.length === 0) return null;
+  const next = dueSoon[0];
+
+  let when: string;
+  if (next.days_until === 0) when = 'ngayong araw';
+  else if (next.days_until === 1) when = 'bukas';
+  else when = `sa loob ng ${next.days_until} araw`;
+
+  const more =
+    dueSoon.length > 1
+      ? ` (at ${dueSoon.length - 1} pa na malapit nang mag-due)`
+      : '';
+
+  return `Heads up, Boss! May ${next.form_name} filing ka ${when}${more}. Handa ka na ba?`;
 }
 
 // ============================================================
@@ -133,9 +162,23 @@ export default function DeadlineList() {
 
   // ─── Grouped list ───────────────────────────────────
   const groups = groupDeadlines(deadlines);
+  const urgentBanner = buildUrgentBanner(groups.dueSoon);
 
   return (
     <div className="flex flex-col gap-4 px-4 pb-4" data-testid="deadline-list">
+      {/* Urgent notification banner — surfaces the nearest 7/3/1-day deadline */}
+      {urgentBanner && (
+        <div
+          className="bg-warning-container/15 border-l-4 border-l-warning rounded-xl p-4"
+          data-testid="urgent-banner"
+          role="alert"
+        >
+          <p className="text-sm font-semibold text-on-surface leading-snug">
+            {urgentBanner}
+          </p>
+        </div>
+      )}
+
       {/* Overdue section */}
       {groups.overdue.length > 0 && (
         <section data-testid="section-overdue">
@@ -150,7 +193,21 @@ export default function DeadlineList() {
         </section>
       )}
 
-      {/* Upcoming section */}
+      {/* Due Soon section — within 7 days (urgent window) */}
+      {groups.dueSoon.length > 0 && (
+        <section data-testid="section-due-soon">
+          <h2 className="text-sm font-bold text-warning mb-2">
+            Malapit na ({groups.dueSoon.length})
+          </h2>
+          <div className="flex flex-col gap-2">
+            {groups.dueSoon.map((dl) => (
+              <DeadlineCard key={dl.id} deadline={dl} onMarkFiled={handleMarkFiled} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Upcoming section — more than 7 days out */}
       {groups.upcoming.length > 0 && (
         <section data-testid="section-upcoming">
           <h2 className="text-sm font-bold text-on-surface mb-2">
