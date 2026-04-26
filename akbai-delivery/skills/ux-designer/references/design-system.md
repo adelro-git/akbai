@@ -13,6 +13,17 @@ To achieve this, we leverage **Intentional Asymmetry** and **Tonal Depth**. We a
 
 **Default theme is Light.** Dark mode is available as a user preference toggle.
 
+### Why Warmth Is Load-Bearing — Don Norman's Three Layers
+<!-- Phase 1 research, 2026-04-25. Source: jnd.org "Emotion & Design — Attractive Things Work Better" via NotebookLM -->
+
+Warmth in AKBai is not decoration; it does measurable UX work across three layers Norman identified:
+
+- **Visceral (pre-cognitive, ~200ms):** The honey palette + Kai mark + paper-note tilt + ambient amber shadows trigger an immediate positive affective reaction *before* the user has cognitively processed what the screen does. For a Filipino MSME owner approaching tax/bookkeeping (which the corpus characterizes as "fear, anxiety, dread"), this layer transforms an intimidating task into a welcoming first impression.
+- **Behavioral (in-task):** Norman's heretical finding — *"pleasing things work better, are easier to learn, and produce a more harmonious result"* — applies directly. A positive affective state increases users' "tolerance for minor difficulties and blockages." When Resibo Scanner OCR misreads a receipt or a category needs manual fix, an aesthetically warm UI buys forgiveness that a sterile UI cannot.
+- **Reflective (long-term):** Localized warmth lets the user form a conscious, positive attachment. The user doesn't *tolerate* AKBai because they have to; they *like* it. This is the layer that drives 30-day retention.
+
+**Design implication:** Every warmth choice (palette, illustration vocabulary, micro-animations, paper-note treatments) is a retention investment. Don't let a future cost-cut sprint strip them out as "nice-to-have."
+
 ---
 
 ## 2. Colors: The Amber Spectrum
@@ -142,7 +153,44 @@ import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrap
 
 ---
 
-## 6. Do's and Don'ts
+## 6. Decorative Motif Vocabulary
+<!-- Phase 1 research, 2026-04-25. Source: NotebookLM "AKBai Filipino MSME Context" notebook (8ee05ad7) — synthesizes COMMUNITY_RESEARCH_REPORT.md, Rest of World sari-sari article, BCG MSME report, plus prior knowledge of Filipino design semiotics. -->
+
+When AKBai needs decorative SVGs, illustrations, dividers, or background patterns (e.g., the redesign's `CapizPattern`, `FloatingPetals`, `WovenDivider`, `Squiggle`, `TapeStrip`), pick from the **inclusive** list. Avoid the **romanticized** list — those motifs read as tourist-board, regional-biased, or politically charged to working-class Filipino MSME owners.
+
+### Use (inclusive, working-class, unisex)
+
+| Motif | Why it lands |
+|---|---|
+| **Banig** (woven mat) | Universal Filipino household texture. Neutral, working-class, unisex. The redesign's `WovenDivider` zig-zag and the banig-textured 7-day chart in the home weekly story trade on this. |
+| **Capiz shell** | Heritage windowpane texture. Subtle pearlescent grid works in modern minimal design without screaming "ethnic." |
+| **Sampaguita** (national flower) | Kept *small* (peak-day marker, time-of-day pill leading icon) and *not garlanded*. Everyday, not feminine-coded. |
+| **Paper-note + masking tape** | Source-grounded: sari-sari owners track utang in notebooks (Rest of World); FB sellers tape receipts. Asymmetric `4px 12px 4px 12px` radius and `rotate(-1.2deg)` mimic an actual taped index card. |
+| **Sachet / tingi** | Visualizes the micro-pack working-class economy. Future motif for tier visualizations. |
+| **Yero** (corrugated iron roofing) | Utilitarian, hustle-coded. Useful as a subtle background texture; recognizable to urban + rural Filipinos. |
+| **Squiggle** (single hand-drawn underline) | One per screen, never multiple. Reviewer-approved emphasis; reads as warmth without precious. |
+
+### Avoid (romanticized, regional-biased, or politically charged)
+
+| Motif | Why it doesn't land |
+|---|---|
+| **Bahay-kubo** | Feels rural-tourist-board; disconnected from the urban / peri-urban reality of today's digital MSMEs. |
+| **Fiesta tropes / banderitas** | Too busy, too seasonal, too unserious for a tax/bookkeeping tool. |
+| **Saint imagery / Catholic icons** | Alienates non-Catholic users. AKBai is a secular professional tool. |
+| **Specific regional textiles** (Inabel, T'nalak, Yakan, etc.) | Risks excluding users from other regions. AKBai is national; design should not skew toward any one heritage tradition. |
+| **National flag colors as primary accents** | Politically charged. Honey palette is the brand; flag motifs read as slogan-y. |
+| **Bayanihan-house / fiesta-people scenes** | Cliché Filipino-illustration tropes; feels like marketing collateral, not a tool. |
+
+### Decorative SVG implementation rules
+
+- All decorative motifs are inline SVG (no extra HTTP requests).
+- All decorative motion (`petal-drift`, `kai-bob`, `slide-up`) is gated behind `prefers-reduced-motion: no-preference`. Layout intact when motion disabled.
+- Density rule: **one squiggle per screen, max.** One ambient layer (petals OR capiz, not both) per screen, max. Reviewer feedback was explicit: "too many of these squiggle lines" / "too many icons going on."
+- Combined image budget for decorative SVGs ≤ 200KB on cold home load (Filipino prepaid-data reality — see `mobile-first.md` §1).
+
+---
+
+## 7. Do's and Don'ts
 
 ### Do
 * **Do** use asymmetrical margins. If the left margin is `spacing-12`, try a right margin of `spacing-24` for editorial layouts.

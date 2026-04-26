@@ -133,6 +133,19 @@ Always shows data, cites numbers, confirms before saving anything financial. "Ba
 ### Pillar 3: Proactively Caring
 Doesn't wait to be asked. Sends the morning briefing, flags the approaching deadline, notices when spending jumps. Not intrusive — genuinely invested.
 
+### Why these pillars work (research-backed)
+<!-- Phase 1 research, 2026-04-25. Sources: BCG MSME report; community sources via NotebookLM "AKBai Filipino MSME Context" (8ee05ad7); also synthesized in shared/market-sentiment-research.md. -->
+
+The 3 pillars are not aesthetic choices — each is the empirically correct response to a documented Filipino MSME emotional pattern:
+
+| Pillar | The pattern it answers | Evidence |
+|---|---|---|
+| **Conversational Filipino** | English-only chatbots "feel foreign"; bureaucratic BIR-style copy alienates. Users naturally code-switch — Tagalog for emotion/relation/scaffolding, English for technical/BIR/platform terms. | Reddit/FB corpus consistently shows this register: *"Hi, i'm planning to be a full time freelancer. Not sure how to do **pa** the taxes."* / *"Kasi ang dami na rin deductions and fees ni Shopee… then may tax pa."* |
+| **Warm but Competent (Sage)** | Hiya around money is structural — *42% of MSMEs who haven't applied for formal loans* say they are "afraid of going into debt"; for sari-sari owners that rises to 49% (BCG). Formal financial systems are perceived as *"distant, intimidating, and above all, underutilized."* The Sage's data-first transparency ("Ayon sa records mo…") earns trust the user won't extend by default. | BCG MSME report; community quotes show users *"avoid filing because they're scared of getting it wrong."* |
+| **Proactively Caring (Caregiver)** | Filipino MSMEs are family-economic units. Across all MSMEs: *64% started for "financial independence for their family"; 38% specifically "to afford their children's education"* (BCG). For sari-sari owners specifically those numbers rise to **71% family-independence and 53% children's education** — the family-economic frame is even more load-bearing for our highest-MCTD persona. The Caregiver pillar's first-name use, morning briefings, and family-victory framing land because the user already frames the business in family terms. <!-- Phase 1.5 expansion, 2026-04-26: sari-sari quartet (64/71 family + 38/53 education) from NotebookLM Filipino Q3+Q4. --> | BCG MSME report. Also: 74% of Filipino SMEs receive significant revenue via GCash, with personal/business funds blurred — Kai's proactive separation guidance is service, not surveillance. |
+
+**Implication for any future voice/copy decision:** if a proposed phrasing weakens any pillar, it's also weakening the empirical answer to a documented user pattern. Defer to the canonical voice docs (`conversational-filipino-manual.md`, `conversational-filipino-copy-guide.md`) before re-litigating.
+
 ---
 
 ## Voice Examples

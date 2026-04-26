@@ -50,6 +50,28 @@ AKBai is a Progressive Web App — not a native app. This has specific implicati
 }
 ```
 
+### Filipino Connectivity & Device Baseline (design assumptions)
+<!-- Phase 1 research, 2026-04-25. Sources: DataReportal "Digital 2025: Philippines"; BCG MSME report; community sources via NotebookLM (8ee05ad7). -->
+
+Design and performance budgets assume the following baseline. Re-validate against AKBai's own PostHog data once it's flowing; until then, design for the lower end of the range.
+
+| Dimension | Baseline assumption | Source / rationale |
+|---|---|---|
+| **Median mobile internet speed** | ~35 Mbps cellular download (Philippines, early 2025) | DataReportal Digital 2025 PH. Real-world MSME experience is much patchier — corpus describes inventory syncs taking *hours*, real-time payment failures. |
+| **Connectivity reliability** | Patchy / drop-prone, especially rural | BCG + Rest of World sari-sari article. "Lack of stable internet" cited as a primary barrier to digital tools. Many micro-businesses operate offline-default. |
+| **Device tier** | Mid-range Android (Snapdragon 4xx–6xx, Android 11–13) — design target. Sub-$100 Transsion (TECNO, Infinix) dominant in provincial. Many older sari-sari owners use **hand-me-down devices from their kids** — assume budget hardware. <!-- Phase 1.5 expansion, 2026-04-26 --> | Phase 1.5 NotebookLM Q4+Q5; community sources on intergenerational digital adoption (Jason Endaya / Packworks case). |
+| **OS share** | Android-dominant in PH MSME segment | DataReportal (Android leads PH market share by wide margin). iOS-only patterns will exclude most users. |
+| **Data behavior** | Sachet-economy + prepaid-cap-aware. Users stack short-lived promos (Globe Go+149, Smart PowerAll/Magic Data, DITO ₱10/day Data Sachets), carry **dual-SIM and switch networks** based on best promo/signal, and **defer cellular data**, relying on home/office Wi-Fi for heavy usage. <!-- Phase 1.5 expansion, 2026-04-26 --> | Phase 1.5 NotebookLM Q1; corpus on sachet economy + telco promo cycles. |
+| **Peak-hour load** | Paydays (15th and 30th) flood DM channels and payment platforms. Mega campaigns (9.9, 11.11) drive 3–10× normal daily volume for platform-seller MSMEs. <!-- Phase 1.5 expansion, 2026-04-26 --> | Community sources + BCG. Implication: AKBai's morning-briefing and weekly-story endpoints should never degrade on those dates. |
+| **Regional split (NCR vs provincial)** <!-- Phase 1.5 expansion, 2026-04-26 --> | NCR: 68.7% home internet, 79.3% individuals online, 6.1 hr/day online (highest in country). Provincial: BARMM 27.7% home internet; Cagayan Valley 3.4 hr/day online (lowest). Patchy rural internet — inventory syncs take hours, digital payments fail outright. | Phase 1.5 NotebookLM Q5; DataReportal regional breakdowns. |
+
+**Design implications baked into the rest of this doc:**
+- **Performance budget § 10**: First Contentful Paint < 1.5s on emulated Slow 3G + mid-range Android; LCP ≤ 2.5s; TTI < 3.5s. Inline decorative SVGs (no extra requests). Image budget ≤ 200KB on cold home load. Page weight < 500KB initial; JS < 200KB gzipped.
+- **Offline-first behavior § 7**: Service Worker (`next-pwa`) + **TanStack Query + Persister** as the validated stack. Cache morning briefing daily / stale-while-revalidate. Heavy lists cached on first load + incrementally updated on foreground. Setup-level data (profile, BIR deadlines) cached indefinitely until version change. Offline mutations queue → auto-sync on next foreground connection → brief "Synced ✓" toast. Reassuring microcopy on no-connection states: *"Walang internet ngayon — na-save ko muna sa phone mo. I-sync ko pag may connection."* <!-- Phase 1.5 expansion, 2026-04-26: validated stack details from NotebookLM Q2 + Q1 corpus -->
+- **Touch target sizing § 2**: Mid-range Android screens (5.5"–6.5") with imperfect touch accuracy — keep 44×44px minimum strict.
+
+> **Open questions still unvalidated by the corpus:** explicit "image avoidance when data is exhausted" behavior, and PH-specific retail/sari-sari one-handed thumb-zone evidence (Phase 1.5 Q6 timed out twice — corpus lacks this). Validate via AKBai's own analytics post-launch (Phase 12). Until then, design conservatively to the lower end of the range.
+
 ---
 
 ## 2. Touch Targets and Hit Areas

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AKBai — Katuwang mo sa Negosyo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=12">
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="components/kai.jsx?v=2"></script>
+<script type="text/babel" src="components/data.jsx?v=2"></script>
+<script type="text/babel" src="components/ui.jsx?v=2"></script>
+<script type="text/babel" src="components/icons.jsx?v=4"></script>
+<script type="text/babel" src="components/screen-home.jsx?v=9"></script>
+<script type="text/babel" src="components/screen-chat.jsx"></script>
+<script type="text/babel" src="components/screen-saan.jsx"></script>
+<script type="text/babel" src="components/screen-scan-deadlines.jsx"></script>
+<script type="text/babel" src="components/screen-other.jsx"></script>
+
+<script type="text/babel">
+/* global React, ReactDOM, PERSONAS, COPY, Kai, AmbientKai, HomeScreen, ChatScreen, SaanScreen, ScanScreen, DeadlinesScreen, CheckinScreen, SundayStoryScreen, CostingScreen, InvoicesScreen, DraftsScreen, OnboardingScreen, NavIconHome, NavIconChat, NavIconScan, NavIconMoney, NavIconMore */
+const { useState, useEffect } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "persona": "andoy",
+  "density": "compact",
+  "lang": "fil",
+  "showOnboarding": false,
+  "palette": "honey",
+  "decorations": "soft"
+}/*EDITMODE-END*/;
+
+// ─────────── Sidebar (desktop) ───────────
+function Sidebar({ screen, setScreen, persona, lang, setLang, onOpenTools }) {
+  const p = PERSONAS[persona];
+  const primary = [
+    { id: 'home', Ic: NavIconHome,  label: lang === 'fil' ? 'Umaga Mo' : 'Home' },
+    { id: 'chat', Ic: NavIconChat,  label: lang === 'fil' ? 'Kausap' : 'Chat' },
+    { id: 'scan', Ic: NavIconScan,  label: lang === 'fil' ? 'Scan' : 'Scan' },
+    { id: 'saan', Ic: NavIconMoney, label: lang === 'fil' ? 'Pera' : 'Money' },
+  ];
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-brand">
+        <Kai size={30} expression="happy" animated={false}/>
+        <span>AKB<span className="honey-text">ai</span></span>
+      </div>
+
+      <div className="sidebar-persona">
+        <div className="avatar-sm" style={{ background: p.avatarBg }}>{p.initials}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="persona-name">{p.name.split(' ')[0]}</div>
+          <div className="persona-biz">{p.biz}</div>
+        </div>
+      </div>
+
+      <div className="sidebar-section">
+        {primary.map(t => {
+          const active = screen === t.id;
+          const Ic = t.Ic;
+          return (
+            <button key={t.id} onClick={() => setScreen(t.id)}
+              className={`side-item ${active ? 'is-active' : ''}`}>
+              <span className="side-icon"><Ic active={active}/></span>
+              <span>{t.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <button onClick={onOpenTools} className="side-item side-tools">
+        <span className="side-icon"><NavIconMore/></span>
+        <span>{lang === 'fil' ? 'Higit pa...' : 'More tools...'}</span>
+      </button>
+
+      <div style={{ flex: 1 }}/>
+
+      <div className="lang-toggle">
+        {[['fil', 'Filipino'], ['en', 'English']].map(([v, l]) => (
+          <button key={v} onClick={() => setLang(v)}
+            className={lang === v ? 'is-active' : ''}>{l}</button>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+// ─────────── Mobile bottom nav ───────────
+function MobileBottomNav({ active, onChange, onOpenTools, lang }) {
+  const tabs = [
+    { id: 'home', Ic: NavIconHome,  label: lang === 'fil' ? 'Umaga' : 'Home' },
+    { id: 'chat', Ic: NavIconChat,  label: 'Kai' },
+    { id: 'scan', Ic: NavIconScan,  label: 'Scan', primary: true },
+    { id: 'saan', Ic: NavIconMoney, label: lang === 'fil' ? 'Pera' : 'Money' },
+    { id: 'tools', Ic: NavIconMore, label: lang === 'fil' ? 'Iba pa' : 'More' },
+  ];
+  return (
+    <nav className="bottom-nav">
+      {tabs.map(t => {
+        const isActive = active === t.id;
+        const Ic = t.Ic;
+        if (t.primary) {
+          return (
+            <button key={t.id} onClick={() => onChange(t.id)} className="fab-scan">
+              <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                <path d="M8 5 Q8 4 9 4 L19 4 Q20 4 20 5 L20 22 L18.5 21 L17 22 L15.5 21 L14 22 L12.5 21 L11 22 L9.5 21 L8 22 Z"
+                  fill="#fff" stroke="#c87b14" strokeWidth="1.6" strokeLinejoin="round"/>
+                <line x1="11" y1="11" x2="17" y2="11" stroke="#c87b14" strokeWidth="1.3" strokeLinecap="round"/>
+                <line x1="11" y1="14" x2="15" y2="14" stroke="#c87b14" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+            </button>
+          );
+        }
+        return (
+          <button key={t.id}
+            onClick={() => t.id === 'tools' ? onOpenTools() : onChange(t.id)}
+            className={`mnav-btn ${isActive ? 'is-active' : ''}`}>
+            <Ic active={isActive}/>
+            <span className="mnav-label">{t.label}</span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
+// ─────────── Tools drawer (bottom sheet — mobile + desktop) ───────────
+function ToolsDrawer({ onSelect, lang, onClose }) {
+  const tools = [
+    { id: 'deadlines', icon: '📅', label: lang === 'fil' ? 'BIR Deadlines' : 'BIR Deadlines', desc: lang === 'fil' ? 'Paalala sa filing' : 'Filing reminders' },
+    { id: 'costing', icon: '📐', label: lang === 'fil' ? 'Pricing & Costing' : 'Pricing & Costing', desc: lang === 'fil' ? 'Magkano dapat singil' : 'What to charge' },
+    { id: 'invoices', icon: '🧾', label: lang === 'fil' ? 'Mga Invoice' : 'Invoices', desc: lang === 'fil' ? 'Sinong may utang' : 'Who owes you' },
+    { id: 'drafts', icon: '✍️', label: lang === 'fil' ? 'Reply Drafts' : 'Reply Drafts', desc: lang === 'fil' ? 'Draft sagot sa customer' : 'Draft customer replies' },
+    { id: 'checkin', icon: '💛', label: lang === 'fil' ? 'Kumusta ka?' : 'Daily Check-In', desc: lang === 'fil' ? 'Short check-in ni Kai' : 'Quick check-in from Kai' },
+    { id: 'sunday', icon: '📖', label: lang === 'fil' ? 'Sunday Story' : 'Sunday Story', desc: lang === 'fil' ? 'Linggong pagbabalik-tanaw' : 'Weekly recap' },
+  ];
+  return (
+    <div className="drawer-scrim" onClick={onClose}>
+      <div className="drawer-sheet pop-in" onClick={e => e.stopPropagation()}>
+        <div className="drawer-grip"/>
+        <div className="drawer-title">{lang === 'fil' ? 'Higit pang tools' : 'More tools'}</div>
+        <div className="drawer-list">
+          {tools.map(t => (
+            <button key={t.id} onClick={() => { onSelect(t.id); onClose(); }} className="drawer-item">
+              <div className="drawer-icon">{t.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div className="drawer-item-label">{t.label}</div>
+                <div className="drawer-item-desc">{t.desc}</div>
+              </div>
+              <div className="drawer-arrow">→</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────── Tweaks panel ───────────
+function TweaksPanel({ tweaksActive, persona, setPersona, lang, setLang, palette, setPalette, decorations, setDecorations, showOnboarding, setShowOnboarding }) {
+  if (!tweaksActive) return null;
+  return (
+    <div className="pop-in tweaks-panel">
+      <div className="tweaks-title">Tweaks</div>
+
+      <div className="tweaks-group">
+        <div className="tweaks-label">Persona</div>
+        <div className="tweaks-grid-2">
+          {Object.values(PERSONAS).map(p => (
+            <button key={p.id} onClick={() => setPersona(p.id)}
+              className={`tweaks-btn ${persona === p.id ? 'is-honey' : ''}`}>
+              {p.emoji} {p.name.split(' ')[0]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="tweaks-group">
+        <div className="tweaks-label">Voice</div>
+        <div className="tweaks-grid-2">
+          {[['fil', 'Filipino'], ['en', 'English']].map(([v, l]) => (
+            <button key={v} onClick={() => setLang(v)}
+              className={`tweaks-btn ${lang === v ? 'is-sage' : ''}`}>{l}</button>
+          ))}
+        </div>
+      </div>
+
+      <div className="tweaks-group">
+        <div className="tweaks-label">Palette</div>
+        <div className="tweaks-grid-3">
+          {[
+            ['cream', 'Cream'],
+            ['honey', 'Honey'],
+            ['dawn', 'Dawn'],
+          ].map(([v, l]) => (
+            <button key={v} onClick={() => setPalette(v)}
+              className={`tweaks-btn ${palette === v ? 'is-honey' : ''}`}>{l}</button>
+          ))}
+        </div>
+      </div>
+
+      <div className="tweaks-group">
+        <div className="tweaks-label">Decorations</div>
+        <div className="tweaks-grid-3">
+          {[
+            ['minimal', 'Minimal'],
+            ['soft', 'Soft'],
+            ['playful', 'Playful'],
+          ].map(([v, l]) => (
+            <button key={v} onClick={() => setDecorations(v)}
+              className={`tweaks-btn ${decorations === v ? 'is-honey' : ''}`}>{l}</button>
+          ))}
+        </div>
+      </div>
+
+      <button onClick={() => setShowOnboarding(!showOnboarding)}
+        className={`tweaks-btn tweaks-full ${showOnboarding ? 'is-honey' : ''}`}>
+        {showOnboarding ? '✓ Onboarding on' : 'Show Onboarding'}
+      </button>
+    </div>
+  );
+}
+
+// ─────────── Main App ───────────
+function App() {
+  const [persona, setPersona] = useState(TWEAK_DEFAULTS.persona);
+  const [lang, setLang] = useState(TWEAK_DEFAULTS.lang);
+  const [palette, setPalette] = useState(TWEAK_DEFAULTS.palette || 'cream');
+  const [decorations, setDecorations] = useState(TWEAK_DEFAULTS.decorations || 'soft');
+  const [showOnboarding, setShowOnboarding] = useState(TWEAK_DEFAULTS.showOnboarding);
+  const [screen, setScreen] = useState('home');
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [kaiState, setKaiState] = useState('idle');
+  const [kaiThought, setKaiThought] = useState(null);
+  const [tweaksActive, setTweaksActive] = useState(false);
+
+  const copy = COPY[lang];
+
+  // Apply palette + decoration classes to <html>
+  useEffect(() => {
+    document.documentElement.dataset.palette = palette;
+    document.documentElement.dataset.decorations = decorations;
+  }, [palette, decorations]);
+
+  // Kai ambient thoughts
+  useEffect(() => {
+    const thoughts = lang === 'fil' ? [
+      'Malapit na yung Nov 25 deadline ha.',
+      'Tumataas ang margin mo this week!',
+      'Na-tag ko na yung 5 resibo kahapon.',
+      null, null, null,
+    ] : [
+      'Heads up — Nov 25 deadline is close.',
+      'Your margin is trending up this week!',
+      "Tagged yesterday's 5 receipts for you.",
+      null, null, null,
+    ];
+    const pick = () => {
+      const t = thoughts[Math.floor(Math.random() * thoughts.length)];
+      setKaiThought(t);
+      if (t) setTimeout(() => setKaiThought(null), 5000);
+    };
+    const i = setInterval(pick, 14000);
+    return () => clearInterval(i);
+  }, [lang]);
+
+  useEffect(() => {
+    function onMsg(e) {
+      if (!e.data || typeof e.data !== 'object') return;
+      if (e.data.type === '__activate_edit_mode') setTweaksActive(true);
+      if (e.data.type === '__deactivate_edit_mode') setTweaksActive(false);
+    }
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  useEffect(() => {
+    window.parent.postMessage({
+      type: '__edit_mode_set_keys',
+      edits: { persona, lang, palette, decorations, showOnboarding },
+    }, '*');
+  }, [persona, lang, palette, decorations, showOnboarding]);
+
+  function renderScreen() {
+    const props = { persona, copy, lang, density: 'editorial', onOpenScreen: setScreen };
+    if (screen === 'home') return <HomeScreen {...props} onKaiTap={() => setScreen('chat')} onOpenTools={() => setToolsOpen(true)}/>;
+    if (screen === 'chat') return <ChatScreen {...props} onKaiState={setKaiState} onBack={() => setScreen('home')}/>;
+    if (screen === 'saan') return <SaanScreen {...props}/>;
+    if (screen === 'scan') return <ScanScreen {...props} onBack={() => setScreen('home')}/>;
+    if (screen === 'deadlines') return <DeadlinesScreen lang={lang}/>;
+    if (screen === 'checkin') return <CheckinScreen lang={lang} onBack={() => setScreen('home')}/>;
+    if (screen === 'sunday') return <SundayStoryScreen persona={persona} lang={lang} onBack={() => setScreen('home')}/>;
+    if (screen === 'costing') return <CostingScreen lang={lang}/>;
+    if (screen === 'invoices') return <InvoicesScreen lang={lang}/>;
+    if (screen === 'drafts') return <DraftsScreen lang={lang}/>;
+    return <HomeScreen {...props}/>;
+  }
+
+  const screenLabels = {
+    home: '01 Home', chat: '02 Chat',
+    scan: '03 Scan', saan: '04 Money',
+    deadlines: '05 Deadlines', checkin: '06 Check-In',
+    sunday: '07 Sunday Story', costing: '08 Costing',
+    invoices: '09 Invoices', drafts: '10 Drafts',
+  };
+
+  const showAmbientKai = !['chat', 'scan', 'home'].includes(screen) && !showOnboarding;
+
+  if (showOnboarding) {
+    return (
+      <div className="onboarding-shell">
+        <OnboardingScreen lang={lang} onDone={() => setShowOnboarding(false)}/>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-shell" data-screen-label={screenLabels[screen] || '00'}>
+      <Sidebar screen={screen} setScreen={setScreen}
+        persona={persona} lang={lang} setLang={setLang}
+        onOpenTools={() => setToolsOpen(true)}/>
+
+      <main className="app-main">
+        <div className="content-frame">
+          <div className="content-inner">
+            {renderScreen()}
+          </div>
+        </div>
+
+        {showAmbientKai && (
+          <AmbientKai state={kaiState} thought={kaiThought} onTap={() => setScreen('chat')}/>
+        )}
+      </main>
+
+      <MobileBottomNav
+        active={screen} lang={lang}
+        onChange={setScreen}
+        onOpenTools={() => setToolsOpen(true)}/>
+
+      {toolsOpen && <ToolsDrawer lang={lang} onSelect={setScreen} onClose={() => setToolsOpen(false)}/>}
+
+      <TweaksPanel
+        tweaksActive={tweaksActive}
+        persona={persona} setPersona={setPersona}
+        lang={lang} setLang={setLang}
+        palette={palette} setPalette={setPalette}
+        decorations={decorations} setDecorations={setDecorations}
+        showOnboarding={showOnboarding} setShowOnboarding={setShowOnboarding}/>
+
+      {!tweaksActive && (
+        <div className="tweaks-hint">
+          💡 Toggle <b>Tweaks</b> for palette & decorations
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
+</script>
+</body>
+</html>

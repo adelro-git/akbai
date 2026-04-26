@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AKBai — Phase 2.2 Motif Repository</title>
+  <style>
+    :root {
+      --honey-cream: #fef3d9;
+      --honey-bright: #fef4dd;
+      --honey: #f59e0b;
+      --honey-deep: #a1620e;
+      --ink: #2c1f12;
+      --ink-soft: #534434;
+      --outline: #e6dac4;
+      --bg: #fdf9f2;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+      margin: 0; padding: 0 24px 64px;
+      background: var(--bg); color: var(--ink); line-height: 1.5;
+    }
+    header.page {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg); border-bottom: 1px solid var(--outline);
+      padding: 24px 0 16px; margin: 0 -24px 24px;
+      padding-left: 24px; padding-right: 24px;
+    }
+    h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
+    h1 small { font-weight: 400; color: var(--ink-soft); font-size: 14px; margin-left: 8px; }
+    .meta { font-size: 13px; color: var(--ink-soft); }
+    .meta a { color: var(--honey-deep); }
+    nav.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    nav.tabs a {
+      font-size: 12px; padding: 6px 14px; background: white;
+      border: 1px solid var(--outline); border-radius: 999px;
+      color: var(--ink); text-decoration: none; font-weight: 600;
+    }
+    nav.tabs a:hover { background: var(--honey); color: white; border-color: var(--honey); }
+
+    main { max-width: 1400px; margin: 0 auto; }
+    section { margin: 0 0 48px; scroll-margin-top: 110px; }
+    section > h2.section-h {
+      font-size: 18px; margin: 0 0 8px;
+      border-bottom: 2px solid var(--honey); padding-bottom: 8px;
+      font-weight: 700;
+    }
+    section > p.section-desc { font-size: 13px; color: var(--ink-soft); margin: 0 0 20px; }
+
+    .motif-card {
+      background: white; border: 1px solid var(--outline); border-radius: 12px;
+      padding: 20px; margin-bottom: 24px;
+    }
+    .motif-card h3 { margin: 0 0 6px; font-size: 16px; font-weight: 700; }
+    .motif-card .where {
+      font-size: 11px; color: var(--ink-soft); text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 16px;
+    }
+    .motif-card .demos {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-bottom: 16px;
+    }
+    .motif-card .demo {
+      position: relative; min-height: 180px; border-radius: 8px;
+      border: 1px solid var(--outline); overflow: hidden;
+    }
+    .motif-card .demo.white { background: var(--white); }
+    .motif-card .demo.honey { background: var(--honey-bright); }
+    .motif-card .demo-label {
+      position: absolute; top: 8px; left: 12px; font-size: 10px;
+      color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em;
+      font-weight: 600; z-index: 5;
+    }
+    .motif-card .style-notes {
+      font-size: 12px; color: var(--ink-soft); line-height: 1.6;
+      padding: 12px 14px; background: var(--bg); border-radius: 6px;
+    }
+    .motif-card .style-notes b { color: var(--ink); }
+    @media (max-width: 700px) {
+      .motif-card .demos { grid-template-columns: 1fr; }
+    }
+
+    .verdict-row {
+      background: var(--honey-cream); border: 1px solid var(--outline);
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 13px; color: var(--ink); margin-bottom: 24px;
+    }
+    .verdict-row b { color: var(--honey-deep); }
+
+    /* Animations preview (gated on reduced-motion) */
+    @keyframes petal-drift {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.85; }
+      90%  { opacity: 0.85; }
+      100% { transform: translateY(220px) rotate(360deg); opacity: 0; }
+    }
+    @keyframes leaf-sway {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+    @keyframes sun-slow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* Repo-only: animations always play (production code respects prefers-reduced-motion).
+       See B5/B6 in 02-decisions.md for the production gating rule. */
+    .petal-fall { animation: petal-drift 14s linear infinite; }
+    .leaf-sway-anim { animation: leaf-sway 4s ease-in-out infinite; transform-origin: bottom center; }
+    .sun-slow { animation: sun-slow 30s linear infinite; transform-origin: 50% 50%; }
+
+    /* Dark mode demo background */
+    .demo.dark { background: #1a1410; color: #fef3d9; }
+    .demo.dark .demo-label { color: #fef3d9; opacity: 0.65; }
+  </style>
+</head>
+<body>
+  <header class="page">
+    <h1>AKBai — Phase 2.2 Motif Repository <small>2026-04-26</small></h1>
+    <p class="meta">
+      Review the candidate decorative motifs from the redesign handoff before approving B5 (Decorative motifs).
+      Each motif shown in isolation against white and honey-cream backgrounds + at scale + with annotated "where used."
+      <br>
+      Back to: <a href="../decisions.html">decisions.html</a> · <a href="../index.html">index.html</a> · <a href="icons.html">icons</a> · <a href="animations.html">animations</a>
+    </p>
+    <nav class="tabs">
+      <a href="#capiz">CapizPattern</a>
+      <a href="#petals">FloatingPetals</a>
+      <a href="#woven">WovenDivider</a>
+      <a href="#squiggle">Squiggle</a>
+      <a href="#tape">TapeStrip</a>
+      <a href="#sampaguita-garland">SampaguitaGarland</a>
+      <a href="#leaf">SwayingLeaf</a>
+      <a href="#sunburst">Sunburst</a>
+      <a href="#doodle">DoodleArrow</a>
+      <a href="#dark-mode">All in dark mode</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="verdict-row">
+      <b>Verdict pending Anton review.</b> Once approved, motifs ship as inline SVG components in
+      <code>frontend/src/components/illustrations/decorative/</code>. All ambient animations
+      gated on <code>prefers-reduced-motion</code>. Image budget ≤ 200KB cold home load.
+    </div>
+
+    <!-- CapizPattern -->
+    <section id="capiz">
+      <h2 class="section-h">CapizPattern</h2>
+      <p class="section-desc">
+        Background pattern referencing capiz windowpane oysters — heritage Filipino architecture motif.
+        Tiled 60×60 squares at 0.18 opacity. Fills the entire backdrop, never the foreground.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Behind hero card · paper-note callouts · weekly story background</h3>
+        <p class="where">opacity 0.18-0.35 (light) · 0.12-0.20 (dark) · pointer-events none</p>
+        <div class="demos">
+          <div class="demo white">
+            <div class="demo-label">on white (#fdf9f2)</div>
+            <svg width="100%" height="180" style="display:block;opacity:0.35;">
+              <defs>
+                <pattern id="capiz-w" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <rect width="60" height="60" fill="transparent"/>
+                  <rect x="6" y="6" width="22" height="22" rx="3" fill="#fef3d9" stroke="#f0be6a" stroke-width="0.8" opacity="0.6"/>
+                  <rect x="32" y="6" width="22" height="22" rx="3" fill="#fdf5e2" stroke="#f0be6a" stroke-width="0.8" opacity="0.5"/>
+                  <rect x="6" y="32" width="22" height="22" rx="3" fill="#fdf5e2" stroke="#f0be6a" stroke-width="0.8" opacity="0.5"/>
+                  <rect x="32" y="32" width="22" height="22" rx="3" fill="#fef3d9" stroke="#f0be6a" stroke-width="0.8" opacity="0.6"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#capiz-w)"/>
+            </svg>
+          </div>
+          <div class="demo honey">
+            <div class="demo-label">on honey-cream (#fef4dd)</div>
+            <svg width="100%" height="180" style="display:block;opacity:0.35;">
+              <defs>
+                <pattern id="capiz-h" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <rect width="60" height="60" fill="transparent"/>
+                  <rect x="6" y="6" width="22" height="22" rx="3" fill="#fef3d9" stroke="#f0be6a" stroke-width="0.8" opacity="0.6"/>
+                  <rect x="32" y="6" width="22" height="22" rx="3" fill="#fdf5e2" stroke="#f0be6a" stroke-width="0.8" opacity="0.5"/>
+                  <rect x="6" y="32" width="22" height="22" rx="3" fill="#fdf5e2" stroke="#f0be6a" stroke-width="0.8" opacity="0.5"/>
+                  <rect x="32" y="32" width="22" height="22" rx="3" fill="#fef3d9" stroke="#f0be6a" stroke-width="0.8" opacity="0.6"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#capiz-h)"/>
+            </svg>
+          </div>
+          <div class="demo dark" style="grid-column: 1 / -1;">
+            <div class="demo-label">on dark mode (#1a1410)</div>
+            <svg width="100%" height="180" style="display:block;opacity:0.18;">
+              <defs>
+                <pattern id="capiz-d" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <rect width="60" height="60" fill="transparent"/>
+                  <rect x="6" y="6" width="22" height="22" rx="3" fill="#3a2c1a" stroke="#a1620e" stroke-width="0.8" opacity="0.7"/>
+                  <rect x="32" y="6" width="22" height="22" rx="3" fill="#2c2114" stroke="#a1620e" stroke-width="0.8" opacity="0.6"/>
+                  <rect x="6" y="32" width="22" height="22" rx="3" fill="#2c2114" stroke="#a1620e" stroke-width="0.8" opacity="0.6"/>
+                  <rect x="32" y="32" width="22" height="22" rx="3" fill="#3a2c1a" stroke="#a1620e" stroke-width="0.8" opacity="0.7"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#capiz-d)"/>
+            </svg>
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Source:</b> Phase 1 design-system §6 — capiz is one of two inclusive primary motifs (along with banig).
+          <b>Tile:</b> 60×60 unit, 4-cell quartet with alternating opacity.
+          <b>Reads better on:</b> honey-cream (subtle texture without competing with content).
+          <b>Phase 1 rule:</b> Filipino architecture heritage; subtle, never dominant; survives WCAG contrast checks against text on top.
+        </div>
+      </div>
+    </section>
+
+    <!-- FloatingPetals -->
+    <section id="petals">
+      <h2 class="section-h">FloatingPetals</h2>
+      <p class="section-desc">
+        6–12 sampaguita petals drifting from top to bottom of the home view. Animated <code>petal-drift</code> 14–22s linear, randomized delay.
+        Pure decoration, pointer-events: none.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Home hero ambient layer · onboarding completion celebration burst</h3>
+        <p class="where">animation runs always in this repo · production gates on prefers-reduced-motion (per F2)</p>
+        <div class="demos">
+          <div class="demo white" style="min-height:240px;">
+            <div class="demo-label">on white</div>
+            <div style="position:absolute;inset:0;overflow:hidden;">
+              <span class="petal-fall" style="position:absolute;left:8%;top:0;width:9px;height:9px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.5);animation-duration:8s;"></span>
+              <span class="petal-fall" style="position:absolute;left:24%;top:0;width:7px;height:7px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.5);animation-duration:10s;animation-delay:1s;"></span>
+              <span class="petal-fall" style="position:absolute;left:42%;top:0;width:10px;height:10px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.5);animation-duration:9s;animation-delay:3s;"></span>
+              <span class="petal-fall" style="position:absolute;left:58%;top:0;width:8px;height:8px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.5);animation-duration:11s;animation-delay:0.5s;"></span>
+              <span class="petal-fall" style="position:absolute;left:76%;top:0;width:9px;height:9px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.5);animation-duration:8.5s;animation-delay:4s;"></span>
+              <span class="petal-fall" style="position:absolute;left:88%;top:0;width:7px;height:7px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.5);animation-duration:9.5s;animation-delay:6s;"></span>
+            </div>
+            <div style="position:absolute;bottom:8px;left:12px;font-size:11px;color:var(--ink-soft);">live preview — petals drift continuously</div>
+          </div>
+          <div class="demo honey" style="min-height:240px;">
+            <div class="demo-label">on honey-cream</div>
+            <div style="position:absolute;inset:0;overflow:hidden;">
+              <span class="petal-fall" style="position:absolute;left:18%;top:0;width:9px;height:9px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.65);animation-duration:8s;"></span>
+              <span class="petal-fall" style="position:absolute;left:32%;top:0;width:8px;height:8px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.65);animation-duration:10s;animation-delay:2s;"></span>
+              <span class="petal-fall" style="position:absolute;left:50%;top:0;width:10px;height:10px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.65);animation-duration:9s;animation-delay:4s;"></span>
+              <span class="petal-fall" style="position:absolute;left:68%;top:0;width:7px;height:7px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.65);animation-duration:11s;animation-delay:1s;"></span>
+              <span class="petal-fall" style="position:absolute;left:84%;top:0;width:8px;height:8px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:1px solid rgba(232,155,47,0.65);animation-duration:8.5s;animation-delay:5s;"></span>
+            </div>
+            <div style="position:absolute;bottom:8px;left:12px;font-size:11px;color:var(--ink-soft);">slightly subtler on honey</div>
+          </div>
+          <div class="demo dark" style="grid-column: 1 / -1; min-height:240px;">
+            <div class="demo-label">on dark mode (#1a1410)</div>
+            <div style="position:absolute;inset:0;overflow:hidden;">
+              <span class="petal-fall" style="position:absolute;left:14%;top:0;width:9px;height:9px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fffbf0, #f5d995);border:1px solid rgba(245,179,71,0.6);animation-duration:8s;"></span>
+              <span class="petal-fall" style="position:absolute;left:28%;top:0;width:7px;height:7px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fffbf0, #f5d995);border:1px solid rgba(245,179,71,0.6);animation-duration:10s;animation-delay:1.5s;"></span>
+              <span class="petal-fall" style="position:absolute;left:46%;top:0;width:10px;height:10px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fffbf0, #f5d995);border:1px solid rgba(245,179,71,0.6);animation-duration:9s;animation-delay:3.5s;"></span>
+              <span class="petal-fall" style="position:absolute;left:64%;top:0;width:8px;height:8px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fffbf0, #f5d995);border:1px solid rgba(245,179,71,0.6);animation-duration:11s;animation-delay:0.5s;"></span>
+              <span class="petal-fall" style="position:absolute;left:82%;top:0;width:9px;height:9px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fffbf0, #f5d995);border:1px solid rgba(245,179,71,0.6);animation-duration:8.5s;animation-delay:4.5s;"></span>
+            </div>
+            <div style="position:absolute;bottom:8px;left:12px;font-size:11px;color:rgba(254,243,217,0.6);">petals shifted to warm cream + honey ring for dark visibility</div>
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Petal shape:</b> 6–9px asymmetric tear-drop, radial-gradient white-to-cream, 0.5px honey edge.
+          <b>Behavior:</b> 6 petals on home (default), up to 12 on celebration burst (1.5s one-shot).
+          <b>Performance:</b> <code>transform</code> + <code>opacity</code> only — no layout-impacting properties. Reduced-motion disables animation but petals remain visible (static).
+          <b>Open question:</b> Anton — petals on home only, or also on Linggong Kuwento entry?
+        </div>
+      </div>
+    </section>
+
+    <!-- WovenDivider -->
+    <section id="woven">
+      <h2 class="section-h">WovenDivider</h2>
+      <p class="section-desc">
+        Banig-weave dashes in zigzag pattern. Replaces the original sampaguita garland (rejected as "too feminine for some users").
+        32-segment SVG, alternating up/down strokes.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Section divider on home (between action grid and weekly story)</h3>
+        <p class="where">opacity 0.55 · color #b06410 · stroke 1.2</p>
+        <div class="demos">
+          <div class="demo white" style="display:flex;align-items:center;justify-content:center;padding:0 24px;">
+            <div class="demo-label">on white</div>
+            <div style="width:100%;display:flex;align-items:center;justify-content:center;padding:4px 0;opacity:0.55;">
+              <svg width="100%" height="14" viewBox="0 0 400 10" preserveAspectRatio="none">
+                <g stroke="#b06410" stroke-width="1.2" stroke-linecap="round" opacity="0.55">
+                  <line x1="6" y1="2" x2="13" y2="8"/>
+                  <line x1="18.3" y1="8" x2="25.3" y2="2"/>
+                  <line x1="30.6" y1="2" x2="37.6" y2="8"/>
+                  <line x1="42.9" y1="8" x2="49.9" y2="2"/>
+                  <line x1="55.2" y1="2" x2="62.2" y2="8"/>
+                  <line x1="67.5" y1="8" x2="74.5" y2="2"/>
+                  <line x1="79.8" y1="2" x2="86.8" y2="8"/>
+                  <line x1="92.1" y1="8" x2="99.1" y2="2"/>
+                  <line x1="104.4" y1="2" x2="111.4" y2="8"/>
+                  <line x1="116.7" y1="8" x2="123.7" y2="2"/>
+                  <line x1="129" y1="2" x2="136" y2="8"/>
+                  <line x1="141.3" y1="8" x2="148.3" y2="2"/>
+                  <line x1="153.6" y1="2" x2="160.6" y2="8"/>
+                  <line x1="165.9" y1="8" x2="172.9" y2="2"/>
+                  <line x1="178.2" y1="2" x2="185.2" y2="8"/>
+                  <line x1="190.5" y1="8" x2="197.5" y2="2"/>
+                  <line x1="202.8" y1="2" x2="209.8" y2="8"/>
+                  <line x1="215.1" y1="8" x2="222.1" y2="2"/>
+                  <line x1="227.4" y1="2" x2="234.4" y2="8"/>
+                  <line x1="239.7" y1="8" x2="246.7" y2="2"/>
+                  <line x1="252" y1="2" x2="259" y2="8"/>
+                  <line x1="264.3" y1="8" x2="271.3" y2="2"/>
+                  <line x1="276.6" y1="2" x2="283.6" y2="8"/>
+                  <line x1="288.9" y1="8" x2="295.9" y2="2"/>
+                  <line x1="301.2" y1="2" x2="308.2" y2="8"/>
+                  <line x1="313.5" y1="8" x2="320.5" y2="2"/>
+                  <line x1="325.8" y1="2" x2="332.8" y2="8"/>
+                  <line x1="338.1" y1="8" x2="345.1" y2="2"/>
+                  <line x1="350.4" y1="2" x2="357.4" y2="8"/>
+                  <line x1="362.7" y1="8" x2="369.7" y2="2"/>
+                  <line x1="375" y1="2" x2="382" y2="8"/>
+                  <line x1="387.3" y1="8" x2="394.3" y2="2"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div class="demo honey" style="display:flex;align-items:center;justify-content:center;padding:0 24px;">
+            <div class="demo-label">on honey-cream</div>
+            <div style="width:100%;display:flex;align-items:center;justify-content:center;padding:4px 0;opacity:0.55;">
+              <svg width="100%" height="14" viewBox="0 0 400 10" preserveAspectRatio="none">
+                <g stroke="#b06410" stroke-width="1.2" stroke-linecap="round" opacity="0.55">
+                  <line x1="6" y1="2" x2="13" y2="8"/>
+                  <line x1="18.3" y1="8" x2="25.3" y2="2"/>
+                  <line x1="30.6" y1="2" x2="37.6" y2="8"/>
+                  <line x1="42.9" y1="8" x2="49.9" y2="2"/>
+                  <line x1="55.2" y1="2" x2="62.2" y2="8"/>
+                  <line x1="67.5" y1="8" x2="74.5" y2="2"/>
+                  <line x1="79.8" y1="2" x2="86.8" y2="8"/>
+                  <line x1="92.1" y1="8" x2="99.1" y2="2"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Style:</b> 32 alternating strokes simulating banig (sleeping mat) weave.
+          <b>Phase 1 design-system §6:</b> Banig is the inclusive primary motif — neutral, working-class, unisex. Reviewer note: "chosen over sampaguita garlands because they might be too feminine for some users."
+          <b>Note:</b> Honey-cream version has lower contrast — may need opacity bump to 0.7 on honey background.
+        </div>
+      </div>
+    </section>
+
+    <!-- Squiggle -->
+    <section id="squiggle">
+      <h2 class="section-h">Squiggle (hand-drawn underline)</h2>
+      <p class="section-desc">
+        Replaces a CSS bottom border. Used once per screen as a deliberate accent — under serif greetings, headline phrases.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Under serif greeting · headline phrase · deliberate-accent only</h3>
+        <p class="where">120px FIL · 130px EN · honey color (#e89b2f) · stroke 2.2</p>
+        <div class="demos">
+          <div class="demo white" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:24px;">
+            <div class="demo-label">on white</div>
+            <span style="font-family: serif; font-size: 28px; font-weight: 600; color: var(--ink); font-style: italic;">kumusta ka?</span>
+            <svg width="120" height="8" viewBox="0 0 80 8" style="display:block;margin-top:2px;">
+              <path d="M2 5 Q12 1 22 5 T42 5 T62 5 T78 5" stroke="#e89b2f" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="demo honey" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:24px;">
+            <div class="demo-label">on honey-cream</div>
+            <span style="font-family: serif; font-size: 28px; font-weight: 600; color: var(--ink); font-style: italic;">how are you?</span>
+            <svg width="130" height="8" viewBox="0 0 80 8" style="display:block;margin-top:2px;">
+              <path d="M2 5 Q12 1 22 5 T42 5 T62 5 T78 5" stroke="#e89b2f" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Style:</b> Hand-drawn quadratic-bezier wave. <b>Behavior:</b> NOT animated by default; could optionally animate-draw on entry.
+          <b>Width prop:</b> wider for English (130) to compensate for shorter visual length of "how are you?" vs "kumusta ka?".
+        </div>
+      </div>
+    </section>
+
+    <!-- TapeStrip -->
+    <section id="tape">
+      <h2 class="section-h">TapeStrip</h2>
+      <p class="section-desc">
+        Washi-tape rectangle on top of paper-note primitive. Implies physical taping to a fridge or wall — Filipino home-business note-taking metaphor.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Top of paper-note primitive (check-in invite, Kai callouts, Kuwento takeaway)</h3>
+        <p class="where">64×18 honey-gradient · rotate -3° to 2° · pointer-events none</p>
+        <div class="demos">
+          <div class="demo white" style="padding:32px;display:flex;align-items:center;justify-content:center;">
+            <div class="demo-label">on white</div>
+            <div style="position:relative;width:240px;background:#fffbf0;border:1px solid #e6dac4;border-radius:4px 12px 4px 12px;transform:rotate(-1.2deg);padding:24px 18px 18px;box-shadow:0 2px 6px rgba(168,120,40,0.15);">
+              <div style="position:absolute;top:-8px;left:30%;transform:translateX(-50%) rotate(-3deg);width:64px;height:18px;background:linear-gradient(180deg, rgba(245,179,71,0.45), rgba(245,179,71,0.25));border-top:1px solid rgba(232,155,47,0.5);border-bottom:1px solid rgba(232,155,47,0.4);box-shadow:0 1px 3px rgba(168,120,40,0.15);pointer-events:none;"></div>
+              <div style="font-size:13px;color:var(--ink);line-height:1.5;"><b>Pang-12 araw na natin.</b><br><span style="color:var(--ink-soft);">Kumusta ka, Andoy?</span></div>
+            </div>
+          </div>
+          <div class="demo honey" style="padding:32px;display:flex;align-items:center;justify-content:center;">
+            <div class="demo-label">on honey-cream</div>
+            <div style="position:relative;width:240px;background:#fffbf0;border:1px solid #e6dac4;border-radius:4px 12px 4px 12px;transform:rotate(1.5deg);padding:24px 18px 18px;box-shadow:0 2px 6px rgba(168,120,40,0.15);">
+              <div style="position:absolute;top:-9px;left:22%;transform:translateX(-50%) rotate(2deg);width:64px;height:18px;background:linear-gradient(180deg, rgba(245,179,71,0.45), rgba(245,179,71,0.25));border-top:1px solid rgba(232,155,47,0.5);border-bottom:1px solid rgba(232,155,47,0.4);box-shadow:0 1px 3px rgba(168,120,40,0.15);pointer-events:none;"></div>
+              <div style="font-size:13px;color:var(--ink);line-height:1.5;"><b>"Mahirap ang linggong 'to,</b><br><span style="color:var(--ink-soft);">pero ginalingan mo pa rin."</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Style:</b> Linear-gradient honey-translucent rectangle, 1px hairline borders top + bottom.
+          <b>Composition:</b> always paired with paper-note primitive (asymmetric 4px 12px 4px 12px corner radius + slight tilt).
+          <b>Phase 1 design-system §6:</b> Tape strip references Filipino home-business habit of taping receipts and notes to walls/fridges.
+        </div>
+      </div>
+    </section>
+
+    <!-- SampaguitaGarland -->
+    <section id="sampaguita-garland">
+      <h2 class="section-h">SampaguitaGarland</h2>
+      <p class="section-desc">
+        Horizontal divider with 9 small sampaguita flowers on a thin sage line. <b>Currently rejected from inclusive design</b> in favor of WovenDivider — included here for context only.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Originally proposed for section dividers · REJECTED per Phase 1 design-system §6</h3>
+        <p class="where">opacity 0.7 · 9 flowers · sage line</p>
+        <div class="demos">
+          <div class="demo white" style="display:flex;align-items:center;justify-content:center;padding:24px;">
+            <div class="demo-label">on white</div>
+            <div style="width:100%;display:flex;align-items:center;justify-content:center;padding:4px 0;opacity:0.7;">
+              <svg width="100%" height="20" viewBox="0 0 400 20" preserveAspectRatio="none">
+                <path d="M0 10 Q100 4 200 10 T400 10" stroke="#97b39d" stroke-width="1.2" fill="none" opacity="0.6"/>
+                <g transform="translate(20 8)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+                <g transform="translate(65 12)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+                <g transform="translate(110 8)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+                <g transform="translate(155 12)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+                <g transform="translate(200 8)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+                <g transform="translate(245 12)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+                <g transform="translate(290 8)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+                <g transform="translate(335 12)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+                <g transform="translate(380 8)"><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216) translate(0 -2.4)"/><circle cx="0" cy="0" r="2.2" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288) translate(0 -2.4)"/><circle cx="0" cy="0" r="1.2" fill="#fbd672"/></g>
+              </svg>
+            </div>
+          </div>
+          <div class="demo honey" style="display:flex;align-items:center;justify-content:center;padding:24px;color:var(--ink-soft);font-size:13px;font-style:italic;">
+            <div class="demo-label">on honey-cream</div>
+            (rejected — kept here for reference only)
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Status:</b> REJECTED in Phase 1 design-system §6. The original handoff used this; it was replaced by WovenDivider (banig) for inclusivity.
+          <b>Reason:</b> "Sampaguita garlands felt too feminine for some users" per the handoff reviewer note.
+          <b>Alternative use:</b> If sampaguita is still desired in some contexts, use single tiny flower (per <code>Sampaguita</code> in icons.html) — never garlanded.
+        </div>
+      </div>
+    </section>
+
+    <!-- SwayingLeaf -->
+    <section id="leaf">
+      <h2 class="section-h">SwayingLeaf</h2>
+      <p class="section-desc">
+        Hand-drawn 3-leaf branch in sage green, animated to sway gently. Used as ambient corner decoration on home or onboarding.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Corner ambient decoration · onboarding wizard · check-in success</h3>
+        <p class="where">60×80 SVG · sage palette · leaf-sway animation 4s</p>
+        <div class="demos">
+          <div class="demo white" style="display:flex;align-items:center;justify-content:center;padding:24px;">
+            <div class="demo-label">on white</div>
+            <svg width="60" height="80" viewBox="0 0 60 80" class="leaf-sway-anim">
+              <path d="M30 78 Q30 50 30 30" stroke="#5a7d62" stroke-width="2" stroke-linecap="round"/>
+              <path d="M30 50 Q18 42 16 30 Q28 36 30 45 Z" fill="#97b39d"/>
+              <path d="M30 42 Q42 34 44 22 Q32 28 30 37 Z" fill="#b7c9ba"/>
+              <path d="M30 34 Q20 26 18 16 Q28 22 30 30 Z" fill="#97b39d" opacity="0.85"/>
+            </svg>
+          </div>
+          <div class="demo honey" style="display:flex;align-items:center;justify-content:center;padding:24px;">
+            <div class="demo-label">on honey-cream</div>
+            <svg width="60" height="80" viewBox="0 0 60 80" class="leaf-sway-anim" style="animation-delay:1s;">
+              <path d="M30 78 Q30 50 30 30" stroke="#5a7d62" stroke-width="2" stroke-linecap="round"/>
+              <path d="M30 50 Q18 42 16 30 Q28 36 30 45 Z" fill="#97b39d"/>
+              <path d="M30 42 Q42 34 44 22 Q32 28 30 37 Z" fill="#b7c9ba"/>
+              <path d="M30 34 Q20 26 18 16 Q28 22 30 30 Z" fill="#97b39d" opacity="0.85"/>
+            </svg>
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Style:</b> Sage green hand-drawn 3-leaf branch. Center stem + 3 leaves at varying angles + opacity.
+          <b>Animation:</b> <code>leaf-sway</code> — rotate -3° to +3°, 4s ease-in-out infinite, transform-origin bottom center.
+          <b>Open question:</b> The handoff uses sage green; current AKBai palette has no sage. Adopt as a tertiary accent or skip?
+        </div>
+      </div>
+    </section>
+
+    <!-- Sunburst -->
+    <section id="sunburst">
+      <h2 class="section-h">Sunburst</h2>
+      <p class="section-desc">
+        24 honey-yellow rays radiating from center, at 0.45 opacity, slow rotation behind Kai mark. Background only — pointer-events none.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Behind Kai mark on home hero (most visible motif behind Kai)</h3>
+        <p class="where">320×320 SVG · sun-slow 30s rotation · opacity 0.45</p>
+        <div class="demos">
+          <div class="demo white" style="display:flex;align-items:center;justify-content:center;padding:0;">
+            <div class="demo-label">on white</div>
+            <div style="position:relative;width:200px;height:200px;">
+              <svg width="200" height="200" viewBox="0 0 200 200" class="sun-slow" style="position:absolute;inset:0;pointer-events:none;">
+                <g stroke="#f5b347" stroke-width="2.2" stroke-linecap="round" opacity="0.45">
+                  <line x1="165" y1="100" x2="188" y2="100"/>
+                  <line x1="156.6" y1="135" x2="172.5" y2="151.6"/>
+                  <line x1="135" y1="156.6" x2="151.6" y2="172.5"/>
+                  <line x1="100" y1="165" x2="100" y2="188"/>
+                  <line x1="65" y1="156.6" x2="48.4" y2="172.5"/>
+                  <line x1="43.4" y1="135" x2="27.5" y2="151.6"/>
+                  <line x1="35" y1="100" x2="12" y2="100"/>
+                  <line x1="43.4" y1="65" x2="27.5" y2="48.4"/>
+                  <line x1="65" y1="43.4" x2="48.4" y2="27.5"/>
+                  <line x1="100" y1="35" x2="100" y2="12"/>
+                  <line x1="135" y1="43.4" x2="151.6" y2="27.5"/>
+                  <line x1="156.6" y1="65" x2="172.5" y2="48.4"/>
+                </g>
+              </svg>
+              <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;overflow:hidden;filter:drop-shadow(0 4px 14px rgba(168,120,40,0.22));"><img src="../../prototype/assets/kai-mark.png" alt="Kai" width="120" height="120" style="display:block;width:120px;height:120px;object-fit:contain;"></div>
+            </div>
+          </div>
+          <div class="demo honey" style="display:flex;align-items:center;justify-content:center;padding:0;">
+            <div class="demo-label">on honey-cream</div>
+            <div style="position:relative;width:200px;height:200px;">
+              <svg width="200" height="200" viewBox="0 0 200 200" class="sun-slow" style="position:absolute;inset:0;pointer-events:none;animation-delay:5s;">
+                <g stroke="#f5b347" stroke-width="2.2" stroke-linecap="round" opacity="0.5">
+                  <line x1="165" y1="100" x2="188" y2="100"/>
+                  <line x1="156.6" y1="135" x2="172.5" y2="151.6"/>
+                  <line x1="135" y1="156.6" x2="151.6" y2="172.5"/>
+                  <line x1="100" y1="165" x2="100" y2="188"/>
+                  <line x1="65" y1="156.6" x2="48.4" y2="172.5"/>
+                  <line x1="43.4" y1="135" x2="27.5" y2="151.6"/>
+                  <line x1="35" y1="100" x2="12" y2="100"/>
+                  <line x1="43.4" y1="65" x2="27.5" y2="48.4"/>
+                  <line x1="65" y1="43.4" x2="48.4" y2="27.5"/>
+                  <line x1="100" y1="35" x2="100" y2="12"/>
+                  <line x1="135" y1="43.4" x2="151.6" y2="27.5"/>
+                  <line x1="156.6" y1="65" x2="172.5" y2="48.4"/>
+                </g>
+              </svg>
+              <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;overflow:hidden;filter:drop-shadow(0 4px 14px rgba(168,120,40,0.22));"><img src="../../prototype/assets/kai-mark.png" alt="Kai" width="120" height="120" style="display:block;width:120px;height:120px;object-fit:contain;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Style:</b> 24 rays alternating long/short, 0.45 opacity. Animated <code>sun-slow</code> 30s linear rotation.
+          <b>Note:</b> Phase 1 design-system §6 doesn't explicitly list sunburst. Open question: include or skip?
+        </div>
+      </div>
+    </section>
+
+    <!-- DoodleArrow -->
+    <section id="doodle">
+      <h2 class="section-h">DoodleArrow</h2>
+      <p class="section-desc">
+        Hand-drawn arrow for "← look at this" pointers. Used in the welcome tour overlay.
+      </p>
+      <div class="motif-card">
+        <h3>Use: Welcome tour 3-card paper-note onboarding (Phase 6) — points at element being introduced</h3>
+        <p class="where">48×48 SVG · honey-deep stroke · 2px</p>
+        <div class="demos">
+          <div class="demo white" style="display:flex;align-items:center;justify-content:center;padding:24px;gap:24px;">
+            <div class="demo-label">on white</div>
+            <svg width="48" height="48" viewBox="0 0 50 50" style="display:block;">
+              <path d="M5 25 Q15 8 38 18" stroke="#a1620e" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M30 12 L40 18 L34 28" stroke="#a1620e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg width="48" height="48" viewBox="0 0 50 50" style="display:block;transform:rotate(45deg);">
+              <path d="M5 25 Q15 8 38 18" stroke="#a1620e" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M30 12 L40 18 L34 28" stroke="#a1620e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg width="48" height="48" viewBox="0 0 50 50" style="display:block;transform:rotate(180deg);">
+              <path d="M5 25 Q15 8 38 18" stroke="#a1620e" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M30 12 L40 18 L34 28" stroke="#a1620e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="demo honey" style="display:flex;align-items:center;justify-content:center;padding:24px;color:var(--ink-soft);font-size:13px;font-style:italic;">
+            <div class="demo-label">on honey-cream</div>
+            (3 rotations: 0° / 45° / 180°)
+          </div>
+        </div>
+        <div class="style-notes">
+          <b>Style:</b> Hand-drawn quadratic-curve arrow + arrowhead. Honey-deep stroke 2px.
+          <b>Use:</b> Welcome tour overlays. Point at the actual element being introduced via small honey arrow SVG (per plan Phase 6 §6.3).
+        </div>
+      </div>
+    </section>
+
+    <!-- Consolidated dark mode preview -->
+    <section id="dark-mode">
+      <h2 class="section-h">All motifs — dark mode preview</h2>
+      <p class="section-desc">
+        AKBai supports dark mode (existing project rule). All decorative motifs need to read correctly on the dark surface
+        (<code>#1a1410</code>) without losing the "warm" feel. Motifs that go invisible or muddy in dark mode get rejected
+        or get a dark-specific variant.
+      </p>
+
+      <div style="background:#1a1410;border:1px solid #3a2c1a;border-radius:12px;padding:32px;color:#fef3d9;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;align-items:start;">
+
+          <!-- Capiz dark -->
+          <div>
+            <h4 style="font-size:13px;color:#fef3d9;opacity:0.85;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.06em;">CapizPattern (dark)</h4>
+            <div style="position:relative;height:140px;border:1px solid #3a2c1a;border-radius:8px;overflow:hidden;">
+              <svg width="100%" height="100%" style="display:block;opacity:0.18;">
+                <defs>
+                  <pattern id="capiz-dm" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                    <rect width="60" height="60" fill="transparent"/>
+                    <rect x="6" y="6" width="22" height="22" rx="3" fill="#3a2c1a" stroke="#a1620e" stroke-width="0.8" opacity="0.7"/>
+                    <rect x="32" y="6" width="22" height="22" rx="3" fill="#2c2114" stroke="#a1620e" stroke-width="0.8" opacity="0.6"/>
+                    <rect x="6" y="32" width="22" height="22" rx="3" fill="#2c2114" stroke="#a1620e" stroke-width="0.8" opacity="0.6"/>
+                    <rect x="32" y="32" width="22" height="22" rx="3" fill="#3a2c1a" stroke="#a1620e" stroke-width="0.8" opacity="0.7"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#capiz-dm)"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Petals dark -->
+          <div>
+            <h4 style="font-size:13px;color:#fef3d9;opacity:0.85;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.06em;">FloatingPetals (dark)</h4>
+            <div style="position:relative;height:140px;border:1px solid #3a2c1a;border-radius:8px;overflow:hidden;">
+              <span class="petal-fall" style="position:absolute;left:18%;top:0;width:9px;height:9px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fffbf0, #f5d995);border:1px solid rgba(245,179,71,0.6);animation-duration:7s;"></span>
+              <span class="petal-fall" style="position:absolute;left:46%;top:0;width:8px;height:8px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fffbf0, #f5d995);border:1px solid rgba(245,179,71,0.6);animation-duration:9s;animation-delay:2s;"></span>
+              <span class="petal-fall" style="position:absolute;left:78%;top:0;width:9px;height:9px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fffbf0, #f5d995);border:1px solid rgba(245,179,71,0.6);animation-duration:8s;animation-delay:4s;"></span>
+            </div>
+          </div>
+
+          <!-- Woven dark -->
+          <div>
+            <h4 style="font-size:13px;color:#fef3d9;opacity:0.85;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.06em;">WovenDivider (dark)</h4>
+            <div style="position:relative;height:140px;border:1px solid #3a2c1a;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 24px;">
+              <svg width="100%" height="14" viewBox="0 0 400 10" preserveAspectRatio="none" style="opacity:0.85;">
+                <g stroke="#f5b347" stroke-width="1.4" stroke-linecap="round" opacity="0.7">
+                  <line x1="6" y1="2" x2="13" y2="8"/><line x1="18.3" y1="8" x2="25.3" y2="2"/><line x1="30.6" y1="2" x2="37.6" y2="8"/><line x1="42.9" y1="8" x2="49.9" y2="2"/><line x1="55.2" y1="2" x2="62.2" y2="8"/><line x1="67.5" y1="8" x2="74.5" y2="2"/><line x1="79.8" y1="2" x2="86.8" y2="8"/><line x1="92.1" y1="8" x2="99.1" y2="2"/>
+                  <line x1="104.4" y1="2" x2="111.4" y2="8"/><line x1="116.7" y1="8" x2="123.7" y2="2"/><line x1="129" y1="2" x2="136" y2="8"/><line x1="141.3" y1="8" x2="148.3" y2="2"/><line x1="153.6" y1="2" x2="160.6" y2="8"/><line x1="165.9" y1="8" x2="172.9" y2="2"/><line x1="178.2" y1="2" x2="185.2" y2="8"/><line x1="190.5" y1="8" x2="197.5" y2="2"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Tape dark -->
+          <div>
+            <h4 style="font-size:13px;color:#fef3d9;opacity:0.85;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.06em;">TapeStrip + paper-note (dark)</h4>
+            <div style="position:relative;height:140px;border:1px solid #3a2c1a;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 16px;">
+              <div style="position:relative;width:200px;background:#2c2114;border:1px solid #5a4318;border-radius:4px 12px 4px 12px;transform:rotate(-1.2deg);padding:18px 14px 14px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">
+                <div style="position:absolute;top:-8px;left:30%;transform:translateX(-50%) rotate(-3deg);width:64px;height:18px;background:linear-gradient(180deg, rgba(245,179,71,0.55), rgba(245,179,71,0.3));border-top:1px solid rgba(232,155,47,0.6);border-bottom:1px solid rgba(232,155,47,0.5);box-shadow:0 1px 3px rgba(0,0,0,0.4);pointer-events:none;"></div>
+                <div style="font-size:12px;color:#fef3d9;line-height:1.5;"><b>Pang-12 araw na natin.</b><br><span style="opacity:0.7;">Kumusta ka, Andoy?</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sunburst dark -->
+          <div>
+            <h4 style="font-size:13px;color:#fef3d9;opacity:0.85;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.06em;">Sunburst (dark)</h4>
+            <div style="position:relative;height:140px;border:1px solid #3a2c1a;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <div style="position:relative;width:100px;height:100px;">
+                <svg width="100" height="100" viewBox="0 0 200 200" class="sun-slow" style="position:absolute;inset:0;pointer-events:none;animation-delay:8s;">
+                  <g stroke="#f5b347" stroke-width="2.5" stroke-linecap="round" opacity="0.55">
+                    <line x1="165" y1="100" x2="188" y2="100"/><line x1="156.6" y1="135" x2="172.5" y2="151.6"/><line x1="135" y1="156.6" x2="151.6" y2="172.5"/><line x1="100" y1="165" x2="100" y2="188"/><line x1="65" y1="156.6" x2="48.4" y2="172.5"/><line x1="43.4" y1="135" x2="27.5" y2="151.6"/><line x1="35" y1="100" x2="12" y2="100"/><line x1="43.4" y1="65" x2="27.5" y2="48.4"/><line x1="65" y1="43.4" x2="48.4" y2="27.5"/><line x1="100" y1="35" x2="100" y2="12"/><line x1="135" y1="43.4" x2="151.6" y2="27.5"/><line x1="156.6" y1="65" x2="172.5" y2="48.4"/>
+                  </g>
+                </svg>
+                <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;overflow:hidden;filter:drop-shadow(0 4px 14px rgba(0,0,0,0.4));"><img src="../../prototype/assets/kai-mark.png" alt="Kai" width="60" height="60" style="display:block;width:60px;height:60px;object-fit:contain;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Squiggle dark -->
+          <div>
+            <h4 style="font-size:13px;color:#fef3d9;opacity:0.85;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.06em;">Squiggle (dark)</h4>
+            <div style="position:relative;height:140px;border:1px solid #3a2c1a;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+              <span style="font-family:serif;font-size:24px;font-weight:600;color:#fef3d9;font-style:italic;">kumusta ka?</span>
+              <svg width="120" height="8" viewBox="0 0 80 8" style="display:block;margin-top:2px;">
+                <path d="M2 5 Q12 1 22 5 T42 5 T62 5 T78 5" stroke="#f5b347" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <p style="font-size:12px;color:rgba(254,243,217,0.7);margin:24px 0 0;line-height:1.6;">
+          <b style="color:#f5b347;">Dark-mode adjustments applied:</b>
+          (1) Capiz tile fills shift from creams to warm browns (<code>#3a2c1a</code> / <code>#2c2114</code>) with honey-deep stroke at 0.18 opacity.
+          (2) Petals shift from white→cream to cream→honey to stay visible on dark.
+          (3) WovenDivider stroke moves from honey-deep to honey-bright (<code>#f5b347</code>) at 0.85 opacity.
+          (4) TapeStrip composes against a dark paper-note (<code>#2c2114</code>) — note the inverted text color but warm tape.
+          (5) Squiggle stroke brightens from <code>#e89b2f</code> to <code>#f5b347</code>. Same shape, brighter line.
+        </p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

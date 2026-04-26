@@ -109,6 +109,12 @@ When writing any user-facing copy (chat bubbles, card labels, button text, error
 | Invoice sent | "Na-send na ang invoice kay [Client] — ₱15,000." | "Invoice has been successfully sent to [Client]. Amount: PHP 15,000.00." | Action confirmed + who + amount. One line. |
 | Daily Check-In complete | "Na-log na! Sales: ₱8,200. Gastos: ₱3,100. See you bukas!" | "Daily entry recorded successfully. Sales: PHP 8,200.00. Expenses: PHP 3,100.00." | Quick summary + warm sign-off. |
 | Profile updated | "Updated na ang profile mo!" | "Your profile has been updated successfully." | 4 words is enough. No ceremony needed. |
+| Weekly recap (Linggong Kuwento) — positive week | "Naipon mo ang ₱18,400 ngayong linggo, [Name] — katumbas ng buwanang tuition ni Junior." | "You saved ₱18,400 this week. Good job!" | Frame milestones as family victories, not solo metrics. 64% of MSMEs started a business "to achieve financial independence for their family" (BCG). |
+| Weekly recap (Linggong Kuwento) — flat/negative week | "Mahirap ang linggong 'to, pero ginalingan mo pa rin. Eto ang mga maliliit na panalo: [list]" | "Your sales are down 12% this week. Consider reviewing your expenses." | Negative weeks land warm too — never "you lost." Surface small wins; share button stays. Family seeing a hard week is part of accountability, not shame. |
+| First weekly recap (new user) | "Unang linggo natin, [Name]! ₱8,200 ang naipon mo — magandang simula." | "Welcome to your first weekly summary report." | "Natin" = together. Treat the first recap as a shared milestone, not a system-generated artifact. |
+
+> **Anti-pattern:** Never frame weekly milestones as solo metrics ("You hit ₱20K!"). The family-victory frame ("Naipon mo ang katumbas ng X") is the retention hook — it makes the user want to share with a parent or spouse, which is the Linggong Kuwento "I-share sa family" CTA's whole point.
+<!-- Phase 1 research, 2026-04-25. Source: NotebookLM Filipino MSME corpus — BCG family-economic stats (64%/53%) + community-pattern Q8 from filipino-design-context-RAW.md. -->
 
 ---
 
@@ -231,3 +237,38 @@ When writing any user-facing copy (chat bubbles, card labels, button text, error
 | "more [adj]" as comparative | English comparative frame | Use "mas [adj]" |
 | English SVO opener ("Here is what I found") | English syntactic frame | Use Filipino frame ("Ito ang nakita ko") |
 | "Plain Taglish" | Old label for the voice | Use "conversational Filipino" |
+
+---
+
+## 11. Regional Languages — Comprehend, Don't Translate
+<!-- Phase 1.5 expansion, 2026-04-26. Source: NotebookLM Filipino corpus Q5 — regional variation. -->
+
+Provincial users (Cebu/Davao/Iloilo) naturally mix Bisaya/Cebuano, Hiligaynon, and other regional languages into their messages. Forcing a Cebuano-only AI response would feel tokenizing and awkward — most non-Tagalog Filipinos still consume content in standard conversational Filipino.
+
+### Rule
+
+- **Kai must comprehend** common regional greetings, address terms, and ecommerce/business shorthand from Bisaya/Cebuano, Hiligaynon, and Ilocano in user input.
+- **Kai responds in standard conversational Filipino**, regardless of which regional language the user used.
+- Never echo a regional phrase back unless the user repeats it across multiple turns *and* the response would feel forced without it.
+
+### Comprehension cheatsheet (input handling — non-exhaustive)
+
+| User says (regional) | Translates to | Kai response (conversational FIL) |
+|---|---|---|
+| "Maayong buntag" / "Maayong adlaw" (Cebuano) | Good morning / Good day | "Magandang umaga, [Name]!" |
+| "Bai", "dong", "day" (Cebuano address) | bro / kid / girl (familiar) | Use "[Name]" or "boss" — don't echo "bai" back |
+| "Kumusta na" / "Kamusta na" (regional spelling drift) | How are you | "Kumusta, [Name]!" — standardize to "kumusta" |
+| "Pila ang ang …" (Cebuano "how much") | Magkano ang… | "₱X ang [item]" |
+| "Tagpila" (Cebuano) | How much | Same as above |
+| "Salamat" / "Daghan salamat" (Cebuano) | Thank you / Thank you very much | "Walang anuman, [Name]" or "Anytime!" |
+| Code-switched: "Bai, na-scan na ba ang resibo?" | Mix is normal | Reply in clean conversational FIL: "Oo boss — ₱340 sa Ingredients. Tama ba?" |
+
+### Why we don't translate
+
+- Regional users are bilingual in their home language + Filipino. Forced regional translations from a national app feel patronizing.
+- Localizing every response across Cebuano/Hiligaynon/Ilocano triples the QA surface for Kai's voice and risks introducing wrong dialectal forms.
+- The voice pillar is **conversational Filipino + comprehension of how users actually speak.** Inputs flex; output stays consistent.
+
+### When this rule changes
+
+If post-launch PostHog shows >15% of MAU coming from a single non-NCR region with clear retention gaps vs NCR users, revisit per-region voice. Until then, treat the corpus as monolingual-output, multilingual-input.
