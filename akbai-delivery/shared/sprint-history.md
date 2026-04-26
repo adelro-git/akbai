@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-04-26 (Frontend Redesign Phase 7 — Flagship Home — committed; awaiting Anton 24h feel-test before Session 4)
+> Last updated: 2026-04-26 (Frontend Redesign Phase 7 — Flagship Home — merged to main; feel-test gate deferred to Session 4 start)
 
 ---
 
@@ -1243,7 +1243,7 @@ These are NOT bugs — they are decisions made in-session, listed so they don't 
 ## Frontend Redesign — Phase 8 + Phase 9 starting state (handoff for next session)
 
 **Date:** 2026-04-26 (handoff written at end of Phase 7 session for cross-session continuity)
-**Session boundary:** Phase 7 shipped + committed to `claude/redesign-phase-3-4`. **Next session does NOT open until Anton has spent 24h with Phase 7 on a real phone** — this is the immutable feel-test gate per the multi-session plan locked 2026-04-26. Session 4 covers Phase 8 (Kausap + Saan = Chat + Expenses) and Phase 9 (Scan + Deadlines), per the plan.
+**Session boundary:** Phase 7 shipped, merged to `main` at end of Session 3. The branch `claude/redesign-phase-3-4` was deleted (local + remote) after the merge; `main` carries the cumulative redesign work since Session 1. **Anton deferred the 24h feel-test from a session-blocking gate to a Session-4-start gate** (2026-04-26): main may receive Phase 7 immediately so the work is durable + reviewable, but **no Phase 8 code work begins until Anton has spent 24h with the home on a real phone and the feel-test report block below is filled in.** Session 4 covers Phase 8 (Kausap + Saan = Chat + Expenses) and Phase 9 (Scan + Deadlines), per the plan, with the feel-test as its very first action.
 
 ### Anton's 24h feel-test report (capture HERE when Anton reports back)
 
@@ -1300,6 +1300,7 @@ These are NOT bugs — they are decisions made in-session, listed so they don't 
 
 ### First actions for Session 4 (Phase 8 + 9 = Kausap + Saan + Scan + Deadlines)
 
+0. **Feel-test gate fires here.** Before any Phase 8 code work, capture Anton's 24h feel-test notes into the report block above (he may have already done a fresh real-phone walkthrough by the time Session 4 opens, or you may need to ask him to spend 24h with `main` on a real phone first). Do not start step 2 onward until that block is filled in.
 1. **Read the feel-test report block above** (filled in by Anton). Anything Anton flagged as broken supersedes the punted-decision lists.
 2. **Read** [`screens/01-chat.md`](../../design_handoff_akbai_redesign/synthesis/screens/01-chat.md), [`02-expenses.md`](../../design_handoff_akbai_redesign/synthesis/screens/02-expenses.md), [`03-scan.md`](../../design_handoff_akbai_redesign/synthesis/screens/03-scan.md), [`04-deadlines.md`](../../design_handoff_akbai_redesign/synthesis/screens/04-deadlines.md) for the canonical Phase 8/9 specs.
 3. **Verify clean baseline** — run the three commands above. If anything is off, stop and reconcile before adding code.
