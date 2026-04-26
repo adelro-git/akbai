@@ -548,3 +548,57 @@ Frontend Redesign Phase 4 ports the Kai mark, decorative motifs, and brand icon 
 **Related:**
 - Phase 2 verdicts B4 (icons), B5 (motifs) — both signed off 2026-04-26
 - Sprint 5 lesson — reuse audit at [`04-reuse-audit.md`](../../../design_handoff_akbai_redesign/synthesis/04-reuse-audit.md) forbids parallel components
+
+---
+
+## ADR-014: SKIP_AUTH Client Consistency Across Server Pages and API Routes
+
+**Status:** Accepted
+**Date:** 2026-04-26
+
+**Context:**
+Frontend Redesign Phase 6 smoke testing surfaced a defect: `(app)/onboarding/page.tsx` rendered the wizard "fresh" while `/api/onboarding` rejected every step with a 400 `ALREADY_COMPLETED`. Root cause: under `SKIP_AUTH=true` (dev mode), the page used the RLS-protected `createClient()` from `@/lib/supabase/server`, which has no real session and so RLS returned an empty result for `users`. The page treated `userData?.onboarding_completed` as `undefined` and rendered the wizard. Meanwhile `/api/onboarding/route.ts` already followed the dashboard pattern of `db = SKIP_AUTH ? createServiceClient() : supabase`, bypassing RLS and reading the actual prior-run state. Page and API disagreed about whether the user was onboarded.
+
+The dashboard page already had this idiom right; the onboarding page was the outlier. Without an explicit rule, future server pages will repeat the same mistake.
+
+**Decision:**
+
+For any server component that:
+1. Reads from Supabase, **and**
+2. Has a corresponding API route that writes to the same row(s), **and**
+3. Renders or redirects based on that row's state,
+
+The page **must** use the same client-resolution pattern as its sibling API route under `SKIP_AUTH`:
+
+```ts
+const supabase = await createClient();
+// ...auth resolution (SKIP_AUTH ? DEV_USER : supabase.auth.getUser())...
+const db = SKIP_AUTH ? createServiceClient() : supabase;
+// Use `db` for all queries that mirror API behavior.
+```
+
+The auth resolution itself stays as-is (the `SKIP_AUTH` branch returns `DEV_USER` directly without consulting the auth client). What changes is the **data** client used after auth — under `SKIP_AUTH`, both page and API read via the service role to bypass RLS and read DEV_USER's actual state.
+
+**Why this matters:**
+- Dev experience: walking the same flow end-to-end shouldn't surface ghost state where the page says "fresh" and the API says "completed."
+- Production-safety: this is `SKIP_AUTH`-scoped only. In production (`SKIP_AUTH !== 'true'`), both page and API use the auth-bound client and inherit RLS exactly as before.
+- Pattern consistency: any reviewer touching a new server page will see the established two-client idiom and copy it.
+
+**Alternatives Considered:**
+- **Make `createClient()` return the service client under `SKIP_AUTH`:** rejected — too magical. The auth client should always honor RLS; the choice to bypass RLS belongs at the call site so reviewers can see exactly when RLS is dropped.
+- **Always use service client server-side:** rejected — production server components should respect RLS so a regression in user authorization fails closed, not silently leaks data.
+- **Keep the bug and document a "reset DEV_USER between runs" workflow:** rejected — friction every new contributor would re-discover.
+
+**Consequences:**
+- **Positive:** dev-mode flows behave identically to production for state-driven server pages. The `frontend/scripts/reset-dev-onboarding.mjs` helper (committed `a748cea`) exists for state reset, not as a workaround for client-mismatch bugs.
+- **Migration cost:** none in this ADR — the only known violator (`(app)/onboarding/page.tsx`) was fixed in commit `a72cf0c`. New server pages adopt the pattern by default.
+- **Audit:** every existing server page that reads from a table mutated by an API route should confirm it uses the `db = SKIP_AUTH ? createServiceClient() : supabase` idiom. As of 2026-04-26: `(app)/dashboard/page.tsx`, `(app)/profile/page.tsx`, and `(app)/onboarding/page.tsx` all match.
+
+**Validation:**
+- Manual: under `SKIP_AUTH=true`, the user state seen by `GET /onboarding` must equal the state seen by `POST /api/onboarding` for the same DEV_USER.
+- Smoke test: `node --env-file=.env.local scripts/reset-dev-onboarding.mjs` then walk the wizard end-to-end without 400s.
+
+**Related:**
+- Frontend Redesign Phase 6 commit `a72cf0c` (the fix that motivated this ADR)
+- `frontend/scripts/reset-dev-onboarding.mjs` (the dev reset helper, separate from the consistency rule)
+- `dev-auth.ts` defines `SKIP_AUTH` and `DEV_USER`

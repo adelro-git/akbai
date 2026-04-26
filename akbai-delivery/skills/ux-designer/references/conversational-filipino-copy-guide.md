@@ -380,6 +380,36 @@ Errors follow the pattern: **Warm acknowledgment → What happened (briefly) →
 | Rate limited | "Sandali lang — isang code lang every 60 seconds. Subukan muli mamaya." |
 | Yahoo mail delay | "Yahoo Mail minsan may delay sa OTP. I-check mo rin ang spam folder mo." |
 
+### Onboarding kumustahan opener (Frontend Redesign Phase 6, 2026-04-26)
+
+The onboarding header is a kumustahan **opener**, not a brand line. The page sits under the AKBai wordmark and asks the user to settle into a conversation with Kai before the wizard starts.
+
+| Locale | Tagline |
+|--------|---------|
+| FIL | **"Kamusta ka na?"** |
+| EN | "How are you?" |
+
+**Why not "Kilala kita":** the placeholder we shipped first read as a label ("Getting to know you") more than a greeting. "Kamusta ka na?" carries the same warmth Kai uses in chat bubbles and matches the kumustahan-as-onboarding frame the wizard now embodies (Kai expression per step, paper-note prompts, sampaguita stepper).
+
+**Pattern: kumustahan-opener** — when a screen is the literal start of a conversation with Kai (login → onboarding → first home load), greet first, label second. The brand wordmark above carries the identity; the tagline carries the relationship.
+
+### Onboarding step prompts (Phase 6)
+
+Each step's Kai prompt lives in `messages/{fil,en}.json` under `onboarding.stepN.kaiPrompt`. The prompts read as **direct kumustahan questions**, not form labels:
+
+| Step | FIL prompt | Frame |
+|------|-----------|-------|
+| 1 (Pangalan) | "Hi! Ako si Kai. Kumusta? Ano'ng pangalan mo?" | Kai-introduces-self |
+| 2 (Negosyo) | "Saan ka galing, {name}? Anong klaseng negosyo?" | Curious peer |
+| 3 (Kita) | "Magkano ang kita ng negosyo mo kada buwan, {name}?" | Direct, no euphemism |
+| 4 (Pinakahirap) | "Ano ang pinakahirap sa'yo ngayon, {name}?" | Concerned ate |
+| 5 (BIR) | "Naka-rehistro ka ba sa BIR, {name}?" | Practical setup |
+
+**Rules:**
+- Use the user's first name in steps 2–5 (after step 1 captures it). Don't repeat the name in step 1 — Kai doesn't have it yet.
+- "po" appears only on the BIR consent step where the register tilts sage/practical (per `pattern:po-register-calibration`).
+- Prompts end in **questions, not commands** — onboarding is a conversation, not a form.
+
 ---
 
 ## Real-World Expressions (from market sentiment research, March 2026)
