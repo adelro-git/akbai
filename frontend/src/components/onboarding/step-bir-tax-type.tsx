@@ -1,7 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { BIR_TAX_TYPES, BIR_TAX_TYPE_LABELS, BIR_TAX_TYPE_DESCRIPTIONS, type BirTaxType } from '@/lib/deadlines/types';
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import {
+  BIR_TAX_TYPES,
+  BIR_TAX_TYPE_LABELS,
+  BIR_TAX_TYPE_DESCRIPTIONS,
+  type BirTaxType,
+} from '@/lib/deadlines/types';
+import { cn } from '@/lib/utils';
 
 interface StepBirTaxTypeProps {
   onComplete: (taxType: BirTaxType) => void;
@@ -9,33 +16,26 @@ interface StepBirTaxTypeProps {
   firstName: string;
 }
 
-export default function StepBirTaxType({ onComplete, loading, firstName }: StepBirTaxTypeProps) {
+export default function StepBirTaxType({ onComplete, loading }: StepBirTaxTypeProps) {
+  const t = useTranslations('onboarding.step5');
+  const tCommon = useTranslations('common');
   const [selected, setSelected] = useState<BirTaxType | null>(null);
-  const submitRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Kai bubble */}
-      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
-        <p className="text-on-surface text-base leading-relaxed">
-          Nice, <span className="text-primary-container font-semibold">{firstName}</span>! Anong
-          tax type mo sa BIR?
-        </p>
-      </div>
-
-      {/* Tax type options */}
+    <div className="flex flex-col gap-4">
       <div className="grid gap-2">
         {BIR_TAX_TYPES.map((taxType) => (
           <button
             key={taxType}
             type="button"
             onClick={() => setSelected(taxType)}
-            className={`flex w-full text-left px-3 py-2.5 rounded-xl border transition-all ${
-              selected === taxType
-                ? 'border-primary-container bg-primary-container/10 ring-1 ring-primary-container'
-                : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
-            }`}
             data-testid={`onboarding-tax-type-${taxType}`}
+            className={cn(
+              'flex w-full text-left px-3.5 py-3 rounded-2xl border transition-all min-h-[56px]',
+              selected === taxType
+                ? 'border-honey bg-honey-pale/60 ring-2 ring-honey/40'
+                : 'border-outline-soft/40 bg-surface-container-lowest hover:border-honey/40',
+            )}
           >
             <div className="flex flex-col gap-0.5">
               <span className="text-on-surface font-medium text-sm">
@@ -49,16 +49,14 @@ export default function StepBirTaxType({ onComplete, loading, firstName }: StepB
         ))}
       </div>
 
-      {/* Continue button */}
       <button
-        ref={submitRef}
         type="button"
         onClick={() => selected && onComplete(selected)}
         disabled={!selected || loading}
-        className="w-full py-3 px-4 rounded-xl bg-primary-container hover:bg-primary text-on-primary font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="onboarding-tax-type-submit"
+        className="w-full py-3.5 px-4 rounded-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold shadow-ambient transition-all disabled:opacity-40 disabled:cursor-not-allowed min-h-[48px]"
       >
-        {loading ? '...' : 'Sunod'}
+        {loading ? tCommon('loading') : t('cta')}
       </button>
     </div>
   );

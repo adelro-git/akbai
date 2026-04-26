@@ -142,5 +142,46 @@
       "primaryCta": "Let's try it!",
       "skipCta": "I'll explore first"
     }
+  },
+  "welcomeTour": {
+    "aria": "Welcome tour",
+    "greeting": "You're set, {name}!",
+    "subtitle": "Based on what you shared, this is the most helpful for you.",
+    "primaryCta": "Let's try it!",
+    "skipCta": "I'll explore first",
+    "cards": {
+      "expensesPrimary": {
+        "title": "Track your expenses",
+        "description": "Record expenses in your daily check-in or by manual entry — so you always know where your money is going."
+      },
+      "birPrimary": {
+        "title": "Never miss a BIR deadline",
+        "description": "Kai will remind you of every tax deadline — so you never get a penalty."
+      },
+      "messagesPrimary": {
+        "title": "Kai helps with customer messages",
+        "description": "Let Kai draft replies for customers — natural, professional Filipino."
+      },
+      "earningsPrimary": {
+        "title": "Know if you're profitable",
+        "description": "Check in your sales and expenses each day — Saan napunta shows the full picture."
+      },
+      "saanNapunta": {
+        "title": "Saan Napunta?",
+        "description": "Category breakdown of your expenses."
+      },
+      "kausapKai": {
+        "title": "Chat with Kai",
+        "description": "Ask anything about your business."
+      },
+      "trackExpenses": {
+        "title": "Track expenses",
+        "description": "Log spending while you're busy."
+      },
+      "birReminders": {
+        "title": "BIR reminders",
+        "description": "Auto reminders for deadlines."
+      }
+    }
   }
 }

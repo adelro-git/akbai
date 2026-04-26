@@ -168,6 +168,7 @@ export default async function DashboardPage() {
   let businessName: string | null = null;
   let businessType: string | null = null;
   let primaryPain: string | null = null;
+  let welcomeTourCompleted = false;
 
   // --- Data for dashboard cards ---
   let conversationCount = 0;
@@ -198,6 +199,7 @@ export default async function DashboardPage() {
     const user = data.user;
     if (!user) redirect('/login');
     userId = user.id;
+    welcomeTourCompleted = Boolean(user.user_metadata?.welcome_tour_completed);
   }
 
   // Fetch user profile
@@ -335,7 +337,11 @@ export default async function DashboardPage() {
       data-testid="dashboard-page"
     >
       <DashboardTracker />
-      <WelcomeTour primaryPain={primaryPain} firstName={userName} />
+      <WelcomeTour
+        primaryPain={primaryPain}
+        firstName={userName}
+        initiallyCompleted={welcomeTourCompleted}
+      />
 
       {/* Kai Greeting */}
       <KaiGreeting

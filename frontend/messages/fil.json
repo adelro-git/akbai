@@ -142,5 +142,46 @@
       "primaryCta": "Tara, subukan na natin!",
       "skipCta": "Explore ko muna"
     }
+  },
+  "welcomeTour": {
+    "aria": "Welcome tour",
+    "greeting": "Handa ka na, {name}!",
+    "subtitle": "Base sa sinabi mo, ito ang pinakamakakatulong sa'yo.",
+    "primaryCta": "Tara, subukan na natin!",
+    "skipCta": "Explore ko muna",
+    "cards": {
+      "expensesPrimary": {
+        "title": "I-track ang gastos mo",
+        "description": "I-record ang mga gastos sa daily check-in o manual entry — para alam mo lagi kung saan napupunta ang pera."
+      },
+      "birPrimary": {
+        "title": "Hindi ka mahuhuli sa BIR",
+        "description": "Si Kai ang mag-paalala sa lahat ng tax deadlines mo — para walang penalty."
+      },
+      "messagesPrimary": {
+        "title": "Si Kai ang katuwang sa messages",
+        "description": "Pa-draft kay Kai ang mga reply sa customers — natural at professional na Filipino."
+      },
+      "earningsPrimary": {
+        "title": "Alamin kung kumikita ka",
+        "description": "I-check-in ang sales at gastos araw-araw — sa Saan napunta makikita ang buong picture."
+      },
+      "saanNapunta": {
+        "title": "Saan Napunta?",
+        "description": "Category breakdown ng gastos mo."
+      },
+      "kausapKai": {
+        "title": "Kausapin si Kai",
+        "description": "Magtanong tungkol sa negosyo mo."
+      },
+      "trackExpenses": {
+        "title": "Track expenses",
+        "description": "I-log ang gastos habang abala ka."
+      },
+      "birReminders": {
+        "title": "BIR reminders",
+        "description": "Auto reminders para sa deadlines."
+      }
+    }
   }
 }

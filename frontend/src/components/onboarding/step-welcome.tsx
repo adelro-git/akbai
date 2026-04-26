@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
+import { useTranslations } from 'next-intl';
 
 interface StepWelcomeProps {
   onComplete: (displayName: string) => void;
@@ -11,6 +11,8 @@ interface StepWelcomeProps {
 
 export default function StepWelcome({ onComplete, loading, initialName }: StepWelcomeProps) {
   const nameRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations('onboarding.step1');
+  const tCommon = useTranslations('common');
 
   // Pre-fill if resuming
   if (nameRef.current && initialName && !nameRef.current.value) {
@@ -31,49 +33,26 @@ export default function StepWelcome({ onComplete, loading, initialName }: StepWe
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Header illustration — full width of content area */}
-      <div className="flex justify-center w-full">
-        <IllustrationWrapper
-          src="onboarding/welcome.webp"
-          alt="Welcome to AKBai"
-          category="onboarding"
-          className="w-full max-w-full"
-        />
-      </div>
-
-      {/* Kai bubble */}
-      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
-        <p className="text-on-surface text-base leading-relaxed">
-          Kumusta! Ako si <span className="text-primary-container font-semibold">Kai</span>, ang AI business
-          partner mo. Ano ang pangalan mo?
-        </p>
-      </div>
-
-      {/* Name input */}
-      <div className="space-y-2">
-        <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-          Pangalan
-        </label>
-        <input
-          ref={nameRef}
-          type="text"
-          placeholder="e.g. Maria"
-          defaultValue={initialName ?? ''}
-          autoFocus
-          maxLength={100}
-          onKeyDown={handleKeyDown}
-          className="w-full bg-surface-container-high border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface placeholder-outline focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
-        />
-      </div>
+    <div className="flex flex-col gap-4">
+      <input
+        ref={nameRef}
+        type="text"
+        placeholder={t('placeholder')}
+        defaultValue={initialName ?? ''}
+        autoFocus
+        maxLength={100}
+        onKeyDown={handleKeyDown}
+        data-testid="onboarding-name-input"
+        className="w-full bg-surface-container-lowest border border-outline-soft/40 rounded-2xl px-4 py-3.5 text-on-surface placeholder-on-surface-variant/70 focus:border-honey/60 focus:ring-2 focus:ring-honey/30 transition-colors min-h-[48px]"
+      />
 
       <button
         type="button"
         onClick={handleSubmit}
         disabled={loading}
-        className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold py-3.5 px-4 rounded-full shadow-ambient transition-all disabled:opacity-40 disabled:cursor-not-allowed min-h-[48px]"
       >
-        {loading ? 'Sine-save...' : 'Tara, simulan natin!'}
+        {loading ? tCommon('loading') : t('cta')}
       </button>
     </div>
   );

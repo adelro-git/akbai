@@ -1,79 +1,45 @@
 import { describe, it, expect } from 'vitest';
 
-/**
- * Tests for WelcomeTour component logic.
- * Without @testing-library we validate the tour's content contract
- * and localStorage key management.
- */
-
 // ============================================================
-// 1. Welcome Tour — feature cards
-// ============================================================
-
-const FEATURE_CARDS = [
-  {
-    title: 'Track expenses',
-    description: 'I-log ang mga gastos mo at alamin kung saan napupunta ang pera.',
-  },
-  {
-    title: 'Get BIR reminders',
-    description: 'Hindi mo na makakalimutan ang mga tax deadline mo.',
-  },
-  {
-    title: 'Chat with Kai',
-    description: 'May tanong ka sa negosyo? Si Kai ang kaakbay mo.',
-  },
-  {
-    title: 'Scan receipts',
-    description: 'I-scan lang ang resibo — automatic na ang pag-log.',
-  },
-];
-
-describe('WelcomeTour — feature cards', () => {
-  it('should have exactly 4 feature cards', () => {
-    expect(FEATURE_CARDS).toHaveLength(4);
-  });
-
-  it('should include all expected feature titles', () => {
-    const titles = FEATURE_CARDS.map((c) => c.title);
-    expect(titles).toContain('Track expenses');
-    expect(titles).toContain('Get BIR reminders');
-    expect(titles).toContain('Chat with Kai');
-    expect(titles).toContain('Scan receipts');
-  });
-
-  it('should use conversational Filipino descriptions', () => {
-    // Each description should contain Filipino words
-    expect(FEATURE_CARDS[0].description).toContain('gastos');
-    expect(FEATURE_CARDS[1].description).toContain('Hindi');
-    expect(FEATURE_CARDS[2].description).toContain('negosyo');
-    expect(FEATURE_CARDS[3].description).toContain('resibo');
-  });
-});
-
-// ============================================================
-// 2. Welcome Tour — dismiss CTA and localStorage key
+// Phase 6 — WelcomeTour configuration mirror.
+// Replaces the prior 4-card overlay with a Kai-led 3-card paper-note
+// tour: 1 primary card + 2 supporting cards, expression varies per
+// pain point. Completion now persists to user_metadata.welcome_tour_completed
+// (with localStorage as a same-device backup), not just localStorage.
 // ============================================================
 
 const TOUR_STORAGE_KEY = 'akbai_tour_seen';
-const DISMISS_CTA = 'Tara, simulan na natin!';
+const TOUR_METADATA_KEY = 'welcome_tour_completed';
 
-describe('WelcomeTour — dismiss behavior', () => {
-  it('should use the correct localStorage key', () => {
+const PAIN_KEYS = ['receipt_tracking', 'bir_compliance', 'customer_messages', 'knowing_earnings'];
+
+describe('WelcomeTour — persistence keys', () => {
+  it('keeps the legacy localStorage key for same-device backups', () => {
     expect(TOUR_STORAGE_KEY).toBe('akbai_tour_seen');
   });
 
-  it('should have conversational Filipino dismiss CTA', () => {
-    expect(DISMISS_CTA).toContain('Tara');
-    expect(DISMISS_CTA).toContain('simulan');
-    // Not corporate English
-    expect(DISMISS_CTA).not.toBe('Get Started');
-    expect(DISMISS_CTA).not.toBe('Continue');
+  it('uses welcome_tour_completed as the user_metadata field', () => {
+    // The metadata field is what cross-device persistence reads on subsequent visits.
+    expect(TOUR_METADATA_KEY).toBe('welcome_tour_completed');
+  });
+});
+
+describe('WelcomeTour — pain-point coverage', () => {
+  it('covers all 4 PainPointEnum values without gaps', () => {
+    expect(PAIN_KEYS).toHaveLength(4);
+    expect(new Set(PAIN_KEYS).size).toBe(PAIN_KEYS.length);
+  });
+
+  it('matches the kilala-kita PainPointEnum exactly', async () => {
+    const { PainPointEnum } = await import('@/lib/kilala-kita/schemas');
+    const enumValues = Array.from(PainPointEnum.options);
+    expect(new Set(enumValues)).toEqual(new Set(PAIN_KEYS));
   });
 });
 
 // ============================================================
-// 3. Welcome Tour — schema validation (onboarding "Iba Pa" text)
+// Onboarding "Iba Pa" custom business type schema (preserved
+// from the prior test — still load-bearing across Phase 6).
 // ============================================================
 
 describe('Onboarding — "Iba Pa" custom business type schema', () => {
