@@ -106,7 +106,7 @@
     }
   },
   "onboarding": {
-    "tagline": "Getting to know you",
+    "tagline": "How are you?",
     "stepOf": "Step {current} of {total}",
     "step1": {
       "kaiPrompt": "Hi! I'm Kai. What's your name?",

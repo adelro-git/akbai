@@ -106,7 +106,7 @@
     }
   },
   "onboarding": {
-    "tagline": "Kilala kita",
+    "tagline": "Kamusta ka na?",
     "stepOf": "Hakbang {current} ng {total}",
     "step1": {
       "kaiPrompt": "Hi! Ako si Kai. Kumusta? Ano'ng pangalan mo?",
