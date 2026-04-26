@@ -13,12 +13,58 @@
     "chat": "Chat",
     "scan": "Scan",
     "money": "Money",
-    "more": "More"
+    "more": "More",
+    "brandTagline": "Your business partner",
+    "personaFallbackTagline": "Tap for profile",
+    "skipToContent": "Skip to content",
+    "personaAria": "Open your profile",
+    "businessTypeLabel": {
+      "food_baking": "Food / Baking",
+      "online_selling": "Online seller",
+      "freelance_creative": "Freelance / Creative",
+      "sari_sari_retail": "Sari-sari / Retail",
+      "food_carinderia": "Carinderia",
+      "service_salon": "Service / Salon",
+      "other": "Business owner"
+    }
   },
   "language": {
     "label": "Language",
     "filipino": "Filipino",
-    "english": "English"
+    "english": "English",
+    "aria": "Choose language",
+    "switching": "Switching…"
+  },
+  "more": {
+    "title": "More",
+    "subtitle": "Other tools and history",
+    "comingSoon": "Coming soon",
+    "items": {
+      "deadlines": {
+        "title": "BIR Deadlines",
+        "subtitle": "See Kai's reminders"
+      },
+      "costing": {
+        "title": "Right Price",
+        "subtitle": "Set the right markup"
+      },
+      "invoices": {
+        "title": "Invoices",
+        "subtitle": "Bill customers cleanly"
+      },
+      "drafts": {
+        "title": "Reply Drafts",
+        "subtitle": "Drafts from Kai"
+      },
+      "checkin": {
+        "title": "Daily Check-in",
+        "subtitle": "Open your history"
+      },
+      "kuwento": {
+        "title": "Sunday Story",
+        "subtitle": "Fresh every Sunday"
+      }
+    }
   },
   "home": {
     "greeting": {
@@ -47,6 +93,54 @@
       "gastos": "Expenses",
       "tubo": "Profit",
       "footer": "Open full story"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Hi, Katuwang!",
+      "subtitle": "Enter your email to log in.",
+      "secureAccess": "Secure Access",
+      "noAccount": "No account?",
+      "autoSignup": "We'll auto-sign you up.",
+      "disclaimer": "By continuing, you agree to our Terms and Privacy Policy."
+    }
+  },
+  "onboarding": {
+    "tagline": "Getting to know you",
+    "stepOf": "Step {current} of {total}",
+    "step1": {
+      "kaiPrompt": "Hi! I'm Kai. What's your name?",
+      "placeholder": "e.g., Maria",
+      "cta": "Continue"
+    },
+    "step2": {
+      "kaiPrompt": "What kind of business do you run, {name}?",
+      "cta": "Continue"
+    },
+    "step3": {
+      "kaiPrompt": "How much does your business earn each month, {name}?",
+      "cta": "Continue"
+    },
+    "step4": {
+      "kaiPrompt": "What's the hardest part for you right now, {name}?",
+      "cta": "Continue"
+    },
+    "step5": {
+      "kaiPrompt": "Are you registered with BIR, {name}?",
+      "yes": "Yes, registered",
+      "no": "Not yet",
+      "cta": "Continue"
+    },
+    "celebrate": {
+      "title": "Salamat, {name}!",
+      "subtitle": "We're set. Let's get started.",
+      "cta": "Let's begin!"
+    },
+    "tour": {
+      "greeting": "You're set, {name}!",
+      "subtitle": "Based on what you shared, this is the most helpful thing for you:",
+      "primaryCta": "Let's try it!",
+      "skipCta": "I'll explore first"
     }
   }
 }

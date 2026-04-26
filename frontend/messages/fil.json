@@ -13,12 +13,58 @@
     "chat": "Kausap",
     "scan": "Scan",
     "money": "Pera",
-    "more": "Iba pa"
+    "more": "Higit pa",
+    "brandTagline": "Katuwang mo sa Negosyo",
+    "personaFallbackTagline": "I-tap para sa profile",
+    "skipToContent": "Lumaktaw sa content",
+    "personaAria": "Buksan ang profile mo",
+    "businessTypeLabel": {
+      "food_baking": "Food / Baking",
+      "online_selling": "Online seller",
+      "freelance_creative": "Freelance / Creative",
+      "sari_sari_retail": "Sari-sari / Retail",
+      "food_carinderia": "Carinderia",
+      "service_salon": "Service / Salon",
+      "other": "Negosyante"
+    }
   },
   "language": {
     "label": "Wika",
     "filipino": "Filipino",
-    "english": "English"
+    "english": "English",
+    "aria": "Pumili ng wika",
+    "switching": "Pinapalitan…"
+  },
+  "more": {
+    "title": "Higit pa",
+    "subtitle": "Iba pang mga tool at history",
+    "comingSoon": "Sa lalong madaling panahon",
+    "items": {
+      "deadlines": {
+        "title": "BIR Deadlines",
+        "subtitle": "Tingnan ang mga paalala ni Kai"
+      },
+      "costing": {
+        "title": "Tamang Presyo",
+        "subtitle": "Tukuyin ang tamang markup"
+      },
+      "invoices": {
+        "title": "Mga Invoice",
+        "subtitle": "Singilin nang maayos"
+      },
+      "drafts": {
+        "title": "Mga Draft",
+        "subtitle": "Reply drafts ni Kai"
+      },
+      "checkin": {
+        "title": "Daily Check-in",
+        "subtitle": "Buksan ang history mo"
+      },
+      "kuwento": {
+        "title": "Linggong Kuwento",
+        "subtitle": "Sariwa tuwing Linggo"
+      }
+    }
   },
   "home": {
     "greeting": {
@@ -47,6 +93,54 @@
       "gastos": "Gastos",
       "tubo": "Tubo",
       "footer": "Buksan ang detalye"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Kumusta, Katuwang!",
+      "subtitle": "I-enter ang email mo para mag-login.",
+      "secureAccess": "Secure Access",
+      "noAccount": "Walang account?",
+      "autoSignup": "Auto ka na ma-sign up.",
+      "disclaimer": "Sa pagtuloy, sumasang-ayon ka sa aming Terms at Privacy Policy."
+    }
+  },
+  "onboarding": {
+    "tagline": "Kilala kita",
+    "stepOf": "Hakbang {current} ng {total}",
+    "step1": {
+      "kaiPrompt": "Hi! Ako si Kai. Kumusta? Ano'ng pangalan mo?",
+      "placeholder": "Halimbawa, Maria",
+      "cta": "Tuloy"
+    },
+    "step2": {
+      "kaiPrompt": "Saan ka galing, {name}? Anong klaseng negosyo?",
+      "cta": "Tuloy"
+    },
+    "step3": {
+      "kaiPrompt": "Magkano ang kita ng negosyo mo kada buwan, {name}?",
+      "cta": "Tuloy"
+    },
+    "step4": {
+      "kaiPrompt": "Ano ang pinakahirap sa'yo ngayon, {name}?",
+      "cta": "Tuloy"
+    },
+    "step5": {
+      "kaiPrompt": "Naka-rehistro ka ba sa BIR, {name}?",
+      "yes": "Oo, naka-register",
+      "no": "Hindi pa",
+      "cta": "Tuloy"
+    },
+    "celebrate": {
+      "title": "Salamat, {name}!",
+      "subtitle": "Handa na tayo. Tara, simulan na natin.",
+      "cta": "Simulan na natin!"
+    },
+    "tour": {
+      "greeting": "Handa ka na, {name}!",
+      "subtitle": "Base sa sinabi mo, ito ang pinakamakakatulong sa'yo:",
+      "primaryCta": "Tara, subukan na natin!",
+      "skipCta": "Explore ko muna"
     }
   }
 }
