@@ -8,6 +8,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        /* Phase 3 — custom 860px breakpoint for action-grid 4-col on tablets (per Q13) */
+        tablet: '860px',
+      },
       colors: {
         /* --- MD3 Surface tokens (theme-aware via CSS variables) --- */
         surface: 'hsl(var(--surface))',
@@ -58,9 +62,23 @@ module.exports = {
         'kai-card': 'hsl(var(--surface-container))',
         'kai-card-alt': 'hsl(var(--surface-container-high))',
         honey: {
-          DEFAULT: 'hsl(var(--primary-container))',
-          deep: 'hsl(var(--primary))',
+          DEFAULT: 'hsl(var(--honey))',
+          bright: 'hsl(var(--honey-bright))',
+          pale: 'hsl(var(--honey-pale))',
+          deep: 'hsl(var(--honey-deep))',
+          cream: 'hsl(var(--honey-cream))',
         },
+        sage: {
+          DEFAULT: 'hsl(var(--sage))',
+          deep: 'hsl(var(--sage-deep))',
+          pale: 'hsl(var(--sage-pale))',
+        },
+        ink: {
+          DEFAULT: 'hsl(var(--ink))',
+          soft: 'hsl(var(--ink-soft))',
+          faint: 'hsl(var(--ink-faint))',
+        },
+        'outline-soft': 'hsl(var(--outline-soft))',
         teal: 'hsl(var(--tertiary))',
         'user-bubble': 'hsl(var(--secondary-container))',
 
@@ -106,6 +124,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['var(--font-plus-jakarta-sans)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-fraunces)', 'Georgia', 'serif'],
       },
       boxShadow: {
         /* Amber ambient shadows — no grey shadows allowed */
@@ -115,12 +134,85 @@ module.exports = {
       },
       keyframes: {
         'slide-up': {
+          /* drawer/sheet slide (legacy preserved) */
           from: { transform: 'translateY(100%)' },
           to: { transform: 'translateY(0)' },
         },
+        'slide-up-soft': {
+          /* Phase 3 redesign — card/section entry (B6 approved) */
+          from: { transform: 'translateY(8px)', opacity: '0' },
+          to: { transform: 'translateY(0)', opacity: '1' },
+        },
+        'fade-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        'pop-in': {
+          from: { transform: 'scale(0.94)', opacity: '0' },
+          to: { transform: 'scale(1)', opacity: '1' },
+        },
+        'kai-bob': {
+          '0%, 100%': { transform: 'translateY(-3px)' },
+          '50%': { transform: 'translateY(3px)' },
+        },
+        'kai-breathe': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.02)' },
+        },
+        'pandesal-squish': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(0.96)' },
+        },
+        'petal-drift': {
+          '0%': { transform: 'translateY(-20px) rotate(0deg)', opacity: '0' },
+          '10%': { opacity: '0.8' },
+          '90%': { opacity: '0.8' },
+          '100%': { transform: 'translateY(100vh) rotate(360deg)', opacity: '0' },
+        },
+        'typing-bounce': {
+          '0%, 80%, 100%': { transform: 'translateY(0)', opacity: '0.4' },
+          '40%': { transform: 'translateY(-4px)', opacity: '1' },
+        },
+        'gentle-float': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-4px)' },
+        },
+        wobble: {
+          '0%, 100%': { transform: 'rotate(-1.2deg)' },
+          '50%': { transform: 'rotate(1.2deg)' },
+        },
+        'flame-flicker': {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.08)', opacity: '0.85' },
+        },
+        'check-pop': {
+          '0%': { transform: 'scale(0)', opacity: '0' },
+          '60%': { transform: 'scale(1.18)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        'bounce-in': {
+          '0%': { transform: 'scale(0.5)', opacity: '0' },
+          '50%': { transform: 'scale(1.05)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
       },
       animation: {
+        /* legacy drawer/sheet — keep */
         'slide-up': 'slide-up 0.3s ease-out',
+        /* Phase 3 redesign animation library (B6 approved) — production CSS gates each on prefers-reduced-motion */
+        'slide-up-soft': 'slide-up-soft 400ms cubic-bezier(0.16, 1, 0.3, 1) both',
+        'fade-in': 'fade-in 300ms ease-out both',
+        'pop-in': 'pop-in 220ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        'kai-bob': 'kai-bob 3s ease-in-out infinite',
+        'kai-breathe': 'kai-breathe 4s ease-in-out infinite',
+        'pandesal-squish': 'pandesal-squish 120ms cubic-bezier(0.4, 0, 0.6, 1)',
+        'petal-drift': 'petal-drift 16s linear infinite',
+        'typing-bounce': 'typing-bounce 1.2s ease-in-out infinite',
+        'gentle-float': 'gentle-float 4s ease-in-out infinite',
+        wobble: 'wobble 5s ease-in-out infinite',
+        'flame-flicker': 'flame-flicker 1.6s ease-in-out infinite',
+        'check-pop': 'check-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        'bounce-in': 'bounce-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
       },
     },
   },

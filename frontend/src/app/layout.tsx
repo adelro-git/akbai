@@ -1,12 +1,23 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Plus_Jakarta_Sans, Fraunces } from 'next/font/google'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getMessages } from 'next-intl/server'
 import PostHogProvider from '@/components/providers/posthog-provider'
+import { PaletteProvider } from '@/lib/palette/palette-context'
 import './globals.css'
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-plus-jakarta-sans',
+})
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-fraunces',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -66,13 +77,20 @@ export const viewport: Viewport = {
   userScalable: false,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const locale = await getLocale()
+  const messages = await getMessages()
+  const htmlLang = locale === 'en' ? 'en' : 'tl'
   return (
-    <html lang="tl" className={plusJakartaSans.variable} suppressHydrationWarning>
+    <html
+      lang={htmlLang}
+      className={`${plusJakartaSans.variable} ${fraunces.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="icon" href="/favicon-light.png" type="image/png" sizes="48x48" />
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
@@ -91,6 +109,10 @@ export default function RootLayout({
                   if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
                   }
+                  var palette = localStorage.getItem('akbai-palette');
+                  if (palette === 'honey' || palette === 'cream' || palette === 'dawn') {
+                    document.documentElement.setAttribute('data-palette', palette);
+                  }
                 } catch(e) {}
               })();
             `,
@@ -98,9 +120,13 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background text-foreground min-h-dvh antialiased">
-        <PostHogProvider>
-          {children}
-        </PostHogProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <PaletteProvider>
+            <PostHogProvider>
+              {children}
+            </PostHogProvider>
+          </PaletteProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

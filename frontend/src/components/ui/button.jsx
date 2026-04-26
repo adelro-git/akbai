@@ -19,6 +19,11 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        // ─── Phase 3 redesign variants (B-section verdicts) ───
+        honey:
+          "bg-honey-deep text-white shadow-ambient hover:bg-honey-deep/90 active:animate-pandesal-squish",
+        paper:
+          "paper-note bg-surface-container-lowest text-honey-deep px-5 hover:bg-honey-pale active:animate-pandesal-squish",
       },
       size: {
         default: "h-9 px-4 py-2",

@@ -60,3 +60,12 @@ export { PottedPlant } from './decorative/PottedPlant';
 export { CitylineSilhouette } from './decorative/CitylineSilhouette';
 export { SparkleAccent } from './decorative/SparkleAccent';
 export { DotPattern } from './decorative/DotPattern';
+// Phase 4 motifs (B5 approved — see ADR-013)
+export { CapizPattern } from './decorative/CapizPattern';
+export { FloatingPetals } from './decorative/FloatingPetals';
+export { WovenDivider } from './decorative/WovenDivider';
+export { Squiggle } from './decorative/Squiggle';
+export { TapeStrip } from './decorative/TapeStrip';
+export { SwayingLeaf } from './decorative/SwayingLeaf';
+export { Sunburst } from './decorative/Sunburst';
+export { DoodleArrow } from './decorative/DoodleArrow';

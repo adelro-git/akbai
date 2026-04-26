@@ -75,6 +75,45 @@
 
     /* Surface tint */
     --surface-tint: 32 100% 26%;     /* #855300 (primary) */
+
+    /* ─── Phase 3 redesign tokens (honey / sage / ink) ─── */
+    /* Ink scale (text on light surfaces) — verified ≥ 4.5:1 on cream + honey-cream */
+    --ink: 48 8% 10%;                /* #1c1c18 — body text */
+    --ink-soft: 27 20% 27%;          /* #534434 — secondary text */
+    --ink-faint: 30 11% 45%;         /* #867461 — captions / eyebrows */
+
+    /* Outline scale */
+    --outline-soft: 30 22% 76%;      /* #d8c3ad — hairline borders */
+
+    /* Honey scale (warm primary family) — handoff-aligned */
+    --honey: 37 90% 51%;             /* #f59e0b — handoff "honey" */
+    --honey-bright: 36 100% 69%;     /* #ffb95f — light accents */
+    --honey-pale: 33 100% 87%;       /* #ffddb8 — soft chips */
+    --honey-deep: 32 100% 26%;       /* #855300 — CTA + serif highlight (4.92:1 on #fdf9f2 ✓) */
+    --honey-cream: 39 89% 93%;       /* #fef4dd — handoff palette base */
+
+    /* Sage scale (cool counter to honey — used sparingly) */
+    --sage: 158 38% 52%;             /* #5fb89a */
+    --sage-deep: 160 100% 21%;       /* #006b54 — same hue as --tertiary */
+    --sage-pale: 160 50% 91%;        /* #d8eee5 */
+  }
+
+  /* ─── Phase 3 palette context (cream / honey / dawn) ─── */
+  /* Default: cream (current behavior unchanged). Per-route override flips top-level surface
+     tokens without disturbing the MD3 6-level hierarchy underneath. Set via
+     <html data-palette="..."> or a wrapper element. */
+  :root[data-palette='honey'] {
+    --background: 39 89% 93%;        /* #fef4dd */
+    --surface: 39 89% 93%;
+    --surface-bright: 39 89% 93%;
+  }
+  :root[data-palette='cream'] {
+    /* explicit cream — no overrides; default */
+  }
+  :root[data-palette='dawn'] {
+    --background: 33 100% 96%;       /* #fff5e6 — warmer-than-cream sunrise */
+    --surface: 33 100% 96%;
+    --surface-bright: 33 100% 96%;
   }
 
   /* ===== DARK THEME — Ink & Amber ===== */
@@ -148,6 +187,20 @@
 
     /* Surface tint */
     --surface-tint: 36 100% 69%;     /* #ffb95f */
+
+    /* ─── Phase 3 dark-theme honey/sage/ink aliases ─── */
+    --ink: 220 20% 95%;              /* #eef1f7 */
+    --ink-soft: 30 25% 82%;          /* #e0cdb8 */
+    --ink-faint: 30 12% 60%;         /* #a59686 */
+    --outline-soft: 27 18% 32%;      /* #5e4d3e */
+    --honey: 36 100% 69%;            /* bright honey for dark */
+    --honey-bright: 33 100% 87%;     /* #ffddb8 */
+    --honey-pale: 30 100% 20%;       /* deep tone — used as bg in dark */
+    --honey-deep: 33 100% 87%;       /* on dark, "deep" reads as bright honey */
+    --honey-cream: 30 30% 14%;       /* dark warm bg analog */
+    --sage: 158 38% 52%;
+    --sage-deep: 158 95% 69%;        /* #67fbcf — bright on dark */
+    --sage-pale: 161 100% 15%;
   }
 }
 
@@ -325,5 +378,49 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: hsl(var(--primary-container));
+  }
+
+  /* ─── Phase 3 paper-note primitive shape (B7 verdict) ─── */
+  .paper-note {
+    border-radius: 4px 12px 4px 12px;
+    background: hsl(var(--surface-container-lowest));
+    box-shadow:
+      0 1px 0 hsl(var(--primary) / 0.04),
+      0 8px 24px -4px hsl(var(--primary) / 0.10);
+    transform: rotate(-1.2deg);
+  }
+  .paper-note--right {
+    transform: rotate(1.2deg);
+    border-radius: 12px 4px 12px 4px;
+  }
+}
+
+/* ─── Phase 3 reduced-motion gating (F2 verdict) ───
+   Disable Phase 3 redesign animations entirely when the user prefers reduced motion.
+   Layout intact; warmth carried by palette + typography alone. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-up-soft,
+  .animate-fade-in,
+  .animate-pop-in,
+  .animate-kai-bob,
+  .animate-kai-breathe,
+  .animate-pandesal-squish,
+  .animate-petal-drift,
+  .animate-typing-bounce,
+  .animate-gentle-float,
+  .animate-wobble,
+  .animate-flame-flicker,
+  .animate-check-pop,
+  .animate-bounce-in,
+  .landing-fade-in,
+  .landing-float,
+  .landing-float-delayed,
+  .landing-float-slow,
+  .landing-pulse,
+  .landing-reveal {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

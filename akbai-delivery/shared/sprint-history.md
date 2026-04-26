@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-04-05 (Sprint 10 retro)
+> Last updated: 2026-04-26 (Frontend Redesign Phase 4 complete + Phase 5 handoff written for next session)
 
 ---
 
@@ -765,3 +765,250 @@ A user review suggested conversational Filipino would better serve the 30–50 y
 
 **Actual Anton hours:** TBD — updated during retro
 **Sprint outcome:** IN PROGRESS
+
+---
+
+## Frontend Redesign — Phase 1, 1.5, 2 (April 25–26, 2026)
+
+**Initiative:** AKBai frontend redesign — 12-phase plan to convert the current MD3 utility dashboard into a warm Filipino-grounded experience that drives 7-day and 30-day retention. Anchored in a high-fidelity design handoff (`design_handoff_akbai_redesign/`) and Phase 1+1.5 NotebookLM research.
+
+**Why now:** Frontend is the primary retention lever for Phase 0A. Product math, BIR logic, and Claude calls work; what determines whether MSME owners come back daily is whether the app feels like Kai (smart ate/kuya) or another accounting form.
+
+**Plan:** 12 phases. Phases 1–2 = research + synthesis (no code). Phase 3 = foundations. Phases 4–10 = vertical UI slices. Phases 11–12 = polish + retention validation.
+
+### Phase 1 — UI/UX + Filipino Context Research (research only) — DONE
+
+**Deliverables:**
+- `skills/ux-designer/references/ui-ux-principles-akbai.md` — 10 UX laws applied to AKBai (Hick / Fitts / Jakob / Tesler / Goal-Gradient / Peak-End / Aesthetic-Usability / Hooked / Design-for-Interruptions / LCP) + 3 highest-leverage retention investments + Don Norman summary.
+- 5 surgical enhancements to existing canonical docs (design-system.md §6 motif vocabulary, mobile-first.md §1 Filipino baseline, conversational-filipino-manual.md §6 family-victory framing, brand-context.md "Why pillars work").
+- Two NotebookLM notebooks live + RAW Q&A files for traceability.
+- `skills/ux-designer/references/research-sources/RESEARCH-FINDINGS-MAP.md` — provenance index.
+
+**Tooling lessons:** Firecrawl + NotebookLM CLI worked well for sourcing. NotebookLM `--import-all` is dangerous (pulls errored TikTok/YouTube URLs); always follow with cleanup script.
+
+### Phase 1.5 — Expansion (April 26) — DONE
+
+**Trigger:** Anton flagged research as "too limited" after reviewing Phase 1 deliverables. Streamlined approach: load all repo canonicals into both notebooks + add ~10 institutional/cultural sources via deep-research, then run targeted gap-filling questions.
+
+**Notebook expansion:**
+- UI/UX notebook: 14 → 79 sources (+5 repo canonicals, +cross-cutting docs, +deep-research ResearchGate / Medium / fintech retention studies).
+- Filipino notebook: 11 → 105 sources (+13 repo canonicals, +cross-cutting docs, +deep-research institutional sources).
+- Cleaned 850 errored + duplicate sources from `--import-all` overshoot.
+
+**9 of 10 targeted gap-filling questions answered with rich citations.** Q6 (PH-specific retail thumb zones) timed out twice — corpus genuinely lacks this evidence; documented as a Phase 12 PostHog validation gap.
+
+**5 surgical updates applied to canonical docs (all tagged `<!-- Phase 1.5 expansion, 2026-04-26 -->`):**
+- `mobile-first.md` §1 — sachet economy + dual-SIM + NCR vs provincial connectivity stats + hand-me-down hardware + validated SW caching stack
+- `ui-ux-principles-akbai.md` — Hooked variance rule (3-tonal rotation), family-share UX rules under Peak-End, hard retention metrics evidence-anchor
+- `conversational-filipino-manual.md` §11 (new) — Regional Languages: Comprehend, Don't Translate
+- `brand-context.md` — sari-sari quartet (64/71% family-independence + 38/53% children's education)
+- `RESEARCH-FINDINGS-MAP.md` — Phase 1.5 additions + notebook hygiene warning
+
+**Phase 1.5 RAW Q&A:** `skills/ux-designer/references/research-sources/phase-1.5/RAW.md`
+
+### Phase 2 — Design Synthesis (April 26) — DONE
+
+**Approach:** Foundation → review → multi-agent push. Side-by-side visual comparison drives verdicts; verdicts drive per-screen specs; per-screen specs drive reuse audit.
+
+**Foundation deliverables:**
+- `frontend/e2e/synthesis/compare.spec.ts` — Playwright harness, captured 8 routes × 2 viewports = 16 current-app screenshots
+- `design_handoff_akbai_redesign/synthesis/build-report.mjs` + `index.html` — static side-by-side viewer pairing current vs handoff
+- `design_handoff_akbai_redesign/synthesis/build-decisions-html.mjs` + `decisions.html` — visual decisions viewer with color-coded verdict badges
+
+**Synthesis docs (5):**
+- `synthesis/01-comparison.md` — dimension-by-dimension Current/Handoff/Strengths/Risks observation layer
+- `synthesis/02-decisions.md` — 30+ verdicts (Section A per-screen LOCKED by Anton; Sections B-F foundation/chrome/voice/interaction/a11y proposed; B4/B5/B6 deferred to review repos)
+- `synthesis/03-enrichments.md` — 18 named patterns from Phase 1+1.5 research (`pattern:endowed-progress-streaks`, `pattern:peak-end-weekly-close`, `pattern:family-economic-share`, etc.)
+- `synthesis/screens/00-home.md` … `10-shared-chrome.md` — 11 per-screen specs (~600 words each, written by build-ux agent)
+- `synthesis/04-reuse-audit.md` — component-level source map (Current re-skin / Handoff port / Library wrap / New build / Reject parallel)
+
+**3 review repositories (deferred B4/B5/B6 verdicts):**
+- `synthesis/repos/icons.html` — 14 handoff candidates + 10 expense + 6 financial + 4 business-type + 6 Kai expressions, all sizes/backgrounds, style annotations
+- `synthesis/repos/motifs.html` — 9 candidates + dark-mode preview row + dedicated dark-mode consolidated section
+- `synthesis/repos/animations.html` — 16 keyframes paired with actual Kai mark / paper-note / tile / chat-bubble elements they animate, playable
+
+**Anton overrides applied during Phase 2:**
+- A10 — Linggong Kuwento rejects dark inverted palette, stays on honey-cream
+- B4/B5/B6 — DEFER to review repositories before adoption (rather than blanket-adopt from handoff)
+- D5 — Hiya rule is persona-calibrated, not blanket-soft; platform sellers (Jose) get direct framing, sari-sari/baking get warm framing
+- A9 — Daily Check-in stays as modal on `/dashboard`, NOT a separate `/checkin` route (overrides original plan §10.4)
+
+**13 open questions surfaced for Anton** (data endpoints, perf gates, color tints, AI integration points, share format, breakpoint customization).
+
+### What's next — Phase 3 onward
+
+Phase 3 = foundations (palette context + Fraunces + animation library + i18n + primitives). **Blocked on Anton sign-off of:** (1) repo approvals (B4/B5/B6), (2) the 13 open-question resolutions, (3) Section B-F verdict confirmations.
+
+After sign-off, Phase 3 spawns build-engineer as lead with build-architect (ADR for palette + i18n + breakpoint), build-qa (primitive tests), build-ux (design system review).
+
+---
+
+## Frontend Redesign — Phase 3 (Foundations)
+
+**Date:** 2026-04-26
+**Status:** **COMPLETE.** Typecheck (0 new errors — pre-existing 38 unchanged), Vitest (75 files / 1121 tests passing), `next build` (45 routes compiled, no warnings).
+
+### Anton sign-offs that unblocked Phase 3
+
+- All Section A–F verdicts in [`synthesis/02-decisions.md`](../../design_handoff_akbai_redesign/synthesis/02-decisions.md) signed off
+- B4 icons, B5 motifs, B6 animations review repositories approved
+- All 13 open questions resolved (see Q1–Q13 resolutions in 02-decisions.md)
+
+### Cascading rename (post-Q12 pivot)
+
+- `pattern:family-economic-share` → `pattern:privacy-safe-viral-share` in [`screens/09-kuwento.md`](../../design_handoff_akbai_redesign/synthesis/screens/09-kuwento.md). Linggong Kuwento share CTA removed (private screen); share surfaces moved to streak + BIR-completion cards (Phase 10 scope, no peso amounts).
+
+### Foundation deliverables
+
+**Tailwind config** ([`frontend/tailwind.config.js`](../../frontend/tailwind.config.js))
+- Custom `tablet: '860px'` breakpoint (Q13)
+- `fontFamily.serif` extended with Fraunces variable
+- Honey scale (`honey`, `honey-bright`, `honey-pale`, `honey-deep`, `honey-cream`), sage scale, ink scale, `outline-soft` color tokens
+- 13 new animation keyframes (`slide-up-soft`, `fade-in`, `pop-in`, `kai-bob`, `kai-breathe`, `pandesal-squish`, `petal-drift`, `typing-bounce`, `gentle-float`, `wobble`, `flame-flicker`, `check-pop`, `bounce-in`)
+
+**Globals CSS** ([`frontend/src/app/globals.css`](../../frontend/src/app/globals.css))
+- Light + dark scale entries for the new ink/honey/sage/outline tokens
+- `:root[data-palette='honey'|'cream'|'dawn']` palette-context overrides — orthogonal to light/dark
+- `paper-note` shape utility (asymmetric `4px 12px 4px 12px` radius + `rotate(-1.2deg)` tilt + amber ambient shadow), `paper-note--right` mirror variant
+- `prefers-reduced-motion: reduce` block disables all 13 redesign animations + legacy landing-page animations (F2 verdict)
+
+**Root layout** ([`frontend/src/app/layout.tsx`](../../frontend/src/app/layout.tsx))
+- `Fraunces` from `next/font/google` (weights 400/500/600 + italic, swap display, `--font-fraunces` variable)
+- Palette persistence init script (mirrors dark-mode pattern) — reads `localStorage.akbai-palette` and applies `data-palette` attribute pre-hydration
+- `NextIntlClientProvider` (server-resolved locale + messages) wraps `PaletteProvider` wraps `PostHogProvider`
+- `<html lang>` switches `tl` ⇄ `en` based on resolved locale
+
+**Palette context** ([`frontend/src/lib/palette/palette-context.tsx`](../../frontend/src/lib/palette/palette-context.tsx))
+- `<PaletteProvider>` (root) + `usePalette()` hook + `<PaletteScope palette="honey">` for per-route segment overrides
+- Persists to `localStorage.akbai-palette`; SSR-safe initial read from `data-palette` attribute set by inline script
+- Default palette: `cream` (current behavior unchanged for unredesigned screens)
+
+**i18n** (next-intl 4.9.1)
+- `lib/i18n/config.ts` — locales array, `isLocale` guard, `pickLocaleFromAcceptLanguage` helper
+- `lib/i18n/request.ts` — cookie-first locale resolution with `Accept-Language` fallback
+- `lib/i18n/set-locale.ts` — server action that writes `NEXT_LOCALE` cookie + revalidates layout
+- `messages/fil.json` + `messages/en.json` — namespaced FIL + EN catalogs (common, nav, language, home keys)
+- `next.config.js` wires `createNextIntlPlugin('./src/lib/i18n/request.ts')`
+- 12 unit tests on the locale helper — all passing
+
+**Primitive components** (additive, no parallel components)
+- `components/ui/pill.tsx` — Pill primitive (variants: honey / sage / urgent / neutral; sizes: sm / md / lg; CVA-driven)
+- `components/ui/paper-note.tsx` — PaperNote primitive (tilt: left/right/none, tone: default/honey/sage, padding: sm/md/lg, optional TapeStrip child)
+- `components/ui/button.jsx` — extended with `honey` and `paper` variants (existing variants untouched)
+- `components/ui/card.jsx` — extended with `paper` and `honey` variants via `variant` prop (default keeps existing className)
+- `@radix-ui/react-slider` already present — wrapped slider primitive deferred until first consumer needs it (avoid speculative reskin)
+
+### Verification
+
+- `npx tsc --noEmit`: 38 errors — **identical count on main HEAD before Phase 3 changes** (confirmed via `git stash` round-trip). Zero new TS errors introduced.
+- `npx vitest run`: 75 files / 1121 tests passing including new `lib/i18n/__tests__/config.test.ts`
+- `npx next build`: 45 routes compiled successfully, "Compiled successfully in 4.4s", no warnings
+
+### What's next
+
+**Phase 4 — Brand Vocabulary.** Build the visual-language pieces: `<Kai>` avatar component (wraps existing `illustrations/svg/kai/`), decorative motif components (`CapizPattern`, `FloatingPetals`, `WovenDivider`, `Squiggle`, `TapeStrip`), and the 9-icon brand set ported from the approved icon repo. Phase 5 (Shared Chrome) follows.
+
+Lead: build-engineer. Reviewers: build-ux (component-by-component review), build-qa (visual parity tests via Playwright).
+
+---
+
+## Frontend Redesign — Phase 4 (Brand Vocabulary)
+
+**Date:** 2026-04-26
+**Status:** **COMPLETE.** Typecheck (38 errors — same pre-existing count as before Phase 4), Vitest (78 files / 1167 tests passing — 46 new Phase 4 tests), `npx next build` (45 routes compiled, no warnings, "Compiled successfully in 4.4s").
+**Team:** team-lead (PM), build-architect (ADR-013), build-engineer (bulk port — agent invocation), build-ux (PM-led review), build-qa (test scaffolding by build-engineer).
+
+### Deliverables
+
+**ADR-013** (component organization) — appended to [`skills/solutions-architect/references/architecture-decisions.md`](../skills/solutions-architect/references/architecture-decisions.md). Locks: brand icons in `frontend/src/components/illustrations/icons/` (separate from `svg/` for discoverability), decorative motifs in `frontend/src/components/illustrations/svg/decorative/` (extends existing tree), Kai composition in `frontend/src/components/illustrations/kai/`. No CSS-in-JS, all SVG inline (KaiSitting uses Next/Image for the PNG mark), `lucide-react` retained for utility roles only.
+
+**Asset copy** — `design_handoff_akbai_redesign/prototype/assets/kai-mark.png` (2048×2048, 6.3MB master) → [`frontend/public/icons/kai-mark.png`](../../frontend/public/icons/kai-mark.png). Next/Image generates optimized variants on demand (no perf budget concern at delivery).
+
+**Brand icon set** — 15 components in [`frontend/src/components/illustrations/icons/`](../../frontend/src/components/illustrations/icons/):
+- 9 feature icons: `IconResibo`, `IconUsap`, `IconPera`, `IconKalendaryo`, `IconPrecio`, `IconInvoice`, `IconCheckin`, `IconSundayStory`, `IconDrafts`
+- 5 nav icons: `IconHomeNav`, `IconChatNav`, `IconScanNav`, `IconMoneyNav`, `IconMoreNav` (each accepts `active?: boolean` for active/inactive state)
+- 1 brand motif: `IconSampaguita`
+- `useId()` for gradient ID safety on multi-instance pages
+- `IconKalendaryo` exposes `day?: number` (default 25) — fixes the source repo's hard-coded "25"
+
+**Decorative motifs** — 8 components extending [`frontend/src/components/illustrations/svg/decorative/`](../../frontend/src/components/illustrations/svg/decorative/):
+- `CapizPattern` (full-bleed pattern, default opacity 0.18, `pointer-events-none`)
+- `FloatingPetals` (deterministic SSR-safe stagger; perf-cap at 16 petals)
+- `WovenDivider` (32-segment zigzag)
+- `Squiggle` (default width 120 FIL / 130 EN by caller)
+- `TapeStrip` (canonical washi-tape — `paper-note.tsx` now imports this instead of inlining)
+- `SwayingLeaf` (uses Phase 3 `animate-gentle-float` — dedicated `leaf-sway` keyframe deferred)
+- `Sunburst` (12 rays, default size 200, opacity 0.3)
+- `DoodleArrow` (direction prop maps to rotation: right=0°, down=90°, left=180°, up=270°)
+
+**Kai composition** — new directory [`frontend/src/components/illustrations/kai/`](../../frontend/src/components/illustrations/kai/):
+- `kai.tsx` — `<Kai expression size animated />` with 6 expressions mapped to existing `Ka*` SVGs from `svg/ka-expressions/`. `animated` toggles `animate-kai-bob`.
+- `kai-sitting.tsx` — 168×168 hero with circular border-radius, `shadow-ambient-lg`, Next/Image with `priority` for LCP. `animated` applies `animate-kai-breathe`.
+- `index.ts` re-exports both + types.
+
+**`paper-note.tsx` refactor** — internal `PositionedTape` wrapper now composes the canonical `TapeStrip` from `illustrations/svg/decorative/` instead of inlining its own span. Backward-compat re-export kept.
+
+**`svg/index.ts`** — extended decorative section with 8 new motif exports (existing exports untouched).
+
+**Tests** — 46 new Vitest tests across 3 consolidated files (one per directory) using `react-dom/server`'s `renderToStaticMarkup`. Coverage: viewBox assertions for all 15 icons, size-prop honored, day-prop on `IconKalendaryo`, active-state palette swap on nav icons, motif element counts (32 woven segments, 12 sunburst rays, configurable petal count, 16-petal perf cap).
+
+### Verification
+
+- `npx tsc --noEmit`: **38 errors — identical pre-existing baseline.** Zero new TS errors introduced by Phase 4.
+- `npx vitest run`: **78 files / 1167 tests passing.** 46 new Phase 4 tests + Phase 3's 12 i18n tests + pre-existing 1109 = 1167.
+- `npx next build`: 45 routes compiled clean, no warnings.
+
+### Open follow-ups
+
+- **Playwright visual-parity test** — not scaffolded in Phase 4. Defer to Phase 7 (home gate) where the Kai mark + petals + woven divider + paper-note all land in the same scroll container; visual parity tested holistically there.
+- **Custom `leaf-sway` keyframe** — `SwayingLeaf` currently uses `animate-gentle-float`. Add dedicated keyframe (rotation-based, not translate-based) when first consumer ships if the float feel is wrong.
+- **Kai mark optimization** — 6.3MB master PNG. **RESOLVED 2026-04-26 same day**: chroma-keyed + tight bbox cropped + circular masked + resized to 512×512 → 445KB final at [`frontend/public/icons/kai-mark.png`](../../frontend/public/icons/kai-mark.png). A faint cream rim remains because the source PNG had the soft-glow layer baked in; Anton tracking re-export with glow-layer-hidden as personal action item (see memory `project_kai_mark_master_reexport.md`).
+
+### What's next
+
+**Phase 5 — Shared Chrome.** Re-skin sidebar (`sidebar-nav.tsx`) and bottom nav (`bottom-nav.tsx`) per C1/C2/C3 verdicts: 5-tab structure preserved, honey-gradient active states, custom `tablet:860px` breakpoint, language toggle pills functional via the Phase 3 `setLocaleCookie` server action, "Higit pa…" Vaul drawer with the 6 long-tail routes.
+
+Lead: build-engineer. Reviewers: build-ux (chrome is high-traffic — every screen inherits it), build-qa (Playwright tab-navigation E2E). Phase 5 is also the first end-to-end i18n proof — toggle the pill and the chrome re-renders in EN.
+
+---
+
+## Frontend Redesign — Phase 5 starting state (handoff for next session)
+
+**Date:** 2026-04-26 (handoff written at end of Phase 3+4 session for cross-session continuity)
+**Session boundary:** Phase 3 + Phase 4 shipped, committed to branch `claude/redesign-phase-3-4`. Next session starts a clean Phase 5 build from this branch tip.
+
+### What's on disk and committed
+
+- **Phase 1 + 1.5 research deliverables** — `akbai-delivery/skills/ux-designer/references/{ui-ux-principles-akbai.md,filipino-design-context.md,mobile-first.md,conversational-filipino-manual.md}` + raw NotebookLM corpus under `references/research-sources/`
+- **Phase 2 synthesis** — `design_handoff_akbai_redesign/synthesis/{01-comparison.md,02-decisions.md,03-enrichments.md,04-reuse-audit.md,screens/00-home.md…10-shared-chrome.md}` — all sections A–F SIGNED OFF, B4/B5/B6 review repos APPROVED, all 13 open questions RESOLVED
+- **Phase 3 foundations** — Tailwind config (Fraunces serif, `tablet:860px`, honey/sage/ink color scales, 13 animation keyframes), `globals.css` palette context overrides + `paper-note` shape utility + `prefers-reduced-motion` gating, `lib/palette/palette-context.tsx`, `lib/i18n/{config,request,set-locale}.ts`, `messages/{fil,en}.json`, `next.config.js` next-intl plugin, `components/ui/{pill,paper-note}.tsx` primitives, `button.jsx` + `card.jsx` extended with `honey`/`paper` variants
+- **Phase 4 brand vocabulary** — 15 brand icons in `components/illustrations/icons/`, 8 motifs in `components/illustrations/svg/decorative/`, Kai composition in `components/illustrations/kai/`, Kai mark master at `frontend/public/icons/kai-mark.png` (512×512, 445KB, chroma-keyed)
+- **ADR-013** at `akbai-delivery/skills/solutions-architect/references/architecture-decisions.md`
+
+### What's NOT wired yet (Phase 5 scope)
+
+- **`(app)/layout.tsx`** still imports the legacy `@/components/dashboard/sidebar-nav` and `@/components/dashboard/bottom-nav` — neither has been re-skinned. The legacy chrome works but does NOT yet use any Phase 4 nav icons (`IconHomeNav`/`IconChatNav`/`IconScanNav`/`IconMoneyNav`/`IconMoreNav`) or the language toggle. Phase 5 replaces these in place — preserve the current API so consumer pages don't break.
+- **Language toggle pill** — `setLocaleCookie` server action exists but no UI invokes it yet. Phase 5 adds the pill in sidebar bottom + a compact mobile affordance in the "Higit pa…" drawer.
+- **"Higit pa…" Vaul drawer** — vaul is installed (`vaul@1.1.2` in package.json) but the More-tab drawer doesn't exist. Phase 5 builds it with the 6 long-tail routes per C7 verdict (BIR Deadlines, Tamang Presyo, Mga Invoice, Mga Draft, Daily Check-in history, Linggong Kuwento).
+- **Persona pill** — sidebar persona pill (C4 verdict) doesn't exist yet. Build to display business name + tagline, tap routes to `/profile`.
+- **Bottom nav active-state glow** — switch to honey-gradient pill style per C2 verdict; preserve the 5-tab structure.
+
+### Open follow-ups Phase 5 inherits
+
+- **Kai mark soft-glow rim** — tracked in memory `project_kai_mark_master_reexport.md`. Don't re-attempt chroma-key in Phase 5; let Anton re-export.
+- **Playwright visual-parity test** — deferred from Phase 4 to Phase 7 (home gate). Phase 5 should add Playwright E2E for nav navigation + locale toggle, NOT visual-parity yet.
+- **Existing dashboard chrome consumers** — every (app) route currently inherits the legacy chrome. The Phase 5 swap is transparent to consumer pages by design (re-skin `sidebar-nav.tsx` + `bottom-nav.tsx` in place per Sprint 5 reuse rule), but Anton should confirm nothing visually regresses on `/dashboard` / `/chat` / `/expenses` immediately after.
+
+### Verification baseline (next session re-runs to confirm clean start)
+
+- `npx tsc --noEmit`: 38 errors expected (all pre-existing in `src/app/api/**/__tests__/` route tests + `src/lib/costing/__tests__/calculations.test.ts`). Anything > 38 is regression.
+- `npx vitest run`: 78 files / 1167 tests expected.
+- `npx next build`: 45 routes expected, "Compiled successfully", no warnings.
+- `git status` from main branch tip: clean working tree (Phase 3+4 already committed to branch).
+
+### First actions for next session
+
+1. **Read this handoff entry first.** Then read `02-decisions.md` Section C (chrome verdicts C1–C7) and the per-screen spec at `screens/10-shared-chrome.md` for the canonical Phase 5 spec.
+2. **Verify clean baseline** — run the three verification commands above. If anything is off, stop and reconcile before adding code.
+3. **Spawn `/build` Phase 5 team** — team-lead PM + build-engineer (lead) + build-ux (mandatory — chrome inherits everywhere) + build-qa (Playwright nav + locale toggle E2E). Skip build-po (continuation), build-data (no schema), build-ai (no Claude), build-marketing (chrome strings already in i18n catalogs).
+4. **Implementation order** — sidebar re-skin → bottom nav re-skin → language toggle pill → persona pill → "Higit pa" drawer. Each step ends with the route still functional; no half-shipped chrome.

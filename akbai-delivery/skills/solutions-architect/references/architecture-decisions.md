@@ -21,6 +21,7 @@
 | ADR-010 | Saan Napunta expenses dashboard (Build 4) | Accepted | 2026-03-26 |
 | ADR-011 | Ang Umaga Mo morning briefing (Build 5) | Accepted | 2026-03-28 |
 | ADR-012 | Reply Drafter integration into Kai Chat | Accepted | 2026-04-05 |
+| ADR-013 | Frontend Redesign Phase 4 — Brand Vocabulary component organization | Accepted | 2026-04-26 |
 
 ---
 
@@ -508,3 +509,42 @@ Reply Drafter was built in Sprint 9 as a standalone feature: `/reply-drafter` pa
 - `REPLY_DRAFTER_ENABLED` feature flag still works — just gates the chat intent, not a page route
 
 **Review Trigger:** If reply drafting needs more complex input (multiple messages, thread context, customer profile), it may need a dedicated UI again. Revisit if chat interface becomes overloaded with too many card types.
+
+---
+
+## ADR-013: Frontend Redesign Phase 4 — Brand Vocabulary Component Organization
+
+**Status:** Accepted
+**Date:** 2026-04-26
+
+**Context:**
+Frontend Redesign Phase 4 ports the Kai mark, decorative motifs, and brand icon set approved in the B4/B5 review repos ([`repos/icons.html`](../../../design_handoff_akbai_redesign/synthesis/repos/icons.html), [`repos/motifs.html`](../../../design_handoff_akbai_redesign/synthesis/repos/motifs.html)) into shippable React components. The existing illustration tree at [`frontend/src/components/illustrations/svg/`](../../../frontend/src/components/illustrations/svg/) already contains 48+ SVG illustrations (Kai expressions, expense categories, financial indicators, business types, status). Phase 4 must add new components without parallelizing or fragmenting the tree (Sprint 5 lesson — duplicate components fragmented the dashboard).
+
+**Decision:**
+- **Brand icons** (Resibo, Usap, Pera, Kalendaryo, Precio, Invoice, Checkin, SundayStory, Drafts, Sampaguita, plus 5 nav icons) live in a new directory `frontend/src/components/illustrations/icons/` — separate from existing `svg/` to make brand-icon set discoverable without confusing it with illustrations. Each icon is a standalone TSX component exporting a default-named function with `{ size?: number; color?: string; className?: string }` props. `currentColor` is the default fill so palette-context aware styling works.
+- **Decorative motifs** (CapizPattern, FloatingPetals, WovenDivider, Squiggle, TapeStrip, SwayingLeaf, Sunburst, DoodleArrow) extend the existing `frontend/src/components/illustrations/svg/decorative/` directory. Each accepts shape-specific props (e.g., `<FloatingPetals count?={number} />`, `<Squiggle width?={number} color?={string} />`).
+- **Kai composition** — new `frontend/src/components/illustrations/kai/kai.tsx` provides a single `<Kai expression size animated />` API that maps `expression` to the appropriate `Ka*` component from the existing `svg/ka-expressions/` tree. `KaiSitting` is a separate export — 168×168 hero version that wraps `kai-mark.png` in a circular mask for the home Kumustahan hero. The Kai mark asset is copied from `design_handoff_akbai_redesign/prototype/assets/kai-mark.png` to `frontend/public/icons/kai-mark.png` (canonical location per [`02-decisions.md`](../../../design_handoff_akbai_redesign/synthesis/02-decisions.md) Canonical Kai mark section).
+- **Animation gating** — when `animated` is true on Kai, the component composes `animate-kai-bob` or `animate-kai-breathe` (Phase 3 keyframes); reduced-motion already gates these globally.
+- **Index file expansion** — `svg/index.ts` re-exports new motifs; new `icons/index.ts` and `kai/index.ts` mirror that pattern.
+- **No CSS-in-JS** — every component is plain TSX with Tailwind classes + inline SVG. Inline SVG keeps payload below the Phase 1.5 perf budget (≤ 200KB cold home load) without separate HTTP requests.
+- **`lucide-react` retained** — utility roles (close, chevron, settings, search, filter) still come from `lucide-react`. Brand icons replace `lucide-react` only where the role is brand-load-bearing.
+
+**Alternatives Considered:**
+- **Inline icons in consumer components:** rejected — would scatter brand SVG across the codebase and make later visual tuning expensive.
+- **Single `<BrandIcon name="resibo" />` with switch:** rejected — kills tree-shaking; importing one icon would pull in all 15 SVG strings.
+- **Keep brand icons inside `svg/`:** rejected — illustrations and icons have distinct semantics (illustrations are 48–96px decorative, icons are 16–32px functional). Separating directories prevents accidental conflation.
+- **Web font with custom glyphs:** rejected — adds a heavy build step and complicates color/animation control.
+
+**Consequences:**
+- **Positive:** Phase 5+ screens compose brand iconography from a single, consistent set. Each icon is independently tree-shakable. The Kai mark API is unified (`<Kai expression>`) so Phase 6 onboarding, Phase 7 home, Phase 9 deadlines callout, and Phase 10 Kuwento can swap Kai expressions by name without touching SVG. The motif primitives are inline and small enough that they don't dent the perf budget.
+- **Negative:** ~15 new icon files + 6 new motif files = ~21 new TSX files. Discoverability is via `index.ts` re-exports, not file conventions. Reviewers must know to look at `illustrations/icons/` separately from `illustrations/svg/`.
+- **Migration cost:** zero in Phase 4 (only adds files). Phase 5+ screens swap `lucide-react` imports for brand icons one-by-one when reskinned.
+
+**Validation:**
+- Vitest render tests — every new component renders without throwing, accepts `size` prop, renders correct viewBox.
+- TypeScript typecheck — strict, no `any`, all SVG attributes typed.
+- Playwright visual-parity test — capture each component at default size, diff against the approved repo HTML rendering ≤ 0.5%. (Build the parity test in Phase 4; harness already configured in `frontend/playwright.config.ts`.)
+
+**Related:**
+- Phase 2 verdicts B4 (icons), B5 (motifs) — both signed off 2026-04-26
+- Sprint 5 lesson — reuse audit at [`04-reuse-audit.md`](../../../design_handoff_akbai_redesign/synthesis/04-reuse-audit.md) forbids parallel components

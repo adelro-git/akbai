@@ -1,0 +1,52 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "loading": "Loading…",
+    "retry": "Retry",
+    "close": "Close"
+  },
+  "nav": {
+    "home": "Home",
+    "chat": "Chat",
+    "scan": "Scan",
+    "money": "Money",
+    "more": "More"
+  },
+  "language": {
+    "label": "Language",
+    "filipino": "Filipino",
+    "english": "English"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "kumustaKa": "how are you?",
+    "checkin": {
+      "openCta": "Ready to check in?",
+      "streak": "Day {count} together",
+      "firstTime": "Let's try your first check-in!",
+      "resetCopy": "Back to it, {name}. Day 1 again, together."
+    },
+    "actions": {
+      "header": "What should we do?",
+      "scanResibo": "Scan receipt",
+      "kausapKai": "Chat with Kai",
+      "birPaalala": "BIR reminder",
+      "tamangPresyo": "Right price",
+      "mgaInvoice": "Invoices"
+    },
+    "kuwento": {
+      "label": "This week's story",
+      "kita": "Revenue",
+      "gastos": "Expenses",
+      "tubo": "Profit",
+      "footer": "Open full story"
+    }
+  }
+}

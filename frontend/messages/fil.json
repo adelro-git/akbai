@@ -1,0 +1,52 @@
+{
+  "common": {
+    "save": "I-save",
+    "cancel": "I-cancel",
+    "continue": "Ituloy",
+    "back": "Bumalik",
+    "loading": "Sandali lang…",
+    "retry": "Subukan ulit",
+    "close": "Isara"
+  },
+  "nav": {
+    "home": "Home",
+    "chat": "Kausap",
+    "scan": "Scan",
+    "money": "Pera",
+    "more": "Iba pa"
+  },
+  "language": {
+    "label": "Wika",
+    "filipino": "Filipino",
+    "english": "English"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Magandang umaga",
+      "afternoon": "Magandang hapon",
+      "evening": "Magandang gabi"
+    },
+    "kumustaKa": "kumusta ka?",
+    "checkin": {
+      "openCta": "Ready ka na bang mag-check-in?",
+      "streak": "Pang-{count} araw na natin",
+      "firstTime": "Subukan natin ang unang check-in mo!",
+      "resetCopy": "Balik tayo, {name}. Pang-1 araw ulit natin."
+    },
+    "actions": {
+      "header": "Anong gagawin natin?",
+      "scanResibo": "Scan resibo",
+      "kausapKai": "Kausap si Kai",
+      "birPaalala": "BIR paalala",
+      "tamangPresyo": "Tamang presyo",
+      "mgaInvoice": "Mga invoice"
+    },
+    "kuwento": {
+      "label": "Kuwento ng Linggo",
+      "kita": "Kita",
+      "gastos": "Gastos",
+      "tubo": "Tubo",
+      "footer": "Buksan ang detalye"
+    }
+  }
+}
