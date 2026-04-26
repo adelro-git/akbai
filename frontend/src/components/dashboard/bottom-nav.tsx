@@ -2,71 +2,125 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MorningBriefing, CustomerMessages, ResiboScanner, CashFlow, ProfileUser } from '@/components/illustrations/svg';
+import { useTranslations } from 'next-intl';
+import {
+  IconHomeNav,
+  IconChatNav,
+  IconScanNav,
+  IconMoneyNav,
+  IconMoreNav,
+  type NavIconProps,
+} from '@/components/illustrations/icons';
+import MoreDrawer from './more-drawer';
+import { cn } from '@/lib/utils';
 
 // ============================================================
-// Nav Items — 5-item mobile bottom nav (max for mobile UX).
-// Home, Chat, Resibo, Gastos, Profile. Secondary features
-// (Costing, Invoices, Deadlines) accessible from dashboard cards.
+// Phase 5 — Bottom nav (< 860px breakpoint, per C2/C3).
+// 5 tabs preserved (Home / Chat / Scan / Pera / More) — Sprint 5
+// reuse rule: re-skin in place, no parallel component. The 5th
+// "More" tab opens the Vaul drawer with long-tail routes.
+// Glass blur preserved (C6); honey-gradient active state (C2).
 // ============================================================
 
 interface NavItem {
-  label: string;
+  key: 'home' | 'chat' | 'scan' | 'money';
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<NavIconProps>;
   testId: string;
+  i18nKey: 'home' | 'chat' | 'scan' | 'money';
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/dashboard', icon: MorningBriefing, testId: 'nav-home' },
-  { label: 'Chat', href: '/chat', icon: CustomerMessages, testId: 'nav-chat' },
-  { label: 'Resibo', href: '/scan', icon: ResiboScanner, testId: 'nav-scan' },
-  { label: 'Gastos', href: '/expenses', icon: CashFlow, testId: 'nav-expenses' },
-  { label: 'Profile', href: '/profile', icon: ProfileUser, testId: 'nav-profile' },
+  { key: 'home', href: '/dashboard', icon: IconHomeNav, testId: 'nav-home', i18nKey: 'home' },
+  { key: 'chat', href: '/chat', icon: IconChatNav, testId: 'nav-chat', i18nKey: 'chat' },
+  { key: 'scan', href: '/scan', icon: IconScanNav, testId: 'nav-scan', i18nKey: 'scan' },
+  { key: 'money', href: '/expenses', icon: IconMoneyNav, testId: 'nav-money', i18nKey: 'money' },
 ];
+
+function isRouteActive(pathname: string, href: string): boolean {
+  return pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
+}
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const t = useTranslations('nav');
 
-  // Hide bottom nav on chat page — chat has its own full-screen layout with input bar
+  // Hide bottom nav on chat — chat has its own full-screen layout with input bar.
   if (pathname === '/chat') return null;
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-surface-container-lowest/80 backdrop-blur-[20px] shadow-ambient-nav border-t border-outline-variant/20 z-50 md:hidden"
+      className="fixed bottom-0 left-0 right-0 glass-nav shadow-ambient-nav border-t border-outline-soft/30 z-50 tablet:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       data-testid="bottom-nav"
       aria-label="Main navigation"
     >
-      <div className="flex items-center justify-around h-14 max-w-md mx-auto">
+      <div className="flex items-stretch justify-around h-14 max-w-md mx-auto">
         {NAV_ITEMS.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== '/dashboard' && pathname.startsWith(item.href));
+          const active = isRouteActive(pathname, item.href);
           const Icon = item.icon;
-
           return (
             <Link
-              key={item.href}
+              key={item.key}
               href={item.href}
-              className="flex flex-col items-center justify-center w-full h-full min-w-[44px] min-h-[44px]"
+              className="flex flex-col items-center justify-center w-full min-w-[44px] min-h-[44px] px-1"
               data-testid={item.testId}
-              aria-current={isActive ? 'page' : undefined}
+              aria-current={active ? 'page' : undefined}
             >
-              <div className={`rounded-lg p-1 ${isActive ? 'bg-primary-container/15' : 'opacity-60'}`}>
-                <Icon size={28} />
-              </div>
-              <span
-                className={`text-[11px] font-semibold mt-0.5 ${
-                  isActive ? 'text-primary-container' : 'text-on-surface-variant'
-                }`}
-              >
-                {item.label}
-              </span>
+              <ActiveTabContent
+                icon={<Icon size={26} active={active} />}
+                label={t(item.i18nKey)}
+                active={active}
+              />
             </Link>
           );
         })}
+        <MoreDrawer
+          showLanguageToggle
+          trigger={
+            <button
+              type="button"
+              data-testid="nav-more"
+              className="flex flex-col items-center justify-center w-full min-w-[44px] min-h-[44px] px-1"
+            >
+              <ActiveTabContent
+                icon={<IconMoreNav size={26} active={false} />}
+                label={t('more')}
+                active={false}
+              />
+            </button>
+          }
+        />
       </div>
     </nav>
+  );
+}
+
+interface ActiveTabContentProps {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+}
+
+function ActiveTabContent({ icon, label, active }: ActiveTabContentProps) {
+  return (
+    <>
+      <span
+        className={cn(
+          'flex h-8 w-12 items-center justify-center rounded-full transition-colors',
+          active && 'bg-gradient-to-r from-honey to-honey-deep shadow-ambient',
+        )}
+      >
+        {icon}
+      </span>
+      <span
+        className={cn(
+          'text-[11px] font-semibold mt-0.5 transition-colors',
+          active ? 'text-honey-deep' : 'text-on-surface-variant',
+        )}
+      >
+        {label}
+      </span>
+    </>
   );
 }

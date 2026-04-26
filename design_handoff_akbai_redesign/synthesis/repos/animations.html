@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AKBai — Phase 2.2 Animation Repository</title>
+  <style>
+    :root {
+      --honey-cream: #fef3d9;
+      --honey-bright: #fef4dd;
+      --honey: #f59e0b;
+      --honey-deep: #a1620e;
+      --ink: #2c1f12;
+      --ink-soft: #534434;
+      --outline: #e6dac4;
+      --bg: #fdf9f2;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+      margin: 0; padding: 0 24px 64px;
+      background: var(--bg); color: var(--ink); line-height: 1.5;
+    }
+    header.page {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg); border-bottom: 1px solid var(--outline);
+      padding: 24px 0 16px; margin: 0 -24px 24px;
+      padding-left: 24px; padding-right: 24px;
+    }
+    h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
+    h1 small { font-weight: 400; color: var(--ink-soft); font-size: 14px; margin-left: 8px; }
+    .meta { font-size: 13px; color: var(--ink-soft); }
+    .meta a { color: var(--honey-deep); }
+    nav.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    nav.tabs a {
+      font-size: 12px; padding: 6px 14px; background: white;
+      border: 1px solid var(--outline); border-radius: 999px;
+      color: var(--ink); text-decoration: none; font-weight: 600;
+    }
+    nav.tabs a:hover { background: var(--honey); color: white; border-color: var(--honey); }
+
+    main { max-width: 1400px; margin: 0 auto; }
+
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 16px;
+    }
+    .anim-card {
+      background: white; border: 1px solid var(--outline); border-radius: 12px;
+      padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .anim-card h3 { margin: 0; font-size: 15px; font-weight: 700; }
+    .anim-card .where {
+      font-size: 11px; color: var(--ink-soft); text-transform: uppercase;
+      letter-spacing: 0.06em; margin-top: -6px;
+    }
+    .anim-card .demo {
+      position: relative; min-height: 160px; border-radius: 8px;
+      background: var(--bg); border: 1px solid var(--outline);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .anim-card .demo.honey { background: var(--honey-bright); }
+    .anim-card .controls {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .anim-card button {
+      padding: 6px 14px; font-size: 12px; font-weight: 600;
+      background: var(--honey); color: white; border: 0;
+      border-radius: 999px; cursor: pointer;
+    }
+    .anim-card button:hover { background: var(--honey-deep); }
+    .anim-card button.toggle.off { background: var(--ink-soft); }
+    .anim-card .meta-row {
+      font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+      color: var(--ink-soft); flex: 1;
+    }
+    .anim-card pre {
+      margin: 0; padding: 10px 12px; background: var(--bg);
+      border: 1px solid var(--outline); border-radius: 6px;
+      font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+      line-height: 1.55; color: var(--ink); overflow-x: auto;
+      white-space: pre;
+    }
+    .anim-card .style-notes {
+      font-size: 11px; color: var(--ink-soft); line-height: 1.6;
+      padding-top: 8px; border-top: 1px dashed var(--outline);
+    }
+    .anim-card .style-notes b { color: var(--ink); }
+
+    .verdict-row {
+      background: var(--honey-cream); border: 1px solid var(--outline);
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 13px; color: var(--ink); margin-bottom: 24px;
+    }
+    .verdict-row b { color: var(--honey-deep); }
+
+    /* ──────── Animation keyframes — all from handoff styles.css ──────── */
+    @keyframes kai-bob {
+      0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+      50% { transform: translateY(-4px) rotate(0.5deg); }
+    }
+    @keyframes kai-breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.025); }
+    }
+    @keyframes pandesal-squish {
+      0% { transform: scale(1); }
+      40% { transform: scale(0.97, 1.02); }
+      100% { transform: scale(1); }
+    }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pop-in {
+      0% { transform: scale(0.96) translateY(8px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    @keyframes typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+    @keyframes steam-rise {
+      0% { opacity: 0; transform: translateY(2px); }
+      30% { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(-8px); }
+    }
+    @keyframes leaf-sway {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+    @keyframes sun-slow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes gentle-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes petal-drift {
+      0% { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.55; }
+      50% { transform: translateY(50vh) translateX(20px) rotate(180deg); opacity: 0.45; }
+      100% { transform: translateY(110vh) translateX(-10px) rotate(360deg); opacity: 0; }
+    }
+    @keyframes flame-flicker {
+      0%, 100% { transform: scale(1) rotate(-2deg); }
+      50% { transform: scale(1.08) rotate(3deg); }
+    }
+    @keyframes check-pop {
+      0% { transform: scale(0.6); }
+      60% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    @keyframes bounce-in {
+      0% { transform: scale(0.3); opacity: 0; }
+      60% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    @keyframes wobble {
+      0%, 100% { transform: rotate(0); }
+      25% { transform: rotate(-1deg); }
+      75% { transform: rotate(1deg); }
+    }
+
+    /* Class-based bindings — toggled by JS for play/pause */
+    .play-kai-bob { animation: kai-bob 4s ease-in-out infinite; transform-origin: center; }
+    .play-kai-breathe { animation: kai-breathe 4s ease-in-out infinite; transform-origin: center; }
+    .play-pandesal-squish { animation: pandesal-squish 0.4s ease-out; }
+    .play-slide-up { animation: slide-up 0.4s cubic-bezier(.2,.7,.2,1) both; }
+    .play-fade-in { animation: fade-in 0.35s ease-out both; }
+    .play-pop-in { animation: pop-in 0.25s cubic-bezier(.2,.9,.2,1.1) both; }
+    .play-typing { animation: typing-bounce 1.4s ease-in-out infinite; }
+    .play-steam { animation: steam-rise 2s ease-out infinite; }
+    .play-leaf-sway { animation: leaf-sway 5s ease-in-out infinite; transform-origin: bottom center; }
+    .play-sun-slow { animation: sun-slow 30s linear infinite; transform-origin: center; }
+    .play-gentle-float { animation: gentle-float 6s ease-in-out infinite; }
+    .play-petal-drift { animation: petal-drift 14s linear infinite; }
+    .play-flame-flicker { animation: flame-flicker 1.6s ease-in-out infinite; }
+    .play-check-pop { animation: check-pop 0.45s ease-out; }
+    .play-bounce-in { animation: bounce-in 0.6s cubic-bezier(.2,.9,.2,1.1); }
+    .play-wobble { animation: wobble 1.8s ease-in-out infinite; transform-origin: top center; }
+
+    /* In PRODUCTION code these are gated on prefers-reduced-motion.
+       In this REVIEW REPO the gate is intentionally removed so Anton can see every animation
+       regardless of OS settings. The production gate is non-negotiable — see B6 / F2 in 02-decisions.md. */
+  </style>
+</head>
+<body>
+  <header class="page">
+    <h1>AKBai — Phase 2.2 Animation Repository <small>2026-04-26</small></h1>
+    <p class="meta">
+      Review the candidate animation keyframes from the handoff before approving B6 (Animation library).
+      Each animation paired with the actual image / element it will animate.
+      All animations gated on <code>prefers-reduced-motion: reduce</code> — disabled in OS-level reduced-motion mode.
+      <br>
+      Back to: <a href="../decisions.html">decisions.html</a> · <a href="../index.html">index.html</a> · <a href="icons.html">icons</a> · <a href="motifs.html">motifs</a>
+    </p>
+    <nav class="tabs">
+      <a href="#kai">Kai animations</a>
+      <a href="#tile">Tile + card entries</a>
+      <a href="#chat">Chat indicators</a>
+      <a href="#ambient">Ambient backgrounds</a>
+      <a href="#celebration">Celebrations</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="verdict-row">
+      <b>Verdict pending Anton review.</b> Each animation can be toggled on/off independently below.
+      Once approved, keyframes ship in <code>frontend/src/app/globals.css</code> with the same
+      <code>prefers-reduced-motion</code> gate active here.
+    </div>
+    <p style="background:#fef3d9;border:1px solid #fde68a;border-radius:8px;padding:10px 16px;margin-bottom:24px;color:#92400e;font-size:12px;">
+      ℹ <b>Note:</b> animations in this repo always play regardless of your OS's <code>prefers-reduced-motion</code> setting (so you can review them).
+      In production code these are gated — users with reduced-motion enabled see static layouts. See B6 / F2 in <a href="../02-decisions.md" style="color:var(--honey-deep);">02-decisions.md</a>.
+    </p>
+
+    <!-- ───── KAI ANIMATIONS ───── -->
+    <section id="kai">
+      <h2 style="font-size:18px;margin:0 0 12px;border-bottom:2px solid var(--honey);padding-bottom:8px;">Kai animations</h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:0 0 16px;">Animations applied to the Kai mark on home hero, chat header, and onboarding completion.</p>
+
+      <div class="grid">
+
+        <div class="anim-card">
+          <h3>kai-bob</h3>
+          <p class="where">Home hero · Kai sitting mark · 4s ease-in-out infinite</p>
+          <div class="demo">
+            <div id="kai-bob-demo" style="width:140px;height:140px;border-radius:50%;overflow:hidden;filter:drop-shadow(0 4px 14px rgba(168,120,40,0.22));">
+              <img src="../../prototype/assets/kai-mark.png" alt="Kai" width="140" height="140" style="display:block;width:140px;height:140px;object-fit:contain;">
+            </div>
+          </div>
+          <pre>@keyframes kai-bob {
+  0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+  50%      { transform: translateY(-4px) rotate(0.5deg); }
+}
+/* 4s ease-in-out infinite */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggle('kai-bob-demo','play-kai-bob',this)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 4s</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Gentle vertical bob with subtle rotation. Pre-cognitive warmth (Don Norman visceral layer).
+            <b>Use:</b> Kai sitting mark on home hero. Always running unless reduced-motion. Pairs with subtle drop-shadow.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>kai-breathe</h3>
+          <p class="where">Onboarding wizard · login · alternative to kai-bob · 4s</p>
+          <div class="demo">
+            <div id="kai-breathe-demo" style="width:140px;height:140px;border-radius:50%;overflow:hidden;filter:drop-shadow(0 4px 14px rgba(168,120,40,0.22));">
+              <img src="../../prototype/assets/kai-mark.png" alt="Kai" width="140" height="140" style="display:block;width:140px;height:140px;object-fit:contain;">
+            </div>
+          </div>
+          <pre>@keyframes kai-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.025); }
+}
+/* 4s ease-in-out infinite */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggle('kai-breathe-demo','play-kai-breathe',this)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 4s</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Subtle scale-pulse, like breathing. Quieter than kai-bob.
+            <b>Open question:</b> Use kai-bob on home (active app context) and kai-breathe on auth/onboarding (calm, anticipatory)?
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───── TILE + CARD ENTRIES ───── -->
+    <section id="tile" style="margin-top:48px;">
+      <h2 style="font-size:18px;margin:0 0 12px;border-bottom:2px solid var(--honey);padding-bottom:8px;">Tile + card entries</h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:0 0 16px;">One-shot entry animations on cards, tiles, and toast appearances. Tile press uses pandesal-squish.</p>
+
+      <div class="grid">
+
+        <div class="anim-card">
+          <h3>pandesal-squish</h3>
+          <p class="where">Action tile press / button click · 0.4s ease-out one-shot</p>
+          <div class="demo">
+            <div id="squish-demo" style="width:120px;height:120px;background:linear-gradient(180deg,#fffbf0,#fde8c0);border-radius:14px;border:1.5px solid #b06410;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;" onclick="oneShot('squish-demo','play-pandesal-squish')">📷<br>Scan</div>
+          </div>
+          <pre>@keyframes pandesal-squish {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.97, 1.02); }
+  100% { transform: scale(1); }
+}
+/* 0.4s ease-out — runs on click */</pre>
+          <div class="controls">
+            <button onclick="oneShot('squish-demo','play-pandesal-squish')">▶ Trigger</button>
+            <span class="meta-row">one-shot 0.4s · click tile to retrigger</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Slight squish on press (like real bread or a button being pressed).
+            <b>Use:</b> Every brand action tile + primary button. Replaces standard <code>:active</code> scale.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>slide-up</h3>
+          <p class="where">Card entry · page mount · 0.4s cubic-bezier one-shot</p>
+          <div class="demo" style="flex-direction:column;gap:8px;">
+            <div id="slide-up-demo" style="width:80%;height:50px;background:white;border:1px solid #e6dac4;border-radius:10px;padding:12px;font-size:12px;color:var(--ink-soft);">Card sliding up from below</div>
+            <button onclick="oneShot('slide-up-demo','play-slide-up')">▶ Replay</button>
+          </div>
+          <pre>@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* 0.4s cubic-bezier(.2,.7,.2,1) both */</pre>
+          <div class="controls">
+            <span class="meta-row">one-shot 0.4s · cards stagger by 50ms</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Fade + 10px upward translate. Subtler than ADOPT-HANDOFF default.
+            <b>Use:</b> Every card mount on page entry. Use stagger delays (50ms × index) for cascading reveal.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>fade-in</h3>
+          <p class="where">Lightweight content reveal · 0.35s ease-out</p>
+          <div class="demo" style="flex-direction:column;gap:8px;">
+            <div id="fade-in-demo" style="width:80%;text-align:center;font-size:14px;color:var(--ink);">Faded content reveal</div>
+            <button onclick="oneShot('fade-in-demo','play-fade-in')">▶ Replay</button>
+          </div>
+          <pre>@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* 0.35s ease-out both */</pre>
+          <div class="controls">
+            <span class="meta-row">one-shot 0.35s · 4px translate</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Smaller version of slide-up — used for inline reveals (typing indicator → answer, suggestion chips).
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>pop-in</h3>
+          <p class="where">Toast · success indicator · 0.25s</p>
+          <div class="demo" style="flex-direction:column;gap:8px;">
+            <div id="pop-in-demo" style="background:#dcfce7;color:#14532d;padding:8px 16px;border-radius:999px;font-size:12px;font-weight:600;">✓ Synced</div>
+            <button onclick="oneShot('pop-in-demo','play-pop-in')">▶ Replay</button>
+          </div>
+          <pre>@keyframes pop-in {
+  0%   { transform: scale(0.96) translateY(8px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+/* 0.25s cubic-bezier(.2,.9,.2,1.1) both */</pre>
+          <div class="controls">
+            <span class="meta-row">one-shot 0.25s · slight overshoot</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Quick scale + fade with overshoot. Snappy.
+            <b>Use:</b> "Synced ✓" toast on offline-mutation reconnect, success indicators.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>gentle-float</h3>
+          <p class="where">Paper-note primitive · 6s ease-in-out infinite</p>
+          <div class="demo">
+            <div id="float-demo" style="background:#fffbf0;border:1px solid #e6dac4;border-radius:4px 12px 4px 12px;padding:14px 18px;transform:rotate(-1.2deg);font-size:13px;color:var(--ink);box-shadow:0 2px 6px rgba(168,120,40,0.15);">Pang-12 araw na natin.</div>
+          </div>
+          <pre>@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+/* 6s ease-in-out infinite */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggle('float-demo','play-gentle-float',this)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 6s</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> 6px vertical float, very slow. Paper-note feels like it's not quite anchored.
+            <b>Open question:</b> Use only on hero check-in note (one per screen) or on every paper-note instance?
+            Risk: if every paper-note floats, it becomes visual noise.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>wobble</h3>
+          <p class="where">Paper-note hover · 1.8s ease-in-out infinite</p>
+          <div class="demo">
+            <div id="wobble-demo" style="background:#fffbf0;border:1px solid #e6dac4;border-radius:4px 12px 4px 12px;padding:14px 18px;font-size:13px;color:var(--ink);box-shadow:0 2px 6px rgba(168,120,40,0.15);">Hover-active wobble note</div>
+          </div>
+          <pre>@keyframes wobble {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-1deg); }
+  75% { transform: rotate(1deg); }
+}
+/* 1.8s ease-in-out infinite */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggle('wobble-demo','play-wobble',this)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 1.8s · trigger on hover</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Tiny rotation back-and-forth. Reads as "interactive — tap me."
+            <b>Use:</b> Only on hover/long-press of paper-note primitive. Never default-on.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───── CHAT INDICATORS ───── -->
+    <section id="chat" style="margin-top:48px;">
+      <h2 style="font-size:18px;margin:0 0 12px;border-bottom:2px solid var(--honey);padding-bottom:8px;">Chat indicators</h2>
+      <div class="grid">
+
+        <div class="anim-card">
+          <h3>typing-bounce</h3>
+          <p class="where">Kai chat bubble · 3-dot typing indicator · 1.4s</p>
+          <div class="demo">
+            <div style="display:flex;gap:6px;align-items:center;background:white;border:1px solid #e6dac4;padding:12px 16px;border-radius:18px 18px 18px 4px;">
+              <span id="typing-1" style="width:7px;height:7px;background:var(--honey-deep);border-radius:50%;display:block;"></span>
+              <span id="typing-2" style="width:7px;height:7px;background:var(--honey-deep);border-radius:50%;display:block;"></span>
+              <span id="typing-3" style="width:7px;height:7px;background:var(--honey-deep);border-radius:50%;display:block;"></span>
+            </div>
+          </div>
+          <pre>@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30%           { transform: translateY(-4px); opacity: 1; }
+}
+/* 1.4s infinite · stagger 0.16s × index */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggleAll(['typing-1','typing-2','typing-3'],'play-typing',this,0.16)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 1.4s</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> 3 dots bounce sequentially with 0.16s stagger.
+            <b>Use:</b> Kai chat bubble while waiting for Sonnet response. Replaces a static "..." or spinner.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───── AMBIENT BACKGROUNDS ───── -->
+    <section id="ambient" style="margin-top:48px;">
+      <h2 style="font-size:18px;margin:0 0 12px;border-bottom:2px solid var(--honey);padding-bottom:8px;">Ambient backgrounds</h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:0 0 16px;">Continuous low-energy animations on background motifs. All gated on prefers-reduced-motion.</p>
+
+      <div class="grid">
+
+        <div class="anim-card">
+          <h3>petal-drift</h3>
+          <p class="where">Home FloatingPetals · 14s linear infinite (per petal)</p>
+          <div class="demo" style="overflow:hidden;">
+            <div id="petal-demo-container" style="position:absolute;inset:0;pointer-events:none;">
+              <span id="petal-demo-1" style="position:absolute;left:20%;top:-20px;width:8px;height:8px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:0.5px solid rgba(232,155,47,0.3);transform:rotate(45deg);"></span>
+              <span id="petal-demo-2" style="position:absolute;left:50%;top:-20px;width:7px;height:7px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:0.5px solid rgba(232,155,47,0.3);transform:rotate(120deg);"></span>
+              <span id="petal-demo-3" style="position:absolute;left:80%;top:-20px;width:9px;height:9px;border-radius:50% 50% 50% 0;background:radial-gradient(circle at 30% 30%, #fff, #fdf0d4);border:0.5px solid rgba(232,155,47,0.3);transform:rotate(220deg);"></span>
+            </div>
+            <span style="font-size:11px;color:var(--ink-soft);">demo box (petals fall outside it in real use)</span>
+          </div>
+          <pre>@keyframes petal-drift {
+  0%   { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.55; }
+  50%  { transform: translateY(50vh) translateX(20px) rotate(180deg); opacity: 0.45; }
+  100% { transform: translateY(110vh) translateX(-10px) rotate(360deg); opacity: 0; }
+}
+/* 14–22s linear infinite · randomized per petal */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggleAll(['petal-demo-1','petal-demo-2','petal-demo-3'],'play-petal-drift',this,3)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 14–22s · 6 petals on home</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Each petal drifts top-to-bottom with horizontal sway + rotation. Randomized delay/duration per petal.
+            <b>Performance:</b> <code>transform</code> + <code>opacity</code> only. Off-thread compositor.
+            <b>Note:</b> 6 petals on home is the proposed default; 12 only on celebration burst.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>leaf-sway</h3>
+          <p class="where">SwayingLeaf decoration · 5s ease-in-out infinite</p>
+          <div class="demo">
+            <svg id="leaf-demo" width="60" height="80" viewBox="0 0 60 80">
+              <path d="M30 78 Q30 50 30 30" stroke="#5a7d62" stroke-width="2" stroke-linecap="round"/>
+              <path d="M30 50 Q18 42 16 30 Q28 36 30 45 Z" fill="#97b39d"/>
+              <path d="M30 42 Q42 34 44 22 Q32 28 30 37 Z" fill="#b7c9ba"/>
+              <path d="M30 34 Q20 26 18 16 Q28 22 30 30 Z" fill="#97b39d" opacity="0.85"/>
+            </svg>
+          </div>
+          <pre>@keyframes leaf-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+/* 5s ease-in-out infinite · transform-origin: bottom center */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggle('leaf-demo','play-leaf-sway',this)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 5s</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Sage 3-leaf branch rotates ±3° from bottom anchor. Like a real leaf in light wind.
+            <b>Open question:</b> Sage palette is new for AKBai — adopt or skip the SwayingLeaf entirely?
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>sun-slow</h3>
+          <p class="where">Sunburst behind Kai mark · 30s linear infinite</p>
+          <div class="demo">
+            <div style="position:relative;width:200px;height:200px;">
+              <svg id="sun-demo" width="200" height="200" viewBox="0 0 200 200" style="position:absolute;inset:0;pointer-events:none;">
+                <g stroke="#f5b347" stroke-width="2.2" stroke-linecap="round" opacity="0.5">
+                  <line x1="165" y1="100" x2="188" y2="100"/>
+                  <line x1="156.6" y1="135" x2="172.5" y2="151.6"/>
+                  <line x1="135" y1="156.6" x2="151.6" y2="172.5"/>
+                  <line x1="100" y1="165" x2="100" y2="188"/>
+                  <line x1="65" y1="156.6" x2="48.4" y2="172.5"/>
+                  <line x1="43.4" y1="135" x2="27.5" y2="151.6"/>
+                  <line x1="35" y1="100" x2="12" y2="100"/>
+                  <line x1="43.4" y1="65" x2="27.5" y2="48.4"/>
+                  <line x1="65" y1="43.4" x2="48.4" y2="27.5"/>
+                  <line x1="100" y1="35" x2="100" y2="12"/>
+                  <line x1="135" y1="43.4" x2="151.6" y2="27.5"/>
+                  <line x1="156.6" y1="65" x2="172.5" y2="48.4"/>
+                </g>
+              </svg>
+              <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;overflow:hidden;filter:drop-shadow(0 4px 14px rgba(168,120,40,0.22));">
+                <img src="../../prototype/assets/kai-mark.png" alt="Kai" width="120" height="120" style="display:block;width:120px;height:120px;object-fit:contain;">
+              </div>
+            </div>
+          </div>
+          <pre>@keyframes sun-slow {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* 30s linear infinite · transform-origin: center */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggle('sun-demo','play-sun-slow',this)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 30s · barely perceptible</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Full rotation in 30s — at 0.012°/frame this is nearly subliminal. Establishes "ambient warmth" without distraction.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>steam-rise</h3>
+          <p class="where">IconCheckin coffee cup · 2s ease-out infinite</p>
+          <div class="demo">
+            <svg id="steam-demo" width="100" height="120" viewBox="0 0 60 60" fill="none">
+              <path d="M26 12 Q24 10 26 7 Q28 5 26 2" stroke="#d6c8a8" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+              <path d="M32 12 Q30 10 32 7 Q34 5 32 2" stroke="#d6c8a8" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+              <ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/>
+              <path d="M14 20 L46 20 L44 46 Q44 50 40 50 L20 50 Q16 50 16 46 Z" fill="#fff8ea" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/>
+              <ellipse cx="30" cy="22" rx="15" ry="3" fill="#8a4e0a"/>
+              <path d="M46 26 Q54 28 54 34 Q54 40 46 40" stroke="#b06410" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <pre>@keyframes steam-rise {
+  0%   { opacity: 0; transform: translateY(2px); }
+  30%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+/* 2s ease-out infinite · only on the steam paths */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggle('steam-demo','play-steam',this)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 2s · steam wisps only</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> The two steam squiggles fade up and out repeatedly. Cup body stays static.
+            <b>Use:</b> IconCheckin only — when the daily check-in CTA is visible.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───── CELEBRATIONS ───── -->
+    <section id="celebration" style="margin-top:48px;">
+      <h2 style="font-size:18px;margin:0 0 12px;border-bottom:2px solid var(--honey);padding-bottom:8px;">Celebrations</h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:0 0 16px;">One-shot triggered animations for milestones, success, and onboarding completion.</p>
+
+      <div class="grid">
+
+        <div class="anim-card">
+          <h3>check-pop</h3>
+          <p class="where">Checkmark on confirmation · 0.45s ease-out one-shot</p>
+          <div class="demo">
+            <div id="check-pop-demo" style="width:60px;height:60px;background:#dcfce7;border:2px solid #14532d;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#14532d;font-size:28px;font-weight:bold;">✓</div>
+          </div>
+          <pre>@keyframes check-pop {
+  0%   { transform: scale(0.6); }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+/* 0.45s ease-out one-shot */</pre>
+          <div class="controls">
+            <button onclick="oneShot('check-pop-demo','play-check-pop')">▶ Trigger</button>
+            <span class="meta-row">one-shot 0.45s · slight overshoot</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Scale 0.6 → 1.15 → 1 with overshoot. Reads as "yes!" not "ok."
+            <b>Use:</b> Daily check-in submit · receipt scan confirm · onboarding step complete.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>bounce-in</h3>
+          <p class="where">Onboarding completion celebration · 0.6s</p>
+          <div class="demo">
+            <div id="bounce-in-demo" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div style="font-size:48px;">🎉</div>
+              <div style="font-size:14px;font-weight:700;color:var(--honey-deep);">Tara, Andoy!</div>
+            </div>
+          </div>
+          <pre>@keyframes bounce-in {
+  0%   { transform: scale(0.3); opacity: 0; }
+  60%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+/* 0.6s cubic-bezier */</pre>
+          <div class="controls">
+            <button onclick="oneShot('bounce-in-demo','play-bounce-in')">▶ Trigger</button>
+            <span class="meta-row">one-shot 0.6s · larger overshoot</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Scale up from tiny with bounce. Used once per major milestone.
+            <b>Use:</b> Onboarding final-step celebration. Pairs with petal burst.
+          </div>
+        </div>
+
+        <div class="anim-card">
+          <h3>flame-flicker</h3>
+          <p class="where">Streak counter on home check-in note · 1.6s ease-in-out infinite</p>
+          <div class="demo">
+            <div style="display:flex;align-items:center;gap:8px;font-size:24px;">
+              <span id="flame-demo" style="display:inline-block;font-size:28px;">🔥</span>
+              <span style="font-weight:800;color:var(--honey-deep);">Pang-12</span>
+              <span style="font-size:14px;color:var(--ink-soft);">na araw</span>
+            </div>
+          </div>
+          <pre>@keyframes flame-flicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50%      { transform: scale(1.08) rotate(3deg); }
+}
+/* 1.6s ease-in-out infinite */</pre>
+          <div class="controls">
+            <button class="toggle" onclick="toggle('flame-demo','play-flame-flicker',this)">▶ Play</button>
+            <span class="meta-row">∞ infinite · 1.6s</span>
+          </div>
+          <div class="style-notes">
+            <b>Effect:</b> Flame icon flickers slightly. Reinforces streak-as-warm-presence.
+            <b>Open question:</b> The handoff uses a flame for streak. AKBai has used "pang-X araw na natin" without flame — adopt the flame or use sampaguita instead?
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function toggle(id, cls, btn) {
+      const el = document.getElementById(id);
+      const playing = el.classList.toggle(cls);
+      btn.textContent = playing ? '⏸ Pause' : '▶ Play';
+      btn.classList.toggle('off', !playing);
+    }
+    function toggleAll(ids, cls, btn, staggerSec) {
+      const els = ids.map(id => document.getElementById(id));
+      const playing = !els[0].classList.contains(cls);
+      els.forEach((el, i) => {
+        if (playing) {
+          el.classList.add(cls);
+          if (staggerSec) el.style.animationDelay = (i * staggerSec) + 's';
+        } else {
+          el.classList.remove(cls);
+        }
+      });
+      btn.textContent = playing ? '⏸ Pause' : '▶ Play';
+      btn.classList.toggle('off', !playing);
+    }
+    function oneShot(id, cls) {
+      const el = document.getElementById(id);
+      el.classList.remove(cls);
+      void el.offsetWidth; // force reflow
+      el.classList.add(cls);
+    }
+  </script>
+</body>
+</html>

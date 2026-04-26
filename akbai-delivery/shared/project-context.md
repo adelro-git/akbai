@@ -144,8 +144,8 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Sprint 11 Complete (2026-04-09)
-> Build 0 shipped (2026-03-20). Build 1 frontend (Sprint 3, 2026-03-22). Build 2 complete (Sprint 5, 2026-03-25). Sprint 6: Design Gates 2 & 3 closed, UX gaps B1/B2/D6 resolved, first-run polish. Sprint 7: Build 4 (Saan Napunta/Expenses) shipped. Sprint 8+9: Build 5 (Ang Umaga Mo) + Build 6 (Deadline Watcher) + Build 7 (Reply Drafter) shipped. Sprint 10: Build 5 completed (reconciliation), illustrations wired, 6 dev-mode bugs fixed. Sprint 11 (2026-04-09): Conversational Filipino voice revision — shifted primary voice from "Taglish" to "conversational Filipino" across ~130 files (CLAUDE.md, master brief, brand-context, skill/agent files, core-persona.ts, landing page, brand book HTML, project HTML docs). Rewrote copy guides with new 8-marker syntactic checklist. Added 9 regression tests for conversational Filipino markers. 770 tests passing. All 8 Design Gates resolved.
+> Current: Phase 0A — Frontend Redesign Phase 7 merged to main (2026-04-26) — feel-test gate moved to Session 4 start (no Phase 8 code work until Anton's 24h notes are captured)
+> Build 0 shipped (2026-03-20). Build 1 frontend (Sprint 3, 2026-03-22). Build 2 complete (Sprint 5, 2026-03-25). Sprint 6: Design Gates 2 & 3 closed, UX gaps B1/B2/D6 resolved, first-run polish. Sprint 7: Build 4 (Saan Napunta/Expenses) shipped. Sprint 8+9: Build 5 (Ang Umaga Mo) + Build 6 (Deadline Watcher) + Build 7 (Reply Drafter) shipped. Sprint 10: Build 5 completed (reconciliation), illustrations wired, 6 dev-mode bugs fixed. Sprint 11 (2026-04-09): Conversational Filipino voice revision across ~130 files. **Frontend Redesign session 1 (2026-04-26)** shipped Phases 1+2 (research + synthesis), 3 (Tailwind tokens, Fraunces, palette context, i18n primitives), 4 (15 brand icons, 8 motifs, Kai composition, 512×512 mark). **Frontend Redesign session 2 (2026-04-26)** shipped Phase 5 (chrome — sidebar/bottom-nav re-skin, Vaul "Higit pa…" drawer, FIL/EN toggle, persona pill, `tablet:860px` breakpoint) and Phase 6 (auth+onboarding — KaiSitting login hero, OnboardingShell + SampaguitaProgress, Kai expression mapping per step, paper-note welcome tour with `user_metadata.welcome_tour_completed` cross-device persistence). **Frontend Redesign session 3 (2026-04-26)** shipped Phase 7 — the flagship home (Kumustahan hero with KaiSitting 168px + Fraunces greeting + Squiggle, PaperNote streak-aware check-in invite, 5-tile Hicks-law action grid with Phase 4 brand icons, WovenDivider, Kuwento ng Linggo card with KPI grid + BanigBarChart + Kai takeaway, FloatingPetals deferred per Q2). New `/api/weekly-story` stub (ADR-015) + `/api/morning-briefing` D6 tonal extension with graceful Claude fallback (Anton's call: credits intentionally not topped up before the 24h feel-test). Playwright visual-parity home-gate test built (8/8 passing). 1265 tests passing. **Next: 24h feel-test, then Phase 8 + 9** — Kausap, Saan, Scan, Deadlines.
 
 ### What's Built
 - **Build 0 — AI Scope Definition** (2026-03-20): `/frontend/src/lib/claude/` module
@@ -212,6 +212,50 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - Category chart, transaction list, add-transaction modal, month picker
   - Check-in → expenses integration
   - 559 tests passing (154 new)
+
+- **Frontend Redesign Phases 1–4 — Research, Synthesis, Foundations, Brand Vocabulary** (2026-04-26):
+  - Phase 1+1.5 research deliverables under `skills/ux-designer/references/research-sources/` (NotebookLM corpus + 5 surgical updates to canonical voice/UX docs).
+  - Phase 2 synthesis at `design_handoff_akbai_redesign/synthesis/` — 30+ verdicts across A–F sections (all SIGNED OFF), 11 per-screen specs, B4/B5/B6 review repos APPROVED, 13 open questions RESOLVED.
+  - Phase 3 foundations: Tailwind config (`tablet:860px` custom breakpoint, Fraunces serif, honey/sage/ink scales, 13 keyframes), palette context (`lib/palette/`), `next-intl` 4.9.1 i18n (`lib/i18n/{config,request,set-locale}.ts`, `messages/{fil,en}.json`, `revalidatePath('/', 'layout')` cookie write), `paper-note` shape utility, `pill` + `paper-note` primitives.
+  - Phase 4 brand vocabulary: 15 brand icons (`components/illustrations/icons/`), 8 motifs (`CapizPattern`, `FloatingPetals`, `WovenDivider`, `Squiggle`, `TapeStrip`, `SwayingLeaf`, `Sunburst`, `DoodleArrow`), Kai composition (`Kai` + `KaiSitting` with 6 expressions: happy/concerned/thinking/celebrating/waving/working), 512×512 chroma-keyed Kai mark.
+  - ADR-013: Phase 4 component organization — brand icons separate from `svg/`, decorative motifs extend the existing tree, no parallel components per Sprint 5 reuse rule.
+  - 1167 tests passing (+46 Phase 4 + 12 Phase 3 i18n).
+
+- **Frontend Redesign Phase 5 — Shared Chrome** (2026-04-26, commit `d9de0f5`):
+  - Sidebar re-skin in place: KaiSitting brand lockup + Fraunces italic "ai" tail, persona pill (server-fetched in `(app)/layout.tsx`, taps to `/profile` per C4), 4 nav links + 5th `MoreDrawer` Vaul trigger, honey-gradient active pill, language toggle pinned bottom (C5).
+  - Bottom nav re-skin in place: 5 tabs preserved (Home/Chat/Scan/Pera/More) — Profile dropped, More opens drawer with `showLanguageToggle` for mobile parity. Honey-deep active state, glass blur preserved (C6).
+  - `MoreDrawer` (Vaul): 6 long-tail routes per C7 (Deadlines, Costing, Invoices, Drafts\*, Check-in, Kuwento\*) — Drafts + Kuwento as coming-soon stubs until Phase 10.
+  - `LanguageToggle` (FIL/EN pill): wired to `useLocale()` + `setLocaleCookie` server action; `useTransition` to disable during the action.
+  - `(app)/layout.tsx` async; fetches `users.display_name` + `business_profiles.{business_name, business_type}` server-side; `md:ml-64` → `tablet:ml-60` per C3 verdict.
+  - i18n catalogs gain `nav.*`, `language.*`, `more.*` plus auth + onboarding namespaces.
+  - 1180 tests passing (+13 chrome tests).
+
+- **Frontend Redesign Phase 6 — Auth + Onboarding** (2026-04-26, commit `0efc271`):
+  - Login redesign: KaiSitting 168px hero, Fraunces serif title, FloatingPetals (4) + single CapizPattern background, all copy via `auth.login.*` i18n keys.
+  - `OnboardingShell`: kumustahan frame composing `SampaguitaProgress` + `<Kai expression>` + tilted `<PaperNote>` prompt + form slot. Tilt alternates per step.
+  - `SampaguitaProgress`: 5-dot stepper (done = `IconSampaguita`, current = honey-deep filled circle, future = ring).
+  - Wizard: maps Kai expression per step — `1: waving → 2: thinking → 3: happy → 4: concerned → 5: working`. Celebration step renders KaiSitting 144 + honey PaperNote with first Kai message.
+  - 6 step components stripped of their ad-hoc Kai bubble + IllustrationWrapper; CTAs adopt the Phase 5 honey-gradient pill. State machines preserved (incl. `useRef`+`onClick` per the React 19 rule).
+  - Welcome tour rebuilt: Kai-led header + 1 primary + 2 supporting paper-note cards. Pain → expression mapping. Completion persists to `supabase.auth.updateUser({ data: { welcome_tour_completed: true } })` with `localStorage.akbai_tour_seen` as same-device backup. Dashboard reads `user.user_metadata.welcome_tour_completed` and passes `initiallyCompleted` so returning users skip the overlay.
+  - i18n catalogs gain `auth.login.*`, `onboarding.{tagline, stepN.*, celebrate.*, tour.*}`, full `welcomeTour.*` (FIL + EN).
+  - Tagline updated to "Kamusta ka na?" / "How are you?" (commit `8fcad07`) — kumustahan opener replaces the placeholder.
+  - 1188 tests passing (+8 sampaguita-progress + welcome-tour test rewritten).
+
+- **Frontend Redesign Phase 5/6 follow-up fixes** (2026-04-26):
+  - `(app)/onboarding/page.tsx` switched to service client under `SKIP_AUTH` (commit `a72cf0c`) — eliminates the page/API state-disagreement bug where the RLS-protected page rendered "fresh" while the service-client API rejected steps with `ALREADY_COMPLETED`. Pattern now matches `(app)/dashboard/page.tsx`.
+  - `frontend/scripts/reset-dev-onboarding.mjs` (commit `a748cea`) — one-shot reset of `DEV_USER`'s `users` + `business_profiles` (soft-delete) + onboarding `ka_conversations` rows for fast re-walking the wizard in dev.
+  - ADR-014 captures the SKIP_AUTH client consistency rule for future server pages.
+
+- **Frontend Redesign Phase 7 — Flagship Home** (2026-04-26):
+  - `(app)/dashboard/page.tsx` rebuilt as the canonical Phase 7 home per `screens/00-home.md`: outer `max-w-[760px] mx-auto px-5 py-6 pb-24 flex flex-col gap-[18px]` container, `<KumustahanHero>` (KaiSitting 168px + time-of-day pill + Fraunces 30/500 name line + Fraunces italic 26/500 "kumusta ka?" + single Squiggle underline + optional CapizPattern at 0.18), `<CheckInSection>` with `<PaperNote tilt="left" tape="left">` invite consuming streak data server-side, fixed 5-tile action grid in Hicks-law order (Scan resibo / Kausap si Kai / BIR paalala / Tamang presyo / Mga invoice) with re-skinned `dashboard-card.tsx` IN PLACE, `<WovenDivider>`, `<KuwentoCard>` (3-col KPI + `<BanigBarChart>` + Kai takeaway PaperNote + footer link), italic "— Kai" footer, `<FloatingPetalsLayer>` (Q2 deferral: static day 0, animated day 2+, reduced-motion always static).
+  - `/api/weekly-story` (ADR-015) — new GET route. SKIP_AUTH service-client switch per ADR-014. All-tier (no tier check). Pure DB aggregation (no LLM, no cache table — Phase 10 introduces both). Returns `WeeklyStory` payload (`week_start`, `week_end`, `kita_centavos`, `gastos_centavos`, `tubo_centavos`, `daily_breakdown[7]`, `peak_day_index`, `takeaway`, `tone`). Tonal rotation (D6) deterministic via `pickTone(today) = (dayOfYear − 1) % 3`. 9 static templates × 3 week-shapes (positive / flat / negative tubo) in `lib/weekly-story/takeaway-templates.ts`.
+  - `/api/morning-briefing` extended for D6 tonal hero tagline + graceful Claude fallback. New `tagline` + `tone` fields on `MorningBriefingResponse`. `outputFormatHint` added to the prompt assembler so Claude returns `{ briefing, tagline }` JSON. Credit-balance / 5xx / placeholder-key paths return `reason: 'no_credits'` with deterministic per-day fallback templates. Server-log paths sanitised (no Anthropic billing details, no Supabase error objects).
+  - New components: `kumustahan-hero.tsx`, `kuwento-card.tsx`, `floating-petals-layer.tsx`, `banig-bar-chart.tsx` (Recharts custom Bar shape with banig stripe `<pattern>` + sampaguita peak marker, motion-reduce-aware).
+  - New shared modules: `lib/streak/compute-streak.ts`, `lib/timezone/time-of-day.ts` (server-safe pure function — extracted from `kumustahan-hero.tsx` after a P1 runtime bug surfaced when a Server Component tried to import from a `'use client'` module).
+  - i18n: `home.actions.{scanResibo,kausapKai,birPaalala,tamangPresyo,mgaInvoice}` restructured from string → `{ title, description }`; `home.checkin.summary.{mood,kita,gastos}` keys added; `common.cancel` consumed in the overwrite-confirm dialog. Both FIL + EN.
+  - Tests: 89 vitest files / 1265 tests passing (+77 vs Phase 6 baseline) — `compute-streak` (9), `weekly-story/{aggregate,week-bounds,takeaway-templates}` (24), morning-briefing `{tone,fallback-templates}` (33), morning-briefing route extension (5), weekly-story route (5). Playwright `e2e/synthesis/home.spec.ts`: 8 tests (4 visual-parity captures at 390×844 + 1280×800 × FIL + EN with `maxDiffPixelRatio: 0.005`, petals deferral first-visit + day-2+, reduced-motion path, locale-flip end-to-end). All green; baselines recorded in `e2e/synthesis/home.spec.ts-snapshots/home/`.
+  - ADR-015 landed; ADR-014 added to the index (was authored but unindexed in Phase 6).
+  - **Next: Anton's 24h feel-test gate** (the immutable session boundary per the multi-session plan). Session 4 opens with the feel-test report captured in `sprint-history.md`; only after Anton reports back does Phase 8 + 9 (Kausap, Saan, Scan, Deadlines) start.
 
 ---
 

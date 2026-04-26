@@ -1,15 +1,18 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import StepWelcome from './step-welcome';
 import StepBusinessType from './step-business-type';
 import StepIncomeRange from './step-income-range';
 import StepPainPoint from './step-pain-point';
 import StepBirConsent from './step-bir-consent';
 import StepBirTaxType from './step-bir-tax-type';
+import OnboardingShell from './onboarding-shell';
 import InstallGuide from '@/components/pwa/install-guide';
-import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
+import { KaiSitting, type KaiExpression } from '@/components/illustrations/kai';
+import { PaperNote } from '@/components/ui/paper-note';
 import { trackOnboardingStarted, trackOnboardingCompleted } from '@/lib/posthog/events';
 import type { OnboardingState, BusinessType, IncomeRange, PainPoint } from '@/lib/kilala-kita';
 import type { BirTaxType } from '@/lib/deadlines/types';
@@ -18,8 +21,27 @@ interface OnboardingWizardProps {
   initialState: OnboardingState;
 }
 
+// Kai expression mapping per Phase 6 spec — kumustahan rhythm.
+const STEP_EXPRESSION: Record<1 | 2 | 3 | 4 | 5, KaiExpression> = {
+  1: 'waving',
+  2: 'thinking',
+  3: 'happy',
+  4: 'concerned',
+  5: 'working',
+};
+
+// Tilt alternation keeps the paper-note row visually breathing per step.
+const STEP_TILT: Record<1 | 2 | 3 | 4 | 5, 'left' | 'right'> = {
+  1: 'left',
+  2: 'right',
+  3: 'left',
+  4: 'right',
+  5: 'left',
+};
+
 export default function OnboardingWizard({ initialState }: OnboardingWizardProps) {
   const router = useRouter();
+  const t = useTranslations('onboarding');
   const [currentStep, setCurrentStep] = useState(initialState.onboarding_step + 1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,7 +97,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         setLoading(false);
       }
     },
-    []
+    [],
   );
 
   const handleStep1 = useCallback(
@@ -87,23 +109,20 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         setCurrentStep(2);
       }
     },
-    [saveStep]
+    [saveStep],
   );
 
   const handleStep2 = useCallback(
     async (businessType: BusinessType, otherText?: string) => {
-      // When "Iba Pa" is selected and user specifies a custom type,
-      // store as "other:{userInput}" so downstream can display it.
-      const valueToSave = businessType === 'other' && otherText
-        ? `other:${otherText}`
-        : businessType;
+      const valueToSave =
+        businessType === 'other' && otherText ? `other:${otherText}` : businessType;
       const ok = await saveStep(2, { business_type: valueToSave });
       if (ok) {
         setSavedData((prev) => ({ ...prev, business_type: valueToSave }));
         setCurrentStep(3);
       }
     },
-    [saveStep]
+    [saveStep],
   );
 
   const handleStep3 = useCallback(
@@ -114,7 +133,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         setCurrentStep(4);
       }
     },
-    [saveStep]
+    [saveStep],
   );
 
   const handleStep4 = useCallback(
@@ -125,7 +144,7 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         setCurrentStep(5);
       }
     },
-    [saveStep]
+    [saveStep],
   );
 
   const handleStep5 = useCallback(
@@ -133,15 +152,14 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
       const ok = await saveStep(5, { bir_consent: birConsent });
       if (ok) {
         if (birConsent) {
-          // User said yes to BIR — ask for tax type before completing
           setCurrentStep(5.5);
         } else {
           trackOnboardingCompleted(savedData.business_type ?? 'unknown');
-          setCurrentStep(6); // Skip tax type, show first message
+          setCurrentStep(6);
         }
       }
     },
-    [saveStep, savedData.business_type]
+    [saveStep, savedData.business_type],
   );
 
   const handleBirTaxType = useCallback(
@@ -149,13 +167,11 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
       setLoading(true);
       setError(null);
       try {
-        // Save BIR registered + tax type to profile
         await fetch('/api/profile', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ bir_registered: true, bir_tax_type: taxType }),
         });
-        // Generate deadlines
         await fetch('/api/deadlines', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -168,12 +184,10 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
       trackOnboardingCompleted(savedData.business_type ?? 'unknown');
       setCurrentStep(6);
     },
-    [savedData.business_type]
+    [savedData.business_type],
   );
 
-  const progressPct = Math.min(((currentStep - 1) / 5) * 100, 100);
-
-  // Step 6: Show first Kai message then offer PWA install (optional)
+  // Step 6: celebrate then surface the first Kai message + redirect target.
   if (currentStep === 6 && firstMessage) {
     const painpointRedirect: Record<string, string> = {
       bir_compliance: '/deadlines',
@@ -184,31 +198,34 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
     const redirectTo = painpointRedirect[savedData.primary_pain ?? ''] ?? '/dashboard';
 
     return (
-      <div className="flex flex-col gap-6 animate-in fade-in duration-500">
-        {/* Completion illustration */}
+      <div
+        className="flex flex-col gap-6 animate-in fade-in duration-500"
+        data-testid="onboarding-celebrate"
+      >
         <div className="flex justify-center">
-          <IllustrationWrapper
-            src="onboarding/ready.webp"
-            alt="Handa na ang lahat!"
-            category="onboarding"
-          />
+          <KaiSitting size={144} animated />
         </div>
-
-        <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
-          <p className="text-on-surface text-base leading-relaxed">{firstMessage}</p>
+        <div className="text-center space-y-1">
+          <h2 className="font-serif text-2xl font-medium text-on-surface">
+            {t('celebrate.title', { name: firstName || 'Boss' })}
+          </h2>
+          <p className="text-on-surface-variant text-sm">{t('celebrate.subtitle')}</p>
         </div>
+        <PaperNote tone="honey" tilt="right" tape="left" padding="md" className="self-center">
+          <p className="text-sm leading-relaxed">{firstMessage}</p>
+        </PaperNote>
         <button
           type="button"
           onClick={() => setCurrentStep(6.5)}
-          className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all min-h-[44px]"
+          className="w-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold py-3.5 px-4 rounded-full shadow-ambient transition-all min-h-[48px]"
         >
-          Simulan na natin!
+          {t('celebrate.cta')}
         </button>
       </div>
     );
   }
 
-  // Step 6.5: Optional PWA install guide — non-blocking, user can skip
+  // Step 6.5: PWA install guide (optional, non-blocking).
   if (currentStep === 6.5) {
     const painpointRedirect: Record<string, string> = {
       bir_compliance: '/deadlines',
@@ -224,16 +241,15 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
     };
 
     return (
-      <div className="flex flex-col gap-6 animate-in fade-in duration-500" data-testid="onboarding-install-step">
-        <InstallGuide
-          onDismiss={goToDashboard}
-          showDismiss={true}
-          variant="onboarding"
-        />
+      <div
+        className="flex flex-col gap-6 animate-in fade-in duration-500"
+        data-testid="onboarding-install-step"
+      >
+        <InstallGuide onDismiss={goToDashboard} showDismiss variant="onboarding" />
         <button
           type="button"
           onClick={goToDashboard}
-          className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all min-h-[44px]"
+          className="w-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold py-3.5 px-4 rounded-full shadow-ambient transition-all min-h-[48px]"
           data-testid="onboarding-continue-btn"
         >
           Tara na sa dashboard!
@@ -243,73 +259,101 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Progress bar */}
-      <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-        <div
-          className="h-full bg-primary-container rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${progressPct}%` }}
-        />
-      </div>
-
-      {/* Step counter */}
-      <p className="text-outline text-xs font-medium">
-        Step {Math.min(currentStep, 5)} ng 5
-      </p>
-
-      {/* Error */}
+    <div className="flex flex-col gap-4">
       {error && (
-        <div className="bg-error-container/20 border border-on-error-container/20 rounded-xl p-3">
+        <div className="bg-error-container/20 border border-on-error-container/20 rounded-2xl p-3">
           <p className="text-on-error-container text-sm">{error}</p>
         </div>
       )}
 
-      {/* Steps */}
       {currentStep === 1 && (
-        <StepWelcome
-          onComplete={handleStep1}
-          loading={loading}
-          initialName={savedData.display_name}
-        />
+        <ShellWrapper step={1} prompt={t('step1.kaiPrompt')} expression={STEP_EXPRESSION[1]}>
+          <StepWelcome
+            onComplete={handleStep1}
+            loading={loading}
+            initialName={savedData.display_name}
+          />
+        </ShellWrapper>
       )}
       {currentStep === 2 && (
-        <StepBusinessType
-          onComplete={handleStep2}
-          loading={loading}
-          firstName={firstName}
-          initialValue={savedData.business_type}
-        />
+        <ShellWrapper
+          step={2}
+          prompt={t('step2.kaiPrompt', { name: firstName || 'Boss' })}
+          expression={STEP_EXPRESSION[2]}
+        >
+          <StepBusinessType
+            onComplete={handleStep2}
+            loading={loading}
+            firstName={firstName}
+            initialValue={savedData.business_type}
+          />
+        </ShellWrapper>
       )}
       {currentStep === 3 && (
-        <StepIncomeRange
-          onComplete={handleStep3}
-          loading={loading}
-          firstName={firstName}
-          initialValue={savedData.income_range}
-        />
+        <ShellWrapper
+          step={3}
+          prompt={t('step3.kaiPrompt', { name: firstName || 'Boss' })}
+          expression={STEP_EXPRESSION[3]}
+        >
+          <StepIncomeRange
+            onComplete={handleStep3}
+            loading={loading}
+            firstName={firstName}
+            initialValue={savedData.income_range}
+          />
+        </ShellWrapper>
       )}
       {currentStep === 4 && (
-        <StepPainPoint
-          onComplete={handleStep4}
-          loading={loading}
-          firstName={firstName}
-          initialValue={savedData.primary_pain}
-        />
-      )}
-      {currentStep === 5.5 && (
-        <StepBirTaxType
-          onComplete={handleBirTaxType}
-          loading={loading}
-          firstName={firstName}
-        />
+        <ShellWrapper
+          step={4}
+          prompt={t('step4.kaiPrompt', { name: firstName || 'Boss' })}
+          expression={STEP_EXPRESSION[4]}
+        >
+          <StepPainPoint
+            onComplete={handleStep4}
+            loading={loading}
+            firstName={firstName}
+            initialValue={savedData.primary_pain}
+          />
+        </ShellWrapper>
       )}
       {currentStep === 5 && (
-        <StepBirConsent
-          onComplete={handleStep5}
-          loading={loading}
-          firstName={firstName}
-        />
+        <ShellWrapper
+          step={5}
+          prompt={t('step5.kaiPrompt', { name: firstName || 'Boss' })}
+          expression={STEP_EXPRESSION[5]}
+        >
+          <StepBirConsent onComplete={handleStep5} loading={loading} firstName={firstName} />
+        </ShellWrapper>
+      )}
+      {currentStep === 5.5 && (
+        <ShellWrapper step={5} prompt={t('step5.kaiPrompt', { name: firstName || 'Boss' })} expression="working">
+          <StepBirTaxType onComplete={handleBirTaxType} loading={loading} firstName={firstName} />
+        </ShellWrapper>
       )}
     </div>
   );
 }
+
+interface ShellWrapperProps {
+  step: 1 | 2 | 3 | 4 | 5;
+  prompt: string;
+  subtitle?: ReactNode;
+  expression: KaiExpression;
+  children: ReactNode;
+}
+
+function ShellWrapper({ step, prompt, subtitle, expression, children }: ShellWrapperProps) {
+  return (
+    <OnboardingShell
+      step={step}
+      expression={expression}
+      tilt={STEP_TILT[step]}
+      prompt={prompt}
+      promptSubtitle={subtitle}
+    >
+      {children}
+    </OnboardingShell>
+  );
+}
+

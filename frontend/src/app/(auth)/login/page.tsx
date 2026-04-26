@@ -1,87 +1,70 @@
-import { Metadata } from 'next'
-import LoginForm from '@/components/auth/login-form'
-import Image from 'next/image'
-import { PageBackground } from '@/components/ui/page-background'
+import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+import LoginForm from '@/components/auth/login-form';
+import { PageBackground } from '@/components/ui/page-background';
+import { KaiSitting } from '@/components/illustrations/kai';
+import { CapizPattern } from '@/components/illustrations/svg/decorative/CapizPattern';
+import { FloatingPetals } from '@/components/illustrations/svg/decorative/FloatingPetals';
 
 export const metadata: Metadata = {
   title: 'Login — AKBai',
-}
+};
 
-export default function LoginPage() {
+// ============================================================
+// Phase 6 — Login redesign.
+// KaiSitting hero (168px) + Fraunces serif title + ambient
+// FloatingPetals (4 petals — perf-light, day-1 visible) + a
+// single CapizPattern background. Form internals untouched.
+// ============================================================
+
+export default async function LoginPage() {
+  const t = await getTranslations('auth.login');
   return (
     <PageBackground variant="login">
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
-      {/* Atmospheric Glow (Top Left) */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary-container/5 rounded-full blur-[120px] pointer-events-none" />
-
-      <main className="w-full max-w-lg md:max-w-xl flex flex-col space-y-12 relative z-10">
-        {/* Header & Branding */}
-        <header className="flex flex-col items-center text-center space-y-8">
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary-container/10 blur-2xl rounded-full" />
-            <div className="relative z-10 w-56 h-56">
-              {/* Gray circle layer — visible through the white parts of mark-honey */}
-              <Image
-                src="/icons/mark-on-light.png"
-                alt=""
-                fill
-                className="object-contain opacity-30 dark:opacity-0"
-                aria-hidden="true"
-              />
-              <Image
-                src="/icons/mark-honey.png"
-                alt="AKBai"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-          </div>
-          <div className="space-y-3">
-            <h1 className="text-3xl font-extrabold tracking-tight text-on-surface">
-              Welcome, Katuwang!
-            </h1>
-            <p className="text-on-surface-variant leading-relaxed max-w-[280px] mx-auto">
-              I-enter ang iyong email para mag-log in.
-            </p>
-          </div>
-        </header>
-
-        {/* Login Form */}
-        <LoginForm />
-
-        {/* Secure Access Divider */}
-        <div className="relative flex items-center py-2">
-          <div className="flex-grow border-t border-outline-variant/20" />
-          <span className="flex-shrink mx-4 text-xs font-medium uppercase tracking-widest text-outline/40">
-            Secure Access
-          </span>
-          <div className="flex-grow border-t border-outline-variant/20" />
+      <main
+        className="relative min-h-dvh flex flex-col items-center justify-center px-6 py-12 overflow-hidden"
+        data-testid="login-page"
+      >
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <CapizPattern opacity={0.1} />
+        </div>
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <FloatingPetals count={4} />
         </div>
 
-        {/* Footer */}
-        <footer className="text-center">
-          <p className="text-on-surface-variant text-sm">
-            Walang account?{' '}
-            <span className="text-primary-container font-bold">
-              Auto ka na ma-sign up.
+        <section className="relative w-full max-w-md tablet:max-w-lg flex flex-col gap-10">
+          <header className="flex flex-col items-center text-center gap-5">
+            <KaiSitting size={168} animated />
+            <div className="space-y-2">
+              <h1 className="font-serif text-3xl tablet:text-4xl font-medium leading-tight tracking-tight text-on-surface">
+                {t('title')}
+              </h1>
+              <p className="text-on-surface-variant leading-relaxed max-w-[320px] mx-auto">
+                {t('subtitle')}
+              </p>
+            </div>
+          </header>
+
+          <LoginForm />
+
+          <div className="relative flex items-center py-2" aria-hidden>
+            <div className="flex-grow border-t border-outline-soft/40" />
+            <span className="flex-shrink mx-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-honey-deep/70">
+              {t('secureAccess')}
             </span>
-          </p>
-        </footer>
+            <div className="flex-grow border-t border-outline-soft/40" />
+          </div>
+
+          <footer className="text-center space-y-3">
+            <p className="text-on-surface-variant text-sm">
+              {t('noAccount')} <span className="text-honey-deep font-bold">{t('autoSignup')}</span>
+            </p>
+            <p className="text-on-surface-variant/70 text-[11px] leading-relaxed max-w-[320px] mx-auto">
+              {t('disclaimer')}
+            </p>
+          </footer>
+        </section>
       </main>
-
-      {/* Background Decoration (Bottom Right) */}
-      <div className="fixed bottom-0 right-0 p-8 opacity-5 pointer-events-none select-none">
-        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" className="text-primary-container">
-          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" />
-        </svg>
-      </div>
-
-      {/* Disclaimer */}
-      <p className="mt-8 text-xs text-outline/40 text-center max-w-xs relative z-10">
-        AKBai provides informational guidance only — hindi ito professional financial o tax advice.
-      </p>
-    </div>
     </PageBackground>
-  )
+  );
 }

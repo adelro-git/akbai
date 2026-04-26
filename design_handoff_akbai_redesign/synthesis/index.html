@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AKBai — Phase 2.1 visual comparison</title>
+  <style>
+    :root {
+      --honey-cream: #fef3d9;
+      --honey: #f59e0b;
+      --honey-deep: #a1620e;
+      --ink: #2c1f12;
+      --ink-soft: #534434;
+      --outline: #e6dac4;
+      --bg: #fdf9f2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+      margin: 0;
+      padding: 0 24px 64px;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      position: sticky; top: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--outline);
+      padding: 24px 0 16px;
+      margin-bottom: 24px;
+      z-index: 10;
+    }
+    h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
+    h1 small { font-weight: 400; color: var(--ink-soft); font-size: 14px; margin-left: 8px; }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    nav a {
+      font-size: 12px;
+      padding: 4px 10px;
+      background: var(--honey-cream);
+      border: 1px solid var(--outline);
+      border-radius: 999px;
+      color: var(--honey-deep);
+      text-decoration: none;
+    }
+    nav a:hover { background: var(--honey); color: white; }
+    section {
+      max-width: 1400px;
+      margin: 0 auto 64px;
+      scroll-margin-top: 96px;
+    }
+    h2 { font-size: 18px; margin: 0 0 4px; color: var(--ink); }
+    .meta { font-size: 13px; color: var(--ink-soft); margin: 0 0 16px; }
+    .meta code { background: var(--honey-cream); padding: 2px 6px; border-radius: 4px; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .col {
+      background: white;
+      border: 1px solid var(--outline);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .col h3 {
+      font-size: 14px;
+      margin: 0 0 12px;
+      color: var(--ink-soft);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    figure { margin: 0 0 16px; }
+    figcaption { font-size: 11px; color: var(--ink-soft); font-family: ui-monospace, Menlo, monospace; margin-bottom: 6px; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--outline); display: block; }
+    .missing {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 13px;
+      border: 1px dashed var(--outline);
+      border-radius: 8px;
+      background: var(--honey-cream);
+    }
+    .missing code { background: white; padding: 2px 6px; border-radius: 4px; }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AKBai — Phase 2.1 Visual Comparison <small>2026-04-26</small></h1>
+    <p style="font-size:13px;color:var(--ink-soft);margin:8px 0 0;">
+      Phase 2 docs: <a href="01-comparison.md" style="color:var(--honey-deep);">01-comparison.md</a> ·
+      <a href="02-decisions.md" style="color:var(--honey-deep);">02-decisions.md</a> ·
+      <a href="decisions.html" style="color:var(--honey-deep);"><b>decisions.html (visual)</b></a> ·
+      Review repos: <a href="repos/icons.html" style="color:var(--honey-deep);">icons</a> /
+      <a href="repos/motifs.html" style="color:var(--honey-deep);">motifs</a> /
+      <a href="repos/animations.html" style="color:var(--honey-deep);">animations</a>
+    </p>
+    <nav>
+      <a href="#00-home">Home / Umaga Mo</a><a href="#01-chat">Kausap (Chat)</a><a href="#02-expenses">Saan napunta (Expenses)</a><a href="#03-scan">Resibo Scanner</a><a href="#04-deadlines">BIR Deadlines</a><a href="#05-costing">Tamang Presyo (Costing)</a><a href="#06-invoices">Mga Invoice</a><a href="#07-profile">Profile / Persona</a><a href="#08-checkin">Daily Check-in</a><a href="#09-kuwento">Linggong Kuwento (Sunday Story)</a>
+    </nav>
+  </header>
+  <main>
+    
+    <section id="00-home">
+      <h2>00-home — Home / Umaga Mo</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/dashboard</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          
+          <figure>
+            <figcaption>current-desktop-chrome.png</figcaption>
+            <a href="screenshots/00-home/current-desktop-chrome.png" target="_blank"><img src="screenshots/00-home/current-desktop-chrome.png" alt="Home / Umaga Mo current" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>current-mobile-chrome.png</figcaption>
+            <a href="screenshots/00-home/current-mobile-chrome.png" target="_blank"><img src="screenshots/00-home/current-mobile-chrome.png" alt="Home / Umaga Mo current" loading="lazy"></a>
+          </figure>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>01-home-honey-fil-andoy.png</figcaption>
+            <a href="../screenshots/01-home-honey-fil-andoy.png" target="_blank"><img src="../screenshots/01-home-honey-fil-andoy.png" alt="Home / Umaga Mo handoff" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>02-home-honey-fil-mobile.png</figcaption>
+            <a href="../screenshots/02-home-honey-fil-mobile.png" target="_blank"><img src="../screenshots/02-home-honey-fil-mobile.png" alt="Home / Umaga Mo handoff" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>03-home-honey-en.png</figcaption>
+            <a href="../screenshots/03-home-honey-en.png" target="_blank"><img src="../screenshots/03-home-honey-en.png" alt="Home / Umaga Mo handoff" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>04-home-dawn-fil.png</figcaption>
+            <a href="../screenshots/04-home-dawn-fil.png" target="_blank"><img src="../screenshots/04-home-dawn-fil.png" alt="Home / Umaga Mo handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="01-chat">
+      <h2>01-chat — Kausap (Chat)</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/chat</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          
+          <figure>
+            <figcaption>current-desktop-chrome.png</figcaption>
+            <a href="screenshots/01-chat/current-desktop-chrome.png" target="_blank"><img src="screenshots/01-chat/current-desktop-chrome.png" alt="Kausap (Chat) current" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>current-mobile-chrome.png</figcaption>
+            <a href="screenshots/01-chat/current-mobile-chrome.png" target="_blank"><img src="screenshots/01-chat/current-mobile-chrome.png" alt="Kausap (Chat) current" loading="lazy"></a>
+          </figure>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>06-chat-honey-fil.png</figcaption>
+            <a href="../screenshots/06-chat-honey-fil.png" target="_blank"><img src="../screenshots/06-chat-honey-fil.png" alt="Kausap (Chat) handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="02-expenses">
+      <h2>02-expenses — Saan napunta (Expenses)</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/expenses</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          
+          <figure>
+            <figcaption>current-desktop-chrome.png</figcaption>
+            <a href="screenshots/02-expenses/current-desktop-chrome.png" target="_blank"><img src="screenshots/02-expenses/current-desktop-chrome.png" alt="Saan napunta (Expenses) current" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>current-mobile-chrome.png</figcaption>
+            <a href="screenshots/02-expenses/current-mobile-chrome.png" target="_blank"><img src="screenshots/02-expenses/current-mobile-chrome.png" alt="Saan napunta (Expenses) current" loading="lazy"></a>
+          </figure>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>07-saan-honey-fil.png</figcaption>
+            <a href="../screenshots/07-saan-honey-fil.png" target="_blank"><img src="../screenshots/07-saan-honey-fil.png" alt="Saan napunta (Expenses) handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="03-scan">
+      <h2>03-scan — Resibo Scanner</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/scan</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          
+          <figure>
+            <figcaption>current-desktop-chrome.png</figcaption>
+            <a href="screenshots/03-scan/current-desktop-chrome.png" target="_blank"><img src="screenshots/03-scan/current-desktop-chrome.png" alt="Resibo Scanner current" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>current-mobile-chrome.png</figcaption>
+            <a href="screenshots/03-scan/current-mobile-chrome.png" target="_blank"><img src="screenshots/03-scan/current-mobile-chrome.png" alt="Resibo Scanner current" loading="lazy"></a>
+          </figure>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>08-scan-honey-fil.png</figcaption>
+            <a href="../screenshots/08-scan-honey-fil.png" target="_blank"><img src="../screenshots/08-scan-honey-fil.png" alt="Resibo Scanner handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="04-deadlines">
+      <h2>04-deadlines — BIR Deadlines</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/deadlines</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          
+          <figure>
+            <figcaption>current-desktop-chrome.png</figcaption>
+            <a href="screenshots/04-deadlines/current-desktop-chrome.png" target="_blank"><img src="screenshots/04-deadlines/current-desktop-chrome.png" alt="BIR Deadlines current" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>current-mobile-chrome.png</figcaption>
+            <a href="screenshots/04-deadlines/current-mobile-chrome.png" target="_blank"><img src="screenshots/04-deadlines/current-mobile-chrome.png" alt="BIR Deadlines current" loading="lazy"></a>
+          </figure>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>09-deadlines-honey-fil.png</figcaption>
+            <a href="../screenshots/09-deadlines-honey-fil.png" target="_blank"><img src="../screenshots/09-deadlines-honey-fil.png" alt="BIR Deadlines handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="05-costing">
+      <h2>05-costing — Tamang Presyo (Costing)</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/costing</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          
+          <figure>
+            <figcaption>current-desktop-chrome.png</figcaption>
+            <a href="screenshots/05-costing/current-desktop-chrome.png" target="_blank"><img src="screenshots/05-costing/current-desktop-chrome.png" alt="Tamang Presyo (Costing) current" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>current-mobile-chrome.png</figcaption>
+            <a href="screenshots/05-costing/current-mobile-chrome.png" target="_blank"><img src="screenshots/05-costing/current-mobile-chrome.png" alt="Tamang Presyo (Costing) current" loading="lazy"></a>
+          </figure>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>10-costing-honey-fil.png</figcaption>
+            <a href="../screenshots/10-costing-honey-fil.png" target="_blank"><img src="../screenshots/10-costing-honey-fil.png" alt="Tamang Presyo (Costing) handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="06-invoices">
+      <h2>06-invoices — Mga Invoice</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/invoices</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          
+          <figure>
+            <figcaption>current-desktop-chrome.png</figcaption>
+            <a href="screenshots/06-invoices/current-desktop-chrome.png" target="_blank"><img src="screenshots/06-invoices/current-desktop-chrome.png" alt="Mga Invoice current" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>current-mobile-chrome.png</figcaption>
+            <a href="screenshots/06-invoices/current-mobile-chrome.png" target="_blank"><img src="screenshots/06-invoices/current-mobile-chrome.png" alt="Mga Invoice current" loading="lazy"></a>
+          </figure>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>11-invoices-honey-fil.png</figcaption>
+            <a href="../screenshots/11-invoices-honey-fil.png" target="_blank"><img src="../screenshots/11-invoices-honey-fil.png" alt="Mga Invoice handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="07-profile">
+      <h2>07-profile — Profile / Persona</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/profile</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          
+          <figure>
+            <figcaption>current-desktop-chrome.png</figcaption>
+            <a href="screenshots/07-profile/current-desktop-chrome.png" target="_blank"><img src="screenshots/07-profile/current-desktop-chrome.png" alt="Profile / Persona current" loading="lazy"></a>
+          </figure>
+
+          <figure>
+            <figcaption>current-mobile-chrome.png</figcaption>
+            <a href="screenshots/07-profile/current-mobile-chrome.png" target="_blank"><img src="screenshots/07-profile/current-mobile-chrome.png" alt="Profile / Persona current" loading="lazy"></a>
+          </figure>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          <div class="missing">No handoff reference (screen is new in redesign)</div>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="08-checkin">
+      <h2>08-checkin — Daily Check-in</h2>
+      <p class="meta"><strong>Current route:</strong> <code>/dashboard (modal)</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          <div class="missing">No current capture — run <code>npm run test:e2e -- e2e/synthesis/compare.spec.ts</code></div>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>12-checkin-honey-fil.png</figcaption>
+            <a href="../screenshots/12-checkin-honey-fil.png" target="_blank"><img src="../screenshots/12-checkin-honey-fil.png" alt="Daily Check-in handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+
+    <section id="09-kuwento">
+      <h2>09-kuwento — Linggong Kuwento (Sunday Story)</h2>
+      <p class="meta"><strong>Current route:</strong> <code>(not yet implemented)</code></p>
+      <div class="grid">
+        <div class="col">
+          <h3>Current AKBai</h3>
+          <div class="missing">No current capture — run <code>npm run test:e2e -- e2e/synthesis/compare.spec.ts</code></div>
+        </div>
+        <div class="col">
+          <h3>Handoff (reference)</h3>
+          
+          <figure>
+            <figcaption>13-sundaystory-honey-fil.png</figcaption>
+            <a href="../screenshots/13-sundaystory-honey-fil.png" target="_blank"><img src="../screenshots/13-sundaystory-honey-fil.png" alt="Linggong Kuwento (Sunday Story) handoff" loading="lazy"></a>
+          </figure>
+        </div>
+      </div>
+    </section>
+  
+  </main>
+</body>
+</html>

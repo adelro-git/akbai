@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AKBai — Phase 2.2 Icon Repository</title>
+  <style>
+    :root {
+      --honey-cream: #fef3d9;
+      --honey-bright: #fef4dd;
+      --honey: #f59e0b;
+      --honey-deep: #a1620e;
+      --ink: #2c1f12;
+      --ink-soft: #534434;
+      --outline: #e6dac4;
+      --bg: #fdf9f2;
+      --white: #ffffff;
+      /* MD3 vars used by existing AKBai SVG icons (resolves hsl(var(--xxx))) */
+      --primary-container: 37 90% 51%;
+      --on-surface: 48 8% 10%;
+      --on-surface-variant: 27 20% 27%;
+      --surface-container: 33 13% 91%;
+      --surface-container-high: 33 11% 87%;
+      --tertiary: 160 100% 21%;
+      --tertiary-container: 161 76% 45%;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+      margin: 0; padding: 0 24px 64px;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    header.page {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg);
+      border-bottom: 1px solid var(--outline);
+      padding: 24px 0 16px;
+      margin: 0 -24px 24px;
+      padding-left: 24px; padding-right: 24px;
+    }
+    h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
+    h1 small { font-weight: 400; color: var(--ink-soft); font-size: 14px; margin-left: 8px; }
+    .meta { font-size: 13px; color: var(--ink-soft); }
+    .meta a { color: var(--honey-deep); }
+    nav.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    nav.tabs a {
+      font-size: 12px; padding: 6px 14px; background: white;
+      border: 1px solid var(--outline); border-radius: 999px;
+      color: var(--ink); text-decoration: none; font-weight: 600;
+    }
+    nav.tabs a:hover { background: var(--honey); color: white; border-color: var(--honey); }
+
+    main { max-width: 1400px; margin: 0 auto; }
+    section { margin: 0 0 48px; scroll-margin-top: 110px; }
+    section > h2.section-h {
+      font-size: 18px; margin: 0 0 8px;
+      border-bottom: 2px solid var(--honey); padding-bottom: 8px;
+      color: var(--ink); font-weight: 700;
+    }
+    section > p.section-desc { font-size: 13px; color: var(--ink-soft); margin: 0 0 20px; }
+
+    .icon-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .icon-card {
+      background: white; border: 1px solid var(--outline); border-radius: 12px;
+      padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .icon-card h3 {
+      margin: 0; font-size: 14px; font-weight: 700; color: var(--ink);
+    }
+    .icon-card .where {
+      font-size: 11px; color: var(--ink-soft);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-top: -4px;
+    }
+    .icon-card .sizes {
+      display: flex; align-items: flex-end; gap: 12px;
+      padding: 16px 12px; border-radius: 8px;
+      background: var(--white);
+      border: 1px solid var(--outline);
+      justify-content: center;
+    }
+    .icon-card .sizes.honey { background: var(--honey-cream); }
+    .icon-card .sizes.bg { background: var(--bg); }
+    .icon-card .size-label {
+      font-family: ui-monospace, Menlo, monospace; font-size: 9px;
+      color: var(--ink-soft); text-align: center; margin-top: 4px;
+    }
+    .size-stack { display: flex; flex-direction: column; align-items: center; }
+    .icon-card .bg-row-label {
+      font-size: 10px; color: var(--ink-soft); text-transform: uppercase;
+      letter-spacing: 0.06em; font-weight: 600; margin-bottom: 4px;
+    }
+    .icon-card .style-notes {
+      font-size: 11px; color: var(--ink-soft); line-height: 1.5;
+      padding-top: 8px; border-top: 1px dashed var(--outline);
+    }
+    .icon-card .style-notes b { color: var(--ink); }
+
+    .verdict-row {
+      background: var(--honey-cream); border: 1px solid var(--outline);
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 13px; color: var(--ink); margin-bottom: 24px;
+    }
+    .verdict-row b { color: var(--honey-deep); }
+  </style>
+</head>
+<body>
+  <header class="page">
+    <h1>AKBai — Phase 2.2 Icon Repository <small>2026-04-26</small></h1>
+    <p class="meta">
+      Review the candidate brand and nav icons from the redesign handoff before approving B4 (Iconography).
+      Each icon shown at four sizes on white and honey-cream backgrounds.
+      Style annotations describe stroke weight, color palette, and the "have-face" question.
+      <br>
+      Back to: <a href="../decisions.html">decisions.html</a> · <a href="../index.html">index.html</a> · <a href="motifs.html">motifs</a> · <a href="animations.html">animations</a>
+    </p>
+    <nav class="tabs">
+      <a href="#brand">Brand icons (9)</a>
+      <a href="#nav">Nav icons (5)</a>
+      <a href="#expenses">Expense categories (10)</a>
+      <a href="#financial">Financial / sales (6)</a>
+      <a href="#business">Business types (4)</a>
+      <a href="#kai">Kai expressions (6)</a>
+      <a href="#style-rules">Style rules</a>
+      <a href="#existing">Existing AKBai illustrations</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="verdict-row">
+      <b>Verdict pending Anton review.</b> Once approved, the canonical brand-icon set ships in
+      <code>frontend/src/components/illustrations/icons/</code> and replaces lucide-react in
+      brand-load-bearing roles. Icons that don't pass review drop out — only approved ones become canonical.
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--outline);border-radius:8px;padding:12px 16px;margin-bottom:24px;font-size:13px;">
+      <b>Money tracker iconography.</b> The handoff uses <b>IconPera</b> (two coins) as the single icon for the entire
+      money-tracker / Pera surface — covering expense tracking, the home Pera tile, the bottom-nav Pera tab, and
+      KPI labels in Linggong Kuwento. If you want additional money-specific candidates (wallet, ledger book, bar chart, peso bill),
+      flag which roles need their own icon and we'll design them in the handoff style for review. Otherwise, IconPera does triple duty.
+    </div>
+
+    <section id="brand">
+      <h2 class="section-h">Brand icons (9 candidates)</h2>
+      <p class="section-desc">
+        Used in feature tiles, page headers, paper-note callouts. Always shown at 32–64px.
+        Hand-drawn warm-paper style with 60×60 viewBox, rounded shapes, honey-and-cream gradients,
+        soft shadow ellipse below, ~1.6 stroke weight. Several have a "face" (Resibo, Pera).
+      </p>
+      <div class="icon-grid">
+
+        <!-- IconResibo -->
+        <div class="icon-card">
+          <h3>IconResibo</h3>
+          <p class="where">Receipt scanner · expense capture</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="24" height="24" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ir-paper-1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M16 10 Q16 8 18 8 L42 8 Q44 8 44 10 L44 46 L41 44 L38 46 L35 44 L32 46 L29 44 L26 46 L23 44 L20 46 L17 44 Q16 43 16 42 Z" fill="url(#ir-paper-1)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M23 22 Q25 20 27 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M33 22 Q35 20 37 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M26 28 Q30 31 34 28" stroke="#b0391a" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><div class="size-label">24</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ir-paper-2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M16 10 Q16 8 18 8 L42 8 Q44 8 44 10 L44 46 L41 44 L38 46 L35 44 L32 46 L29 44 L26 46 L23 44 L20 46 L17 44 Q16 43 16 42 Z" fill="url(#ir-paper-2)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M23 22 Q25 20 27 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M33 22 Q35 20 37 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M26 28 Q30 31 34 28" stroke="#b0391a" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="22" y1="36" x2="38" y2="36" stroke="#c89a3e" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ir-paper-3" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M16 10 Q16 8 18 8 L42 8 Q44 8 44 10 L44 46 L41 44 L38 46 L35 44 L32 46 L29 44 L26 46 L23 44 L20 46 L17 44 Q16 43 16 42 Z" fill="url(#ir-paper-3)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M23 22 Q25 20 27 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M33 22 Q35 20 37 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M26 28 Q30 31 34 28" stroke="#b0391a" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="22" y1="36" x2="38" y2="36" stroke="#c89a3e" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/><line x1="22" y1="40" x2="34" y2="40" stroke="#c89a3e" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/><text x="37" y="16" font-size="6" font-weight="800" fill="#b06410" opacity="0.7">₱</text></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ir-paper-4" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M16 10 Q16 8 18 8 L42 8 Q44 8 44 10 L44 46 L41 44 L38 46 L35 44 L32 46 L29 44 L26 46 L23 44 L20 46 L17 44 Q16 43 16 42 Z" fill="url(#ir-paper-4)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M23 22 Q25 20 27 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M33 22 Q35 20 37 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M26 28 Q30 31 34 28" stroke="#b0391a" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="22" y1="36" x2="38" y2="36" stroke="#c89a3e" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/><line x1="22" y1="40" x2="34" y2="40" stroke="#c89a3e" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/><text x="37" y="16" font-size="6" font-weight="800" fill="#b06410" opacity="0.7">₱</text></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="bg-row-label">on honey-cream</div>
+          <div class="sizes honey">
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ir-paper-h" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M16 10 Q16 8 18 8 L42 8 Q44 8 44 10 L44 46 L41 44 L38 46 L35 44 L32 46 L29 44 L26 46 L23 44 L20 46 L17 44 Q16 43 16 42 Z" fill="url(#ir-paper-h)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M23 22 Q25 20 27 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M33 22 Q35 20 37 22" stroke="#6d3a08" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M26 28 Q30 31 34 28" stroke="#b0391a" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><div class="size-label">44</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Has face (eyes + smile). Receipt with zigzag bottom + peso mark. Cream-to-honey gradient fill.
+            <b>Stroke:</b> 1.6 outer, 1.8 face. <b>Has gradient:</b> yes.
+            <b>Recommended:</b> Use 32–64px to preserve face detail.
+          </div>
+        </div>
+
+        <!-- IconUsap -->
+        <div class="icon-card">
+          <h3>IconUsap</h3>
+          <p class="where">Chat / Kausap with Kai</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="24" height="24" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="iu-bubble-1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3d9"/><stop offset="100%" stop-color="#fad88f"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.2"/><path d="M12 22 Q12 14 20 14 L40 14 Q48 14 48 22 L48 34 Q48 42 40 42 L28 42 L20 50 L22 42 Q12 42 12 34 Z" fill="url(#iu-bubble-1)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="28" r="2.2" fill="#b06410"/><circle cx="30" cy="28" r="2.2" fill="#b06410"/><circle cx="38" cy="28" r="2.2" fill="#b06410"/></svg><div class="size-label">24</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="iu-bubble-2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3d9"/><stop offset="100%" stop-color="#fad88f"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.2"/><path d="M12 22 Q12 14 20 14 L40 14 Q48 14 48 22 L48 34 Q48 42 40 42 L28 42 L20 50 L22 42 Q12 42 12 34 Z" fill="url(#iu-bubble-2)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="28" r="2.2" fill="#b06410"/><circle cx="30" cy="28" r="2.2" fill="#b06410"/><circle cx="38" cy="28" r="2.2" fill="#b06410"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="iu-bubble-3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3d9"/><stop offset="100%" stop-color="#fad88f"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.2"/><path d="M12 22 Q12 14 20 14 L40 14 Q48 14 48 22 L48 34 Q48 42 40 42 L28 42 L20 50 L22 42 Q12 42 12 34 Z" fill="url(#iu-bubble-3)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="28" r="2.2" fill="#b06410"/><circle cx="30" cy="28" r="2.2" fill="#b06410"/><circle cx="38" cy="28" r="2.2" fill="#b06410"/></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="iu-bubble-4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3d9"/><stop offset="100%" stop-color="#fad88f"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.2"/><path d="M12 22 Q12 14 20 14 L40 14 Q48 14 48 22 L48 34 Q48 42 40 42 L28 42 L20 50 L22 42 Q12 42 12 34 Z" fill="url(#iu-bubble-4)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="28" r="2.2" fill="#b06410"/><circle cx="30" cy="28" r="2.2" fill="#b06410"/><circle cx="38" cy="28" r="2.2" fill="#b06410"/></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="bg-row-label">on honey-cream</div>
+          <div class="sizes honey">
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="iu-bubble-h" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3d9"/><stop offset="100%" stop-color="#fad88f"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.2"/><path d="M12 22 Q12 14 20 14 L40 14 Q48 14 48 22 L48 34 Q48 42 40 42 L28 42 L20 50 L22 42 Q12 42 12 34 Z" fill="url(#iu-bubble-h)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="28" r="2.2" fill="#b06410"/><circle cx="30" cy="28" r="2.2" fill="#b06410"/><circle cx="38" cy="28" r="2.2" fill="#b06410"/></svg><div class="size-label">44</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Speech bubble with tail + 3 typing dots. <b>Stroke:</b> 1.6.
+            <b>Note:</b> The icon's "tail" can clash with the chat-page Kai illustration — review use placement carefully.
+          </div>
+        </div>
+
+        <!-- IconPera -->
+        <div class="icon-card" style="border:2px solid var(--honey);">
+          <h3>IconPera <span style="font-size:11px;background:var(--honey);color:white;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:6px;">MONEY TRACKER</span></h3>
+          <p class="where">Pera tab · Saan napunta ang pera · expense tracker home tile · weekly story KPI grid</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="24" height="24" viewBox="0 0 60 60" fill="none"><defs><radialGradient id="ip-coin-1" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffd97a"/><stop offset="100%" stop-color="#c87b14"/></radialGradient></defs><ellipse cx="30" cy="54" rx="18" ry="2.2" fill="#c89a3e" opacity="0.25"/><circle cx="38" cy="32" r="14" fill="url(#ip-coin-1)" stroke="#8a4e0a" stroke-width="1.5"/><text x="38" y="37" text-anchor="middle" font-size="13" font-weight="900" fill="#fff8ea">₱</text><circle cx="22" cy="28" r="13" fill="url(#ip-coin-1)" stroke="#8a4e0a" stroke-width="1.5"/></svg><div class="size-label">24</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><radialGradient id="ip-coin-2" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffd97a"/><stop offset="100%" stop-color="#c87b14"/></radialGradient></defs><ellipse cx="30" cy="54" rx="18" ry="2.2" fill="#c89a3e" opacity="0.25"/><circle cx="38" cy="32" r="14" fill="url(#ip-coin-2)" stroke="#8a4e0a" stroke-width="1.5"/><text x="38" y="37" text-anchor="middle" font-size="13" font-weight="900" fill="#fff8ea">₱</text><circle cx="22" cy="28" r="13" fill="url(#ip-coin-2)" stroke="#8a4e0a" stroke-width="1.5"/><path d="M17 26 Q19 24 21 26" stroke="#6d3a08" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M23 26 Q25 24 27 26" stroke="#6d3a08" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><radialGradient id="ip-coin-3" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffd97a"/><stop offset="100%" stop-color="#c87b14"/></radialGradient></defs><ellipse cx="30" cy="54" rx="18" ry="2.2" fill="#c89a3e" opacity="0.25"/><circle cx="38" cy="32" r="14" fill="url(#ip-coin-3)" stroke="#8a4e0a" stroke-width="1.5"/><text x="38" y="37" text-anchor="middle" font-size="13" font-weight="900" fill="#fff8ea">₱</text><circle cx="22" cy="28" r="13" fill="url(#ip-coin-3)" stroke="#8a4e0a" stroke-width="1.5"/><path d="M17 26 Q19 24 21 26" stroke="#6d3a08" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M23 26 Q25 24 27 26" stroke="#6d3a08" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M19 30 Q22 33 25 30" stroke="#b0391a" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><radialGradient id="ip-coin-4" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffd97a"/><stop offset="100%" stop-color="#c87b14"/></radialGradient></defs><ellipse cx="30" cy="54" rx="18" ry="2.2" fill="#c89a3e" opacity="0.25"/><circle cx="38" cy="32" r="14" fill="url(#ip-coin-4)" stroke="#8a4e0a" stroke-width="1.5"/><text x="38" y="37" text-anchor="middle" font-size="13" font-weight="900" fill="#fff8ea">₱</text><circle cx="22" cy="28" r="13" fill="url(#ip-coin-4)" stroke="#8a4e0a" stroke-width="1.5"/><path d="M17 26 Q19 24 21 26" stroke="#6d3a08" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M23 26 Q25 24 27 26" stroke="#6d3a08" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M19 30 Q22 33 25 30" stroke="#b0391a" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="bg-row-label">on honey-cream</div>
+          <div class="sizes honey">
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><radialGradient id="ip-coin-h" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffd97a"/><stop offset="100%" stop-color="#c87b14"/></radialGradient></defs><ellipse cx="30" cy="54" rx="18" ry="2.2" fill="#c89a3e" opacity="0.25"/><circle cx="38" cy="32" r="14" fill="url(#ip-coin-h)" stroke="#8a4e0a" stroke-width="1.5"/><text x="38" y="37" text-anchor="middle" font-size="13" font-weight="900" fill="#fff8ea">₱</text><circle cx="22" cy="28" r="13" fill="url(#ip-coin-h)" stroke="#8a4e0a" stroke-width="1.5"/><path d="M17 26 Q19 24 21 26" stroke="#6d3a08" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M23 26 Q25 24 27 26" stroke="#6d3a08" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M19 30 Q22 33 25 30" stroke="#b0391a" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><div class="size-label">44</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Two stacked coins, front coin has face. Radial gradient. Peso ₱ on back coin.
+            <b>Stroke:</b> 1.5. <b>Background visibility:</b> Strong on both white and honey-cream.
+          </div>
+        </div>
+
+        <!-- IconKalendaryo -->
+        <div class="icon-card">
+          <h3>IconKalendaryo</h3>
+          <p class="where">BIR Deadlines · Calendar</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ik-paper-1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><rect x="12" y="14" width="36" height="34" rx="5" fill="url(#ik-paper-1)" stroke="#b06410" stroke-width="1.6"/><path d="M12 19 Q12 14 17 14 L43 14 Q48 14 48 19 L48 22 L12 22 Z" fill="#e89b2f"/><rect x="18" y="10" width="3" height="8" rx="1.5" fill="#8a4e0a"/><rect x="39" y="10" width="3" height="8" rx="1.5" fill="#8a4e0a"/><circle cx="30" cy="35" r="9" fill="#fef3d9" stroke="#e89b2f" stroke-width="1.4"/><text x="30" y="38" text-anchor="middle" font-size="10" font-weight="800" fill="#8a3d0a">25</text></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ik-paper-2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><rect x="12" y="14" width="36" height="34" rx="5" fill="url(#ik-paper-2)" stroke="#b06410" stroke-width="1.6"/><path d="M12 19 Q12 14 17 14 L43 14 Q48 14 48 19 L48 22 L12 22 Z" fill="#e89b2f"/><rect x="18" y="10" width="3" height="8" rx="1.5" fill="#8a4e0a"/><rect x="39" y="10" width="3" height="8" rx="1.5" fill="#8a4e0a"/><circle cx="30" cy="35" r="9" fill="#fef3d9" stroke="#e89b2f" stroke-width="1.4"/><g stroke="#e89b2f" stroke-width="1.2" stroke-linecap="round"><line x1="30" y1="23" x2="30" y2="25"/><line x1="42" y1="35" x2="40" y2="35"/><line x1="20" y1="35" x2="18" y2="35"/></g><text x="30" y="38" text-anchor="middle" font-size="10" font-weight="800" fill="#8a3d0a">25</text></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ik-paper-3" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><rect x="12" y="14" width="36" height="34" rx="5" fill="url(#ik-paper-3)" stroke="#b06410" stroke-width="1.6"/><path d="M12 19 Q12 14 17 14 L43 14 Q48 14 48 19 L48 22 L12 22 Z" fill="#e89b2f"/><rect x="18" y="10" width="3" height="8" rx="1.5" fill="#8a4e0a"/><rect x="39" y="10" width="3" height="8" rx="1.5" fill="#8a4e0a"/><circle cx="30" cy="35" r="9" fill="#fef3d9" stroke="#e89b2f" stroke-width="1.4"/><g stroke="#e89b2f" stroke-width="1.2" stroke-linecap="round"><line x1="30" y1="23" x2="30" y2="25"/><line x1="42" y1="35" x2="40" y2="35"/><line x1="20" y1="35" x2="18" y2="35"/></g><text x="30" y="38" text-anchor="middle" font-size="10" font-weight="800" fill="#8a3d0a">25</text></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="bg-row-label">on honey-cream</div>
+          <div class="sizes honey">
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ik-paper-h" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><rect x="12" y="14" width="36" height="34" rx="5" fill="url(#ik-paper-h)" stroke="#b06410" stroke-width="1.6"/><path d="M12 19 Q12 14 17 14 L43 14 Q48 14 48 19 L48 22 L12 22 Z" fill="#e89b2f"/><rect x="18" y="10" width="3" height="8" rx="1.5" fill="#8a4e0a"/><rect x="39" y="10" width="3" height="8" rx="1.5" fill="#8a4e0a"/><circle cx="30" cy="35" r="9" fill="#fef3d9" stroke="#e89b2f" stroke-width="1.4"/><g stroke="#e89b2f" stroke-width="1.2" stroke-linecap="round"><line x1="30" y1="23" x2="30" y2="25"/><line x1="42" y1="35" x2="40" y2="35"/></g><text x="30" y="38" text-anchor="middle" font-size="10" font-weight="800" fill="#8a3d0a">25</text></svg><div class="size-label">44</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Calendar with orange header band + sun rays around date circle. Date "25" hard-coded — should be dynamic in implementation.
+            <b>Stroke:</b> 1.6. <b>Note:</b> Hard-coded "25" must become a prop.
+          </div>
+        </div>
+
+        <!-- IconPrecio -->
+        <div class="icon-card">
+          <h3>IconPrecio</h3>
+          <p class="where">Tamang Presyo / Costing</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ipr-tag-1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5b347"/><stop offset="100%" stop-color="#c87b14"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 18 L34 14 Q38 13 41 16 L48 23 Q51 26 50 30 L46 50 Q45 54 41 54 Q37 55 34 52 L17 35 Q14 32 14 28 Z" fill="url(#ipr-tag-1)" stroke="#8a4e0a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="25" r="3" fill="#fef3d9" stroke="#8a4e0a" stroke-width="1.4"/><text x="36" y="36" text-anchor="middle" font-size="14" font-weight="900" fill="white">₱</text></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ipr-tag-2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5b347"/><stop offset="100%" stop-color="#c87b14"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 18 L34 14 Q38 13 41 16 L48 23 Q51 26 50 30 L46 50 Q45 54 41 54 Q37 55 34 52 L17 35 Q14 32 14 28 Z" fill="url(#ipr-tag-2)" stroke="#8a4e0a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="25" r="3" fill="#fef3d9" stroke="#8a4e0a" stroke-width="1.4"/><text x="36" y="36" text-anchor="middle" font-size="14" font-weight="900" fill="white">₱</text></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ipr-tag-3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5b347"/><stop offset="100%" stop-color="#c87b14"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 18 L34 14 Q38 13 41 16 L48 23 Q51 26 50 30 L46 50 Q45 54 41 54 Q37 55 34 52 L17 35 Q14 32 14 28 Z" fill="url(#ipr-tag-3)" stroke="#8a4e0a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="25" r="3" fill="#fef3d9" stroke="#8a4e0a" stroke-width="1.4"/><text x="36" y="36" text-anchor="middle" font-size="14" font-weight="900" fill="white">₱</text></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="bg-row-label">on honey-cream</div>
+          <div class="sizes honey">
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ipr-tag-h" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5b347"/><stop offset="100%" stop-color="#c87b14"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 18 L34 14 Q38 13 41 16 L48 23 Q51 26 50 30 L46 50 Q45 54 41 54 Q37 55 34 52 L17 35 Q14 32 14 28 Z" fill="url(#ipr-tag-h)" stroke="#8a4e0a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="22" cy="25" r="3" fill="#fef3d9" stroke="#8a4e0a" stroke-width="1.4"/><text x="36" y="36" text-anchor="middle" font-size="14" font-weight="900" fill="white">₱</text></svg><div class="size-label">44</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Solid honey-gradient price tag with hole + ₱ in white. Single shape, no face.
+            <b>Stroke:</b> 1.6. <b>Strongest visual identity</b> of the icon set — instantly readable at 24px.
+          </div>
+        </div>
+
+        <!-- IconInvoice -->
+        <div class="icon-card">
+          <h3>IconInvoice</h3>
+          <p class="where">Mga Invoice (utang collection)</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ii-paper-1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 10 L38 10 L46 18 L46 48 Q46 50 44 50 L16 50 Q14 50 14 48 Z" fill="url(#ii-paper-1)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M38 10 L38 18 L46 18" stroke="#b06410" stroke-width="1.6" fill="#fde8c0" stroke-linejoin="round"/><line x1="20" y1="28" x2="36" y2="28" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="34" x2="40" y2="34" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ii-paper-2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 10 L38 10 L46 18 L46 48 Q46 50 44 50 L16 50 Q14 50 14 48 Z" fill="url(#ii-paper-2)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M38 10 L38 18 L46 18" stroke="#b06410" stroke-width="1.6" fill="#fde8c0" stroke-linejoin="round"/><line x1="20" y1="28" x2="36" y2="28" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="34" x2="40" y2="34" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="40" x2="32" y2="40" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="44" r="2" fill="#e89b2f" opacity="0.8"/></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ii-paper-3" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 10 L38 10 L46 18 L46 48 Q46 50 44 50 L16 50 Q14 50 14 48 Z" fill="url(#ii-paper-3)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M38 10 L38 18 L46 18" stroke="#b06410" stroke-width="1.6" fill="#fde8c0" stroke-linejoin="round"/><line x1="20" y1="28" x2="36" y2="28" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="34" x2="40" y2="34" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="40" x2="32" y2="40" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="44" r="2" fill="#e89b2f" opacity="0.8"/></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="bg-row-label">on honey-cream</div>
+          <div class="sizes honey">
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="ii-paper-h" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 10 L38 10 L46 18 L46 48 Q46 50 44 50 L16 50 Q14 50 14 48 Z" fill="url(#ii-paper-h)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><path d="M38 10 L38 18 L46 18" stroke="#b06410" stroke-width="1.6" fill="#fde8c0" stroke-linejoin="round"/><line x1="20" y1="28" x2="36" y2="28" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="34" x2="40" y2="34" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="40" x2="32" y2="40" stroke="#c89a3e" stroke-width="1.5" stroke-linecap="round"/></svg><div class="size-label">44</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Page with folded corner + 3 lines + tiny sampaguita dot on bottom. <b>Stroke:</b> 1.6.
+            <b>Note:</b> Could be confused with IconResibo (both are paper) — review usage placement to avoid ambiguity.
+          </div>
+        </div>
+
+        <!-- IconCheckin -->
+        <div class="icon-card">
+          <h3>IconCheckin</h3>
+          <p class="where">Daily Check-in (modal trigger)</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><radialGradient id="ic-cup-1" cx="40%" cy="30%" r="70%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#f0d99a"/></radialGradient></defs><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 20 L46 20 L44 46 Q44 50 40 50 L20 50 Q16 50 16 46 Z" fill="url(#ic-cup-1)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><ellipse cx="30" cy="22" rx="15" ry="3" fill="#8a4e0a"/><path d="M46 26 Q54 28 54 34 Q54 40 46 40" stroke="#b06410" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><radialGradient id="ic-cup-2" cx="40%" cy="30%" r="70%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#f0d99a"/></radialGradient></defs><path d="M26 12 Q24 10 26 7 Q28 5 26 2" stroke="#d6c8a8" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.7"/><path d="M32 12 Q30 10 32 7 Q34 5 32 2" stroke="#d6c8a8" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.7"/><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 20 L46 20 L44 46 Q44 50 40 50 L20 50 Q16 50 16 46 Z" fill="url(#ic-cup-2)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><ellipse cx="30" cy="22" rx="15" ry="3" fill="#8a4e0a"/><ellipse cx="30" cy="21" rx="12" ry="2" fill="#b06410" opacity="0.6"/><path d="M46 26 Q54 28 54 34 Q54 40 46 40" stroke="#b06410" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M28 36 Q26 34 24 36 Q22 38 25 40 L28 43 L31 40 Q34 38 32 36 Q30 34 28 36 Z" fill="#c87b14" opacity="0.7"/></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><radialGradient id="ic-cup-3" cx="40%" cy="30%" r="70%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#f0d99a"/></radialGradient></defs><path d="M26 12 Q24 10 26 7 Q28 5 26 2" stroke="#d6c8a8" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.7"/><path d="M32 12 Q30 10 32 7 Q34 5 32 2" stroke="#d6c8a8" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.7"/><ellipse cx="30" cy="54" rx="15" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M14 20 L46 20 L44 46 Q44 50 40 50 L20 50 Q16 50 16 46 Z" fill="url(#ic-cup-3)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><ellipse cx="30" cy="22" rx="15" ry="3" fill="#8a4e0a"/><ellipse cx="30" cy="21" rx="12" ry="2" fill="#b06410" opacity="0.6"/><path d="M46 26 Q54 28 54 34 Q54 40 46 40" stroke="#b06410" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M28 36 Q26 34 24 36 Q22 38 25 40 L28 43 L31 40 Q34 38 32 36 Q30 34 28 36 Z" fill="#c87b14" opacity="0.7"/></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Coffee cup with steam + heart on cup + handle. Designed to animate (steam can rise).
+            <b>Stroke:</b> 1.6. <b>Note:</b> Steam strokes can attach to a CSS keyframe animation.
+          </div>
+        </div>
+
+        <!-- IconSundayStory -->
+        <div class="icon-card">
+          <h3>IconSundayStory</h3>
+          <p class="where">Linggong Kuwento</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="is-book-1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M10 18 Q18 14 30 16 Q42 14 50 18 L50 46 Q42 42 30 44 Q18 42 10 46 Z" fill="url(#is-book-1)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><line x1="30" y1="16" x2="30" y2="44" stroke="#b06410" stroke-width="1.2"/><circle cx="38" cy="28" r="5" fill="#f5b347"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="is-book-2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M10 18 Q18 14 30 16 Q42 14 50 18 L50 46 Q42 42 30 44 Q18 42 10 46 Z" fill="url(#is-book-2)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><line x1="30" y1="16" x2="30" y2="44" stroke="#b06410" stroke-width="1.2"/><line x1="15" y1="24" x2="26" y2="23" stroke="#c89a3e" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/><line x1="15" y1="28" x2="26" y2="27" stroke="#c89a3e" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/><circle cx="38" cy="28" r="5" fill="#f5b347"/><g stroke="#e89b2f" stroke-width="1.2" stroke-linecap="round"><line x1="38" y1="20" x2="38" y2="22"/><line x1="46" y1="28" x2="44" y2="28"/></g></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="is-book-3" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fff8ea"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><path d="M10 18 Q18 14 30 16 Q42 14 50 18 L50 46 Q42 42 30 44 Q18 42 10 46 Z" fill="url(#is-book-3)" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><line x1="30" y1="16" x2="30" y2="44" stroke="#b06410" stroke-width="1.2"/><line x1="15" y1="24" x2="26" y2="23" stroke="#c89a3e" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/><line x1="15" y1="28" x2="26" y2="27" stroke="#c89a3e" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/><line x1="15" y1="32" x2="26" y2="31" stroke="#c89a3e" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/><circle cx="38" cy="28" r="5" fill="#f5b347"/><g stroke="#e89b2f" stroke-width="1.2" stroke-linecap="round"><line x1="38" y1="20" x2="38" y2="22"/><line x1="46" y1="28" x2="44" y2="28"/><line x1="32" y1="23" x2="33" y2="25"/><line x1="43" y1="23" x2="42" y2="25"/></g></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Open book with sun on right page. Storytelling metaphor. <b>Stroke:</b> 1.6.
+            <b>Note:</b> Sun rays can be a separate animated layer.
+          </div>
+        </div>
+
+        <!-- IconDrafts -->
+        <div class="icon-card">
+          <h3>IconDrafts</h3>
+          <p class="where">Mga Draft (drafts list)</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="id-paper-1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><rect x="14" y="14" width="30" height="36" rx="3" fill="url(#id-paper-1)" stroke="#b06410" stroke-width="1.6"/><line x1="20" y1="24" x2="38" y2="24" stroke="#c89a3e" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/><line x1="20" y1="30" x2="36" y2="30" stroke="#c89a3e" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="44" height="44" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="id-paper-2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><rect x="14" y="14" width="30" height="36" rx="3" fill="url(#id-paper-2)" stroke="#b06410" stroke-width="1.6"/><line x1="20" y1="24" x2="38" y2="24" stroke="#c89a3e" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/><line x1="20" y1="30" x2="36" y2="30" stroke="#c89a3e" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/><line x1="20" y1="36" x2="32" y2="36" stroke="#c89a3e" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/><g transform="rotate(-25 42 32)"><rect x="40" y="28" width="18" height="5" rx="1" fill="#e89b2f" stroke="#8a4e0a" stroke-width="1.2"/><path d="M58 30.5 L62 30.5 L60 28 Z M58 30.5 L62 30.5 L60 33 Z" fill="#2b2317"/><rect x="36" y="28" width="4" height="5" fill="#e57b5f" stroke="#8a4e0a" stroke-width="1.2"/></g></svg><div class="size-label">44</div></div>
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 60 60" fill="none"><defs><linearGradient id="id-paper-3" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fffbf0"/><stop offset="100%" stop-color="#fde8c0"/></linearGradient></defs><ellipse cx="30" cy="54" rx="16" ry="2" fill="#c89a3e" opacity="0.22"/><rect x="14" y="14" width="30" height="36" rx="3" fill="url(#id-paper-3)" stroke="#b06410" stroke-width="1.6"/><line x1="20" y1="24" x2="38" y2="24" stroke="#c89a3e" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/><line x1="20" y1="30" x2="36" y2="30" stroke="#c89a3e" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/><line x1="20" y1="36" x2="32" y2="36" stroke="#c89a3e" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/><g transform="rotate(-25 42 32)"><rect x="40" y="28" width="18" height="5" rx="1" fill="#e89b2f" stroke="#8a4e0a" stroke-width="1.2"/><path d="M58 30.5 L62 30.5 L60 28 Z M58 30.5 L62 30.5 L60 33 Z" fill="#2b2317"/><rect x="36" y="28" width="4" height="5" fill="#e57b5f" stroke="#8a4e0a" stroke-width="1.2"/></g></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Paper + diagonal pencil. <b>Stroke:</b> 1.6.
+            <b>Note:</b> The pencil rotation is illustrative; verify legibility at 24px (it may shrink to a smudge).
+          </div>
+        </div>
+
+        <!-- Sampaguita -->
+        <div class="icon-card">
+          <h3>Sampaguita (decoration)</h3>
+          <p class="where">Tile corner accents · streak markers · brand flourish</p>
+          <div class="bg-row-label">on white</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288 10 10)"/><circle cx="10" cy="10" r="1.6" fill="#f5b347"/></svg><div class="size-label">16</div></div>
+            <div class="size-stack"><svg width="24" height="24" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288 10 10)"/><circle cx="10" cy="10" r="1.6" fill="#f5b347"/></svg><div class="size-label">24</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288 10 10)"/><circle cx="10" cy="10" r="1.6" fill="#f5b347"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288 10 10)"/><circle cx="10" cy="10" r="1.6" fill="#f5b347"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="bg-row-label">on honey-cream</div>
+          <div class="sizes honey">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(72 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(144 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(216 10 10)"/><ellipse cx="10" cy="5" rx="2.8" ry="4" fill="#fff" stroke="#e89b2f" stroke-width="0.6" transform="rotate(288 10 10)"/><circle cx="10" cy="10" r="1.6" fill="#f5b347"/></svg><div class="size-label">32</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> 5 white petals + honey-yellow center. National flower, kept tiny — small token, not garlanded.
+            <b>Per Phase 1 design-system rule:</b> Banig and capiz are inclusive primary motifs; sampaguita is a secondary accent because garlanded sampaguita read as "too feminine for some users."
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="nav">
+      <h2 class="section-h">Nav icons (5 candidates)</h2>
+      <p class="section-desc">
+        Used in bottom nav and sidebar. Shown at 26×26 with active and inactive states.
+        Active state: honey gradient (<code>#f5b347</code>) fill + dark stroke (<code>#8a3d0a</code>).
+        Inactive: cream fill + brown stroke.
+      </p>
+      <div class="icon-grid">
+
+        <!-- NavIconHome -->
+        <div class="icon-card">
+          <h3>NavIconHome</h3>
+          <p class="where">Bottom nav · Home tab</p>
+          <div class="bg-row-label">inactive (left) · active (right)</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><path d="M5 13 L14 5 L23 13 L23 22 Q23 23 22 23 L17 23 L17 17 L11 17 L11 23 L6 23 Q5 23 5 22 Z" fill="#fef3d9" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><circle cx="14" cy="10" r="1.2" fill="#b06410" opacity="0.6"/></svg><div class="size-label">inactive</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><path d="M5 13 L14 5 L23 13 L23 22 Q23 23 22 23 L17 23 L17 17 L11 17 L11 23 L6 23 Q5 23 5 22 Z" fill="#f5b347" stroke="#8a3d0a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="14" cy="10" r="1.2" fill="#8a3d0a" opacity="0.6"/></svg><div class="size-label">active</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Classic house silhouette with roof + door cut-out. Tiny dot above doorway.
+            <b>Note:</b> The dot inside the roof reads ambiguously at 26px — possibly a smoke detail. Could clean up.
+          </div>
+        </div>
+
+        <!-- NavIconChat -->
+        <div class="icon-card">
+          <h3>NavIconChat</h3>
+          <p class="where">Bottom nav · Chat/Kausap tab</p>
+          <div class="bg-row-label">inactive (left) · active (right)</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><path d="M5 10 Q5 5 10 5 L18 5 Q23 5 23 10 L23 16 Q23 21 18 21 L13 21 L9 24 L10 21 Q5 21 5 16 Z" fill="#fef3d9" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><circle cx="10" cy="13" r="1.3" fill="#b06410"/><circle cx="14" cy="13" r="1.3" fill="#b06410"/><circle cx="18" cy="13" r="1.3" fill="#b06410"/></svg><div class="size-label">inactive</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><path d="M5 10 Q5 5 10 5 L18 5 Q23 5 23 10 L23 16 Q23 21 18 21 L13 21 L9 24 L10 21 Q5 21 5 16 Z" fill="#f5b347" stroke="#8a3d0a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="10" cy="13" r="1.3" fill="#8a3d0a"/><circle cx="14" cy="13" r="1.3" fill="#8a3d0a"/><circle cx="18" cy="13" r="1.3" fill="#8a3d0a"/></svg><div class="size-label">active</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Speech bubble + 3 typing dots. Same metaphor as IconUsap, simplified. <b>Stroke:</b> 1.6.
+          </div>
+        </div>
+
+        <!-- NavIconScan -->
+        <div class="icon-card">
+          <h3>NavIconScan</h3>
+          <p class="where">Bottom nav · Scan tab (KEEP — see C2)</p>
+          <div class="bg-row-label">inactive (left) · active (right)</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><path d="M8 5 Q8 4 9 4 L19 4 Q20 4 20 5 L20 22 L18.5 21 L17 22 L15.5 21 L14 22 L12.5 21 L11 22 L9.5 21 L8 22 Z" fill="#fef3d9" stroke="#b06410" stroke-width="1.6" stroke-linejoin="round"/><line x1="11" y1="11" x2="17" y2="11" stroke="#b06410" stroke-width="1.3" stroke-linecap="round" opacity="0.7"/><line x1="11" y1="14" x2="15" y2="14" stroke="#b06410" stroke-width="1.3" stroke-linecap="round" opacity="0.7"/></svg><div class="size-label">inactive</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><path d="M8 5 Q8 4 9 4 L19 4 Q20 4 20 5 L20 22 L18.5 21 L17 22 L15.5 21 L14 22 L12.5 21 L11 22 L9.5 21 L8 22 Z" fill="#f5b347" stroke="#8a3d0a" stroke-width="1.6" stroke-linejoin="round"/><line x1="11" y1="11" x2="17" y2="11" stroke="#8a3d0a" stroke-width="1.3" stroke-linecap="round" opacity="0.7"/><line x1="11" y1="14" x2="15" y2="14" stroke="#8a3d0a" stroke-width="1.3" stroke-linecap="round" opacity="0.7"/></svg><div class="size-label">active</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Receipt with zigzag bottom + 2 lines (matches IconResibo metaphor at smaller scale).
+            <b>Note:</b> Anton's C2 keeps Scan in the bottom nav; this icon is in scope.
+          </div>
+        </div>
+
+        <!-- NavIconMoney -->
+        <div class="icon-card">
+          <h3>NavIconMoney</h3>
+          <p class="where">Bottom nav · Pera tab</p>
+          <div class="bg-row-label">inactive (left) · active (right)</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><circle cx="18" cy="15" r="8" fill="#fde8c0" stroke="#b06410" stroke-width="1.5"/><circle cx="10" cy="13" r="7.5" fill="#fef3d9" stroke="#b06410" stroke-width="1.5"/><path d="M7 10 L7 16 M7 10 L11 10 Q13 10 13 12 Q13 14 11 14 L7 14 M5.5 12 L12 12" stroke="#8a3d0a" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><div class="size-label">inactive</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><circle cx="18" cy="15" r="8" fill="#c87b14" stroke="#8a3d0a" stroke-width="1.5"/><circle cx="10" cy="13" r="7.5" fill="#f5b347" stroke="#8a3d0a" stroke-width="1.5"/><path d="M7 10 L7 16 M7 10 L11 10 Q13 10 13 12 Q13 14 11 14 L7 14 M5.5 12 L12 12" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><div class="size-label">active</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Two stacked coins with peso glyph drawn as path (no text — avoids accessibility leak).
+            <b>Note:</b> Smaller scale of IconPera. Active state inverts to filled coins.
+          </div>
+        </div>
+
+        <!-- NavIconMore -->
+        <div class="icon-card">
+          <h3>NavIconMore</h3>
+          <p class="where">Bottom nav · More / Iba pa tab</p>
+          <div class="bg-row-label">inactive (left) · active (right)</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><circle cx="8" cy="14" r="2.2" fill="#fef3d9" stroke="#b06410" stroke-width="1.5"/><circle cx="14" cy="14" r="2.2" fill="#fef3d9" stroke="#b06410" stroke-width="1.5"/><circle cx="20" cy="14" r="2.2" fill="#fef3d9" stroke="#b06410" stroke-width="1.5"/></svg><div class="size-label">inactive</div></div>
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 28 28" fill="none"><circle cx="8" cy="14" r="2.2" fill="#f5b347" stroke="#8a3d0a" stroke-width="1.5"/><circle cx="14" cy="14" r="2.2" fill="#f5b347" stroke="#8a3d0a" stroke-width="1.5"/><circle cx="20" cy="14" r="2.2" fill="#f5b347" stroke="#8a3d0a" stroke-width="1.5"/></svg><div class="size-label">active</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Three hollow circles, simple. <b>Stroke:</b> 1.5.
+            <b>Note:</b> The simplest icon in the set — high recognition.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───── EXISTING AKBAI ICON FAMILIES ───── -->
+    <section id="expenses">
+      <h2 class="section-h">Existing AKBai expense category icons (10 — current vocabulary)</h2>
+      <p class="section-desc">
+        These are <b>already shipped</b> in <code>frontend/src/components/illustrations/svg/expense-categories/</code>.
+        They use the MD3 token system (<code>--primary-container</code>, <code>--on-surface</code>, etc.) so they integrate cleanly
+        with the current palette. Goal: <b>keep these as-is</b>; only re-skin if any are inconsistent with the handoff brand-icon style.
+        Showing 5 representatives below — full set: Food, Transport, Utilities, Marketing, Salary, Inventory, Rent, Supplies, Equipment, Misc.
+      </p>
+      <div class="icon-grid">
+
+        <div class="icon-card">
+          <h3>ExpenseFood</h3>
+          <p class="where">Food / kainan / palengke run</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><path d="M8 18C8 18 8 28 20 28C32 28 32 18 32 18H8Z" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><ellipse cx="20" cy="18" rx="12" ry="3" fill="#f59e0b"/><path d="M12 18C12 18 14 13 20 13C26 13 28 18 28 18" fill="hsl(var(--surface-container))"/><ellipse cx="17" cy="15.5" rx="1.5" ry="0.8" fill="#fff" opacity="0.8"/><ellipse cx="22" cy="14.5" rx="1.5" ry="0.8" fill="#fff" opacity="0.8"/><rect x="16" y="28" width="8" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.7"/><path d="M16 10C16 8.5 17 7 16.5 5.5" stroke="hsl(var(--on-surface))" stroke-width="1.2" stroke-linecap="round" opacity="0.7" fill="none"/><path d="M20 9C20 7.5 21 6 20.5 4.5" stroke="hsl(var(--on-surface))" stroke-width="1.2" stroke-linecap="round" opacity="0.7" fill="none"/><path d="M24 10C24 8.5 25 7 24.5 5.5" stroke="hsl(var(--on-surface))" stroke-width="1.2" stroke-linecap="round" opacity="0.7" fill="none"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><path d="M8 18C8 18 8 28 20 28C32 28 32 18 32 18H8Z" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><ellipse cx="20" cy="18" rx="12" ry="3" fill="#f59e0b"/><path d="M12 18C12 18 14 13 20 13C26 13 28 18 28 18" fill="hsl(var(--surface-container))"/><ellipse cx="17" cy="15.5" rx="1.5" ry="0.8" fill="#fff" opacity="0.8"/><ellipse cx="22" cy="14.5" rx="1.5" ry="0.8" fill="#fff" opacity="0.8"/><ellipse cx="20" cy="16.5" rx="1.2" ry="0.7" fill="#fff" opacity="0.8"/><rect x="16" y="28" width="8" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.7"/><path d="M30 8C30 8 32 9 32 11C32 13 30 13.5 30 13.5L29 13L28.5 9L30 8Z" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="29" y="13" width="1.2" height="8" rx="0.6" fill="hsl(var(--on-surface))" opacity="0.8"/><path d="M16 10C16 8.5 17 7 16.5 5.5" stroke="hsl(var(--on-surface))" stroke-width="1.2" stroke-linecap="round" opacity="0.7" fill="none"/><path d="M20 9C20 7.5 21 6 20.5 4.5" stroke="hsl(var(--on-surface))" stroke-width="1.2" stroke-linecap="round" opacity="0.7" fill="none"/><path d="M24 10C24 8.5 25 7 24.5 5.5" stroke="hsl(var(--on-surface))" stroke-width="1.2" stroke-linecap="round" opacity="0.7" fill="none"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="bg-row-label">on honey-cream · 48</div>
+          <div class="sizes honey">
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><path d="M8 18C8 18 8 28 20 28C32 28 32 18 32 18H8Z" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><ellipse cx="20" cy="18" rx="12" ry="3" fill="#f59e0b"/><path d="M12 18C12 18 14 13 20 13C26 13 28 18 28 18" fill="hsl(var(--surface-container))"/><rect x="16" y="28" width="8" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.7"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Bowl + steam wisps + utensils. <b>viewBox:</b> 40×40 (vs handoff's 60×60). Different scale system from B4 candidates.
+          </div>
+        </div>
+
+        <div class="icon-card">
+          <h3>ExpenseTransport</h3>
+          <p class="where">Transport / jeepney / Grab / fuel</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="5" y="14" width="30" height="14" rx="2" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><rect x="4" y="11" width="32" height="4" rx="1.5" fill="#f59e0b"/><rect x="6" y="9.5" width="28" height="2" rx="1" fill="#d97706"/><rect x="5" y="14" width="4" height="14" rx="1" fill="#e8a308"/><rect x="6" y="15.5" width="2.5" height="5" rx="0.5" fill="hsl(var(--surface-container))"/><rect x="12" y="16" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="19" y="16" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="26" y="16" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="5" y="25" width="30" height="2" rx="0.5" fill="#d97706"/><circle cx="12" cy="30" r="3" fill="hsl(var(--on-surface))" opacity="0.7"/><circle cx="12" cy="30" r="1.5" fill="hsl(var(--surface-container))"/><circle cx="28" cy="30" r="3" fill="hsl(var(--on-surface))" opacity="0.7"/><circle cx="28" cy="30" r="1.5" fill="hsl(var(--surface-container))"/><circle cx="7" cy="24" r="1.2" fill="#fbbf24"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><rect x="5" y="14" width="30" height="14" rx="2" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><rect x="4" y="11" width="32" height="4" rx="1.5" fill="#f59e0b"/><rect x="6" y="9.5" width="28" height="2" rx="1" fill="#d97706"/><rect x="5" y="14" width="4" height="14" rx="1" fill="#e8a308"/><rect x="6" y="15.5" width="2.5" height="5" rx="0.5" fill="hsl(var(--surface-container))"/><rect x="12" y="16" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="19" y="16" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="26" y="16" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="5" y="25" width="30" height="2" rx="0.5" fill="#d97706"/><rect x="31" y="17" width="3" height="8" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.7"/><circle cx="12" cy="30" r="3" fill="hsl(var(--on-surface))" opacity="0.7"/><circle cx="12" cy="30" r="1.5" fill="hsl(var(--surface-container))"/><circle cx="28" cy="30" r="3" fill="hsl(var(--on-surface))" opacity="0.7"/><circle cx="28" cy="30" r="1.5" fill="hsl(var(--surface-container))"/><circle cx="7" cy="24" r="1.2" fill="#fbbf24"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Jeepney with windows, wheels, headlight. Distinctly Filipino transport.
+          </div>
+        </div>
+
+        <div class="icon-card">
+          <h3>ExpenseUtilities</h3>
+          <p class="where">Electricity · water · gas · meralco</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><path d="M20 4C14.5 4 10 8.5 10 14C10 18.5 13 21 14 23H26C27 21 30 18.5 30 14C30 8.5 25.5 4 20 4Z" fill="#fbbf24" opacity="0.85"/><path d="M20 7C16.5 7 13.5 10 13.5 14C13.5 17 15.5 19 16 20H24C24.5 19 26.5 17 26.5 14C26.5 10 23.5 7 20 7Z" fill="#fde68a" opacity="0.8"/><path d="M17 16L19 12L21 16L23 12" stroke="#d97706" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="14" y="23" width="12" height="2" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="15" y="25" width="10" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="16" y="26.5" width="8" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.8"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><path d="M20 4C14.5 4 10 8.5 10 14C10 18.5 13 21 14 23H26C27 21 30 18.5 30 14C30 8.5 25.5 4 20 4Z" fill="#fbbf24" opacity="0.85"/><path d="M20 7C16.5 7 13.5 10 13.5 14C13.5 17 15.5 19 16 20H24C24.5 19 26.5 17 26.5 14C26.5 10 23.5 7 20 7Z" fill="#fde68a" opacity="0.8"/><path d="M17 16L19 12L21 16L23 12" stroke="#d97706" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="14" y="23" width="12" height="2" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="15" y="25" width="10" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="16" y="26.5" width="8" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="17" y="28" width="6" height="1.5" rx="0.75" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="19.25" y="1" width="1.5" height="2.5" rx="0.75" fill="#fbbf24" opacity="0.8"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Light bulb with filament + base screw + light rays. Clear "utility" reading.
+          </div>
+        </div>
+
+        <div class="icon-card">
+          <h3>ExpenseMarketing</h3>
+          <p class="where">Ads · promotions · social boost</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><path d="M10 16L28 8V32L10 24V16Z" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><path d="M28 8L34 5V35L28 32V8Z" fill="#f59e0b"/><path d="M29 10L33 7.5V32.5L29 30V10Z" fill="#d97706" opacity="0.7"/><rect x="6" y="16" width="5" height="8" rx="1.5" fill="hsl(var(--on-surface))" opacity="0.8"/><path d="M35 15C37 17 37 23 35 25" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><path d="M10 16L28 8V32L10 24V16Z" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><path d="M28 8L34 5V35L28 32V8Z" fill="#f59e0b"/><path d="M29 10L33 7.5V32.5L29 30V10Z" fill="#d97706" opacity="0.7"/><rect x="6" y="16" width="5" height="8" rx="1.5" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="7" y="17.5" width="3" height="5" rx="1" fill="hsl(var(--on-surface))" opacity="0.7"/><path d="M35 15C37 17 37 23 35 25" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M37 12C39.5 15.5 39.5 24.5 37 28" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" opacity="0.8" fill="none"/><path d="M32 4L33 2L34 4L36 5L34 6L33 8L32 6L30 5Z" fill="#fbbf24" opacity="0.8"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Megaphone + sound waves + sparkles. Active broadcast feel.
+          </div>
+        </div>
+
+        <div class="icon-card">
+          <h3>ExpenseRent</h3>
+          <p class="where">Rent · stall fee · location</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="8" y="10" width="20" height="24" rx="1.5" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><path d="M5 10L20 3L35 10H5Z" fill="#f59e0b"/><rect x="5" y="10" width="30" height="2" rx="0.5" fill="#d97706"/><rect x="11" y="14" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="20" y="14" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="11" y="20" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="20" y="20" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="15" y="27" width="6" height="7" rx="1" fill="#d97706"/><circle cx="33" cy="28" r="5" fill="hsl(var(--tertiary))" opacity="0.85"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><rect x="8" y="10" width="20" height="24" rx="1.5" fill="hsl(var(--primary-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><path d="M5 10L20 3L35 10H5Z" fill="#f59e0b"/><rect x="5" y="10" width="30" height="2" rx="0.5" fill="#d97706"/><rect x="11" y="14" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="20" y="14" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="11" y="20" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="20" y="20" width="5" height="4" rx="0.8" fill="hsl(var(--surface-container))"/><rect x="15" y="27" width="6" height="7" rx="1" fill="#d97706"/><circle cx="19.5" cy="31" r="0.7" fill="#fbbf24"/><rect x="10" y="6" width="16" height="3" rx="0.8" fill="hsl(var(--surface-container))" opacity="0.8"/><circle cx="33" cy="28" r="5" fill="hsl(var(--tertiary))" opacity="0.85"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> Building + roof + windows + door + key badge. Urban/commercial reading.
+          </div>
+        </div>
+
+      </div>
+      <p style="font-size:12px;color:var(--ink-soft);margin:12px 0 0;font-style:italic;">
+        Other expense icons (Salary, Inventory, Supplies, Equipment, Misc) follow same MD3 token style — preview in your editor by opening
+        <code>frontend/src/components/illustrations/svg/expense-categories/</code>.
+      </p>
+    </section>
+
+    <section id="financial">
+      <h2 class="section-h">Existing AKBai financial / sales icons (6 — current vocabulary)</h2>
+      <p class="section-desc">
+        At <code>frontend/src/components/illustrations/svg/financial/</code>. Used for sales, profit, savings, and budget tiles.
+        Same MD3 token system — they integrate with current palette and the redesign honey palette equally well.
+      </p>
+      <div class="icon-grid">
+
+        <div class="icon-card">
+          <h3>PesoSign</h3>
+          <p class="where">Generic peso indicator · sales summary</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" fill="#f59e0b" stroke="#92400e" stroke-width="1.2"/><circle cx="20" cy="20" r="14" fill="#fbbf24"/><text x="20" y="27" font-size="22" font-weight="800" fill="#92400e" text-anchor="middle" font-family="sans-serif">₱</text><ellipse cx="14" cy="13" rx="4" ry="2.5" fill="#fde68a" opacity="0.8"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" fill="#f59e0b" stroke="#92400e" stroke-width="1.2"/><circle cx="20" cy="20" r="14" fill="#fbbf24"/><text x="20" y="27" font-size="22" font-weight="800" fill="#92400e" text-anchor="middle" font-family="sans-serif">₱</text><ellipse cx="14" cy="13" rx="4" ry="2.5" fill="#fde68a" opacity="0.8"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes"><b>Style:</b> Solid honey-yellow coin with bold ₱.</div>
+        </div>
+
+        <div class="icon-card">
+          <h3>RevenueUp</h3>
+          <p class="where">Sales going up · positive profit</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><path d="M8 28L16 20L22 24L32 12" stroke="hsl(var(--tertiary))" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M26 12H32V18" stroke="hsl(var(--tertiary))" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><text x="10" y="16" font-size="10" font-weight="700" fill="hsl(var(--tertiary))" font-family="sans-serif">₱</text></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" stroke-width="1.2" opacity="0.7"/><path d="M8 28L16 20L22 24L32 12" stroke="hsl(var(--tertiary))" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M26 12H32V18" stroke="hsl(var(--tertiary))" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><text x="10" y="16" font-size="10" font-weight="700" fill="hsl(var(--tertiary))" font-family="sans-serif">₱</text></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes"><b>Style:</b> Up-arrow over chart line, teal (positive). Pairs with RevenueDown (red).</div>
+        </div>
+
+        <div class="icon-card">
+          <h3>ProfitBadge</h3>
+          <p class="where">Profit milestone · achievement</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><path d="M20 2L24.5 13.5L36 14.5L27.5 22L30 34L20 28L10 34L12.5 22L4 14.5L15.5 13.5Z" fill="hsl(var(--tertiary))"/><path d="M20 7L23.2 15L31 15.7L25 21L27 29L20 25L13 29L15 21L9 15.7L16.8 15Z" fill="hsl(var(--tertiary))" opacity="0.85"/><path d="M15 20L18 23L25 16" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><path d="M20 2L24.5 13.5L36 14.5L27.5 22L30 34L20 28L10 34L12.5 22L4 14.5L15.5 13.5Z" fill="hsl(var(--tertiary))"/><path d="M20 7L23.2 15L31 15.7L25 21L27 29L20 25L13 29L15 21L9 15.7L16.8 15Z" fill="hsl(var(--tertiary))" opacity="0.85"/><path d="M15 20L18 23L25 16" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes"><b>Style:</b> Teal star + checkmark. Achievement signaling.</div>
+        </div>
+
+        <div class="icon-card">
+          <h3>SavingsGoal</h3>
+          <p class="where">Savings · piggy bank · ipon</p>
+          <div class="bg-row-label">on white · 32 / 48</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><ellipse cx="20" cy="23" rx="13" ry="10" fill="#f59e0b" stroke="#92400e" stroke-width="1.2"/><ellipse cx="11" cy="16" rx="3" ry="4" fill="#d97706"/><ellipse cx="31" cy="23" rx="3.5" ry="2.5" fill="#d97706"/><circle cx="30" cy="22.5" r="0.8" fill="#92400e"/><circle cx="32" cy="22.5" r="0.8" fill="#92400e"/><circle cx="15" cy="20" r="1.2" fill="#1c1c18"/><rect x="13" y="30" width="3" height="4" rx="1" fill="#d97706"/><rect x="24" y="30" width="3" height="4" rx="1" fill="#d97706"/><rect x="17" y="13" width="6" height="1.5" rx="0.75" fill="#92400e"/><circle cx="20" cy="9" r="3.5" fill="#fbbf24"/></svg><div class="size-label">32</div></div>
+            <div class="size-stack"><svg width="48" height="48" viewBox="0 0 40 40" fill="none"><ellipse cx="20" cy="23" rx="13" ry="10" fill="#f59e0b" stroke="#92400e" stroke-width="1.2"/><ellipse cx="11" cy="16" rx="3" ry="4" fill="#d97706"/><ellipse cx="31" cy="23" rx="3.5" ry="2.5" fill="#d97706"/><circle cx="30" cy="22.5" r="0.8" fill="#92400e"/><circle cx="32" cy="22.5" r="0.8" fill="#92400e"/><circle cx="15" cy="20" r="1.2" fill="#1c1c18"/><rect x="13" y="30" width="3" height="4" rx="1" fill="#d97706"/><rect x="24" y="30" width="3" height="4" rx="1" fill="#d97706"/><rect x="17" y="13" width="6" height="1.5" rx="0.75" fill="#92400e"/><circle cx="20" cy="9" r="3.5" fill="#fbbf24"/><text x="20" y="11" font-size="5" font-weight="700" fill="#92400e" text-anchor="middle" font-family="sans-serif">₱</text></svg><div class="size-label">48</div></div>
+          </div>
+          <div class="style-notes"><b>Style:</b> Piggy bank + coin going in. Peso-themed savings.</div>
+        </div>
+
+      </div>
+      <p style="font-size:12px;color:var(--ink-soft);margin:12px 0 0;font-style:italic;">
+        Other financial icons: BudgetMeter (gauge with needle), RevenueDown (red down arrow). All same style.
+      </p>
+    </section>
+
+    <section id="business">
+      <h2 class="section-h">Existing AKBai business-type icons (4 — onboarding personas)</h2>
+      <p class="section-desc">
+        At <code>frontend/src/components/illustrations/svg/business-types/</code>. Used in the onboarding wizard for "Anong klaseng negosyo?"
+        Each icon represents one of the 4 primary AKBai personas. <b>viewBox 48×48</b> (larger than expense icons).
+      </p>
+      <div class="icon-grid">
+
+        <div class="icon-card">
+          <h3>FoodBaking</h3>
+          <p class="where">Maria persona · home baker · pandesal · merienda</p>
+          <div class="bg-row-label">on white · 64</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="40" rx="16" ry="4" fill="hsl(var(--surface-container))"/><ellipse cx="24" cy="39" rx="14" ry="3" fill="hsl(var(--surface-container-low, 33 19% 94%))"/><path d="M16 32 L14 39 L16.5 38 L19 39 L21.5 38 L24 39 L26.5 38 L29 39 L31.5 38 L34 39 L32 32Z" fill="#f5e6d3"/><ellipse cx="24" cy="30" rx="9" ry="7" fill="#d4954a" stroke="#92400e" stroke-width="1.2"/><ellipse cx="22" cy="27" rx="5" ry="3.5" fill="#e8b06a"/><path d="M20 29 Q24 25 28 29" stroke="#c07830" stroke-width="1" fill="none"/><path d="M20 18 Q18 14 20 11" stroke="hsl(var(--on-surface))" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/><path d="M24 16 Q22 12 24 9" stroke="hsl(var(--on-surface))" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="style-notes"><b>Style:</b> Pandesal on plate with steam wisps + paper liner. Filipino-specific food.</div>
+        </div>
+
+        <div class="icon-card">
+          <h3>OnlineSelling</h3>
+          <p class="where">Jose persona · Shopee/Lazada/TikTok seller</p>
+          <div class="bg-row-label">on white · 64</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 48 48" fill="none"><rect x="12" y="4" width="24" height="40" rx="4" fill="hsl(var(--surface-container))" stroke="hsl(var(--on-surface))" stroke-width="1.5" opacity="0.7"/><rect x="14" y="8" width="20" height="32" rx="2" fill="hsl(var(--surface-container-low, 33 19% 94%))"/><rect x="18" y="16" width="12" height="14" rx="2" fill="hsl(var(--primary-container))"/><path d="M21 16 Q21 12 24 12 Q27 12 27 16" stroke="#d4954a" stroke-width="1.5" fill="none" stroke-linecap="round"/><rect x="20" y="19" width="8" height="1.5" rx="0.5" fill="#e8b06a" opacity="0.8"/><circle cx="32" cy="14" r="5" fill="hsl(var(--tertiary))"/><text x="32" y="16.5" text-anchor="middle" font-size="7" font-weight="bold" fill="white">3</text></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="style-notes"><b>Style:</b> Phone with shopping bag on screen + cart badge.</div>
+        </div>
+
+        <div class="icon-card">
+          <h3>RetailSariSari</h3>
+          <p class="where">Andoy persona · sari-sari store · neighborhood</p>
+          <div class="bg-row-label">on white · 64</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 48 48" fill="none"><path d="M4 14 L44 14 L42 8 L6 8Z" fill="hsl(var(--primary-container))"/><path d="M4 14 Q8 18 12 14 Q16 18 20 14 Q24 18 28 14 Q32 18 36 14 Q40 18 44 14" fill="hsl(var(--primary-container))"/><rect x="6" y="14" width="36" height="26" fill="hsl(var(--surface-container))"/><rect x="10" y="18" width="28" height="14" rx="1" fill="hsl(var(--surface-container-low, 33 19% 94%))"/><rect x="11" y="24" width="26" height="1" fill="hsl(var(--on-surface))" opacity="0.8"/><rect x="13" y="19" width="4" height="5" rx="1" fill="#d4954a" opacity="0.8"/><rect x="22" y="19" width="4" height="5" rx="1" fill="#e8b06a" opacity="0.8"/><rect x="11" y="30" width="26" height="1" fill="hsl(var(--on-surface))" opacity="0.8"/></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="style-notes"><b>Style:</b> Sari-sari storefront with awning + shelves of products.</div>
+        </div>
+
+        <div class="icon-card">
+          <h3>Freelance</h3>
+          <p class="where">Ana persona · freelancer · home office</p>
+          <div class="bg-row-label">on white · 64</div>
+          <div class="sizes">
+            <div class="size-stack"><svg width="64" height="64" viewBox="0 0 48 48" fill="none"><rect x="4" y="36" width="30" height="2" rx="1" fill="hsl(var(--on-surface))" opacity="0.8"/><path d="M6 36 L8 34 L28 34 L30 36Z" fill="hsl(var(--surface-container))"/><rect x="7" y="16" width="22" height="18" rx="2" fill="hsl(var(--surface-container))"/><rect x="9" y="18" width="18" height="14" rx="1" fill="hsl(var(--surface-container-low, 33 19% 94%))"/><rect x="11" y="20" width="10" height="1.5" rx="0.5" fill="hsl(var(--tertiary))" opacity="0.8"/><rect x="11" y="23" width="14" height="1.5" rx="0.5" fill="hsl(var(--on-surface))" opacity="0.7"/><rect x="11" y="26" width="8" height="1.5" rx="0.5" fill="hsl(var(--primary-container))" opacity="0.8"/><rect x="36" y="28" width="8" height="10" rx="2" fill="#d4954a"/><rect x="35" y="27" width="10" height="2" rx="1" fill="#e8b06a"/></svg><div class="size-label">64</div></div>
+          </div>
+          <div class="style-notes"><b>Style:</b> Laptop with code lines + coffee cup. Remote-work feel.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="kai">
+      <h2 class="section-h">Kai expressions (6 — existing, kept as-is)</h2>
+      <p class="section-desc">
+        At <code>frontend/src/components/illustrations/svg/ka-expressions/</code>: <b>KaCelebrating, KaConcerned, KaHappy, KaThinking, KaWaving, KaWorking</b>.
+        Plus the canonical <code>kai-mark.png</code> used by the handoff (shown in the animations repo).
+        These are the existing Kai vocabulary — Phase 4 wraps them in a single <code>&lt;Kai expression="..." animated&gt;</code> component.
+      </p>
+      <div class="motif-card" style="margin-bottom:0;">
+        <div style="display:flex;gap:32px;align-items:center;flex-wrap:wrap;justify-content:center;padding:24px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;filter:drop-shadow(0 4px 14px rgba(168,120,40,0.22));">
+              <img src="../../prototype/assets/kai-mark.png" alt="Kai canonical mark" width="120" height="120" style="display:block;width:120px;height:120px;object-fit:contain;">
+            </div>
+            <span style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Canonical Kai mark</span>
+            <span style="font-size:10px;color:var(--ink-soft);font-family:ui-monospace,Menlo,monospace;">kai-mark.png</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink);max-width:380px;line-height:1.6;">
+            <b>The 6 KaXxx.tsx expression variants</b> swap eyes/eyebrows/mouth on this base form.
+            They power Kai's emotional context across the app:
+            <ul style="margin:8px 0 0 18px;padding:0;">
+              <li><b>KaWaving</b> — onboarding step 1, login</li>
+              <li><b>KaThinking</b> — wait states, "let me check..."</li>
+              <li><b>KaHappy</b> — default home, post-action</li>
+              <li><b>KaCelebrating</b> — milestones, completion</li>
+              <li><b>KaConcerned</b> — tight cash flow, deadline near</li>
+              <li><b>KaWorking</b> — OCR processing, syncing</li>
+            </ul>
+            <p style="margin:10px 0 0;font-size:12px;color:var(--ink-soft);font-style:italic;">
+              Open the TSX files in your editor to view individual expressions, or render via Storybook (Phase 3 deliverable).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="style-rules">
+      <h2 class="section-h">Proposed style rules (becomes canonical if approved)</h2>
+      <div style="background:white;border:1px solid var(--outline);border-radius:12px;padding:20px;font-size:13px;line-height:1.7;">
+        <p><b>Brand-icon rules:</b></p>
+        <ul style="margin:0 0 12px 24px;padding:0;">
+          <li><b>ViewBox:</b> 60×60 for brand icons; 28×28 for nav icons; 20×20 for sampaguita.</li>
+          <li><b>Stroke weight:</b> 1.5 for outer shapes, 1.6 for primary, 1.8 for face lines, 1.2 for fine details.</li>
+          <li><b>Colors:</b> stroke <code>#b06410</code> or <code>#8a4e0a</code>; gradient stops <code>#fffbf0</code>→<code>#fde8c0</code> (paper) or <code>#f5b347</code>→<code>#c87b14</code> (honey). Active state: <code>#f5b347</code> fill, <code>#8a3d0a</code> stroke.</li>
+          <li><b>Soft shadow:</b> ellipse below shape at <code>cx=30, cy=54, rx=15-18, ry=2</code>, fill <code>#c89a3e</code> opacity 0.22.</li>
+          <li><b>Faces:</b> Resibo and Pera have small smiles. Limit faces to 2-3 icons total — too many faces feels infantile.</li>
+          <li><b>Text in SVG:</b> use <code>&lt;text&gt;</code> only when essential (peso ₱). Avoid text leak to <code>aria-label</code>.</li>
+          <li><b>aria-hidden:</b> set <code>aria-hidden="true"</code> on all decorative icons. Provide accessible label on the parent button.</li>
+        </ul>
+        <p><b>When to use a brand icon vs lucide-react:</b></p>
+        <ul style="margin:0 0 12px 24px;padding:0;">
+          <li>Brand icon: feature tile, page header, paper-note callout, primary CTA decoration.</li>
+          <li>lucide-react: utility (close ✕, chevron, settings ⚙, search 🔍, filter, ellipsis-vertical, ...).</li>
+          <li>Never both for the same role — pick one and commit.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="existing">
+      <h2 class="section-h">Existing AKBai illustration style (reference)</h2>
+      <p class="section-desc">For style consistency check. The candidate icons should feel related to this existing illustration vocabulary.</p>
+      <div class="icon-grid">
+        <div class="icon-card">
+          <h3>Empty-state .webp illustrations</h3>
+          <p class="where">/public/illustrations/empty-states/</p>
+          <div class="sizes">
+            <img src="../../../frontend/public/illustrations/empty-states/no-expenses.webp" alt="no-expenses" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--outline);">
+          </div>
+          <div class="style-notes">
+            <b>Style:</b> High-fidelity raster, hand-illustrated, warm character-led scenes. Different medium from the icons (raster vs SVG) — but the warmth + cream-honey palette + character-with-face approach should feel related.
+          </div>
+        </div>
+        <div class="icon-card">
+          <h3>First-scan illustration</h3>
+          <p class="where">/public/illustrations/empty-states/first-scan.webp</p>
+          <div class="sizes">
+            <img src="../../../frontend/public/illustrations/empty-states/first-scan.webp" alt="first-scan" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--outline);">
+          </div>
+        </div>
+        <div class="icon-card">
+          <h3>Costing-empty illustration</h3>
+          <p class="where">/public/illustrations/empty-states/costing-empty.webp</p>
+          <div class="sizes">
+            <img src="../../../frontend/public/illustrations/empty-states/costing-empty.webp" alt="costing-empty" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--outline);">
+          </div>
+        </div>
+      </div>
+      <p class="section-desc" style="margin-top:16px;">
+        <b>Style consistency check:</b> Anton, look at the existing illustrations alongside the candidate icons.
+        Do they feel like the same brand? If the icons feel too cartoony, too cute, or stylistically off
+        from the existing illustration vocabulary, we can adjust.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

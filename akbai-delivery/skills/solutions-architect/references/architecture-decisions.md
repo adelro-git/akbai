@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-012
-> Last updated: 2026-04-05
+> Current highest: ADR-015
+> Last updated: 2026-04-26
 
 ---
 
@@ -21,6 +21,9 @@
 | ADR-010 | Saan Napunta expenses dashboard (Build 4) | Accepted | 2026-03-26 |
 | ADR-011 | Ang Umaga Mo morning briefing (Build 5) | Accepted | 2026-03-28 |
 | ADR-012 | Reply Drafter integration into Kai Chat | Accepted | 2026-04-05 |
+| ADR-013 | Frontend Redesign Phase 4 — Brand Vocabulary component organization | Accepted | 2026-04-26 |
+| ADR-014 | SKIP_AUTH client consistency across server pages and API routes | Accepted | 2026-04-26 |
+| ADR-015 | Frontend Redesign Phase 7 — `/api/weekly-story` endpoint shape | Accepted | 2026-04-26 |
 
 ---
 
@@ -508,3 +511,241 @@ Reply Drafter was built in Sprint 9 as a standalone feature: `/reply-drafter` pa
 - `REPLY_DRAFTER_ENABLED` feature flag still works — just gates the chat intent, not a page route
 
 **Review Trigger:** If reply drafting needs more complex input (multiple messages, thread context, customer profile), it may need a dedicated UI again. Revisit if chat interface becomes overloaded with too many card types.
+
+---
+
+## ADR-013: Frontend Redesign Phase 4 — Brand Vocabulary Component Organization
+
+**Status:** Accepted
+**Date:** 2026-04-26
+
+**Context:**
+Frontend Redesign Phase 4 ports the Kai mark, decorative motifs, and brand icon set approved in the B4/B5 review repos ([`repos/icons.html`](../../../design_handoff_akbai_redesign/synthesis/repos/icons.html), [`repos/motifs.html`](../../../design_handoff_akbai_redesign/synthesis/repos/motifs.html)) into shippable React components. The existing illustration tree at [`frontend/src/components/illustrations/svg/`](../../../frontend/src/components/illustrations/svg/) already contains 48+ SVG illustrations (Kai expressions, expense categories, financial indicators, business types, status). Phase 4 must add new components without parallelizing or fragmenting the tree (Sprint 5 lesson — duplicate components fragmented the dashboard).
+
+**Decision:**
+- **Brand icons** (Resibo, Usap, Pera, Kalendaryo, Precio, Invoice, Checkin, SundayStory, Drafts, Sampaguita, plus 5 nav icons) live in a new directory `frontend/src/components/illustrations/icons/` — separate from existing `svg/` to make brand-icon set discoverable without confusing it with illustrations. Each icon is a standalone TSX component exporting a default-named function with `{ size?: number; color?: string; className?: string }` props. `currentColor` is the default fill so palette-context aware styling works.
+- **Decorative motifs** (CapizPattern, FloatingPetals, WovenDivider, Squiggle, TapeStrip, SwayingLeaf, Sunburst, DoodleArrow) extend the existing `frontend/src/components/illustrations/svg/decorative/` directory. Each accepts shape-specific props (e.g., `<FloatingPetals count?={number} />`, `<Squiggle width?={number} color?={string} />`).
+- **Kai composition** — new `frontend/src/components/illustrations/kai/kai.tsx` provides a single `<Kai expression size animated />` API that maps `expression` to the appropriate `Ka*` component from the existing `svg/ka-expressions/` tree. `KaiSitting` is a separate export — 168×168 hero version that wraps `kai-mark.png` in a circular mask for the home Kumustahan hero. The Kai mark asset is copied from `design_handoff_akbai_redesign/prototype/assets/kai-mark.png` to `frontend/public/icons/kai-mark.png` (canonical location per [`02-decisions.md`](../../../design_handoff_akbai_redesign/synthesis/02-decisions.md) Canonical Kai mark section).
+- **Animation gating** — when `animated` is true on Kai, the component composes `animate-kai-bob` or `animate-kai-breathe` (Phase 3 keyframes); reduced-motion already gates these globally.
+- **Index file expansion** — `svg/index.ts` re-exports new motifs; new `icons/index.ts` and `kai/index.ts` mirror that pattern.
+- **No CSS-in-JS** — every component is plain TSX with Tailwind classes + inline SVG. Inline SVG keeps payload below the Phase 1.5 perf budget (≤ 200KB cold home load) without separate HTTP requests.
+- **`lucide-react` retained** — utility roles (close, chevron, settings, search, filter) still come from `lucide-react`. Brand icons replace `lucide-react` only where the role is brand-load-bearing.
+
+**Alternatives Considered:**
+- **Inline icons in consumer components:** rejected — would scatter brand SVG across the codebase and make later visual tuning expensive.
+- **Single `<BrandIcon name="resibo" />` with switch:** rejected — kills tree-shaking; importing one icon would pull in all 15 SVG strings.
+- **Keep brand icons inside `svg/`:** rejected — illustrations and icons have distinct semantics (illustrations are 48–96px decorative, icons are 16–32px functional). Separating directories prevents accidental conflation.
+- **Web font with custom glyphs:** rejected — adds a heavy build step and complicates color/animation control.
+
+**Consequences:**
+- **Positive:** Phase 5+ screens compose brand iconography from a single, consistent set. Each icon is independently tree-shakable. The Kai mark API is unified (`<Kai expression>`) so Phase 6 onboarding, Phase 7 home, Phase 9 deadlines callout, and Phase 10 Kuwento can swap Kai expressions by name without touching SVG. The motif primitives are inline and small enough that they don't dent the perf budget.
+- **Negative:** ~15 new icon files + 6 new motif files = ~21 new TSX files. Discoverability is via `index.ts` re-exports, not file conventions. Reviewers must know to look at `illustrations/icons/` separately from `illustrations/svg/`.
+- **Migration cost:** zero in Phase 4 (only adds files). Phase 5+ screens swap `lucide-react` imports for brand icons one-by-one when reskinned.
+
+**Validation:**
+- Vitest render tests — every new component renders without throwing, accepts `size` prop, renders correct viewBox.
+- TypeScript typecheck — strict, no `any`, all SVG attributes typed.
+- Playwright visual-parity test — capture each component at default size, diff against the approved repo HTML rendering ≤ 0.5%. (Build the parity test in Phase 4; harness already configured in `frontend/playwright.config.ts`.)
+
+**Related:**
+- Phase 2 verdicts B4 (icons), B5 (motifs) — both signed off 2026-04-26
+- Sprint 5 lesson — reuse audit at [`04-reuse-audit.md`](../../../design_handoff_akbai_redesign/synthesis/04-reuse-audit.md) forbids parallel components
+
+---
+
+## ADR-014: SKIP_AUTH Client Consistency Across Server Pages and API Routes
+
+**Status:** Accepted
+**Date:** 2026-04-26
+
+**Context:**
+Frontend Redesign Phase 6 smoke testing surfaced a defect: `(app)/onboarding/page.tsx` rendered the wizard "fresh" while `/api/onboarding` rejected every step with a 400 `ALREADY_COMPLETED`. Root cause: under `SKIP_AUTH=true` (dev mode), the page used the RLS-protected `createClient()` from `@/lib/supabase/server`, which has no real session and so RLS returned an empty result for `users`. The page treated `userData?.onboarding_completed` as `undefined` and rendered the wizard. Meanwhile `/api/onboarding/route.ts` already followed the dashboard pattern of `db = SKIP_AUTH ? createServiceClient() : supabase`, bypassing RLS and reading the actual prior-run state. Page and API disagreed about whether the user was onboarded.
+
+The dashboard page already had this idiom right; the onboarding page was the outlier. Without an explicit rule, future server pages will repeat the same mistake.
+
+**Decision:**
+
+For any server component that:
+1. Reads from Supabase, **and**
+2. Has a corresponding API route that writes to the same row(s), **and**
+3. Renders or redirects based on that row's state,
+
+The page **must** use the same client-resolution pattern as its sibling API route under `SKIP_AUTH`:
+
+```ts
+const supabase = await createClient();
+// ...auth resolution (SKIP_AUTH ? DEV_USER : supabase.auth.getUser())...
+const db = SKIP_AUTH ? createServiceClient() : supabase;
+// Use `db` for all queries that mirror API behavior.
+```
+
+The auth resolution itself stays as-is (the `SKIP_AUTH` branch returns `DEV_USER` directly without consulting the auth client). What changes is the **data** client used after auth — under `SKIP_AUTH`, both page and API read via the service role to bypass RLS and read DEV_USER's actual state.
+
+**Why this matters:**
+- Dev experience: walking the same flow end-to-end shouldn't surface ghost state where the page says "fresh" and the API says "completed."
+- Production-safety: this is `SKIP_AUTH`-scoped only. In production (`SKIP_AUTH !== 'true'`), both page and API use the auth-bound client and inherit RLS exactly as before.
+- Pattern consistency: any reviewer touching a new server page will see the established two-client idiom and copy it.
+
+**Alternatives Considered:**
+- **Make `createClient()` return the service client under `SKIP_AUTH`:** rejected — too magical. The auth client should always honor RLS; the choice to bypass RLS belongs at the call site so reviewers can see exactly when RLS is dropped.
+- **Always use service client server-side:** rejected — production server components should respect RLS so a regression in user authorization fails closed, not silently leaks data.
+- **Keep the bug and document a "reset DEV_USER between runs" workflow:** rejected — friction every new contributor would re-discover.
+
+**Consequences:**
+- **Positive:** dev-mode flows behave identically to production for state-driven server pages. The `frontend/scripts/reset-dev-onboarding.mjs` helper (committed `a748cea`) exists for state reset, not as a workaround for client-mismatch bugs.
+- **Migration cost:** none in this ADR — the only known violator (`(app)/onboarding/page.tsx`) was fixed in commit `a72cf0c`. New server pages adopt the pattern by default.
+- **Audit:** every existing server page that reads from a table mutated by an API route should confirm it uses the `db = SKIP_AUTH ? createServiceClient() : supabase` idiom. As of 2026-04-26: `(app)/dashboard/page.tsx`, `(app)/profile/page.tsx`, and `(app)/onboarding/page.tsx` all match.
+
+**Validation:**
+- Manual: under `SKIP_AUTH=true`, the user state seen by `GET /onboarding` must equal the state seen by `POST /api/onboarding` for the same DEV_USER.
+- Smoke test: `node --env-file=.env.local scripts/reset-dev-onboarding.mjs` then walk the wizard end-to-end without 400s.
+
+**Related:**
+- Frontend Redesign Phase 6 commit `a72cf0c` (the fix that motivated this ADR)
+- `frontend/scripts/reset-dev-onboarding.mjs` (the dev reset helper, separate from the consistency rule)
+- `dev-auth.ts` defines `SKIP_AUTH` and `DEV_USER`
+
+---
+
+## ADR-015: Frontend Redesign Phase 7 — `/api/weekly-story` Endpoint Shape
+
+**Status:** Accepted
+**Date:** 2026-04-26
+
+**Context:**
+Phase 7 of the frontend redesign ships the flagship home (`/dashboard`) including the Kuwento ng Linggo card — a 3-column KPI grid (Kita / Gastos / Tubo), 7-day banig bar chart, and a Kai takeaway paper-note. Phase 2 synthesis Q1 (locked 2026-04-26) committed to **one source of truth** for the weekly-story payload: home renders KPI grid + chart + takeaway only; the future `/kuwento` route (Phase 10) renders the same payload plus narrative paragraphs. Phase 10 will additionally introduce a `weekly_stories` cache table + Sunday 6 AM Vercel cron (Q10 resolution) and swap the takeaway from a static template to LLM-generated narrative.
+
+Phase 7 must therefore add `/api/weekly-story` *now* (so the home Kuwento card has a typed contract to consume), but with the cache + cron + LLM deferred to Phase 10. The endpoint must compute on-request from existing tables (`transactions`, `daily_check_in`) without introducing a new schema dependency.
+
+**Decision:**
+
+A single new GET route `frontend/src/app/api/weekly-story/route.ts` returning a typed payload that both home (Phase 7) and `/kuwento` (Phase 10) consume.
+
+### 1. Route shape
+
+```ts
+// types: frontend/src/lib/weekly-story/types.ts
+export type WeeklyStoryDay = {
+  date: string;            // YYYY-MM-DD (Manila)
+  day_label: string;       // 'Lun', 'Mar', 'Miy', 'Hue', 'Bie', 'Sab', 'Lin'
+  kita_centavos: number;
+  gastos_centavos: number;
+};
+
+export type WeeklyStory = {
+  week_start: string;      // YYYY-MM-DD (Monday, Manila)
+  week_end: string;        // YYYY-MM-DD (Sunday, Manila)
+  kita_centavos: number;
+  gastos_centavos: number;
+  tubo_centavos: number;   // kita - gastos (can be negative)
+  daily_breakdown: WeeklyStoryDay[];  // length 7, Mon..Sun
+  peak_day_index: number | null;      // 0..6, null if no kita
+  takeaway: string;        // tonal-rotated static template (Phase 7); LLM (Phase 10)
+  tone: 'energetic' | 'observant' | 'celebratory';  // D6 rotation
+};
+
+export type WeeklyStoryResponse =
+  | { available: true; story: WeeklyStory; cached: boolean }
+  | { available: false; reason: 'no_data' | 'error'; cached: false; message_tl: string };
+```
+
+### 2. Auth + RLS (per ADR-014)
+
+```ts
+const supabase = await createClient();
+let userId: string;
+if (SKIP_AUTH) {
+  userId = DEV_USER.id;
+} else {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return 401;
+  userId = data.user.id;
+}
+const db = SKIP_AUTH ? createServiceClient() : supabase;
+```
+
+Mirrors `/api/morning-briefing` exactly. Production reads honor RLS; dev mode bypasses RLS to stay consistent with the page-level read pattern.
+
+### 3. Aggregation logic (Phase 7 — no LLM, no cache table)
+
+- **Week boundaries:** ISO week, Monday-start, Manila timezone. `getManilaToday()` from `@/lib/timezone` + a `getManilaWeekBounds(today)` helper that returns `{ week_start, week_end }`.
+- **Kita / Gastos / Tubo:** sum `transactions.amount` (already in centavos per project rule 6) for the user grouped by `transactions.type` (`income` / `expense`) where `transaction_date BETWEEN week_start AND week_end` and `deleted_at IS NULL`. Schema match — see `lib/morning-briefing/aggregate.ts` for the canonical query shape.
+- **Daily breakdown:** group transactions by `transaction_date`, render 7 entries (Mon..Sun). Days with no transactions get `{ kita: 0, gastos: 0 }`.
+- **Peak day:** index of the daily entry with the highest `kita`; null if all days are 0.
+- **No data state:** if zero transactions exist for the week, return `{ available: false, reason: 'no_data', message_tl: 'Wala pang ginagalaw ngayong linggo. Mag-scan ka ng resibo o mag-check-in para makita ang Kuwento mo.' }`.
+
+### 4. Tonal rotation (D6) — static templates in Phase 7
+
+Three tones: `energetic`, `observant`, `celebratory`. Tone selected daily via `dayOfYear % 3` deterministic rotation (no randomness — same user sees same tone within a calendar day).
+
+Templates live in `frontend/src/lib/weekly-story/takeaway-templates.ts` keyed by tone × week-shape (positive tubo / flat / negative). Sample shape:
+
+```
+energetic_positive: "Ginalingan mo this week, {name}! Tubo: {tubo}. Tuloy lang."
+observant_positive: "Pumasok ang {kita} this week. Gastos: {gastos}. Net: {tubo}."
+celebratory_positive: "Wow, {tubo} tubo this week! Mas mataas pa sa {previous_week_tubo}."
+```
+
+`name` falls back to "Boss" if unset. Peso amounts formatted with `Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' })`. No tax claims, no advice — pure observation per Phase 1 conversational-Filipino-copy-guide.
+
+### 5. Caching
+
+- **Phase 7:** none. Each call recomputes from `transactions` + `daily_check_in`. Acceptable because the home only calls once per page render and the queries are indexed. No `weekly_stories` table.
+- **Phase 10:** Vercel cron Sunday 6 AM Manila pre-generates and writes to `weekly_stories(user_id, week_start, payload JSONB, generated_at)`. The route checks the cache first; on hit returns instantly; on miss computes on the fly (cron may have failed for this user). The on-the-fly path is the Phase 7 logic, unchanged.
+
+### 6. No tier gating
+
+Unlike `/api/morning-briefing` (Pro+ only), `/api/weekly-story` is **available to all tiers** (free included). The Kuwento card is a core home moment — gating it would defeat the home's emotional purpose. Cost is zero at scale: pure DB aggregation, no LLM. When Phase 10 adds LLM-generated narratives, **only the narrative paragraphs are tier-gated**, not the KPI grid + chart + takeaway.
+
+### 7. Error path
+
+Any DB error → `{ available: false, reason: 'error', message_tl: 'Pasensya, may problema sa Kuwento ngayon. Try mo ulit mamaya.' }`. Console-error logged, never throws to the client. Home Kuwento card renders a graceful empty state when `available: false`.
+
+### 8. Component structure
+
+```
+frontend/src/
+  lib/weekly-story/
+    types.ts                  -- WeeklyStory, WeeklyStoryDay, WeeklyStoryResponse
+    aggregate.ts              -- aggregateWeeklyStory(db, userId): WeeklyStory
+    takeaway-templates.ts     -- pickTakeaway(tone, story, name): string
+    week-bounds.ts            -- getManilaWeekBounds(date): { week_start, week_end }
+  app/api/weekly-story/
+    route.ts                  -- GET handler (auth, aggregate, format response)
+```
+
+The aggregation is testable in isolation (vitest). The route orchestrates auth + aggregate + format.
+
+**Alternatives Considered:**
+
+- **Compose home Kuwento card from `/api/expenses` + dashboard aggregations** (Path B in the Phase 7 brief): rejected. Two consumers (home + `/kuwento`) end up with different aggregation paths, drifting subtly. Q1 resolution explicitly requires one source of truth. Phase 7 owning the stub is cheaper than retrofitting the unified endpoint in Phase 10 while migrating home consumers.
+- **Add `weekly_stories` cache table in Phase 7:** rejected. The cache is only valuable when LLM narrative generation is expensive (Phase 10 with cron). Phase 7's pure-DB aggregation is fast enough that caching adds complexity without payoff. Phase 10 owns the table + cron together as a coherent unit.
+- **Reuse `/api/morning-briefing` cache layer (extend `daily_check_in.briefing_content` to also store weekly stories):** rejected. The two payloads have different cadences (daily vs weekly) and different tier rules (Pro+ vs all-tier). Conflating them would require versioning logic and tier-mismatch handling. A separate route is cleaner.
+- **Serve weekly story as a Server Component data prop (no API route):** rejected. The Kuwento card is also consumed by the future `/kuwento` page (Phase 10) and a dedicated drawer entry from chrome — having a typed JSON endpoint enables both server-rendered and client-revalidated consumption (TanStack Query persists the home payload offline).
+
+**Consequences:**
+
+- **Positive:**
+  - One source of truth for weekly-story data; no aggregation drift between home and `/kuwento`.
+  - Phase 10 work reduces to: add `weekly_stories` table migration, add Sunday cron, swap `takeaway-templates.ts` for an LLM call. Route surface remains stable.
+  - All tiers see the Kuwento card, reinforcing the home's emotional purpose without paywall friction.
+  - Aggregation logic in `lib/weekly-story/aggregate.ts` is reusable for any future weekly-cadence feature.
+- **Negative:**
+  - Phase 7 ships an API route that has no cache layer — every page render hits Postgres. At Phase 0A scale (< 50 users) this is fine; at scale Phase 10's cron pre-generation absorbs the load.
+  - Static-template takeaway in Phase 7 is less expressive than the LLM version. Acceptable tradeoff: D6 tonal rotation is preserved (variety), and Phase 10 swaps templates → LLM without changing the API contract.
+
+**Validation:**
+
+- Vitest: `frontend/src/lib/weekly-story/__tests__/aggregate.test.ts` — week-boundary edge cases (Sunday boundary, no data, only-income, only-expense, mixed), tonal selection determinism (same `dayOfYear` → same tone), peak-day selection.
+- Vitest: `frontend/src/app/api/weekly-story/__tests__/route.test.ts` — auth gating, error path, RLS bypass under SKIP_AUTH.
+- Playwright: home Kuwento card renders with mocked `/api/weekly-story` payload; both `available: true` and `available: false` states.
+- TypeScript strict — no `any`, Zod-validated response from the client.
+
+**Related:**
+- Phase 2 synthesis Q1 + Q10 (locked 2026-04-26)
+- ADR-011 (morning-briefing caching pattern — Phase 10 cron mirrors this)
+- ADR-014 (SKIP_AUTH consistency rule for the auth/RLS scaffolding)
+
+**Review Trigger:**
+- When Phase 10 adds the `weekly_stories` cache table and Sunday cron — confirm the route signature stays unchanged and only the data-source path changes (cache hit vs compute-on-fly).
+- If the takeaway templates start looking forced or overly repetitive across the 3 tones — that's an early signal Phase 10's LLM swap should land sooner.

@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { IncomeRange } from '@/lib/kilala-kita/schemas';
+import { cn } from '@/lib/utils';
 
 interface StepIncomeRangeProps {
   onComplete: (incomeRange: IncomeRange) => void;
@@ -20,11 +22,12 @@ const INCOME_RANGES: { value: IncomeRange; label: string }[] = [
 export default function StepIncomeRange({
   onComplete,
   loading,
-  firstName,
   initialValue,
 }: StepIncomeRangeProps) {
+  const t = useTranslations('onboarding.step3');
+  const tCommon = useTranslations('common');
   const [selected, setSelected] = useState<IncomeRange | null>(
-    (initialValue as IncomeRange) ?? null
+    (initialValue as IncomeRange) ?? null,
   );
 
   const handleContinue = () => {
@@ -33,30 +36,19 @@ export default function StepIncomeRange({
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Kai bubble */}
-      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
-        <p className="text-on-surface text-base leading-relaxed">
-          Mga magkano ang monthly income ng negosyo mo,{' '}
-          <span className="text-primary-container font-semibold">{firstName}</span>?
-        </p>
-        <p className="text-on-surface-variant text-xs mt-1">
-          Estimate lang — para ma-customize ang tulong ko sa&apos;yo.
-        </p>
-      </div>
-
-      {/* Income range chips */}
-      <div className="grid grid-cols-2 gap-3">
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-2 gap-2.5">
         {INCOME_RANGES.map((range) => (
           <button
             key={range.value}
             type="button"
             onClick={() => setSelected(range.value)}
-            className={`flex flex-col items-center gap-1 p-4 rounded-xl border text-center transition-all ${
+            className={cn(
+              'flex flex-col items-center gap-1 p-4 rounded-2xl border text-center transition-all min-h-[60px]',
               selected === range.value
-                ? 'border-primary-container bg-primary-container/10 ring-1 ring-primary-container'
-                : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
-            }`}
+                ? 'border-honey bg-honey-pale/60 ring-2 ring-honey/40'
+                : 'border-outline-soft/40 bg-surface-container-lowest hover:border-honey/40',
+            )}
           >
             <p className="text-on-surface font-semibold text-sm">{range.label}</p>
           </button>
@@ -67,9 +59,9 @@ export default function StepIncomeRange({
         type="button"
         onClick={handleContinue}
         disabled={loading || !selected}
-        className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold py-3.5 px-4 rounded-full shadow-ambient transition-all disabled:opacity-40 disabled:cursor-not-allowed min-h-[48px]"
       >
-        {loading ? 'Sine-save...' : 'Sunod'}
+        {loading ? tCommon('loading') : t('cta')}
       </button>
     </div>
   );

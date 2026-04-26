@@ -1,9 +1,16 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import type { BusinessType } from '@/lib/kilala-kita/schemas';
-import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
-import { FoodBaking, OnlineSelling, Freelance, RetailSariSari, SparkleAccent } from '@/components/illustrations/svg';
+import {
+  FoodBaking,
+  OnlineSelling,
+  Freelance,
+  RetailSariSari,
+  SparkleAccent,
+} from '@/components/illustrations/svg';
+import { cn } from '@/lib/utils';
 
 interface StepBusinessTypeProps {
   onComplete: (businessType: BusinessType, otherText?: string) => void;
@@ -12,7 +19,12 @@ interface StepBusinessTypeProps {
   initialValue?: string | null;
 }
 
-const BUSINESS_TYPES: { value: BusinessType; label: string; description: string; icon: React.ReactNode }[] = [
+const BUSINESS_TYPES: {
+  value: BusinessType;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+}[] = [
   {
     value: 'food_baking',
     label: 'Food / Baking',
@@ -39,7 +51,7 @@ const BUSINESS_TYPES: { value: BusinessType; label: string; description: string;
   },
   {
     value: 'other',
-    label: 'Iba Pa',
+    label: 'Iba pa',
     description: 'Salon, services, farming, etc.',
     icon: <SparkleAccent size={28} />,
   },
@@ -48,9 +60,11 @@ const BUSINESS_TYPES: { value: BusinessType; label: string; description: string;
 export default function StepBusinessType({
   onComplete,
   loading,
-  firstName,
   initialValue,
 }: StepBusinessTypeProps) {
+  const t = useTranslations('onboarding.step2');
+  const tCommon = useTranslations('common');
+
   // Parse initial value: if starts with "other:", pre-fill the text field
   const parsedInitial = initialValue?.startsWith('other:')
     ? 'other'
@@ -59,9 +73,7 @@ export default function StepBusinessType({
     ? initialValue.slice(6)
     : '';
 
-  const [selected, setSelected] = useState<BusinessType | null>(
-    parsedInitial ?? null
-  );
+  const [selected, setSelected] = useState<BusinessType | null>(parsedInitial ?? null);
   const otherInputRef = useRef<HTMLInputElement>(null);
   const [otherText, setOtherText] = useState(parsedOtherText);
   const [otherError, setOtherError] = useState<string | null>(null);
@@ -92,39 +104,23 @@ export default function StepBusinessType({
   const canContinue = selected !== null && (!isOtherSelected || otherTextValid);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Step header illustration — full width */}
-      <div className="flex justify-center w-full">
-        <IllustrationWrapper
-          src="onboarding/business-type.webp"
-          alt="Choose your business type"
-          category="onboarding"
-          className="w-full max-w-full"
-        />
-      </div>
-
-      {/* Kai bubble */}
-      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
-        <p className="text-on-surface text-base leading-relaxed">
-          Nice to meet you, <span className="text-primary-container font-semibold">{firstName}</span>! Ano ang
-          negosyo mo?
-        </p>
-      </div>
-
-      {/* Business type cards */}
-      <div className="grid gap-3">
+    <div className="flex flex-col gap-4">
+      <div className="grid gap-2.5">
         {BUSINESS_TYPES.map((type) => (
           <button
             key={type.value}
             type="button"
             onClick={() => setSelected(type.value)}
-            className={`flex items-center gap-3 w-full text-left p-4 rounded-xl border transition-all ${
+            className={cn(
+              'flex items-center gap-3 w-full text-left p-3.5 rounded-2xl border transition-all min-h-[60px]',
               selected === type.value
-                ? 'border-primary-container bg-primary-container/10 ring-1 ring-primary-container'
-                : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
-            }`}
+                ? 'border-honey bg-honey-pale/60 ring-2 ring-honey/40'
+                : 'border-outline-soft/40 bg-surface-container-lowest hover:border-honey/40',
+            )}
           >
-            <span className="flex items-center justify-center w-8 h-8">{type.icon}</span>
+            <span className="flex items-center justify-center w-9 h-9 flex-shrink-0">
+              {type.icon}
+            </span>
             <div>
               <p className="text-on-surface font-semibold text-sm">{type.label}</p>
               <p className="text-on-surface-variant text-xs">{type.description}</p>
@@ -133,7 +129,6 @@ export default function StepBusinessType({
         ))}
       </div>
 
-      {/* "Iba pa" text input — shown when "other" is selected */}
       {isOtherSelected && (
         <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
           <label
@@ -153,7 +148,7 @@ export default function StepBusinessType({
             }}
             placeholder="e.g. Pet grooming, Laundry shop"
             maxLength={100}
-            className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface placeholder-on-surface-variant text-sm focus:border-primary-container/50 focus:ring-1 focus:ring-primary-container/30 transition-colors min-h-[44px]"
+            className="w-full bg-surface-container-lowest border border-outline-soft/40 rounded-2xl px-4 py-3 text-on-surface placeholder-on-surface-variant text-sm focus:border-honey/60 focus:ring-2 focus:ring-honey/30 transition-colors min-h-[44px]"
             data-testid="other-business-type-input"
           />
           {otherError && (
@@ -168,9 +163,9 @@ export default function StepBusinessType({
         type="button"
         onClick={handleContinue}
         disabled={loading || !canContinue}
-        className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold py-3.5 px-4 rounded-full shadow-ambient transition-all disabled:opacity-40 disabled:cursor-not-allowed min-h-[48px]"
       >
-        {loading ? 'Sine-save...' : 'Sunod'}
+        {loading ? tCommon('loading') : t('cta')}
       </button>
     </div>
   );

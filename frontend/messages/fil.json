@@ -1,0 +1,207 @@
+{
+  "common": {
+    "save": "I-save",
+    "cancel": "I-cancel",
+    "continue": "Ituloy",
+    "back": "Bumalik",
+    "loading": "Sandali lang…",
+    "retry": "Subukan ulit",
+    "close": "Isara"
+  },
+  "nav": {
+    "home": "Home",
+    "chat": "Kausap",
+    "scan": "Scan",
+    "money": "Pera",
+    "more": "Higit pa",
+    "brandTagline": "Katuwang mo sa Negosyo",
+    "personaFallbackTagline": "I-tap para sa profile",
+    "skipToContent": "Lumaktaw sa content",
+    "personaAria": "Buksan ang profile mo",
+    "businessTypeLabel": {
+      "food_baking": "Food / Baking",
+      "online_selling": "Online seller",
+      "freelance_creative": "Freelance / Creative",
+      "sari_sari_retail": "Sari-sari / Retail",
+      "food_carinderia": "Carinderia",
+      "service_salon": "Service / Salon",
+      "other": "Negosyante"
+    }
+  },
+  "language": {
+    "label": "Wika",
+    "filipino": "Filipino",
+    "english": "English",
+    "aria": "Pumili ng wika",
+    "switching": "Pinapalitan…"
+  },
+  "more": {
+    "title": "Higit pa",
+    "subtitle": "Iba pang mga tool at history",
+    "comingSoon": "Sa lalong madaling panahon",
+    "items": {
+      "deadlines": {
+        "title": "BIR Deadlines",
+        "subtitle": "Tingnan ang mga paalala ni Kai"
+      },
+      "costing": {
+        "title": "Tamang Presyo",
+        "subtitle": "Tukuyin ang tamang markup"
+      },
+      "invoices": {
+        "title": "Mga Invoice",
+        "subtitle": "Singilin nang maayos"
+      },
+      "drafts": {
+        "title": "Mga Draft",
+        "subtitle": "Reply drafts ni Kai"
+      },
+      "checkin": {
+        "title": "Daily Check-in",
+        "subtitle": "Buksan ang history mo"
+      },
+      "kuwento": {
+        "title": "Linggong Kuwento",
+        "subtitle": "Sariwa tuwing Linggo"
+      }
+    }
+  },
+  "home": {
+    "greeting": {
+      "morning": "Magandang umaga",
+      "afternoon": "Magandang hapon",
+      "evening": "Magandang gabi"
+    },
+    "kumustaKa": "kumusta ka?",
+    "checkin": {
+      "openCta": "Ready ka na bang mag-check-in?",
+      "streak": "Pang-{count} araw na natin",
+      "firstTime": "Subukan natin ang unang check-in mo!",
+      "resetCopy": "Balik tayo, {name}. Pang-1 araw ulit natin.",
+      "summary": {
+        "kita": "Kita",
+        "gastos": "Gastos",
+        "mood": "Mood"
+      }
+    },
+    "actions": {
+      "header": "Anong gagawin natin?",
+      "scanResibo": {
+        "title": "Scan resibo",
+        "description": "I-scan ang mga resibo mo"
+      },
+      "kausapKai": {
+        "title": "Kausap si Kai",
+        "description": "Kausapin si Kai — puwede ring mag-draft ng reply"
+      },
+      "birPaalala": {
+        "title": "BIR paalala",
+        "description": "Calendar ng mga tax deadline mo"
+      },
+      "tamangPresyo": {
+        "title": "Tamang presyo",
+        "description": "Magkano talaga ang gastos at margin mo?"
+      },
+      "mgaInvoice": {
+        "title": "Mga invoice",
+        "description": "Gumawa at i-track ang mga invoice"
+      }
+    },
+    "kuwento": {
+      "label": "Kuwento ng Linggo",
+      "kita": "Kita",
+      "gastos": "Gastos",
+      "tubo": "Tubo",
+      "footer": "Buksan ang detalye"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Kumusta, Katuwang!",
+      "subtitle": "I-enter ang email mo para mag-login.",
+      "secureAccess": "Secure Access",
+      "noAccount": "Walang account?",
+      "autoSignup": "Auto ka na ma-sign up.",
+      "disclaimer": "Sa pagtuloy, sumasang-ayon ka sa aming Terms at Privacy Policy."
+    }
+  },
+  "onboarding": {
+    "tagline": "Kamusta ka na?",
+    "stepOf": "Hakbang {current} ng {total}",
+    "step1": {
+      "kaiPrompt": "Hi! Ako si Kai. Kumusta? Ano'ng pangalan mo?",
+      "placeholder": "Halimbawa, Maria",
+      "cta": "Tuloy"
+    },
+    "step2": {
+      "kaiPrompt": "Saan ka galing, {name}? Anong klaseng negosyo?",
+      "cta": "Tuloy"
+    },
+    "step3": {
+      "kaiPrompt": "Magkano ang kita ng negosyo mo kada buwan, {name}?",
+      "cta": "Tuloy"
+    },
+    "step4": {
+      "kaiPrompt": "Ano ang pinakahirap sa'yo ngayon, {name}?",
+      "cta": "Tuloy"
+    },
+    "step5": {
+      "kaiPrompt": "Naka-rehistro ka ba sa BIR, {name}?",
+      "yes": "Oo, naka-register",
+      "no": "Hindi pa",
+      "cta": "Tuloy"
+    },
+    "celebrate": {
+      "title": "Salamat, {name}!",
+      "subtitle": "Handa na tayo. Tara, simulan na natin.",
+      "cta": "Simulan na natin!"
+    },
+    "tour": {
+      "greeting": "Handa ka na, {name}!",
+      "subtitle": "Base sa sinabi mo, ito ang pinakamakakatulong sa'yo:",
+      "primaryCta": "Tara, subukan na natin!",
+      "skipCta": "Explore ko muna"
+    }
+  },
+  "welcomeTour": {
+    "aria": "Welcome tour",
+    "greeting": "Handa ka na, {name}!",
+    "subtitle": "Base sa sinabi mo, ito ang pinakamakakatulong sa'yo.",
+    "primaryCta": "Tara, subukan na natin!",
+    "skipCta": "Explore ko muna",
+    "cards": {
+      "expensesPrimary": {
+        "title": "I-track ang gastos mo",
+        "description": "I-record ang mga gastos sa daily check-in o manual entry — para alam mo lagi kung saan napupunta ang pera."
+      },
+      "birPrimary": {
+        "title": "Hindi ka mahuhuli sa BIR",
+        "description": "Si Kai ang mag-paalala sa lahat ng tax deadlines mo — para walang penalty."
+      },
+      "messagesPrimary": {
+        "title": "Si Kai ang katuwang sa messages",
+        "description": "Pa-draft kay Kai ang mga reply sa customers — natural at professional na Filipino."
+      },
+      "earningsPrimary": {
+        "title": "Alamin kung kumikita ka",
+        "description": "I-check-in ang sales at gastos araw-araw — sa Saan napunta makikita ang buong picture."
+      },
+      "saanNapunta": {
+        "title": "Saan Napunta?",
+        "description": "Category breakdown ng gastos mo."
+      },
+      "kausapKai": {
+        "title": "Kausapin si Kai",
+        "description": "Magtanong tungkol sa negosyo mo."
+      },
+      "trackExpenses": {
+        "title": "Track expenses",
+        "description": "I-log ang gastos habang abala ka."
+      },
+      "birReminders": {
+        "title": "BIR reminders",
+        "description": "Auto reminders para sa deadlines."
+      }
+    }
+  }
+}

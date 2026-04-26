@@ -6,13 +6,22 @@
  * 2. Shows summary card if already checked in (with "I-update?" option)
  * 3. After 5pm, shows stronger nudge CTA if not yet checked in
  * 4. Confirms overwrite before replacing existing check-in
+ *
+ * Phase 7: the "no check-in yet" CTA is rendered as a PaperNote
+ * (paper-note-asymmetric-corners pattern) with streak-aware copy
+ * (Pang-{n} araw na natin / firstTime / resetCopy). The streak count
+ * is computed server-side and passed in via props (per the brief)
+ * so the paper-note SSRs with the correct text.
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sparkles, Check, RefreshCw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Check, RefreshCw } from 'lucide-react';
 import { centavosToPeso } from '@/lib/utils/money';
 import { toManila } from '@/lib/timezone';
+import { PaperNote } from '@/components/ui/paper-note';
+import type { StreakStatus } from '@/lib/streak/compute-streak';
 import CheckInModal from './check-in-modal';
 
 // ============================================================
@@ -30,6 +39,12 @@ interface CheckInData {
 
 interface CheckInSectionProps {
   todayCheckIn: CheckInData | null;
+  /** Streak count computed server-side via lib/streak/compute-streak.ts */
+  streak: number;
+  /** Streak status — drives invite copy variant (firstTime / resetCopy / streak). */
+  streakStatus: StreakStatus;
+  /** Display name — interpolated into resetCopy. Defaults to "Boss". */
+  userName?: string;
 }
 
 const MOOD_DISPLAY: Record<string, string> = {
@@ -47,7 +62,14 @@ const AUTO_PROMPT_KEY = 'akbai_checkin_autoprompt';
 // Component
 // ============================================================
 
-export default function CheckInSection({ todayCheckIn }: CheckInSectionProps) {
+export default function CheckInSection({
+  todayCheckIn,
+  streak,
+  streakStatus,
+  userName = 'Boss',
+}: CheckInSectionProps) {
+  const t = useTranslations('home');
+  const tCommon = useTranslations('common');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false);
   const [showUpdatedToast, setShowUpdatedToast] = useState(false);
@@ -94,10 +116,6 @@ export default function CheckInSection({ todayCheckIn }: CheckInSectionProps) {
     setIsModalOpen(true);
   }, []);
 
-  // ── Check if it's after 5pm Manila time ──
-  const manilaHour = toManila().getUTCHours();
-  const isAfter5pm = manilaHour >= 17;
-
   // ── Already checked in: show summary + optional update ──
   if (todayCheckIn) {
     const moodLabel = todayCheckIn.mood
@@ -106,7 +124,7 @@ export default function CheckInSection({ todayCheckIn }: CheckInSectionProps) {
 
     return (
       <>
-        <section className="px-4 pb-3" data-testid="check-in-summary">
+        <section data-testid="check-in-summary">
           <div className="bg-surface-container rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -116,6 +134,14 @@ export default function CheckInSection({ todayCheckIn }: CheckInSectionProps) {
                 <p className="text-on-surface text-sm font-semibold">
                   Na-check-in ka na!
                 </p>
+                {streak > 0 && (
+                  <span
+                    className="ml-1 text-xs font-semibold text-honey-deep"
+                    data-testid="check-in-summary-streak"
+                  >
+                    {t('checkin.streak', { count: streak })}
+                  </span>
+                )}
               </div>
               <button
                 onClick={handleUpdateClick}
@@ -130,16 +156,18 @@ export default function CheckInSection({ todayCheckIn }: CheckInSectionProps) {
 
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-on-surface-variant">
               {moodLabel && (
-                <span data-testid="check-in-summary-mood">Mood: {moodLabel}</span>
+                <span data-testid="check-in-summary-mood">
+                  {t('checkin.summary.mood')}: {moodLabel}
+                </span>
               )}
               {todayCheckIn.sales_amount != null && (
                 <span data-testid="check-in-summary-sales">
-                  Sales: {centavosToPeso(todayCheckIn.sales_amount)}
+                  {t('checkin.summary.kita')}: {centavosToPeso(todayCheckIn.sales_amount)}
                 </span>
               )}
               {todayCheckIn.expenses_amount != null && (
                 <span data-testid="check-in-summary-expenses">
-                  Gastos: {centavosToPeso(todayCheckIn.expenses_amount)}
+                  {t('checkin.summary.gastos')}: {centavosToPeso(todayCheckIn.expenses_amount)}
                 </span>
               )}
             </div>
@@ -163,7 +191,7 @@ export default function CheckInSection({ todayCheckIn }: CheckInSectionProps) {
                   className="flex-1 bg-surface-container text-on-surface-variant font-semibold rounded-xl py-2.5 text-sm"
                   type="button"
                 >
-                  Cancel
+                  {tCommon('cancel')}
                 </button>
                 <button
                   onClick={handleConfirmOverwrite}
@@ -194,35 +222,47 @@ export default function CheckInSection({ todayCheckIn }: CheckInSectionProps) {
     );
   }
 
-  // ── No check-in yet: show CTA (stronger after 5pm) ──
+  // ── No check-in yet: paper-note invite (Phase 7) ──
+  // Resolve sub-line copy from streak status — three variants per the brief.
+  let subLine: string;
+  if (streakStatus === 'reset') {
+    subLine = t('checkin.resetCopy', { name: userName });
+  } else if (streakStatus === 'active' && streak > 0) {
+    // Active streak — yesterday existed; today is the next checkpoint.
+    // We render Pang-{streak+1} araw na natin so the count reads as
+    // the day-about-to-happen. (Pure-display sugar; the underlying
+    // streak count from compute-streak is unchanged.)
+    subLine = t('checkin.streak', { count: streak + 1 });
+  } else {
+    // status === 'fresh' (and streak is 0) → first-ever check-in.
+    subLine = t('checkin.firstTime');
+  }
+
+  // After-5pm gets a slightly stronger tilt + tape rhythm (still left-tilted
+  // per the asymmetric-corners pattern; the urgency is in the sub-line copy
+  // emitted by the modal upstream rather than another visual variant here).
+  void toManila; // retained for future tilt variation if Anton wants it
+
   return (
     <>
-      <section className="px-4 pb-3" data-testid="check-in-cta">
+      <section data-testid="check-in-cta">
         <button
           onClick={() => setIsModalOpen(true)}
-          className={`w-full rounded-xl p-4 flex items-center gap-3 transition-colors ${
-            isAfter5pm
-              ? 'bg-primary-container/20 ring-1 ring-primary-container/40'
-              : 'bg-primary/10 hover:bg-primary/15 active:bg-primary/20'
-          }`}
+          className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-honey-deep rounded-2xl"
           type="button"
           data-testid="check-in-cta-button"
         >
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-            isAfter5pm ? 'bg-primary-container/30' : 'bg-primary-container/20'
-          }`}>
-            <Sparkles className="w-5 h-5 text-primary-container" />
-          </div>
-          <div className="text-left">
-            <p className="text-on-surface text-sm font-semibold">
-              {isAfter5pm ? 'Tara na, check-in tayo!' : 'Kumusta ang araw mo?'}
+          <PaperNote tilt="left" tape="left" padding="md" tone="default">
+            <p className="font-serif text-[20px] font-medium text-on-surface leading-snug">
+              {t('checkin.openCta')}
             </p>
-            <p className="text-on-surface-variant text-xs">
-              {isAfter5pm
-                ? 'Hapon na — i-record ang sales at gastos mo bago matapos ang araw'
-                : 'I-check in ang mood at numbers mo ngayong araw'}
+            <p
+              className="mt-1.5 text-sm text-honey-deep font-semibold"
+              data-testid="check-in-cta-streak"
+            >
+              {subLine}
             </p>
-          </div>
+          </PaperNote>
         </button>
       </section>
 

@@ -1,9 +1,13 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import OnboardingWizard from '@/components/onboarding/onboarding-wizard';
 import { PageBackground } from '@/components/ui/page-background';
+import { CapizPattern } from '@/components/illustrations/svg/decorative/CapizPattern';
+import { FloatingPetals } from '@/components/illustrations/svg/decorative/FloatingPetals';
 import type { OnboardingState } from '@/lib/kilala-kita';
 
 export const metadata: Metadata = {
@@ -12,6 +16,7 @@ export const metadata: Metadata = {
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
+  const t = await getTranslations('onboarding');
 
   let user;
   if (SKIP_AUTH) {
@@ -22,20 +27,23 @@ export default async function OnboardingPage() {
     if (!user) redirect('/login');
   }
 
-  // Fetch onboarding state
-  const { data: userData } = await supabase
+  // Match the dashboard + /api/onboarding pattern: under SKIP_AUTH the auth
+  // client returns nothing (no real session → RLS blocks every row), so the
+  // page would render fresh while the API would refuse on the next POST.
+  // Use the service client in dev so page + API see the same row.
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
+
+  const { data: userData } = await db
     .from('users')
     .select('display_name, primary_pain, bir_consent, onboarding_step, onboarding_completed')
     .eq('id', user.id)
     .single();
 
-  // Already completed — go to dashboard
   if (userData?.onboarding_completed) {
     redirect('/dashboard');
   }
 
-  // Fetch business profile if exists
-  const { data: profile } = await supabase
+  const { data: profile } = await db
     .from('business_profiles')
     .select('business_type, income_range')
     .eq('user_id', user.id)
@@ -54,19 +62,26 @@ export default async function OnboardingPage() {
 
   return (
     <PageBackground variant="onboarding">
-    <main className="min-h-dvh flex items-start justify-center pt-safe">
-      <div className="w-full max-w-lg md:max-w-2xl px-5 py-8">
-        {/* Logo */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-on-surface">
-            AKB<span className="text-primary-container">ai</span>
-          </h1>
-          <p className="text-outline text-base md:text-lg mt-1">Maaari ka bang Makilala?</p>
+      <main className="relative min-h-dvh flex items-start justify-center pt-safe overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <CapizPattern opacity={0.12} />
         </div>
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <FloatingPetals count={6} />
+        </div>
+        <div className="relative w-full max-w-lg tablet:max-w-2xl px-5 py-8">
+          <header className="mb-6 text-center">
+            <h1 className="text-3xl tablet:text-4xl font-extrabold tracking-tight text-on-surface">
+              AKB<span className="font-serif italic font-medium text-honey-deep">ai</span>
+            </h1>
+            <p className="mt-1 font-serif italic text-honey-deep text-base tablet:text-lg">
+              {t('tagline')}
+            </p>
+          </header>
 
-        <OnboardingWizard initialState={state} />
-      </div>
-    </main>
+          <OnboardingWizard initialState={state} />
+        </div>
+      </main>
     </PageBackground>
   );
 }

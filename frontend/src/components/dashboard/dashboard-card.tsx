@@ -1,5 +1,24 @@
 'use client';
 
+// ============================================================
+// DashboardCard — Phase 7 re-skin (in place per 04-reuse-audit.md)
+// Role: 100x100+ tap target tile rendered on the home action grid (5 tiles)
+//       and reused as the canonical home-tile primitive for any other surface
+//       that wants a single feature CTA (preserve API).
+//
+// Phase 7 changes (Q3 resolution — re-derived tints for the cream `#fdf9f2`
+// home background; no new Tailwind tokens added):
+//   - icon: extended ICON_MAP with the 5 brand icons (Resibo / Usap / Kalendaryo
+//     / Precio / Invoice). Legacy `camera|wallet|calendar|message-circle|message-square`
+//     keys retained for backward-compat callers.
+//   - chrome: per-tile honey/sage/ink tonal tint (each ≥ 3:1 on cream); icon
+//     container is `bg-on-surface/5` (subtle inset, no hairline border per the
+//     No-Line Rule).
+//   - hover: `hover:ring-honey-deep/40`.
+//   - press: `active:animate-pandesal-squish` (B6 keyframe, reduced-motion gates
+//     globally via globals.css).
+// ============================================================
+
 import Link from 'next/link';
 import {
   ResiboScanner,
@@ -8,13 +27,48 @@ import {
   CustomerMessages,
   ReplyDrafter,
 } from '@/components/illustrations/svg';
+import {
+  IconResibo,
+  IconUsap,
+  IconKalendaryo,
+  IconPrecio,
+  IconInvoice,
+} from '@/components/illustrations/icons';
 
+// ICON_MAP — string-key shape preserved for prop API stability. New Phase 7
+// brand icons (resibo / usap / kalendaryo / precio / invoice) are the home
+// canonical set; the legacy lucide-derived illustration keys remain so other
+// dashboard consumers don't break while they migrate.
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  // Phase 7 brand icons (B4 approved)
+  resibo: IconResibo,
+  usap: IconUsap,
+  kalendaryo: IconKalendaryo,
+  precio: IconPrecio,
+  invoice: IconInvoice,
+  // Backward-compat legacy keys (other callers may still pass these)
   camera: ResiboScanner,
   wallet: CashFlow,
   calendar: BirDeadlines,
   'message-circle': CustomerMessages,
   'message-square': ReplyDrafter,
+};
+
+// TILE_TINT — per-icon tonal background, re-derived for cream home bg per Q3.
+// Falls back to surface-container for any unknown icon key (preserves legacy
+// callers that pass other keys).
+const TILE_TINT: Record<string, string> = {
+  resibo: 'bg-honey-pale',
+  usap: 'bg-sage-pale',
+  kalendaryo: 'bg-honey-cream',
+  precio: 'bg-honey-pale',
+  invoice: 'bg-sage-pale',
+  // legacy keys keep the existing chrome
+  camera: 'bg-surface-container',
+  wallet: 'bg-surface-container',
+  calendar: 'bg-surface-container',
+  'message-circle': 'bg-surface-container',
+  'message-square': 'bg-surface-container',
 };
 
 interface DashboardCardProps {
@@ -37,21 +91,22 @@ export default function DashboardCard({
   summary,
 }: DashboardCardProps) {
   const IconComponent = ICON_MAP[icon];
+  const tintClass = TILE_TINT[icon] ?? 'bg-surface-container';
 
   return (
     <Link
       href={href}
-      className="block bg-surface-container rounded-xl p-5 min-h-[100px] transition-colors hover:ring-1 hover:ring-primary-container/40 active:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
+      className={`block ${tintClass} rounded-2xl p-4 min-h-[100px] transition-all hover:ring-1 hover:ring-honey-deep/40 active:animate-pandesal-squish focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-honey-deep`}
       data-testid={`dashboard-card-${icon}`}
-      style={{ minHeight: '100px' }} // enlarged touch target
+      style={{ minHeight: '100px' }} // enforces 44x44 minimum touch target floor
     >
       <div className="flex items-start gap-3">
-        {/* Icon */}
-        <div className="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center flex-shrink-0">
+        {/* Icon — soft inset chip, color-shift over hairline (No-Line Rule). */}
+        <div className="w-12 h-12 rounded-xl bg-on-surface/5 flex items-center justify-center flex-shrink-0">
           {IconComponent ? (
             <IconComponent size={32} />
           ) : (
-            <span className="text-primary-container text-sm">?</span>
+            <span className="text-honey-deep text-sm">?</span>
           )}
         </div>
 
@@ -65,7 +120,7 @@ export default function DashboardCard({
               </p>
               {summary && (
                 <p
-                  className="text-tertiary text-xs mt-1 font-semibold truncate"
+                  className="text-honey-deep text-xs mt-1 font-semibold truncate"
                   data-testid={`dashboard-card-summary-${icon}`}
                 >
                   {summary}
@@ -73,7 +128,7 @@ export default function DashboardCard({
               )}
             </>
           ) : (
-            <p className="text-outline text-xs mt-0.5 italic line-clamp-2">
+            <p className="text-ink-faint text-xs mt-0.5 italic line-clamp-2">
               {emptyState ?? description}
             </p>
           )}

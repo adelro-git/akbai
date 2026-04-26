@@ -30,6 +30,14 @@ export interface PromptAssemblyInput {
   userContext: UserContext | null;
   /** Optional JSON string with feature-specific data (e.g., morning briefing context) */
   dataContext?: string;
+  /**
+   * Optional per-call override of the model's expected output format. Appended
+   * to the prompt as a separate layer so feature blocks stay reusable. Used by
+   * morning_briefing (Phase 7) to request a strict JSON object containing both
+   * `briefing` and `tagline` fields. Non-breaking: if omitted, behaviour is
+   * unchanged.
+   */
+  outputFormatHint?: string;
 }
 
 /** User profile data injected into the prompt at runtime. */

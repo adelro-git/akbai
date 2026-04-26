@@ -1,9 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { PainPoint } from '@/lib/kilala-kita/schemas';
-import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
-import { ReceiptTracking, BirCompliance, CustomerMessages, KnowingEarnings } from '@/components/illustrations/svg';
+import {
+  ReceiptTracking,
+  BirCompliance,
+  CustomerMessages,
+  KnowingEarnings,
+} from '@/components/illustrations/svg';
+import { cn } from '@/lib/utils';
 
 interface StepPainPointProps {
   onComplete: (painPoint: PainPoint) => void;
@@ -12,7 +18,12 @@ interface StepPainPointProps {
   initialValue?: string | null;
 }
 
-const PAIN_POINTS: { value: PainPoint; label: string; description: string; icon: React.ReactNode }[] = [
+const PAIN_POINTS: {
+  value: PainPoint;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+}[] = [
   {
     value: 'receipt_tracking',
     label: 'Nawawala ang mga resibo ko',
@@ -42,11 +53,12 @@ const PAIN_POINTS: { value: PainPoint; label: string; description: string; icon:
 export default function StepPainPoint({
   onComplete,
   loading,
-  firstName,
   initialValue,
 }: StepPainPointProps) {
+  const t = useTranslations('onboarding.step4');
+  const tCommon = useTranslations('common');
   const [selected, setSelected] = useState<PainPoint | null>(
-    (initialValue as PainPoint) ?? null
+    (initialValue as PainPoint) ?? null,
   );
 
   const handleContinue = () => {
@@ -55,39 +67,23 @@ export default function StepPainPoint({
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Step header illustration — full width */}
-      <div className="flex justify-center w-full">
-        <IllustrationWrapper
-          src="onboarding/pain-point.webp"
-          alt="What's your biggest challenge?"
-          category="onboarding"
-          className="w-full max-w-full"
-        />
-      </div>
-
-      {/* Kai bubble */}
-      <div className="bg-surface-container rounded-2xl rounded-tl-sm p-4">
-        <p className="text-on-surface text-base leading-relaxed">
-          Ano ang pinakamasakit sa ulo mo sa negosyo,{' '}
-          <span className="text-primary-container font-semibold">{firstName}</span>?
-        </p>
-      </div>
-
-      {/* Pain point cards */}
-      <div className="grid gap-3">
+    <div className="flex flex-col gap-4">
+      <div className="grid gap-2.5">
         {PAIN_POINTS.map((pain) => (
           <button
             key={pain.value}
             type="button"
             onClick={() => setSelected(pain.value)}
-            className={`flex items-center gap-3 w-full text-left p-4 rounded-xl border transition-all ${
+            className={cn(
+              'flex items-center gap-3 w-full text-left p-3.5 rounded-2xl border transition-all min-h-[60px]',
               selected === pain.value
-                ? 'border-primary-container bg-primary-container/10 ring-1 ring-primary-container'
-                : 'border-outline-variant/30 bg-surface-container-high hover:border-outline-variant/50'
-            }`}
+                ? 'border-honey bg-honey-pale/60 ring-2 ring-honey/40'
+                : 'border-outline-soft/40 bg-surface-container-lowest hover:border-honey/40',
+            )}
           >
-            <span className="flex items-center justify-center w-8 h-8">{pain.icon}</span>
+            <span className="flex items-center justify-center w-9 h-9 flex-shrink-0">
+              {pain.icon}
+            </span>
             <div>
               <p className="text-on-surface font-semibold text-sm">{pain.label}</p>
               <p className="text-on-surface-variant text-xs">{pain.description}</p>
@@ -100,9 +96,9 @@ export default function StepPainPoint({
         type="button"
         onClick={handleContinue}
         disabled={loading || !selected}
-        className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold py-3.5 px-4 rounded-full shadow-ambient transition-all disabled:opacity-40 disabled:cursor-not-allowed min-h-[48px]"
       >
-        {loading ? 'Sine-save...' : 'Sunod'}
+        {loading ? tCommon('loading') : t('cta')}
       </button>
     </div>
   );

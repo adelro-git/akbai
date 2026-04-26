@@ -1,227 +1,282 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ResiboScanner, BirCompliance, CustomerMessages, KnowingEarnings } from '@/components/illustrations/svg';
+import { useTranslations } from 'next-intl';
+import { Kai, type KaiExpression } from '@/components/illustrations/kai';
+import { PaperNote } from '@/components/ui/paper-note';
+import { createClient } from '@/lib/supabase/client';
+import {
+  ResiboScanner,
+  BirCompliance,
+  CustomerMessages,
+  KnowingEarnings,
+} from '@/components/illustrations/svg';
 
+// Backwards-compat localStorage key. Read on mount as a fallback for users who
+// completed the tour before the user_metadata switch landed.
 const TOUR_STORAGE_KEY = 'akbai_tour_seen';
+// User metadata key — written via supabase.auth.updateUser().
+const TOUR_METADATA_KEY = 'welcome_tour_completed';
 
-interface FeatureHighlight {
+// ============================================================
+// Phase 6 — Kai-led 3-card paper-note welcome tour.
+// Replaces the prior modal overlay with: a Kai expression header,
+// a primary PaperNote card (driven by the user's pain point) and
+// 2 supporting paper-note cards. Completion persists to
+// user_metadata.welcome_tour_completed via supabase.auth.updateUser
+// + localStorage as a same-device backup.
+// ============================================================
+
+interface FeatureCard {
   icon: React.ReactNode;
-  title: string;
-  description: string;
+  i18nTitleKey: string;
+  i18nDescKey: string;
   href: string;
 }
 
-/**
- * Map each pain point to a prioritized feature to lead them to,
- * plus supporting features they should also know about.
- */
-const PAIN_TO_FEATURES: Record<string, { primary: FeatureHighlight; supporting: FeatureHighlight[] }> = {
+interface FeatureSet {
+  expression: KaiExpression;
+  primary: FeatureCard;
+  supporting: [FeatureCard, FeatureCard];
+}
+
+const PAIN_TO_FEATURES: Record<string, FeatureSet> = {
   receipt_tracking: {
+    expression: 'happy',
     primary: {
-      icon: <ResiboScanner size={28} className="text-primary" />,
-      title: 'Track ang gastos mo',
-      description: 'I-record ang expenses mo araw-araw sa check-in o manual entry — para lagi mong alam saan napupunta ang pera.',
+      icon: <ResiboScanner size={28} className="text-honey-deep" />,
+      i18nTitleKey: 'cards.expensesPrimary.title',
+      i18nDescKey: 'cards.expensesPrimary.description',
       href: '/expenses',
     },
     supporting: [
       {
-        icon: <KnowingEarnings size={20} className="text-primary" />,
-        title: 'Saan Napunta?',
-        description: 'Category breakdown ng gastos mo.',
+        icon: <KnowingEarnings size={20} className="text-honey-deep" />,
+        i18nTitleKey: 'cards.saanNapunta.title',
+        i18nDescKey: 'cards.saanNapunta.description',
         href: '/expenses',
       },
       {
-        icon: <CustomerMessages size={20} className="text-primary" />,
-        title: 'Kausapin si Kai',
-        description: 'Tanungin si Kai tungkol sa negosyo mo.',
+        icon: <CustomerMessages size={20} className="text-honey-deep" />,
+        i18nTitleKey: 'cards.kausapKai.title',
+        i18nDescKey: 'cards.kausapKai.description',
         href: '/chat',
       },
     ],
   },
   bir_compliance: {
+    expression: 'working',
     primary: {
-      icon: <BirCompliance size={28} className="text-primary" />,
-      title: 'Hindi mo na makakalimutan ang BIR',
-      description: 'Si Kai ang mag-re-remind sa lahat ng tax deadlines mo — para walang penalty.',
+      icon: <BirCompliance size={28} className="text-honey-deep" />,
+      i18nTitleKey: 'cards.birPrimary.title',
+      i18nDescKey: 'cards.birPrimary.description',
       href: '/chat',
     },
     supporting: [
       {
-        icon: <CustomerMessages size={20} className="text-primary" />,
-        title: 'Tanungin si Kai',
-        description: 'I-ask ang BIR questions mo kay Kai.',
+        icon: <CustomerMessages size={20} className="text-honey-deep" />,
+        i18nTitleKey: 'cards.kausapKai.title',
+        i18nDescKey: 'cards.kausapKai.description',
         href: '/chat',
       },
       {
-        icon: <ResiboScanner size={20} className="text-primary" />,
-        title: 'Track expenses',
-        description: 'Para ready ka sa tax filing.',
+        icon: <ResiboScanner size={20} className="text-honey-deep" />,
+        i18nTitleKey: 'cards.trackExpenses.title',
+        i18nDescKey: 'cards.trackExpenses.description',
         href: '/expenses',
       },
     ],
   },
   customer_messages: {
+    expression: 'thinking',
     primary: {
-      icon: <CustomerMessages size={28} className="text-primary" />,
-      title: 'Si Kai ang katuwang mo sa messages',
-      description: 'Pa-draft kay Kai ang replies sa customers mo — professional at natural Filipino.',
+      icon: <CustomerMessages size={28} className="text-honey-deep" />,
+      i18nTitleKey: 'cards.messagesPrimary.title',
+      i18nDescKey: 'cards.messagesPrimary.description',
       href: '/chat',
     },
     supporting: [
       {
-        icon: <ResiboScanner size={20} className="text-primary" />,
-        title: 'Track expenses',
-        description: 'I-log ang gastos habang busy ka.',
+        icon: <ResiboScanner size={20} className="text-honey-deep" />,
+        i18nTitleKey: 'cards.trackExpenses.title',
+        i18nDescKey: 'cards.trackExpenses.description',
         href: '/expenses',
       },
       {
-        icon: <BirCompliance size={20} className="text-primary" />,
-        title: 'BIR reminders',
-        description: 'Auto reminders para sa deadlines.',
+        icon: <BirCompliance size={20} className="text-honey-deep" />,
+        i18nTitleKey: 'cards.birReminders.title',
+        i18nDescKey: 'cards.birReminders.description',
         href: '/chat',
       },
     ],
   },
   knowing_earnings: {
+    expression: 'celebrating',
     primary: {
-      icon: <KnowingEarnings size={28} className="text-primary" />,
-      title: 'Alamin kung kumikita ka',
-      description: 'I-check-in ang sales at gastos mo araw-araw — sa expenses mo makikita ang buong picture.',
+      icon: <KnowingEarnings size={28} className="text-honey-deep" />,
+      i18nTitleKey: 'cards.earningsPrimary.title',
+      i18nDescKey: 'cards.earningsPrimary.description',
       href: '/expenses',
     },
     supporting: [
       {
-        icon: <ResiboScanner size={20} className="text-primary" />,
-        title: 'Saan Napunta?',
-        description: 'Detailed breakdown ng expenses.',
+        icon: <ResiboScanner size={20} className="text-honey-deep" />,
+        i18nTitleKey: 'cards.saanNapunta.title',
+        i18nDescKey: 'cards.saanNapunta.description',
         href: '/expenses',
       },
       {
-        icon: <CustomerMessages size={20} className="text-primary" />,
-        title: 'Kausapin si Kai',
-        description: 'Tanungin kung magkano ang net mo.',
+        icon: <CustomerMessages size={20} className="text-honey-deep" />,
+        i18nTitleKey: 'cards.kausapKai.title',
+        i18nDescKey: 'cards.kausapKai.description',
         href: '/chat',
       },
     ],
   },
 };
 
-const DEFAULT_FEATURES = PAIN_TO_FEATURES['knowing_earnings'];
+const DEFAULT_FEATURES = PAIN_TO_FEATURES.knowing_earnings;
 
 interface WelcomeTourProps {
   primaryPain?: string | null;
   firstName?: string;
+  /** Server-supplied initial completion flag (from supabase user_metadata). */
+  initiallyCompleted?: boolean;
 }
 
-/**
- * Post-onboarding welcome tour — personalized based on pain point.
- * Shows the most relevant feature first with a CTA to go there directly.
- */
-export default function WelcomeTour({ primaryPain, firstName }: WelcomeTourProps) {
+export default function WelcomeTour({
+  primaryPain,
+  firstName,
+  initiallyCompleted = false,
+}: WelcomeTourProps) {
   const router = useRouter();
+  const t = useTranslations('welcomeTour');
   const [visible, setVisible] = useState(false);
 
   const features = (primaryPain && PAIN_TO_FEATURES[primaryPain]) || DEFAULT_FEATURES;
 
   useEffect(() => {
+    if (initiallyCompleted) return;
     try {
       const seen = localStorage.getItem(TOUR_STORAGE_KEY);
-      if (!seen) {
-        setVisible(true);
+      if (!seen) setVisible(true);
+    } catch {
+      setVisible(true);
+    }
+  }, [initiallyCompleted]);
+
+  const persistCompletion = useCallback(async () => {
+    try {
+      localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+    } catch {
+      /* best-effort */
+    }
+    try {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        await supabase.auth.updateUser({
+          data: { ...data.user.user_metadata, [TOUR_METADATA_KEY]: true },
+        });
       }
     } catch {
-      // localStorage unavailable
+      /* dev-mode SKIP_AUTH or offline — localStorage carries the flag */
     }
   }, []);
 
-  function handleGo() {
-    try {
-      localStorage.setItem(TOUR_STORAGE_KEY, 'true');
-    } catch {
-      // best-effort
-    }
-    // Navigate first — keep modal visible as a loading state so dashboard doesn't flash
+  const handleGo = useCallback(async () => {
+    await persistCompletion();
     router.push(features.primary.href);
     router.refresh();
-  }
+  }, [persistCompletion, router, features.primary.href]);
 
-  function handleSkip() {
+  const handleSkip = useCallback(async () => {
     setVisible(false);
-    try {
-      localStorage.setItem(TOUR_STORAGE_KEY, 'true');
-    } catch {
-      // best-effort
-    }
-  }
+    await persistCompletion();
+  }, [persistCompletion]);
 
   if (!visible) return null;
 
-  const greeting = firstName ? `Handa ka na, ${firstName}!` : 'Handa ka na!';
+  const greetingName = firstName ?? 'Boss';
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-[20px] bg-black/20"
-      data-testid="welcome-tour-modal"
+      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-[16px] bg-black/30 px-4 py-8"
       role="dialog"
       aria-modal="true"
-      aria-label="Welcome tour"
+      aria-label={t('aria')}
+      data-testid="welcome-tour-modal"
     >
-      <div className="bg-surface rounded-2xl p-6 mx-4 max-w-md w-full shadow-ambient-lg flex flex-col gap-5">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h2 className="text-xl font-bold text-on-surface">{greeting}</h2>
-          <p className="text-on-surface-variant text-sm leading-relaxed">
-            Base sa sinabi mo, eto ang pinakamakakatulong sa&apos;yo:
-          </p>
-        </div>
+      <div className="w-full max-w-md flex flex-col gap-5">
+        <header className="flex items-end gap-3">
+          <Kai expression={features.expression} size={88} animated />
+          <PaperNote
+            tilt="left"
+            tape="right"
+            padding="md"
+            tone="honey"
+            className="flex-1"
+          >
+            <p className="font-serif text-lg leading-snug">
+              {t('greeting', { name: greetingName })}
+            </p>
+            <p className="mt-1 text-xs">{t('subtitle')}</p>
+          </PaperNote>
+        </header>
 
-        {/* Primary feature — highlighted */}
-        <div
-          className="bg-primary-container/10 border border-primary-container/20 rounded-xl p-5 flex flex-col gap-3"
+        <PaperNote
+          tilt="right"
+          padding="md"
+          className="flex flex-col gap-3"
           data-testid="welcome-tour-primary"
         >
-          <div className="w-12 h-12 rounded-full bg-primary-container/15 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-honey-pale/70 flex items-center justify-center">
             {features.primary.icon}
           </div>
-          <p className="text-on-surface font-bold text-base">{features.primary.title}</p>
-          <p className="text-on-surface-variant text-sm leading-relaxed">{features.primary.description}</p>
-        </div>
+          <p className="font-serif text-base font-semibold leading-snug text-on-surface">
+            {t(features.primary.i18nTitleKey)}
+          </p>
+          <p className="text-sm leading-relaxed text-on-surface-variant">
+            {t(features.primary.i18nDescKey)}
+          </p>
+        </PaperNote>
 
-        {/* Supporting features */}
-        <div className="flex gap-3" data-testid="welcome-tour-supporting">
-          {features.supporting.map((feat) => (
-            <div
-              key={feat.title}
-              className="flex-1 bg-surface-container-low rounded-xl p-3 flex flex-col gap-1.5"
+        <div className="grid grid-cols-2 gap-3">
+          {features.supporting.map((feat, idx) => (
+            <PaperNote
+              key={feat.i18nTitleKey}
+              tilt={idx === 0 ? 'left' : 'right'}
+              padding="sm"
+              className="flex flex-col gap-1.5"
             >
-              <div className="w-8 h-8 rounded-full bg-primary-container/10 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-honey-pale/60 flex items-center justify-center">
                 {feat.icon}
               </div>
-              <p className="text-on-surface font-semibold text-xs">{feat.title}</p>
-              <p className="text-on-surface-variant text-[11px] leading-relaxed">{feat.description}</p>
-            </div>
+              <p className="font-semibold text-on-surface text-xs">{t(feat.i18nTitleKey)}</p>
+              <p className="text-on-surface-variant text-[11px] leading-snug">
+                {t(feat.i18nDescKey)}
+              </p>
+            </PaperNote>
           ))}
         </div>
 
-        {/* CTAs */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 pt-1">
           <button
             type="button"
             onClick={handleGo}
-            className="w-full bg-primary-container hover:bg-primary text-on-primary font-semibold py-3 px-4 rounded-xl transition-all min-h-[44px]"
+            className="w-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold py-3.5 px-4 rounded-full shadow-ambient transition-all min-h-[48px]"
             data-testid="welcome-tour-go-btn"
           >
-            Tara, subukan na natin!
+            {t('primaryCta')}
           </button>
           <button
             type="button"
             onClick={handleSkip}
-            className="w-full text-on-surface-variant hover:text-on-surface text-sm py-2 transition-colors"
+            className="w-full text-on-surface-variant hover:text-on-surface text-sm py-2.5 transition-colors"
             data-testid="welcome-tour-skip-btn"
           >
-            Explore ko muna
+            {t('skipCta')}
           </button>
         </div>
       </div>
