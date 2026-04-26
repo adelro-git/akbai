@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-04-26 (Frontend Redesign Phase 4 complete + Phase 5 handoff written for next session)
+> Last updated: 2026-04-26 (Frontend Redesign Phase 5 + Phase 6 complete + Phase 7 handoff written for next session)
 
 ---
 
@@ -1031,3 +1031,136 @@ Lead: build-engineer. Reviewers: build-ux (chrome is high-traffic — every scre
 **Why these groupings:** session 2 pairs because chrome wraps the auth flow; sessions 4 + 6 pair similar-concern screen ports / cross-cutting passes; session 3 is alone because of the feel-test gate; session 5 is alone because Phase 10 is the only L-feature left.
 
 **Each future session opens with the same pattern:** read this multi-session table to confirm "you are here" → read the most recent handoff entry → verify baseline (typecheck + tests + build) → spawn the relevant `/build` team → ship → write next handoff → commit → close.
+
+---
+
+## Frontend Redesign — Phase 5 (Shared Chrome) — DONE
+
+**Date:** 2026-04-26
+**Commit:** `d9de0f5` on branch `claude/redesign-phase-3-4`
+**Team:** team-lead (PM, in-session) + build-engineer (lead, direct) + build-ux (review pass) + build-qa (test scaffold).
+
+### Deliverables
+
+- **`SidebarNav` re-skin** ([sidebar-nav.tsx](../../frontend/src/components/dashboard/sidebar-nav.tsx)) — preserves the default-export API per Sprint 5 reuse rule. New layout: `<KaiSitting size={40}>` brand lockup + AKBai wordmark with Fraunces italic "ai" tail, persona pill (taps to `/profile` per C4) sourced from a server-side fetch in `(app)/layout.tsx`, 4 primary nav items (`Home / Chat / Scan / Pera`) using Phase 4 brand nav icons (`IconHomeNav` / `IconChatNav` / `IconScanNav` / `IconMoneyNav`), 5th item is the `<MoreDrawer>` Vaul trigger with `IconMoreNav`. Active state: `bg-gradient-to-r from-honey to-honey-deep` pill + `shadow-ambient`. Language toggle pinned to the bottom (per C5).
+- **`BottomNav` re-skin** ([bottom-nav.tsx](../../frontend/src/components/dashboard/bottom-nav.tsx)) — 5 tabs preserved (`Home / Chat / Scan / Pera / More`), Profile removed (now reachable via the sidebar persona pill). Honey-deep active state on icon + label, glass blur preserved (`glass-nav` utility per C6), the 5th tab opens `<MoreDrawer showLanguageToggle>` so locale switching reaches mobile users without leaving the chrome.
+- **`MoreDrawer`** ([more-drawer.tsx](../../frontend/src/components/dashboard/more-drawer.tsx)) — Vaul-based bottom-sheet drawer with the 6 long-tail routes from C7 (BIR Deadlines, Tamang Presyo, Mga Invoice, Mga Draft\*, Daily Check-in history, Linggong Kuwento\*). Routes marked \* render as coming-soon stubs (`comingSoon: true`, `href: null`) until Phase 10 ships them. Items registry exported as `MORE_DRAWER_ITEMS` for tests + future reuse.
+- **`LanguageToggle`** ([language-toggle.tsx](../../frontend/src/components/dashboard/language-toggle.tsx)) — FIL/EN pill pair wired via `useLocale()` + the Phase 3 `setLocaleCookie` server action. Compact variant (`compact` prop) lives inside the `MoreDrawer` for mobile parity. Uses `useTransition` to disable both pills during the action so taps can't double-fire.
+- **`(app)/layout.tsx`** ([layout.tsx](../../frontend/src/app/(app)/layout.tsx)) — converted to async; fetches `users.display_name` + `business_profiles.{business_name, business_type}` server-side via `createClient()` (or `createServiceClient()` under `SKIP_AUTH`), derives the persona pill `name + tagline`, and pipes it into `<SidebarNav persona={...}>`. Outer container switched from `md:ml-64` (768px / 256px) to `tablet:ml-60` (860px / 240px) per C3. Tagline derivation handles the `other:{user-typed-string}` business_type prefix used in onboarding step 2.
+- **i18n catalogs** ([fil.json](../../frontend/messages/fil.json), [en.json](../../frontend/messages/en.json)) — `nav.brandTagline`, `nav.personaFallbackTagline`, `nav.personaAria`, `nav.businessTypeLabel.*` (7 keys), `language.*` (5 keys), `more.title/subtitle/comingSoon`, `more.items.{deadlines,costing,invoices,drafts,checkin,kuwento}.{title,subtitle}`. Auth + onboarding namespaces pre-populated for Phase 6.
+- **Tests** — 4 new vitest suites under `components/dashboard/__tests__/`: `sidebar-nav.test.ts` (4 cases), `bottom-nav.test.ts` (rewritten — old test ran against the legacy 5-tab Profile layout), `more-drawer.test.ts` (5 cases on the items registry), `language-toggle.test.ts` (4 cases on the locale guard).
+
+### Verification (recorded at commit time)
+
+- `npx tsc --noEmit`: **38 errors — identical pre-existing baseline.** Zero new TS errors introduced.
+- `npx vitest run`: **81 files / 1180 tests passing.** +13 new chrome tests vs Phase 4 baseline of 1167.
+- `npx next build`: 45 routes compiled clean, "Compiled successfully", no warnings.
+
+### Open follow-ups Phase 5 leaves
+
+- **`md:` → `tablet:` band on internal pages** — `expenses/page.tsx`, `costing/page.tsx`, `invoices/page.tsx` still use `md:hidden` for FAB visibility / `hidden md:flex` for the inline button. At 768–860px the FAB is hidden but the bottom nav is still showing — functional but slightly redundant. Not chrome scope; resolve in Phase 8/10 when those pages are otherwise touched.
+- **Persona pill data freshness** — server-side fetched once per layout render. If the user updates business name in Profile, the pill won't refresh until the next navigation. Acceptable for Phase 5 (single-user app, low edit frequency); revisit if a real-time signal becomes necessary.
+- **Playwright nav E2E** — deferred to Phase 7 home gate. The MoreDrawer test currently covers the items registry; full open/close/route navigation E2E is on the Phase 7 punch list with the visual-parity tests.
+
+---
+
+## Frontend Redesign — Phase 6 (Auth + Onboarding) — DONE
+
+**Date:** 2026-04-26
+**Commit:** `0efc271` on branch `claude/redesign-phase-3-4`
+**Team:** team-lead (PM) + build-engineer (lead, direct) + build-ux (Kai expression mapping + paper-note tilt review) + build-qa (sampaguita-progress + welcome-tour test rewrites). build-marketing not separately spawned — onboarding copy passes brand-pillar review since all strings live in `messages/{fil,en}.json` Phase 6 keys with the existing voice manual.
+
+### Deliverables
+
+- **Login redesign** ([(auth)/login/page.tsx](../../frontend/src/app/(auth)/login/page.tsx)) — `<KaiSitting size={168} animated>` hero replaces the prior twin-mark image stack, Fraunces serif title pulled from `auth.login.title`, single `<CapizPattern opacity={0.1}>` background + `<FloatingPetals count={4}>` ambient layer (perf-light at day-1 budget). All copy strings localized via `getTranslations('auth.login')`. Form internals (`LoginForm`) untouched.
+- **`OnboardingShell`** ([onboarding-shell.tsx](../../frontend/src/components/onboarding/onboarding-shell.tsx)) — kumustahan frame: `<SampaguitaProgress>` row at top, then a `<Kai>` expression at 72px next to a tilted `<PaperNote>` carrying the step prompt (`font-serif text-lg`), plus a `promptSubtitle` slot, then the step's form content as `children`. Tilt direction alternates `left/right/left/right/left` per step.
+- **`SampaguitaProgress`** ([sampaguita-progress.tsx](../../frontend/src/components/onboarding/sampaguita-progress.tsx)) — 5-dot stepper. `done` dots render `<IconSampaguita size={20}>`, `current` is a `bg-honey-deep` filled circle with `shadow-ambient`, `future` is an outlined circle. Replaces the generic linear progress bar.
+- **`OnboardingWizard` refactor** ([onboarding-wizard.tsx](../../frontend/src/components/onboarding/onboarding-wizard.tsx)) — wraps each step in `<OnboardingShell>` with the canonical Kai expression map: `1: waving → 2: thinking → 3: happy → 4: concerned → 5: working`. Step 5.5 (BIR tax type) reuses `working`. Celebration step 6 renders `<KaiSitting size={144} animated>` + a honey-toned `<PaperNote>` with the first Kai message. All prompt copy localized via `useTranslations('onboarding')`.
+- **5 step component refactors** ([step-welcome.tsx](../../frontend/src/components/onboarding/step-welcome.tsx), [step-business-type.tsx](../../frontend/src/components/onboarding/step-business-type.tsx), [step-income-range.tsx](../../frontend/src/components/onboarding/step-income-range.tsx), [step-pain-point.tsx](../../frontend/src/components/onboarding/step-pain-point.tsx), [step-bir-consent.tsx](../../frontend/src/components/onboarding/step-bir-consent.tsx)) — keep their existing form + state machines (incl. `useRef` + `onClick` per the React 19 rule, plus the `other:{custom-text}` business-type schema). Each step strips the ad-hoc Kai bubble and `IllustrationWrapper` since the shell now provides them. CTAs adopt the Phase 5 honey-gradient pill (`bg-gradient-to-r from-honey to-honey-deep`). [step-bir-tax-type.tsx](../../frontend/src/components/onboarding/step-bir-tax-type.tsx) gets the same treatment.
+- **`(app)/onboarding/page.tsx`** ([page.tsx](../../frontend/src/app/(app)/onboarding/page.tsx)) — wrapped in `<CapizPattern opacity={0.12}>` + `<FloatingPetals count={6}>` motif layers. Title swapped to "AKB**ai**" (Fraunces italic honey-deep on the "ai" tail) + Fraunces italic tagline "Kilala kita" pulled from `onboarding.tagline`.
+- **Welcome tour rebuild** ([welcome-tour.tsx](../../frontend/src/components/onboarding/welcome-tour.tsx)) — replaces the prior modal layout with: a Kai-led header (`<Kai expression={pain-mapped} size={88} animated>` next to a tilted `<PaperNote tone="honey">` greeting), a primary `<PaperNote>` card driven by `primaryPain`, and 2 supporting paper-note cards in a 2-column grid. Pain-point dictionary maps to a Kai expression (`receipt_tracking → happy`, `bir_compliance → working`, `customer_messages → thinking`, `knowing_earnings → celebrating`).
+- **Cross-device persistence** — completion now writes `user_metadata.welcome_tour_completed: true` via `supabase.auth.updateUser({ data: { ...user.user_metadata, welcome_tour_completed: true } })` on dismiss. Falls back to `localStorage.akbai_tour_seen` as a same-device backup for `SKIP_AUTH` / offline. The dashboard server-side reads `user.user_metadata.welcome_tour_completed` and passes `initiallyCompleted` to `<WelcomeTour>`, so returning users on a new device see the tour skip after the metadata write completes.
+- **i18n catalogs (Phase 6)** — `auth.login.{title, subtitle, secureAccess, noAccount, autoSignup, disclaimer}`, `onboarding.{tagline, stepOf, step1-5.{kaiPrompt, cta, placeholder}, step5.{yes, no}, celebrate.{title, subtitle, cta}, tour.*}`, full `welcomeTour.{aria, greeting, subtitle, primaryCta, skipCta, cards.{expensesPrimary, birPrimary, messagesPrimary, earningsPrimary, saanNapunta, kausapKai, trackExpenses, birReminders}.{title, description}}`. Both FIL and EN.
+- **Tests** — `sampaguita-progress.test.ts` (9 cases on step-state derivation + the canonical Kai expression map), `welcome-tour.test.ts` rewritten for the Phase 6 persistence-key contract + pain coverage (the legacy 4-card list test was tightly coupled to the old layout and would have fought every future iteration).
+
+### Verification (recorded at commit time)
+
+- `npx tsc --noEmit`: **38 errors — identical pre-existing baseline.** Zero new TS errors introduced.
+- `npx vitest run`: **82 files / 1188 tests passing.** Net +8 vs Phase 5 baseline of 1180 (sampaguita-progress added; welcome-tour rewritten in place).
+- `npx next build`: 45 routes compiled clean, "Compiled successfully in 4.3s", no warnings.
+
+### Open follow-ups Phase 6 leaves
+
+- **Locale flip live verification** — the i18n catalogs carry the keys for chrome + auth + onboarding + welcomeTour, and the LanguageToggle is wired to `setLocaleCookie`, but a manual browser-driven flip on `/dashboard` / `/profile` / `/chat` was not captured in this non-interactive session. Recommend Anton runs `npm run dev`, taps the FIL/EN pill in the sidebar, and confirms the chrome strings flip on at least 3 routes before declaring the redesign locale-complete.
+- **Playwright before/after screenshots** — deferred to Phase 7 home gate (already on the Phase 7 punch list). The Phase 4 motif → Phase 5 chrome → Phase 6 onboarding flow is internally consistent on disk; visual parity vs the handoff prototype is the home-gate test, not a Phase 6 test.
+- **`StepBirConsent` and `StepBirTaxType` `firstName` prop** — both still accept `firstName` in their interface but no longer use it (the shell renders the named greeting). Kept the prop signature stable so the wizard's existing `<StepBirConsent firstName={firstName}>` call site doesn't need a typecheck update; remove during a Phase 11 cleanup pass.
+- **Kai mark soft-glow rim** — still tracked in memory `project_kai_mark_master_reexport.md`. The login hero renders the existing 512×512 mark; the faint cream rim remains until Anton re-exports the master with the soft-glow layer hidden.
+
+---
+
+## Frontend Redesign — Phase 7 starting state (handoff for next session)
+
+**Date:** 2026-04-26 (handoff written at end of Phase 5+6 session for cross-session continuity)
+**Session boundary:** Phase 5 + Phase 6 shipped, committed to branch `claude/redesign-phase-3-4` (commits `d9de0f5` + `0efc271`). Next session is **Phase 7 ONLY** — the flagship home — with a 24h feel-test gate as the immutable session boundary.
+
+### What's on disk and committed (cumulative)
+
+- **Phase 1 + 1.5 research**, **Phase 2 synthesis** (all sections SIGNED OFF, repos APPROVED, 13 questions RESOLVED), **Phase 3 foundations** (Tailwind tablet:860px + Fraunces + honey/sage/ink scales + 13 keyframes + palette context + i18n + primitives), **Phase 4 brand vocabulary** (15 brand icons + 8 motifs + Kai composition + 512×512 Kai mark) — see prior handoff for the full file map.
+- **Phase 5 chrome** — re-skinned `sidebar-nav.tsx` + `bottom-nav.tsx` in place, `(app)/layout.tsx` async with persona fetch + `tablet:` breakpoint, `language-toggle.tsx` + `more-drawer.tsx` shipped, i18n catalogs hold all chrome keys.
+- **Phase 6 auth + onboarding** — login redesign with KaiSitting hero, `OnboardingShell` + `SampaguitaProgress` + Kai expression mapping per step, paper-note welcome tour with `user_metadata.welcome_tour_completed` cross-device persistence.
+
+### What's NOT wired yet (Phase 7 scope)
+
+- **`/dashboard` (home) layout per spec** — current `dashboard/page.tsx` still renders the prior dashboard cards + greeting + check-in section + morning briefing in the legacy structure. Phase 7 replaces this with the synthesized layout from [`screens/00-home.md`](../../design_handoff_akbai_redesign/synthesis/screens/00-home.md): Kumustahan hero (KaiSitting 168px + Fraunces greeting + time-of-day pill + Squiggle underline), `<PaperNote>` check-in invite, "Anong gagawin natin?" 5-tile action grid (`grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))`), `<WovenDivider>` separator, Kuwento ng Linggo card (3-col KPI + banig chart + Kai takeaway paper-note + footer link), closing italic "— Kai", `<FloatingPetals>` ambient layer.
+- **5-tile action grid** — the spec locks Hicks-law to exactly 5 tiles in the order: Scan resibo / Kausap si Kai / BIR paalala / Tamang presyo / Mga invoice. Each tile re-skins `dashboard-card.tsx` (or `feature-tile.tsx` per the reuse map) — preserve API. Tile background tints per Q3 resolution: re-derive for the cream `#fdf9f2` background, ≥ 3:1 contrast.
+- **Kuwento ng Linggo card on home** — Q1 resolution: home pulls the same `/api/weekly-story` payload as `/kuwento` (renders KPI grid + chart + takeaway only; full narrative paragraphs land in `/kuwento` in Phase 10). The endpoint **does not exist yet** — Phase 7 needs to either add a stub that returns a typed empty payload from existing data (kita / gastos / tubo aggregations) or scaffold it with TODOs and the cron pipeline lands in Phase 10. Confirm with Anton.
+- **`/api/morning-briefing` extension** — current returns a single Kai paragraph. Per the multi-session plan, Phase 7 extends it for the home Kumustahan hero context (greeting + tonal rotation per D6: Energetic / Observant / Celebratory). Cost discipline applies — circuit breaker + Sonnet routing per ADR-011.
+- **Banig 7-day bar chart** — new `<BanigBarChart>` Recharts custom shape (per home spec §5 reuse map). Use the brand sage / honey HSL pair, sampaguita marker on the peak day. Phase 1.5 perf budget applies (image budget ≤ 200KB cold home load).
+- **Streak counter** — D4 verdict "Pang-{n} araw na natin" framing already lives in `home.checkin.streak` i18n key (added in Phase 5). The check-in section needs to consume that key + a real `daily_check_in` query for the count (today vs yesterday continuity).
+- **`pages/expenses` / `costing` / `invoices` `md:` → `tablet:` band** — these pages still use `md:hidden` for FAB visibility; the chrome breakpoint is `tablet:` (860px) so 768–860px shows both bottom nav and FAB. Not strictly Phase 7 scope but the home spec implicitly assumes the rest of the chrome sits in the `tablet:` system. Address opportunistically while you're in `(app)`.
+
+### Open follow-ups Phase 7 inherits
+
+- **Kai mark soft-glow rim** — tracked in memory `project_kai_mark_master_reexport.md`. Phase 7 renders KaiSitting at 168px (the hero) — the faint rim is more visible at this size than at the sidebar 40px. If Anton hasn't re-exported by Phase 7 start, **note in the feel-test report** so this is captured before the 24h gate locks in.
+- **Playwright visual-parity test** — Phase 7 is the home gate; the spec calls for ≤ 0.5% pixel diff vs `screenshots/02-home-honey-fil-mobile.png` adapted to cream bg. Build the parity test as part of Phase 7's QA pass, not after.
+- **Locale flip on home** — already wired in chrome via Phase 5 LanguageToggle. Phase 7 needs the home strings to pivot live (`home.greeting.{morning,afternoon,evening}`, `home.kumustaKa`, `home.checkin.*`, `home.actions.*`, `home.kuwento.*` already exist in both catalogs). Verify both locales render correctly on home.
+- **PostHog instrumentation** — home is the highest-traffic route. Phase 12 retention validation will lean on PostHog events from this screen, so think about event hooks at the time of build (`tile_clicked`, `paper_note_check_in_opened`, `kuwento_card_opened`).
+
+### Verification baseline (next session re-runs to confirm clean start)
+
+- `npx tsc --noEmit`: **38 errors expected.** All pre-existing in `src/app/api/**/__tests__/` route tests + `src/lib/costing/__tests__/calculations.test.ts`. Anything > 38 is regression.
+- `npx vitest run`: **82 files / 1188 tests expected.**
+- `npx next build`: **45 routes expected**, "Compiled successfully", no warnings.
+- `git status` from branch tip: clean working tree (Phase 5 + 6 already committed; only `.firecrawl-converted/` is the historic untracked directory).
+
+### First actions for next session
+
+1. **Read this handoff entry first.** Then read [`screens/00-home.md`](../../design_handoff_akbai_redesign/synthesis/screens/00-home.md) (canonical Phase 7 spec) and the relevant Q1/Q2/Q3 resolutions from [`02-decisions.md`](../../design_handoff_akbai_redesign/synthesis/02-decisions.md).
+2. **Verify clean baseline** — run the three verification commands above. If anything is off, stop and reconcile before adding code.
+3. **Spawn `/build` Phase 7 team** — team-lead PM + build-engineer (lead) + build-ux (mandatory — home is the bet) + build-qa (Playwright visual-parity test built in this phase, not deferred) + build-ai (Kai expression rotation + morning-briefing extension + tonal rotation) + build-data (only if Phase 7 adds the `weekly_stories` cache table; otherwise skip and let Phase 10 own it). Add `review-security` only if `/api/weekly-story` lands in Phase 7.
+4. **Implementation order** (each step ends with the route still functional):
+   1. Re-skin `feature-tile.tsx` / `dashboard-card.tsx` to the new tile chrome (in place).
+   2. Build the Kumustahan hero (KaiSitting + Fraunces greeting block).
+   3. Wire the `<PaperNote>` check-in invite to the existing modal + streak data.
+   4. Lay out the 5-tile action grid in the locked Hicks-law order.
+   5. Drop in the `<WovenDivider>`.
+   6. Build the Kuwento ng Linggo card (KPI grid + BanigBarChart + Kai takeaway paper-note).
+   7. Add the `<FloatingPetals>` ambient layer last (per Q2 deferral — first-visit users see static decorations; petals come on day-2+ once SW caches).
+   8. Wire Playwright visual-parity test before commit.
+5. **Manually verify locale flip on home** — toggle the chrome FIL/EN pill and confirm `home.*` strings flip. This is the first end-to-end home locale proof.
+6. **Hand to Anton for the 24h feel-test gate.** Phase 7 doesn't ship to the next session until Anton reports back from real-phone use. The handoff note from Phase 7 to Phase 8 must record what surfaced during the feel-test — including any Kai mark soft-glow rim observation at hero size.
+
+### Multi-session plan position (forward-looking, locked 2026-04-26)
+
+You are entering **Session 3 of 6 — Phase 7 ONLY**. Per the plan:
+
+| # | Session | Phases | Status |
+|---|---|---|---|
+| 1 | DONE | Phase 1, 2, 3, 4 | Branch `claude/redesign-phase-3-4` shipped |
+| 2 | DONE (this session) | **Phase 5 + Phase 6** | Chrome + auth/onboarding committed (`d9de0f5` + `0efc271`) |
+| 3 | **NEXT** | **Phase 7 ONLY** | Flagship home + 24h feel-test gate (immutable) |
+| 4 | after | Phase 8 + Phase 9 | Kausap + Saan, Scan + Deadlines |
+| 5 | | Phase 10 ONLY | Costing, Invoices, Drafts (new), Check-in, Kuwento (new) + cron |
+| 6 | | Phase 11 + Phase 12 | A11y / perf matrix + retention validation. **DECLARED SHIPPED** at end. |
+
+Phase 11 may still split into a 7th session if `axe-core` reports 10+ critical/serious violations or Lighthouse drops < 85 — that call gets made at the start of session 6 from session 5's handoff numbers.
