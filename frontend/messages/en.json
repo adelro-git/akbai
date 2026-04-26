@@ -77,15 +77,35 @@
       "openCta": "Ready to check in?",
       "streak": "Day {count} together",
       "firstTime": "Let's try your first check-in!",
-      "resetCopy": "Back to it, {name}. Day 1 again, together."
+      "resetCopy": "Back to it, {name}. Day 1 again, together.",
+      "summary": {
+        "kita": "Revenue",
+        "gastos": "Expenses",
+        "mood": "Mood"
+      }
     },
     "actions": {
       "header": "What should we do?",
-      "scanResibo": "Scan receipt",
-      "kausapKai": "Chat with Kai",
-      "birPaalala": "BIR reminder",
-      "tamangPresyo": "Right price",
-      "mgaInvoice": "Invoices"
+      "scanResibo": {
+        "title": "Scan resibo",
+        "description": "Scan your receipts"
+      },
+      "kausapKai": {
+        "title": "Talk to Kai",
+        "description": "Chat with Kai — also drafts replies"
+      },
+      "birPaalala": {
+        "title": "BIR reminders",
+        "description": "Your tax deadline calendar"
+      },
+      "tamangPresyo": {
+        "title": "Tamang Presyo",
+        "description": "What's your real cost and margin?"
+      },
+      "mgaInvoice": {
+        "title": "Invoices",
+        "description": "Create and track invoices"
+      }
     },
     "kuwento": {
       "label": "This week's story",

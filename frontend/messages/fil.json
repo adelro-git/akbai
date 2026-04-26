@@ -77,15 +77,35 @@
       "openCta": "Ready ka na bang mag-check-in?",
       "streak": "Pang-{count} araw na natin",
       "firstTime": "Subukan natin ang unang check-in mo!",
-      "resetCopy": "Balik tayo, {name}. Pang-1 araw ulit natin."
+      "resetCopy": "Balik tayo, {name}. Pang-1 araw ulit natin.",
+      "summary": {
+        "kita": "Kita",
+        "gastos": "Gastos",
+        "mood": "Mood"
+      }
     },
     "actions": {
       "header": "Anong gagawin natin?",
-      "scanResibo": "Scan resibo",
-      "kausapKai": "Kausap si Kai",
-      "birPaalala": "BIR paalala",
-      "tamangPresyo": "Tamang presyo",
-      "mgaInvoice": "Mga invoice"
+      "scanResibo": {
+        "title": "Scan resibo",
+        "description": "I-scan ang mga resibo mo"
+      },
+      "kausapKai": {
+        "title": "Kausap si Kai",
+        "description": "Kausapin si Kai — puwede ring mag-draft ng reply"
+      },
+      "birPaalala": {
+        "title": "BIR paalala",
+        "description": "Calendar ng mga tax deadline mo"
+      },
+      "tamangPresyo": {
+        "title": "Tamang presyo",
+        "description": "Magkano talaga ang gastos at margin mo?"
+      },
+      "mgaInvoice": {
+        "title": "Mga invoice",
+        "description": "Gumawa at i-track ang mga invoice"
+      }
     },
     "kuwento": {
       "label": "Kuwento ng Linggo",

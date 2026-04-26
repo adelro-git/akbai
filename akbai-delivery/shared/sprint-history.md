@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-04-26 (Frontend Redesign Phase 5 + Phase 6 complete + Phase 7 handoff written for next session)
+> Last updated: 2026-04-26 (Frontend Redesign Phase 7 — Flagship Home — committed; awaiting Anton 24h feel-test before Session 4)
 
 ---
 
@@ -1164,3 +1164,145 @@ You are entering **Session 3 of 6 — Phase 7 ONLY**. Per the plan:
 | 6 | | Phase 11 + Phase 12 | A11y / perf matrix + retention validation. **DECLARED SHIPPED** at end. |
 
 Phase 11 may still split into a 7th session if `axe-core` reports 10+ critical/serious violations or Lighthouse drops < 85 — that call gets made at the start of session 6 from session 5's handoff numbers.
+
+---
+
+## Frontend Redesign — Phase 7 (Flagship Home) — DONE
+
+**Date:** 2026-04-26
+**Branch:** `claude/redesign-phase-3-4` (cumulative since Phase 3 — Phase 7 commits sit on top of `0efc271`)
+**Goal:** Replace the legacy 4-card dashboard with the canonical Phase 7 home — Kumustahan hero (KaiSitting 168px + Fraunces greeting + Squiggle), `<PaperNote>` check-in invite with streak framing, 5-tile Hicks-law action grid, `<WovenDivider>`, Kuwento ng Linggo card (3-col KPI + `<BanigBarChart>` + Kai takeaway paper-note + footer link), closing "— Kai" italic, and `<FloatingPetals>`-deferred ambient layer (Q2: static day 0, animated day 2+).
+
+### Q1 resolution applied
+
+**Path A (Anton call 2026-04-26):** Phase 7 owns a typed `/api/weekly-story` stub. The route returns a `WeeklyStory` payload (`week_start`, `week_end`, `kita_centavos`, `gastos_centavos`, `tubo_centavos`, `daily_breakdown[7]`, `peak_day_index`, `takeaway`, `tone`) computed on-request from `transactions` + `daily_check_in` aggregations. No LLM. No new table. Phase 10 will swap the static-template `takeaway` for an LLM call, add the `weekly_stories` cache table + Sunday Vercel cron, and serve `/kuwento` from the same endpoint. ADR-015 captures the contract; the route signature is stable across Phase 7 → Phase 10. Tonal rotation (D6 — Energetic / Observant / Celebratory) is already deterministic via `pickTone(today) = (dayOfYear − 1) % 3`.
+
+### Operational decisions Anton locked at session start
+
+- **Anthropic credits:** **Add graceful Claude fallback now**, top up later. The `/api/morning-briefing` extension returns `reason: 'no_credits'` + a deterministic Filipino fallback tagline + tone whenever the Anthropic SDK throws a credit-balance error or the `ANTHROPIC_API_KEY` is the placeholder. The Kumustahan hero degrades to a static greeting if no tagline is present. **Implication for the 24h feel-test:** Anton sees the layout + visuals at full fidelity but the Kai micro-tagline rotation is the deterministic fallback set, not LLM output. LLM tonal rotation re-tests once credits land.
+- **Kai mark soft-glow rim:** Phase 7 ships with the existing `frontend/public/icons/kai-mark.png`. Hero size 168px will likely surface the chroma-keyed cream rim more visibly than the 40px sidebar. **Capture in the feel-test handoff** (placeholder section below). Anton may re-export during the 24h gate; if so, the asset swap is a one-file-replace before Session 4.
+
+### What was built
+
+**Backend (one new route + supporting libs):**
+- [frontend/src/app/api/weekly-story/route.ts](../../frontend/src/app/api/weekly-story/route.ts) — GET handler. SKIP_AUTH service-client switch per ADR-014. All-tier (no tier check per ADR-015 §6). Returns `{ available: true, story, cached: false }` on happy path; `{ available: false, reason: 'no_data' | 'error', message_tl }` on empty week or DB error. Pure DB aggregation; no LLM.
+- [frontend/src/lib/weekly-story/{types,week-bounds,aggregate,takeaway-templates}.ts](../../frontend/src/lib/weekly-story/) — Manila-Monday week bounds, transactions+daily_check_in aggregation, 9 tonal × week-shape static templates with deterministic per-day tone selection.
+- [frontend/src/lib/streak/compute-streak.ts](../../frontend/src/lib/streak/compute-streak.ts) — pure function reading `daily_check_in.check_in_date` history, walks consecutive days from today backwards, returns `{ streak, status: 'fresh' | 'active' | 'reset' }` — drives the PaperNote invite copy variant per D4 + the `streak-resilience-no-shame` enrichment.
+- [frontend/src/lib/timezone/time-of-day.ts](../../frontend/src/lib/timezone/time-of-day.ts) — pure function `(manilaHour) → 'morning' | 'afternoon' | 'evening'` (5–11 / 12–17 / else). Server-safe so both `dashboard/page.tsx` (Server Component) and `kumustahan-hero.tsx` (`'use client'`) can call it. **This module exists because of a P1 runtime bug QA caught:** the original implementation co-located `computeTimeOfDay` inside the `'use client'` hero, and the Server Component import returned 500. Hot-fix moved it to a server-safe module.
+
+**Morning-briefing extension (D6 tonal rotation + graceful fallback):**
+- [frontend/src/lib/morning-briefing/{tone,fallback-templates}.ts](../../frontend/src/lib/morning-briefing/) — `pickTone(date)` deterministic per Manila day; `pickFallback(tone, date, name)` returns a deterministic per-day variant from a 3-tone × 3-variant template registry. No fabricated peso amounts in the fallback set.
+- [frontend/src/lib/morning-briefing/types.ts](../../frontend/src/lib/morning-briefing/types.ts) — extended `MorningBriefingResponse` with optional `tagline`, `tone`, and `reason: 'no_credits'`.
+- [frontend/src/lib/claude/{types,assemble}.ts](../../frontend/src/lib/claude/) — added optional non-breaking `outputFormatHint?: string` to `PromptAssemblyInput` so the morning-briefing route can ask Claude for JSON output (`{ briefing, tagline }`) per the day's tone. All other features call sites unchanged.
+- [frontend/src/app/api/morning-briefing/route.ts](../../frontend/src/app/api/morning-briefing/route.ts) — wires tone + format-hint, parses Claude's JSON response (markdown-fence stripping), credit-balance/5xx graceful fallback returns `reason: 'no_credits'` with deterministic tagline, server-log path now sanitised to log only `Error.constructor.name` (no Anthropic billing details).
+
+**Home composition (re-skin in place + new presentational components):**
+- [frontend/src/components/dashboard/dashboard-card.tsx](../../frontend/src/components/dashboard/dashboard-card.tsx) — re-skinned IN PLACE per Sprint 5 reuse rule. Phase 4 brand icons added to `ICON_MAP` (`resibo`/`usap`/`kalendaryo`/`precio`/`invoice`). Per-tile honey/sage tints re-derived for the cream `#fdf9f2` background per Q3. Existing prop API preserved.
+- [frontend/src/components/dashboard/kumustahan-hero.tsx](../../frontend/src/components/dashboard/kumustahan-hero.tsx) — NEW. `<KaiSitting size={168} animated>` + time-of-day pill + Fraunces 30/500 name line + Fraunces italic 26/500 "kumusta ka?" + single `<Squiggle>` underline + optional `<CapizPattern>` at 0.18 opacity (motion-reduce gated). Optional `aiTagline` + `aiTone` props from the morning-briefing extension; degrades cleanly when null.
+- [frontend/src/components/dashboard/check-in-section.tsx](../../frontend/src/components/dashboard/check-in-section.tsx) — invite block replaced with `<PaperNote tilt="left" tape="left">`. Existing modal-wiring + overwrite-confirm logic preserved. Streak count + status passed in from `dashboard/page.tsx` server-side. UX must-fix landed: `Sales:` → `Kita:`, `Cancel` → `tCommon('cancel')` (consumes `common.cancel`), all summary labels via i18n.
+- [frontend/src/components/dashboard/kuwento-card.tsx](../../frontend/src/components/dashboard/kuwento-card.tsx) — NEW. Client component fetches `/api/weekly-story` on mount (`useEffect` + `fetch`). Renders `<IconPera>` + serif label + Fraunces H1 narrative + 3-col KPI grid + `<BanigBarChart>` + `<PaperNote tone="honey" tilt="right" tape="right">` takeaway + footer link to `/expenses`. Empty-state when `available: false` shows the `message_tl` + "Mag-scan ka ng resibo →" CTA.
+- [frontend/src/components/ui/banig-bar-chart.tsx](../../frontend/src/components/ui/banig-bar-chart.tsx) — NEW. Recharts custom `<Bar shape>` with banig stripe `<pattern>`, sampaguita peak marker, motion-reduce-aware. 7 bars Mon..Sun, height 140px, full-width responsive container.
+- [frontend/src/components/dashboard/floating-petals-layer.tsx](../../frontend/src/components/dashboard/floating-petals-layer.tsx) — NEW. Q2 deferral: 5 `<IconSampaguita>` static decorations on first visit (`localStorage.akbai_home_visit_count < 2`); animated `<FloatingPetals>` from visit ≥ 2; reduced-motion always shows static.
+- [frontend/src/app/(app)/dashboard/page.tsx](../../frontend/src/app/(app)/dashboard/page.tsx) — full Phase 7 composition. Server-side: streak query, today's check-in fetch, BIR registered + business name + transaction count + costing card count + invoice counts (carried over from legacy for `summary` props on the 5 tiles). Resolves `aiTagline` + `aiTone` server-side with graceful fallback (the column-not-found path uses `pickFallback` until migration 013 lands). Fixed 5-tile Hicks-law order (Scan resibo / Kausap si Kai / BIR paalala / Tamang presyo / Mga invoice) — no feature-flag gates on the home grid (the flags continue to gate the routes themselves). Outer container: `max-w-[760px] mx-auto px-5 py-6 pb-24 flex flex-col gap-[18px]` per spec §2.
+- **Removed from the home composition** (NOT deleted from disk): the legacy `<KaiGreeting>` + `<MorningBriefingCard>` imports. The components remain on disk per the brief; if they're truly orphaned, Phase 8 can remove them after confirming no other consumers.
+
+**i18n catalogs ([fil.json](../../frontend/messages/fil.json) + [en.json](../../frontend/messages/en.json)):**
+- `home.actions.{scanResibo,kausapKai,birPaalala,tamangPresyo,mgaInvoice}` restructured from `string` → `{ title, description }` to fix a UX must-fix (5 tile descriptions were inline English, including `'Tax calendar at reminders'` — now `'Calendar ng mga tax deadline mo'` in FIL).
+- `home.checkin.summary.{mood,kita,gastos}` keys added so the post-check-in summary card consumes labels from i18n (was `Mood:` / `Sales:` / `Gastos:` inline; symmetric Filipino now).
+- `common.cancel` confirmed present in both FIL (`I-cancel`) and EN (`Cancel`); `check-in-section.tsx` overwrite-confirm dialog now consumes it.
+
+**New tests (vitest + Playwright):**
+- 4 vitest suites: `compute-streak` (9 tests), `weekly-story/{week-bounds,aggregate,takeaway-templates}` (24 tests across 3 files), morning-briefing `{tone,fallback-templates}` (33 tests across 2 files), morning-briefing route extension (5 new tests for the credit-balance fallback path), weekly-story route (5 tests covering SKIP_AUTH happy path, no_data shape, aggregator-throw error shape, undefined userName, top-level catch).
+- [frontend/e2e/synthesis/home.spec.ts](../../frontend/e2e/synthesis/home.spec.ts) — Playwright **visual-parity test** (the home gate test deferred from Phase 4). Captures `/dashboard` at mobile (390×844) + desktop (1280×800) × FIL + EN = 4 baselines, threshold `maxDiffPixelRatio: 0.005`. Plus 4 supplementary tests: petals deferral first-visit (static only) and day-2+ (animated), reduced-motion path, locale-flip end-to-end on home (the first end-to-end home-locale proof).
+
+**ADR landed:**
+- [ADR-015](../../akbai-delivery/skills/solutions-architect/references/architecture-decisions.md) — `/api/weekly-story` endpoint shape. Documents the contract Phase 7 ships and the Phase 10 swap (cache table + cron + LLM takeaway). The route signature is stable across phases.
+- ADR-014 was authored in the prior Phase 6 session but the index in `architecture-decisions.md` was missing; this session rebuilt the index to include both ADR-014 and ADR-015 and bumped the "current highest" header.
+
+### Verification (after the hot-fix pass)
+
+- `npx tsc --noEmit`: **38 errors** (baseline preserved exactly — all pre-existing in `src/app/api/**/__tests__/route.test.ts` + `src/lib/costing/__tests__/calculations.test.ts`). Zero new Phase 7 errors.
+- `npx vitest run`: **89 files / 1265 tests passing** (was 1188 at session start; +77 new tests across the 8 new vitest suites and the route-extension tests).
+- `npx next build`: **Compiled successfully** in 5.1s. **46 routes** (was 45; +1 new `/api/weekly-story`). No warnings (the two pre-existing `@sentry/nextjs` deprecation warnings are unchanged Phase 4 inheritance, not Phase 7 regressions).
+- `curl -i http://localhost:3000/dashboard`: **HTTP 200**. The page HTML contains `Kumustahan`, `Magandang [umaga|hapon|gabi]`, `kumusta`, confirming the Phase 7 layout renders. (The QA agent first ran into HTTP 500 because of the `'use client'` import-from-server bug — the hot-fix pass moved `computeTimeOfDay` to `lib/timezone/time-of-day.ts` and the page now renders.)
+- Locale flip on home: confirmed wired (the chrome `<LanguageToggle>` from Phase 5 sets the cookie; `dashboard/page.tsx` resolves all visible strings via `useTranslations('home')` and `useTranslations('common')`). End-to-end Playwright test exercises the flip on `/dashboard`. **This is the first end-to-end home locale proof per the multi-session plan.**
+
+### What this session intentionally punted (so Session 4 / Phase 8/9 sees them)
+
+These are NOT bugs — they are decisions made in-session, listed so they don't get lost:
+
+- **Migration 013 (`013_morning_briefing_tone.sql`)** — adds `briefing_tagline TEXT NULL` + `briefing_tone TEXT NULL` to `daily_check_in` so the morning-briefing route can persist tagline/tone alongside the existing `briefing_content`. Phase 7 ships WITHOUT this migration: the route serves tagline + tone live in the response without persistence (and `dashboard/page.tsx` falls back to `pickFallback()` when the column-not-found error fires). Once migration 013 lands, both the route's cache-write and the page's cache-read need to consume the new columns. **This work belongs to data-architect in a Phase 8 prep step.**
+- **Tile tint pair duplication** — `resibo` + `precio` both use `bg-honey-pale`; `usap` + `invoice` both use `bg-sage-pale`. UX flagged this as a post-feel-test nice-to-have. The 24h feel-test will tell us whether the visual monotony reads on a real phone; if so, introduce a third tint for `kalendaryo` from the existing scales (no new tokens).
+- **Kuwento takeaway duplication** — `story.takeaway` renders as both the serif H1 headline and the body inside the `<PaperNote>`. Lead engineer + UX both flagged. If the feel-test confirms it reads as repetitive, Phase 8/9 should split: headline becomes a shorter Kai-voice prompt while the paper-note carries the full takeaway. Coordinate with whoever extends `WeeklyStory` shape.
+- **`md:` → `tablet:` band on internal pages** — `expenses/page.tsx`, `costing/page.tsx`, `invoices/page.tsx` still use `md:hidden` for FAB visibility. Outside Phase 7's scope; address opportunistically in Phase 8 (`expenses` will be touched there) and Phase 10 (`costing` + `invoices`).
+- **Reduced-motion belt-and-suspenders on `KaiSitting`** — UX flagged that `animate-kai-breathe` should also have `motion-reduce:animate-none` on the `<KaiSitting>` span as defense in depth. The keyframe is correctly wrapped in `@media (prefers-reduced-motion: no-preference)` at the CSS level, so this is genuinely belt-and-suspenders, not a defect. Apply during Phase 8 polish.
+- **Minor security defense-in-depth (post feel-test)** — `lib/claude/assemble.ts` USER_CONTEXT layer interpolates `firstName` and `businessType` directly into the system prompt without sanitisation. Threat is theoretical (Claude system prompt is not normally injectable from system text), but the rule is defense in depth. Apply `filterOutput`-equivalent sanitisation in Phase 11 polish. Also: add a runtime guard in `morning-briefing/route.ts` `buildOutputFormatHint` confirming `tone in toneGuidance` before template-literal interpolation.
+
+---
+
+## Frontend Redesign — Phase 8 + Phase 9 starting state (handoff for next session)
+
+**Date:** 2026-04-26 (handoff written at end of Phase 7 session for cross-session continuity)
+**Session boundary:** Phase 7 shipped + committed to `claude/redesign-phase-3-4`. **Next session does NOT open until Anton has spent 24h with Phase 7 on a real phone** — this is the immutable feel-test gate per the multi-session plan locked 2026-04-26. Session 4 covers Phase 8 (Kausap + Saan = Chat + Expenses) and Phase 9 (Scan + Deadlines), per the plan.
+
+### Anton's 24h feel-test report (capture HERE when Anton reports back)
+
+> _Placeholder — fill in this block at the start of Session 4 with everything Anton surfaces after 24h of real-phone use. Suggested capture areas:_
+>
+> - **Visual parity:** does the home read as the spec promised? Cream bg + honey accents + Kai mark scale + Squiggle alignment + Banig bar chart legibility + paper-note tilt feeling.
+> - **Kai mark soft-glow rim observation at hero 168px:** is the chroma-keyed cream rim noticeable? Does Anton want to re-export before Session 4 starts? (Memory `project_kai_mark_master_reexport.md` is the tracker.)
+> - **Tile tint pair duplication:** with two pairs sharing the same bg, does the 5-tile grid feel monotone or balanced? If monotone, propose third tint.
+> - **Kuwento takeaway duplication:** reading both the H1 headline and the paper-note body — does it feel redundant?
+> - **Streak framing:** "Pang-{n} araw na natin" — does this land or feel forced? D4 verdict was a strong "yes" but the feel-test is the proof.
+> - **Locale flip on home:** does FIL/EN swap feel snappy? Any string truncation or layout shift on the EN side?
+> - **Morning-briefing graceful fallback:** the Kumustahan tagline is currently the deterministic per-day fallback (credits not topped up). Does it still feel like Kai or does the fallback read as templated?
+> - **5-tile action grid order (Hicks's law):** Scan resibo first — does muscle memory reach for it where you expect?
+> - **Reduced-motion path:** if Anton flips OS-level reduced-motion, does the home still feel right (no broken layout, just no animations)?
+> - **PaperNote check-in invite tilt:** the asymmetric corners + 1.2deg tilt — magic, or fussy?
+> - **First-visit petals deferral (Q2):** static sampaguita on day 0 read as warmth or as "missing decoration"? (Day 2+ is when animated petals come in.)
+> - **Anything else.** Anton's literal notes belong here, verbatim.
+
+### What's on disk and committed (cumulative from Session 1 → Session 3)
+
+- **Phase 1 + 1.5** research, **Phase 2** synthesis (all sections SIGNED OFF, repos APPROVED, 13 questions RESOLVED), **Phase 3** foundations (Tailwind tablet:860px + Fraunces + honey/sage/ink scales + 13 keyframes + palette context + i18n + primitives), **Phase 4** brand vocabulary (15 brand icons + 8 motifs + Kai composition + 512×512 Kai mark) — see prior handoff entries.
+- **Phase 5** chrome — re-skinned `sidebar-nav.tsx` + `bottom-nav.tsx` in place, `(app)/layout.tsx` async with persona fetch + `tablet:` breakpoint, `language-toggle.tsx` + `more-drawer.tsx` shipped, i18n catalogs hold all chrome keys.
+- **Phase 6** auth + onboarding — login redesign with KaiSitting hero, `OnboardingShell` + `SampaguitaProgress` + Kai expression mapping per step, paper-note welcome tour with `user_metadata.welcome_tour_completed` cross-device persistence.
+- **Phase 7** flagship home — full canonical layout per `screens/00-home.md`, including the new `/api/weekly-story` stub (ADR-015), the `/api/morning-briefing` D6 tonal extension with graceful Claude fallback, all UX must-fixes, all major security findings resolved, and the Playwright visual-parity home-gate test built.
+
+### What's NOT wired yet (Phase 8 + 9 scope per the multi-session plan)
+
+**Phase 8 — Kausap + Saan:**
+- `/chat` (Kausap si Kai) — A2 verdict: HYBRIDIZE. Adopt handoff layout (top bar with Kai 32px avatar + "● Nandito ako para sa'yo" status, suggested-question chips above composer, paper-note CTA composer, restyled disclaimer banner). KEEP CURRENT branded "Chat with Kai" framing/header + the existing in-bubble Kai illustration treatment. Q4 resolution: chips data source is rule-based DB queries via `/api/chat/suggestions` (no LLM), cached 30 min.
+- `/expenses` (Saan napunta) — A3 verdict: ADOPT HANDOFF. Total card + donut + delta line, category breakdown rows with color-coded progress bars (Q5 — add `color` field to `EXPENSE_CATEGORIES` registry), banig-textured 7-day daily bars (reuse `<BanigBarChart>` from Phase 7), Kai callout paper-note. Keep current's month picker logic.
+- Both pages should adopt the `tablet:` breakpoint band (Phase 7 punted this — `md:hidden` → `tablet:hidden` for FAB visibility).
+
+**Phase 9 — Scan + Deadlines:**
+- `/scan` — A4 verdict: KEEP CURRENT. Camera UI, viewfinder, capture flow, post-scan card slide-in stay as-is. The dark-bleed handoff scan UI is rejected. Phase 9 is essentially a "polish pass" on the existing scan — confirm the chrome inheritance + persona pill from Phase 5 reads correctly above the camera viewfinder; otherwise no large-scale changes.
+- `/deadlines` (BIR paalala) — A5 verdict: ADOPT HANDOFF. Serif H1 "Hindi ka mahuhuli kay Kai." + Kai pre-deadline `<PaperNote>` callout for urgent items (≤ 7 days). Each row: 56×56 date chip (English month abbreviations per Q6) + form-code pill (1701Q) + days-left counter + form name + description. Next-due card highlighted with 2px honey-deep border. BIR disclaimer banner restyled. Q7 resolution: tap on a deadline navigates to `/chat?topic={form_code}&context=deadline-{N}d` with system-prompt context injection.
+
+### Open follow-ups Phase 8/9 inherits from Phase 7
+
+- **Migration 013** (briefing_tagline + briefing_tone columns) — pre-Phase-8 prep work for data-architect.
+- **Anthropic credits top-up** — by the time Session 4 starts, Anton may have topped up; if so, the morning-briefing extension switches from deterministic fallback to LLM tagline. The hero degrades cleanly either way.
+- **Kai mark soft-glow rim** — if Anton re-exports during the 24h gate, swap `frontend/public/icons/kai-mark.png` before Phase 8 begins. Tracked in memory `project_kai_mark_master_reexport.md`.
+- **Tile tint pair duplication** — gate on the feel-test verdict.
+- **Kuwento takeaway duplication** — gate on the feel-test verdict; Phase 8 may extend the `WeeklyStory` shape with a separate `kai_note` field.
+- **Reduced-motion belt-and-suspenders** on `KaiSitting` — apply during Phase 8 polish.
+- **Visual-parity baselines** — the Phase 7 home gate test recorded its first baseline this session under `frontend/e2e/synthesis/__snapshots__/home/`. Phase 8 + 9 add similar specs for `/chat`, `/expenses`, `/deadlines` (the Phase 4 retro test deferred to "the home gate" was specifically the home — sibling pages get their own specs).
+
+### Verification baseline (Session 4 re-runs to confirm clean start)
+
+- `npx tsc --noEmit`: **38 errors expected.** All pre-existing. Anything > 38 is regression.
+- `npx vitest run`: **89 files / 1265 tests expected.**
+- `npx next build`: **46 routes expected**, "Compiled successfully", no warnings.
+- `git status` from branch tip: clean working tree (Phase 7 already committed).
+- `curl -i http://localhost:3000/dashboard`: **HTTP 200** with `Kumustahan` / `kumusta` / `Magandang` strings present in HTML.
+
+### First actions for Session 4 (Phase 8 + 9 = Kausap + Saan + Scan + Deadlines)
+
+1. **Read the feel-test report block above** (filled in by Anton). Anything Anton flagged as broken supersedes the punted-decision lists.
+2. **Read** [`screens/01-chat.md`](../../design_handoff_akbai_redesign/synthesis/screens/01-chat.md), [`02-expenses.md`](../../design_handoff_akbai_redesign/synthesis/screens/02-expenses.md), [`03-scan.md`](../../design_handoff_akbai_redesign/synthesis/screens/03-scan.md), [`04-deadlines.md`](../../design_handoff_akbai_redesign/synthesis/screens/04-deadlines.md) for the canonical Phase 8/9 specs.
+3. **Verify clean baseline** — run the three commands above. If anything is off, stop and reconcile before adding code.
+4. **Spawn `/build` Phase 8 team first** (chat + expenses are the two M-features). Suggested team: team-lead PM + build-architect (only if `/api/chat/suggestions` lands here per Q4) + build-engineer (lead) + build-ux (mandatory — chat + expenses both have heavy paper-note + chart density) + build-qa (Playwright visual-parity for chat + expenses) + build-data (Q5 — add `color` field to `EXPENSE_CATEGORIES`). Skip build-ai unless the chat suggestions extend the prompt assembler. Skip build-marketing (strings already in i18n). Skip review-security unless `/api/chat/suggestions` opens a new auth surface (it shouldn't — same RLS as `/api/chat`).
+5. **Then Phase 9 in the same session** — Scan is "polish only", Deadlines is the larger work. Suggested team: team-lead PM + build-engineer + build-ux + build-qa. Add build-ai if the deadline-callout taps want to inject system-prompt context cleanly.
+6. **Commit at end of session** — same branch `claude/redesign-phase-3-4` (or fork to `claude/redesign-phase-8-9` per Anton's call). Multi-session plan says Session 4 ends with handoff to Session 5 (Phase 10 alone — Costing/Invoices/Drafts/Check-in/Kuwento + cron).
