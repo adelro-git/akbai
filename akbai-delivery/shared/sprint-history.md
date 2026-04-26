@@ -1012,3 +1012,22 @@ Lead: build-engineer. Reviewers: build-ux (chrome is high-traffic — every scre
 2. **Verify clean baseline** — run the three verification commands above. If anything is off, stop and reconcile before adding code.
 3. **Spawn `/build` Phase 5 team** — team-lead PM + build-engineer (lead) + build-ux (mandatory — chrome inherits everywhere) + build-qa (Playwright nav + locale toggle E2E). Skip build-po (continuation), build-data (no schema), build-ai (no Claude), build-marketing (chrome strings already in i18n catalogs).
 4. **Implementation order** — sidebar re-skin → bottom nav re-skin → language toggle pill → persona pill → "Higit pa" drawer. Each step ends with the route still functional; no half-shipped chrome.
+
+### Multi-session plan for Phases 5–12 (forward-looking, locked 2026-04-26)
+
+**Five sessions to ship, possibly six if Phase 11 surfaces regressions.** Each session ends with a commit + handoff note in this file. Phase 7 is an immutable single-phase session (24h feel-test gate). Phase 10 is alone (largest L-feature remaining).
+
+| # | Session | Phases | Pair logic | Hard end-condition |
+|---|---|---|---|---|
+| 1 | DONE | Phase 1, 2, 3, 4 | Research + synthesis → foundations + brand vocab | Branch `claude/redesign-phase-3-4` shipped |
+| 2 | **NEXT** | **Phase 5 + Phase 6** | Chrome enables onboarding (post-onboarding lands on new home). Both M-features, ~25 files combined, both touch i18n catalogs. | Chrome + auth/onboarding ship together |
+| 3 | after | **Phase 7 ONLY** | Flagship home — the bet. `/api/morning-briefing` extension + weekly-story integration. **24h feel-test gate** — Anton uses on real phone for a day before Phase 8. Immutable session boundary. | Feel-test PAUSE (24h) |
+| 4 | | **Phase 8 + Phase 9** | Screen-by-screen ports (Kausap + Saan, Scan + Deadlines). ~20 files. Phase 9 needs `review-security` for receipt PII. | Both ship |
+| 5 | | **Phase 10 ONLY** | Largest L-feature: 5 screens (Costing, Invoices, **Drafts (new route)**, Check-in, **Kuwento (new route)**) + schema migration (`energy_level`, `note`) + new `/api/weekly-story` endpoint + Vercel Cron Sunday trigger. ~25-30 files. Don't pair this with anything. | All 5 screens ship |
+| 6 | | **Phase 11 + Phase 12** | Cross-cutting quality (axe-core, Lighthouse, PWA, reduced-motion × dark × contrast × locale matrix) + retention validation (PostHog instrumentation, dashboards, retro). | **Redesign DECLARED SHIPPED** |
+
+**Variable risk:** Phase 11 may surface regressions that need their own session. If `axe-core` reports 10+ critical/serious violations OR Lighthouse drops below 85, split — Phase 12 spills to a 7th session. The handoff note from session 5 to session 6 must record axe + Lighthouse numbers so session 6 can make the split call before starting work.
+
+**Why these groupings:** session 2 pairs because chrome wraps the auth flow; sessions 4 + 6 pair similar-concern screen ports / cross-cutting passes; session 3 is alone because of the feel-test gate; session 5 is alone because Phase 10 is the only L-feature left.
+
+**Each future session opens with the same pattern:** read this multi-session table to confirm "you are here" → read the most recent handoff entry → verify baseline (typecheck + tests + build) → spawn the relevant `/build` team → ship → write next handoff → commit → close.
