@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import OnboardingWizard from '@/components/onboarding/onboarding-wizard';
 import { PageBackground } from '@/components/ui/page-background';
@@ -26,8 +27,13 @@ export default async function OnboardingPage() {
     if (!user) redirect('/login');
   }
 
-  // Fetch onboarding state
-  const { data: userData } = await supabase
+  // Match the dashboard + /api/onboarding pattern: under SKIP_AUTH the auth
+  // client returns nothing (no real session → RLS blocks every row), so the
+  // page would render fresh while the API would refuse on the next POST.
+  // Use the service client in dev so page + API see the same row.
+  const db = SKIP_AUTH ? createServiceClient() : supabase;
+
+  const { data: userData } = await db
     .from('users')
     .select('display_name, primary_pain, bir_consent, onboarding_step, onboarding_completed')
     .eq('id', user.id)
@@ -37,7 +43,7 @@ export default async function OnboardingPage() {
     redirect('/dashboard');
   }
 
-  const { data: profile } = await supabase
+  const { data: profile } = await db
     .from('business_profiles')
     .select('business_type, income_range')
     .eq('user_id', user.id)
