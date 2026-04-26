@@ -59,13 +59,40 @@ export interface MorningBriefingContext {
 }
 
 // ============================================================
+// Tonal Rotation (D6 — Phase 7 Kumustahan hero)
+// ============================================================
+
+/**
+ * Daily tonal rotation for the Kumustahan hero one-liner.
+ * Selected deterministically via dayOfYear(briefing_date) % 3:
+ *   0 -> energetic   (punchy, action-leaning)
+ *   1 -> observant   (calm, noticing)
+ *   2 -> celebratory (warm, recognising progress)
+ */
+export type MorningTone = 'energetic' | 'observant' | 'celebratory';
+
+// ============================================================
 // API Response — returned by GET /api/morning-briefing
 // ============================================================
 
 export interface MorningBriefingResponse {
   available: boolean;
-  reason?: 'outside_window' | 'tier_required' | 'feature_disabled' | 'error';
+  /**
+   * Why the briefing is unavailable, OR — when paired with `available: true` and
+   * a deterministic tagline/briefing — that the response is a credit-balance
+   * fallback (no Claude call was made).
+   */
+  reason?:
+    | 'outside_window'
+    | 'tier_required'
+    | 'feature_disabled'
+    | 'error'
+    | 'no_credits';
   briefing?: string;
+  /** One-liner for the Kumustahan hero (≤ 80 chars). May be undefined on JSON parse failure. */
+  tagline?: string;
+  /** Which tone was selected for this briefing date. */
+  tone?: MorningTone;
   cached: boolean;
   message_tl?: string;
 }

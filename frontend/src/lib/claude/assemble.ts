@@ -69,5 +69,12 @@ BIR registered: ${ctx.birRegistered ? 'Yes' : 'No'}`
     );
   }
 
+  // Layer 4b — Output Format Hint (optional, non-breaking)
+  // Appended last so it overrides any format guidance baked into the feature
+  // block. Used by morning_briefing (Phase 7) for the tagline JSON shape.
+  if (input.outputFormatHint && input.outputFormatHint.trim().length > 0) {
+    layers.push(input.outputFormatHint.trim());
+  }
+
   return layers.join('\n\n---\n\n');
 }

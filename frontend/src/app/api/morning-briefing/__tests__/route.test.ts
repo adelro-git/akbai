@@ -78,31 +78,40 @@ vi.mock('@/lib/feature-flags/flags', () => ({
   },
 }));
 
-// --- Aggregation mock ---
-vi.mock('@/lib/morning-briefing', () => ({
-  aggregateBriefingData: vi.fn().mockResolvedValue({
-    briefing_date: '2026-03-28',
-    day_of_week: 'Saturday',
-    yesterday: {
-      total_income_centavos: 500000,
-      total_expenses_centavos: 150000,
-      income_count: 3,
-      expense_count: 2,
-      top_expense_categories: [{ category: 'ingredients', amount_centavos: 100000 }],
-      has_transactions: true,
-    },
-    cash_position: { balance_centavos: 350000, trend_vs_last_week: 'up', change_centavos: 50000 },
-    upcoming_deadlines: [],
-    week_comparison: {
-      this_week_income_centavos: 800000,
-      last_week_income_centavos: 600000,
-      this_week_expense_centavos: 300000,
-      last_week_expense_centavos: 250000,
-    },
-    days_since_signup: 30,
-    has_any_transactions: true,
-  }),
-}));
+// --- Aggregation + tone + fallback mocks ---
+// We mock only `aggregateBriefingData` (network-bound). pickTone + pickFallback
+// are pure functions — let the route exercise them for real so we verify the
+// real D6 rotation copy is what reaches the client.
+vi.mock('@/lib/morning-briefing', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/morning-briefing')>(
+    '@/lib/morning-briefing'
+  );
+  return {
+    ...actual,
+    aggregateBriefingData: vi.fn().mockResolvedValue({
+      briefing_date: '2026-03-28',
+      day_of_week: 'Saturday',
+      yesterday: {
+        total_income_centavos: 500000,
+        total_expenses_centavos: 150000,
+        income_count: 3,
+        expense_count: 2,
+        top_expense_categories: [{ category: 'ingredients', amount_centavos: 100000 }],
+        has_transactions: true,
+      },
+      cash_position: { balance_centavos: 350000, trend_vs_last_week: 'up', change_centavos: 50000 },
+      upcoming_deadlines: [],
+      week_comparison: {
+        this_week_income_centavos: 800000,
+        last_week_income_centavos: 600000,
+        this_week_expense_centavos: 300000,
+        last_week_expense_centavos: 250000,
+      },
+      days_since_signup: 30,
+      has_any_transactions: true,
+    }),
+  };
+});
 
 // --- Claude lib mocks ---
 vi.mock('@/lib/claude', () => ({
@@ -309,6 +318,11 @@ describe('GET /api/morning-briefing', () => {
     expect(json.data.available).toBe(true);
     expect(json.data.briefing).toBe(cachedText);
     expect(json.data.cached).toBe(true);
+    // Tone is computed deterministically even on cache hits (Phase 7).
+    // 2026-03-28 → dayOfYear 87 → celebratory.
+    expect(json.data.tone).toBe('celebratory');
+    // Tagline is undefined for pre-migration cached rows — hero degrades cleanly.
+    expect(json.data.tagline).toBeUndefined();
     // Claude should NOT have been called
     expect(mockAnthropicCreate).not.toHaveBeenCalled();
   });
@@ -342,9 +356,17 @@ describe('GET /api/morning-briefing', () => {
 
   // --- Successful generation ---
 
-  it('calls Claude, caches, and returns briefing for valid Pro user in morning window', async () => {
+  it('calls Claude, parses JSON, and returns briefing + tagline + tone', async () => {
     mockAnthropicCreate.mockResolvedValue({
-      content: [{ type: 'text', text: 'Magandang umaga, Maria! Happy Saturday...' }],
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify({
+            briefing: 'Magandang umaga, Maria! Happy Saturday — eto ang update mo.',
+            tagline: 'Tara, simulan na natin ang araw, Maria!',
+          }),
+        },
+      ],
       usage: { input_tokens: 2500, output_tokens: 300 },
     });
 
@@ -354,38 +376,136 @@ describe('GET /api/morning-briefing', () => {
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
     expect(json.data.available).toBe(true);
-    expect(json.data.briefing).toBe('Magandang umaga, Maria! Happy Saturday...');
+    expect(json.data.briefing).toContain('Magandang umaga, Maria');
+    expect(json.data.tagline).toBe('Tara, simulan na natin ang araw, Maria!');
+    // 2026-03-28 → dayOfYear 87 → (87-1) % 3 = 86 % 3 = 2 → celebratory
+    expect(json.data.tone).toBe('celebratory');
     expect(json.data.cached).toBe(false);
     expect(mockAnthropicCreate).toHaveBeenCalledOnce();
   });
 
-  // --- Claude API error ---
-
-  it('returns error response gracefully when Claude API throws', async () => {
-    mockAnthropicCreate.mockRejectedValue(new Error('Claude API overloaded'));
+  it('falls back to no tagline when Claude returns non-JSON text', async () => {
+    mockAnthropicCreate.mockResolvedValue({
+      content: [{ type: 'text', text: 'Magandang umaga, Maria! Plain text response.' }],
+      usage: { input_tokens: 2500, output_tokens: 300 },
+    });
 
     const res = await GET();
     const json = await res.json();
 
-    // The route catches all errors and returns a graceful response
     expect(res.status).toBe(200);
-    expect(json.success).toBe(true);
-    expect(json.data.available).toBe(false);
-    expect(json.data.reason).toBe('error');
-    expect(json.data.message_tl).toContain('problema');
+    expect(json.data.available).toBe(true);
+    expect(json.data.briefing).toContain('Magandang umaga, Maria');
+    expect(json.data.tagline).toBeUndefined();
+    expect(json.data.tone).toBe('celebratory'); // tone is still selected
   });
 
-  // --- Missing API key ---
+  it('strips markdown fences when parsing Claude JSON', async () => {
+    mockAnthropicCreate.mockResolvedValue({
+      content: [
+        {
+          type: 'text',
+          text: '```json\n{"briefing": "Briefing text", "tagline": "Hello, Maria!"}\n```',
+        },
+      ],
+      usage: { input_tokens: 2500, output_tokens: 300 },
+    });
 
-  it('returns error when ANTHROPIC_API_KEY is not configured', async () => {
+    const res = await GET();
+    const json = await res.json();
+
+    expect(json.data.briefing).toContain('Briefing text');
+    expect(json.data.tagline).toBe('Hello, Maria!');
+  });
+
+  // --- Claude graceful fallback (Phase 7 — no_credits) ---
+
+  it('returns deterministic fallback when Claude throws "credit balance" error', async () => {
+    mockAnthropicCreate.mockRejectedValue(new Error('Your credit balance is too low to process this request.'));
+
+    const res = await GET();
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(json.data.available).toBe(true);
+    expect(json.data.reason).toBe('no_credits');
+    expect(json.data.tone).toBe('celebratory'); // 2026-03-28 → celebratory
+    expect(typeof json.data.tagline).toBe('string');
+    expect(json.data.tagline.length).toBeGreaterThan(0);
+    expect(json.data.tagline.length).toBeLessThanOrEqual(80);
+    expect(json.data.tagline).toContain('Maria');
+    expect(typeof json.data.briefing).toBe('string');
+    expect(json.data.briefing).toContain('Maria');
+    // Fallback must NOT contain fabricated peso amounts
+    expect(json.data.briefing).not.toMatch(/₱\s*\d/);
+  });
+
+  it('returns deterministic fallback when Claude throws "insufficient" error', async () => {
+    mockAnthropicCreate.mockRejectedValue(new Error('Insufficient funds for this request'));
+
+    const res = await GET();
+    const json = await res.json();
+
+    expect(json.data.available).toBe(true);
+    expect(json.data.reason).toBe('no_credits');
+    expect(json.data.tagline).toBeTruthy();
+  });
+
+  it('returns deterministic fallback on Anthropic 5xx errors', async () => {
+    const sdkError = Object.assign(new Error('Internal server error'), { status: 503 });
+    mockAnthropicCreate.mockRejectedValue(sdkError);
+
+    const res = await GET();
+    const json = await res.json();
+
+    expect(json.data.available).toBe(true);
+    expect(json.data.reason).toBe('no_credits');
+    expect(json.data.tone).toBeDefined();
+  });
+
+  it('returns deterministic fallback when ANTHROPIC_API_KEY is the dev placeholder', async () => {
+    process.env.ANTHROPIC_API_KEY = 'your-anthropic-api-key-here';
+
+    const res = await GET();
+    const json = await res.json();
+
+    expect(json.data.available).toBe(true);
+    expect(json.data.reason).toBe('no_credits');
+    expect(json.data.tone).toBeDefined();
+    expect(json.data.tagline).toBeTruthy();
+    expect(mockAnthropicCreate).not.toHaveBeenCalled();
+  });
+
+  it('returns deterministic fallback when ANTHROPIC_API_KEY is empty', async () => {
     process.env.ANTHROPIC_API_KEY = '';
 
     const res = await GET();
     const json = await res.json();
 
-    expect(json.data.available).toBe(false);
-    expect(json.data.reason).toBe('error');
+    expect(json.data.available).toBe(true);
+    expect(json.data.reason).toBe('no_credits');
+    expect(json.data.tagline).toBeTruthy();
     expect(mockAnthropicCreate).not.toHaveBeenCalled();
+  });
+
+  // --- Other Claude error (4xx that isn't credits) — should still degrade gracefully ---
+
+  it('returns generic error for non-credit non-5xx Claude failures', async () => {
+    // 4xx that's NOT a credit issue — caught by outer try/catch.
+    // Because pickedTone is set by this point, the route falls back to a tagline.
+    const sdkError = Object.assign(new Error('Bad request: malformed input'), { status: 400 });
+    mockAnthropicCreate.mockRejectedValue(sdkError);
+
+    const res = await GET();
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    // Phase 7 last-ditch fallback: even unexpected errors degrade to a tagline
+    // because pickedTone is set during the cache-check phase.
+    expect(json.data.available).toBe(true);
+    expect(json.data.reason).toBe('no_credits');
   });
 
   // --- Business tier also allowed ---
