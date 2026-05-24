@@ -424,3 +424,13 @@
     transform: none !important;
   }
 }
+
+/* ─── Scanner active-capture nav suppression ───
+   When the camera viewfinder is live on /scan, hide the bottom nav so the
+   user's thumb zone is uncluttered and the viewfinder owns the screen.
+   `body[data-scanning="true"]` is set by camera-capture.tsx on enter, cleared
+   on every exit path (cancel, capture, unmount, permission failure). Idle,
+   preview, and result states keep the nav visible. */
+body[data-scanning='true'] nav[data-testid='bottom-nav'] {
+  display: none;
+}

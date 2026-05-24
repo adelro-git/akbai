@@ -24,6 +24,11 @@ const EVENTS = {
   LANDING_PAGE_CTA_CLICKED: 'landing_page_cta_clicked',
   TOOL_USED: 'tool_used',
   TOOL_RESULT_SHARED: 'tool_result_shared',
+  // Chat suggestion chips (Phase 8c — ADR-016)
+  CHAT_SUGGESTION_TAPPED: 'chat_suggestion_tapped',
+  // Deadline → chat deeplink (Phase 9b — ADR-017)
+  DEADLINE_CHAT_OPENED: 'deadline_chat_opened',
+  DEADLINE_CHAT_SEEDED: 'deadline_chat_seeded',
 } as const
 
 type EventName = (typeof EVENTS)[keyof typeof EVENTS]
@@ -110,4 +115,39 @@ export function trackToolUsed(toolName: string, resultType: string): void {
 /** Track when someone shares a tool result */
 export function trackToolResultShared(toolName: string, shareChannel: string): void {
   capture(EVENTS.TOOL_RESULT_SHARED, { tool_name: toolName, share_channel: shareChannel })
+}
+
+// ─── Phase 8c — chat suggestion chips ────────────────────────────────
+
+/** Track when a user taps a suggested-question chip in chat. */
+export function trackChatSuggestionTapped(chipId: string, intent: string): void {
+  capture(EVENTS.CHAT_SUGGESTION_TAPPED, { chip_id: chipId, intent })
+}
+
+// ─── Phase 9b — deadline → chat deeplink ─────────────────────────────
+
+/** Fired on tap from the /deadlines page (ADR-017 §7). */
+export function trackDeadlineChatOpened(
+  source: 'row' | 'callout',
+  formCode: string,
+  daysUntilDue: number,
+): void {
+  capture(EVENTS.DEADLINE_CHAT_OPENED, {
+    source,
+    form_code: formCode,
+    days_until_due: daysUntilDue,
+  })
+}
+
+/** Fired from the chat client after the sentinel "Kai opens" POST resolves. */
+export function trackDeadlineChatSeeded(
+  formCode: string,
+  daysUntilDue: number,
+  success: boolean,
+): void {
+  capture(EVENTS.DEADLINE_CHAT_SEEDED, {
+    form_code: formCode,
+    days_until_due: daysUntilDue,
+    success,
+  })
 }

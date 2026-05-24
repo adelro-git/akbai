@@ -77,7 +77,7 @@ export function ScannerFlow() {
 
       if (!json.success || !json.data) {
         setErrorMessage(
-          json.error?.message_tl ?? 'Hindi ma-scan ang resibo — subukan ulit.'
+          json.error?.message_tl ?? 'Hindi ko ma-scan ang resibo, boss. Baka malabo — i-try mo ulit o i-type mo manually?'
         );
         setFlowState('error');
         return;

@@ -1,22 +1,31 @@
+// ============================================================
+// /chat — Server Component
+// Reads optional ?topic={form_code}&context=deadline-{N}d (ADR-017 §2)
+// and passes a typed DeadlineContext into the chat client. The client
+// handles the sentinel "Kai opens" POST in a useEffect on first render.
+// ============================================================
+
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth'
 import ChatInterface from '@/components/chat/chat-interface'
 import { PageBackground } from '@/components/ui/page-background'
+import { parseDeadlineContext } from '@/lib/bir/forms'
+import type { ChatMessage } from '@/lib/chat/types'
 
 export const metadata: Metadata = {
   title: 'Kai — AKBai',
 }
 
-export type ChatMessage = {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  created_at: string
+// Re-export so any existing import-from-page consumers keep working.
+export type { ChatMessage }
+
+interface ChatPageProps {
+  searchParams: Promise<{ topic?: string; context?: string }>
 }
 
-export default async function ChatPage() {
+export default async function ChatPage({ searchParams }: ChatPageProps) {
   const supabase = await createClient()
 
   let user
@@ -47,11 +56,15 @@ export default async function ChatPage() {
     .order('created_at', { ascending: true })
     .limit(50)
 
+  const params = await searchParams
+  const deadlineContext = parseDeadlineContext(params.topic, params.context)
+
   return (
     <PageBackground variant="chat">
       <ChatInterface
         initialMessages={(messages || []) as ChatMessage[]}
         userEmail={user.email || ''}
+        deadlineContext={deadlineContext}
       />
     </PageBackground>
   )

@@ -69,7 +69,7 @@ export default function NewInvoicePage() {
   }
 
   return (
-    <div className="min-h-dvh pb-20 md:pb-6 px-4 pt-5 md:px-8 md:pt-8" data-testid="new-invoice-page">
+    <div className="min-h-dvh pb-20 tablet:pb-6 px-4 pt-5 tablet:px-8 tablet:pt-8" data-testid="new-invoice-page">
       <InvoiceForm invoiceNumber={invoiceNumber} />
     </div>
   );

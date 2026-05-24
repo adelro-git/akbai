@@ -38,6 +38,7 @@ import {
   validateReplyOutput,
   SAFE_FALLBACK_MESSAGE,
 } from '@/lib/reply-drafter';
+import { SENTINEL_DEADLINE_CONTEXT_OPEN } from '@/lib/bir/forms';
 
 export async function POST(req: NextRequest) {
   try {
@@ -87,21 +88,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { message, feature: requestedFeature } = parsed.data;
+    const { message, feature: requestedFeature, deadlineContext } = parsed.data;
+
+    // ADR-017 §5 — sentinel "Kai opens" trigger. Skip user-message persist,
+    // require deadlineContext, and force feature='general_chat'. Don't sanitize
+    // the sentinel itself (it never reaches Claude as a user turn).
+    const isDeadlineSentinel = message.trim() === SENTINEL_DEADLINE_CONTEXT_OPEN;
+    if (isDeadlineSentinel && !deadlineContext) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_INPUT',
+            message: 'Deadline context required for sentinel message',
+            message_tl: 'Walang konteksto ng deadline.',
+          },
+        },
+        { status: 400 }
+      );
+    }
 
     // --- Input Sanitization ---
-    const { sanitizedInput, injectionDetected } = sanitizeInput(message);
+    // For the sentinel, sanitize an empty string (skips checks) — the
+    // sentinel string itself is never logged into ka_conversations.
+    const { sanitizedInput, injectionDetected } = sanitizeInput(
+      isDeadlineSentinel ? '' : message
+    );
     if (injectionDetected) {
       console.warn(`[Chat] Injection attempt from user ${user.id}`);
     }
 
     // --- Reply-Draft Intent Detection ---
-    // If the user's message looks like a reply-drafting request,
-    // override the feature to 'reply_drafter' so we get the right
-    // system prompt (communication scope + reply drafter feature block).
+    // Sentinel messages never count as reply-draft intent (empty content).
     const isReplyDraft =
-      requestedFeature === 'reply_drafter' || detectReplyDraftIntent(sanitizedInput);
-    const feature: KAFeature = isReplyDraft ? 'reply_drafter' : (requestedFeature as KAFeature);
+      !isDeadlineSentinel &&
+      (requestedFeature === 'reply_drafter' || detectReplyDraftIntent(sanitizedInput));
+    const feature: KAFeature = isDeadlineSentinel
+      ? 'general_chat'
+      : isReplyDraft
+        ? 'reply_drafter'
+        : (requestedFeature as KAFeature);
 
     // --- Load User Context ---
     // Dev bypass uses service client to bypass RLS; auth path uses normal client
@@ -223,6 +249,7 @@ export async function POST(req: NextRequest) {
     const systemPrompt = assembleSystemPrompt({
       feature,
       userContext,
+      deadlineContext,
     });
 
     // --- Conversation History ---
@@ -234,24 +261,35 @@ export async function POST(req: NextRequest) {
       .order('created_at', { ascending: true })
       .limit(20);
 
-    // Save user message to conversation history
+    // Save user message to conversation history.
+    // ADR-017 §5: do NOT persist the sentinel as a user-typed message.
     const conversationDomain = isReplyDraft ? 'communication' : 'general';
-    await db.from('ka_conversations').insert({
-      user_id: user.id,
-      role: 'user',
-      content: sanitizedInput.trim(),
-      domain: conversationDomain,
-    });
+    if (!isDeadlineSentinel) {
+      await db.from('ka_conversations').insert({
+        user_id: user.id,
+        role: 'user',
+        content: sanitizedInput.trim(),
+        domain: conversationDomain,
+      });
+    }
 
     // --- Claude API Call ---
     const anthropic = new Anthropic({ apiKey });
+
+    // ADR-017 §4 — for the sentinel, seed Claude with a minimal
+    // user turn that prompts Kai to "speak first" using the deadline
+    // context block in the system prompt. The sentinel string is
+    // never sent to Claude verbatim.
+    const seedTurn = isDeadlineSentinel
+      ? '__open_deadline_topic__'
+      : sanitizedInput.trim();
 
     const contextMessages: Anthropic.MessageParam[] = [
       ...(history ?? []).map((m: { role: string; content: string }) => ({
         role: m.role as 'user' | 'assistant',
         content: m.content,
       })),
-      { role: 'user' as const, content: sanitizedInput.trim() },
+      { role: 'user' as const, content: seedTurn },
     ];
 
     const response = await anthropic.messages.create({

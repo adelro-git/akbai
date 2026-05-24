@@ -1,15 +1,14 @@
-/**
- * BIR Deadline Watcher Page — Lists all BIR filing deadlines
- * Feature: Build 6 — BIR Deadline Watcher (Sprint 9)
- * Role: Server page that renders the deadline list with BIR disclaimer.
- *       Mobile-first layout, grouped by status (overdue → upcoming → filed).
- */
+// ============================================================
+// /deadlines — Phase 9b ADOPT HANDOFF (A5)
+// Header eyebrow + Fraunces H1 + caption, then the redesigned
+// DeadlineList with Kai pre-deadline callout + tap-through chat
+// deeplinks (ADR-017).
+// ============================================================
 
 import { Metadata } from 'next';
-import { ChevronLeft, Calendar } from 'lucide-react';
-import Link from 'next/link';
 import DeadlineList from '@/components/deadlines/deadline-list';
 import { PageBackground } from '@/components/ui/page-background';
+import { IconKalendaryo } from '@/components/illustrations/icons';
 
 export const metadata: Metadata = {
   title: 'BIR Deadlines — AKBai',
@@ -18,39 +17,47 @@ export const metadata: Metadata = {
 export default function DeadlinesPage() {
   return (
     <PageBackground variant="deadlines">
-    <div
-      className="min-h-dvh pb-20"
-      data-testid="deadlines-page"
-    >
-      {/* ─── Header ─── */}
-      <header className="flex items-center gap-3 px-4 py-4">
-        <Link
-          href="/dashboard"
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-surface-container transition-colors"
-          aria-label="Back to dashboard"
-          data-testid="deadlines-back-btn"
-        >
-          <ChevronLeft className="w-6 h-6 text-on-surface" />
-        </Link>
-        <div className="flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-primary-container" />
-          <h1 className="text-xl font-bold text-on-surface">BIR Deadlines</h1>
-        </div>
-      </header>
-
-      {/* ─── BIR Disclaimer Banner ─── */}
       <div
-        className="mx-4 mb-4 bg-warning-container/10 rounded-xl px-4 py-3"
-        data-testid="bir-disclaimer"
+        className="min-h-dvh pb-24 max-w-[760px] mx-auto px-4 py-6"
+        data-testid="deadlines-page"
       >
-        <p className="text-xs text-on-surface-variant leading-relaxed">
-          Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo.
-        </p>
-      </div>
+        {/* ── Screen header ── */}
+        <header className="mb-5">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-honey-deep" aria-hidden>
+              <IconKalendaryo size={28} />
+            </span>
+            <span className="text-[10px] font-extrabold tracking-[0.08em] text-honey-deep">
+              BIR DEADLINES
+            </span>
+          </div>
+          <h1
+            className="font-serif text-[28px] leading-tight text-on-surface mb-1"
+            style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 500 }}
+            data-testid="deadlines-h1"
+          >
+            Hindi ka mahuhuli kay Kai.
+          </h1>
+          <p className="text-[13px] text-ink-soft">
+            Automatic na paalala bago ang due date.
+          </p>
+        </header>
 
-      {/* ─── Deadline List (client component) ─── */}
-      <DeadlineList />
-    </div>
+        {/* ── BIR disclaimer banner — voice manual §3 canonical ── */}
+        <div
+          className="mb-5 rounded-xl bg-honey-cream/40 px-4 py-2.5"
+          data-testid="deadlines-disclaimer"
+          role="status"
+          aria-label="BIR disclaimer"
+        >
+          <p className="text-[11px] text-ink-soft leading-snug">
+            Ito ay gabay lamang, hindi tax advice. Kumonsulta sa CPA para sa opisyal na payo.
+          </p>
+        </div>
+
+        {/* ── Deadline list (client) ── */}
+        <DeadlineList />
+      </div>
     </PageBackground>
   );
 }

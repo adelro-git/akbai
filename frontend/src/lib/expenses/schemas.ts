@@ -69,12 +69,25 @@ export type UpdateTransactionPayload = z.infer<typeof UpdateTransactionSchema>;
 
 // ─── Query Params ────────────────────────────────────────────────────
 
+/**
+ * Time-range shorthand used by the /expenses pills.
+ * - `linggo` — trailing 7 Manila days, inclusive of today
+ * - `buwan`  — current Manila month
+ * - `taon`   — current Manila year (Jan 1 → today)
+ *
+ * All boundaries are Manila-local (UTC+8). When both `range` and `month`
+ * are supplied, `range` wins (route warn-logs the conflict).
+ */
+export const ExpensesRangeEnum = z.enum(['linggo', 'buwan', 'taon']);
+export type ExpensesRange = z.infer<typeof ExpensesRangeEnum>;
+
 export const ExpensesQuerySchema = z.object({
   type: TransactionTypeEnum.optional(),
   category: z.string().optional(),
   from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   month: z.string().regex(/^\d{4}-\d{2}$/).optional(), // YYYY-MM shorthand
+  range: ExpensesRangeEnum.optional(),                  // pill shorthand (Sprint 14)
 });
 
 export type ExpensesQuery = z.infer<typeof ExpensesQuerySchema>;

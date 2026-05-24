@@ -148,6 +148,111 @@ describe('GET /api/expenses', () => {
     expect(res.status).toBe(400);
     expect(json.success).toBe(false);
   });
+
+  // ──────────────────────────────────────────────────────────────────
+  // Sprint 14 — `?range=linggo|buwan|taon` shorthand
+  // Mocked Manila today is '2026-03-26' (see top-of-file vi.mock).
+  // ──────────────────────────────────────────────────────────────────
+
+  /**
+   * Wire a transactions chain that captures `.gte`/`.lte` filter values
+   * and resolves to `mockTx` when awaited.
+   */
+  function wireTxChain(mockTx: unknown[]) {
+    const chain = mockChain();
+    (chain as Record<string, unknown>).then = (resolve: (v: unknown) => void) => {
+      resolve({ data: mockTx, error: null });
+      return chain;
+    };
+    mockFromChains['transactions'] = chain;
+    return chain;
+  }
+
+  /**
+   * Resolve the `transaction_date` filter window that was actually applied
+   * to the query: returns the args passed to `.gte('transaction_date', X)`
+   * and `.lte('transaction_date', Y)`.
+   */
+  function readDateWindow(chain: ReturnType<typeof mockChain>): {
+    from: string | undefined;
+    to: string | undefined;
+  } {
+    const gteCall = chain.gte.mock.calls.find((c) => c[0] === 'transaction_date');
+    const lteCall = chain.lte.mock.calls.find((c) => c[0] === 'transaction_date');
+    return { from: gteCall?.[1] as string | undefined, to: lteCall?.[1] as string | undefined };
+  }
+
+  it('range=linggo returns trailing 7 Manila days (2026-03-20 → 2026-03-26)', async () => {
+    const chain = wireTxChain([]);
+    const res = await GET(makeRequest('http://localhost:3000/api/expenses?range=linggo'));
+
+    expect(res.status).toBe(200);
+    expect(readDateWindow(chain)).toEqual({ from: '2026-03-20', to: '2026-03-26' });
+  });
+
+  it('range=buwan matches existing ?month= behavior for current Manila month', async () => {
+    const chain = wireTxChain([]);
+    const res = await GET(makeRequest('http://localhost:3000/api/expenses?range=buwan'));
+
+    expect(res.status).toBe(200);
+    expect(readDateWindow(chain)).toEqual({ from: '2026-03-01', to: '2026-03-31' });
+  });
+
+  it('range=taon returns current Manila year (2026-01-01 → today)', async () => {
+    const chain = wireTxChain([]);
+    const res = await GET(makeRequest('http://localhost:3000/api/expenses?range=taon'));
+
+    expect(res.status).toBe(200);
+    expect(readDateWindow(chain)).toEqual({ from: '2026-01-01', to: '2026-03-26' });
+  });
+
+  it('range=taon boundary: Jan 1 included, prior Dec 31 excluded', async () => {
+    // The Postgres filter uses date-only `transaction_date >= '2026-01-01'`,
+    // so a row stored as '2025-12-31' is below the floor and excluded;
+    // a row stored as '2026-01-01' is included.
+    const chain = wireTxChain([]);
+    await GET(makeRequest('http://localhost:3000/api/expenses?range=taon'));
+
+    const { from } = readDateWindow(chain);
+    expect(from).toBe('2026-01-01');
+    // Sanity check on date-string ordering — Dec 31 prior year sorts below floor:
+    expect('2025-12-31' < (from ?? '')).toBe(true);
+    expect('2026-01-01' < (from ?? '')).toBe(false);
+  });
+
+  it('when both ?range= and ?month= are sent, ?range= wins', async () => {
+    const chain = wireTxChain([]);
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const res = await GET(
+      makeRequest('http://localhost:3000/api/expenses?range=linggo&month=2025-08')
+    );
+
+    expect(res.status).toBe(200);
+    // ?range=linggo wins → trailing 7 days from mocked today (2026-03-26).
+    expect(readDateWindow(chain)).toEqual({ from: '2026-03-20', to: '2026-03-26' });
+    // The conflict is warn-logged for adoption visibility.
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it('invalid ?range= value returns 400 with conversational Filipino message', async () => {
+    const res = await GET(makeRequest('http://localhost:3000/api/expenses?range=quarter'));
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe('INVALID_INPUT');
+    expect(json.error.message_tl).toBe('Hindi tama ang saklaw ng panahon.');
+  });
+
+  it('no params at all defaults to current Manila month (parity with existing default)', async () => {
+    const chain = wireTxChain([]);
+    const res = await GET(makeRequest('http://localhost:3000/api/expenses'));
+
+    expect(res.status).toBe(200);
+    expect(readDateWindow(chain)).toEqual({ from: '2026-03-01', to: '2026-03-31' });
+  });
 });
 
 describe('POST /api/expenses', () => {
