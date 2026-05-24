@@ -1406,6 +1406,8 @@ These are NOT bugs — they are decisions made in-session, listed so they don't 
 
 **Memory entries added:** `feedback_migration_numbering.md` (sprint plans reference migration content not ordinal), `feedback_standup_vs_sprint_mismatch.md` (when /standup is invoked but ask is sprint execution, surface mismatch).
 
+**PR opened 2026-05-24:** https://github.com/adelro-git/akbai/pull/30 (`claude/redesign-phase-8-9` → `main`). 2 commits, +1079/-177 lines docs + ~56 files app code. Pending Anton: 24h feel-test + live-testing pass + self-merge via GitHub UI or `gh pr merge 30 --squash` (your preference per repo convention — recent PRs used merge commits, see PR #29). Branch hygiene: delete `claude/redesign-phase-8-9` after merge.
+
 **Next sprint:** Sprint 14 (Native Mobile Pivot Foundations) opens on a fresh branch after this branch merges to main. The 3 carry-overs originally slated as Sprint 14 Feature Continuation track work are largely shipped pre-merge — Sprint 14 capacity now goes fully to pivot foundations (Capacitor spike + Gemini Kai prompt iteration + Starter/Pro feature matrix confirmation, which is already done in docs).
 
 ---
