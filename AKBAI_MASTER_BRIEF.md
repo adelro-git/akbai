@@ -1,36 +1,29 @@
 # AKBAI_MASTER_BRIEF.md
 > **Single entry-point document for AI app builders.**
-> Last updated: March 19, 2026 | Prepared by: Anton del Rosario (Founder)
+> Last updated: 2026-05-24 (Sprint 13 — Native Mobile Pivot banner added; full doc rewrite deferred) | Original prepared: 2026-03-19 by Anton del Rosario (Founder)
 > Read this ENTIRE file before writing a single line of code.
 
 ---
 
-## EMERGENT SCOPE — READ THIS FIRST
+## ⚠️ STATUS UPDATE — 2026-05-24 (Sprint 13)
 
-This document is being used in a LIMITED Emergent session (100 credits).
-Emergent's ONLY job is to generate a clean scaffold. Do NOT build
-business logic, pillar features, or AI reasoning layers.
+**Several sections of this brief are now stale.** The product has pivoted in three major ways since the original March 2026 draft. **Authoritative current state lives in `akbai-delivery/shared/project-context.md` and `akbai-delivery/shared/tech-stack.md` — read those FIRST** for current architecture, pricing, and phase status. This brief retains its historical/strategic value (market research, personas, pillar definitions, brand voice) but the platform + pricing sections below are superseded.
 
-**BUILD THIS:**
-- Next.js 14 PWA shell, mobile-first
-- User auth (signup, login, sessions via Supabase Auth magic link / email OTP)
-- Basic conversational Filipino chat interface UI shell (text input, message bubbles, Kai persona styling)
-- Database schema (users, ka_conversations, business_profiles — with RLS on every table)
-- One working Claude Sonnet 4 API endpoint at /api/chat (server-side only, no client API key exposure)
-- Vercel deployment config (or Cloudflare Pages — see Section 4 for canonical choice)
+**What changed (full plan: `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md`):**
 
-**DO NOT BUILD:**
-- Financial management logic (Saan Napunta, Costing Cards, Invoice Cards)
-- BIR/tax rules or compliance features (Deadline Watcher, BIR calendar)
-- Any of the 5 pillar features (financial tracking, BIR compliance, customer comms, daily ops, task prioritization)
-- Customer communications engine (Reply Drafter, WhatsApp, Messenger)
-- Operations or decision-making features (Morning Briefing, reconciliation flows)
-- Phase 3 agent customization platform (custom behaviors, Scale tier)
-- Xendit payment integration
-- Receipt scanning / OCR
-- Onboarding flow (Kilala Kita)
+1. **Platform pivot — PWA → Native mobile via Capacitor.** AKBai now ships to App Store + Google Play, not just as a PWA. Capacitor wraps the existing Next.js code (~90% reuse) in iOS + Android native shells. Backend (Next.js API routes, Supabase, Claude API) unchanged.
 
-**STOP** when a user can open the app on mobile, log in, type a message, and receive a Claude API response in a styled chat bubble. That is the entire Emergent deliverable.
+2. **Pricing model rebuilt.** Old: Free / Pro ₱399 / Business ₱899 / Scale ₱1,499 (monthly subscriptions via Xendit). **New: 7-day free trial → ₱299 lifetime Starter (non-consumable IAP, capped to non-AI features) → ₱499/mo or ₱4,999/yr Pro subscription (auto-renewing IAP).** Tarsi-validated impulse-buy starter + subscription-protected unit economics for AI features.
+
+3. **Payment integration — Xendit → App Store / Google Play IAP via RevenueCat SDK.** Xendit code remains on disk but is deferred indefinitely (was never activated — no live customers, zero migration cost). RevenueCat wraps StoreKit 2 + Play Billing in one library, free up to $10K MRR.
+
+4. **Kai character evolution.** Existing Kai mark + persona being extended into a full illustrated character (body, 8+ expressions, scenarios) via Filipino illustrator commission. Brief at `akbai-delivery/skills/ux-designer/references/kai-character-brief.md`. NOT replacing Kai with a new mascot.
+
+**Execution:** Sprints 13-18 (~6-9 weeks compressed, ~12-14 weeks sequential). Pre-launch — no paying users yet.
+
+**This brief will be rewritten end-to-end in a future sprint.** For now, treat Sections 4 (tech stack) and 6 (pricing) as historical. Sections 1 (product summary), 2 (folder structure), 3 (market/personas), 5 (brand voice), 7 (brand quick reference), 8 (known risks) remain authoritative.
+
+**Emergent-scaffold sections removed 2026-05-24 (Sprint 13)** — the Emergent scaffold work is long past; Build 0 through Build 7 have shipped (per `sprint-history.md`). All Emergent-scope guidance is obsolete and has been deleted to prevent confusion. Section numbering after Section 6 has been compacted (old Section 8 → 7, old 9 → 8, old 10 → 9).
 
 ---
 
@@ -40,7 +33,7 @@ AKBai — "Katuwang ng Negosyo Mo" (Your Business Partner) — is a mobile-first
 
 The product is built by a solo founder (Anton del Rosario) working evenings and weekends alongside a day job at Globe Telecom. Sprint capacity is 10–15 hours per two-week sprint. The monetization model uses three tiers: Free (₱0, Haiku-only, 10 queries/day), Pro (₱399/month, 50 receipt scans, full Sonnet access), and Business (₱899/month, 80 scans, multi-seat). Unit economics are strong: Pro LTV of ₱9,975, blended CAC of ₱110, LTV/CAC ratio of 91x, with break-even projected at Month 7 and Year 1 net profit target of ₱110,303.
 
-The project is currently in Phase 0A (Legal Foundation). No code has been written yet. The brand identity, market research, financial model, competitive brief, operations playbook, and full product roadmap (v14) are complete. The next milestone is scaffolding a working PWA shell that can be iterated on during Phase 1 (MVP Build, Months 1–6). Phase 1 targets are 50 registered users, 20 paying Pro subscribers, and ₱6K–₱10K MRR.
+The project is currently in **Phase 0A — Sprint 13 (Frontend Redesign Phase 8-9 close-out)** as of 2026-05-24. Builds 0-7 have shipped (per `akbai-delivery/shared/sprint-history.md`); Build 8 (Costing + Invoice Cards) remains. The brand identity, market research, financial model, competitive brief, operations playbook, and full product roadmap (v14) are complete. Next milestone: native mobile pivot via Capacitor (Sprints 14-19 per `lets-review-our-approach-tidy-harp.md` plan). Phase 1 targets are 50 registered users, 20 paying Pro subscribers, and ₱6K–₱10K MRR.
 
 ---
 
@@ -122,8 +115,9 @@ The project is currently in Phase 0A (Legal Foundation). No code has been writte
 - akbai-delivery plugin scaffolded (12 skills, 15 commands)
 - 5 shared context files written and cross-referenced
 
-### Build Order for Phase 1 (Post-Scaffold)
-The Emergent scaffold is a prerequisite for this sequence. After Emergent delivers, Anton builds in this order:
+### Build Order for Phase 1
+
+> **Status update 2026-05-24:** Builds 0-7 have shipped (per `akbai-delivery/shared/sprint-history.md`). Build 8 (Costing + Invoice Cards) is the only remaining build before MVP-complete. Current focus: Sprint 13 (Frontend Redesign Phase 8-9 close-out) → Sprints 14-19 (Native Mobile Pivot). Table below kept for reference.
 
 | Build | Name | What It Does | Depends On |
 |-------|------|-------------|------------|
@@ -157,14 +151,14 @@ The Emergent scaffold is a prerequisite for this sequence. After Emergent delive
 | UI Library | **Shadcn/UI** | Composable, accessible, zero unused CSS. |
 | Database | **Supabase** (Postgres + Auth + Storage + Realtime) | RLS on every table. Soft-delete only. Audit columns on everything. |
 | AI Brain | **Claude Sonnet 4 via direct API calls** (`claude-sonnet-4-6`) | All calls server-side. Use `@anthropic-ai/sdk`. Never expose API key to client. |
-| AI (lightweight) | **Claude Haiku** (`claude-haiku-4-5`) | For OCR, classification, free-tier queries. Not needed for Emergent scaffold. |
+| AI (lightweight) | **Claude Haiku** (`claude-haiku-4-5`) | For OCR, classification, free-tier queries. |
 | Auth | **Supabase Auth** (magic link / email OTP) | No social login in Phase 1. |
-| Payments | **Xendit** | Not in Emergent scope. GCash primary. |
-| Deployment | **Cloudflare Pages** | Free M1–M6. If Emergent uses Vercel, that's acceptable for scaffold — will migrate later. |
-| PWA | **next-pwa** | Offline support critical. Include manifest + service worker. |
+| Payments | **Xendit** (DEPRECATED 2026-05-24 — see `tech-stack.md`) | Replaced by IAP (Apple StoreKit 2 + Google Play Billing via RevenueCat). |
+| Deployment | **Vercel** (Phase 1) → **Cloudflare Pages** (Month 7+) | Web backend stays on Vercel during native pivot; mobile app ships to App Store + Play Store. |
+| PWA | **next-pwa** (DEPRECATED 2026-05-24 — Capacitor wraps web build for native shells) | Manifest + service worker retained as web fallback. |
 | Data fetching | **TanStack Query + Persister** | Offline-first caching. |
-| Email | **Resend** | Not in Emergent scope. |
-| Monitoring | **Sentry** (errors) + **PostHog** (analytics) | Not in Emergent scope but env vars should be stubbed. |
+| Email | **Resend** | Transactional only. |
+| Monitoring | **Sentry** (errors) + **PostHog** (analytics) | Required for production. |
 
 ### AI API Call Pattern (Critical for /api/chat endpoint)
 ```typescript
@@ -265,7 +259,7 @@ These decisions have been locked after 14 roadmap iterations, 7 ops playbook ver
 
 5. **PWA, not native app.** No App Store listing. Install via "Add to Home Screen." This avoids app review delays and 30% platform fees. PWA install UX is a required design gate.
 
-6. **Cloudflare Pages for deployment.** Free for first 6 months. If Emergent scaffold uses Vercel for convenience, that is acceptable — migration happens later. Do not architect around Vercel-specific features.
+6. **Vercel (Phase 1) → Cloudflare Pages (Month 7+).** Web backend currently on Vercel free tier. Migration to Cloudflare Pages planned for Month 7+ cost optimization. Do not architect around Vercel-specific features.
 
 7. **Mobile-first, light theme default.** The primary background is Surface (#fdf9f2). Cards are #f1ede7. Text is #1c1c18 (on-surface). Dark mode available via user preference toggle (dark background #07101e, cards #0d1a2e). Never pure black. Never cold greys. Font is Plus Jakarta Sans (Google Fonts).
 
@@ -279,7 +273,7 @@ These decisions have been locked after 14 roadmap iterations, 7 ops playbook ver
 
 12. **Circuit breaker on AI spend.** Daily Claude API spend cap tracked in a Supabase table. When hit, return graceful degradation — not an error.
 
-13. **Brand colors are locked.** Primary: Warm Honey (#F59E0B → #D97706 gradient). Supporting: Teal (#20C9A0, #0FB8D9). Error: Red (#F87171). See Section 8 for full color system.
+13. **Brand colors are locked.** Primary: Warm Honey (#F59E0B → #D97706 gradient). Supporting: Teal (#20C9A0, #0FB8D9). Error: Red (#F87171). See Section 7 (Brand Quick Reference) for full color system.
 
 14. **The persona name is "Kai."** The AI persona is named "Kai" — the smart ate/kuya who always has your back.
 
@@ -287,88 +281,7 @@ These decisions have been locked after 14 roadmap iterations, 7 ops playbook ver
 
 ---
 
-## 7. What to Build First in Session 1 (Emergent Scope)
-
-### Deliverable Checklist
-
-Emergent should produce a working scaffold with these 6 components. Check each box before considering the session complete:
-
-- [ ] **Next.js 14 PWA shell** — App Router, TypeScript strict, Tailwind CSS, Shadcn/UI, next-pwa with basic manifest and service worker. Mobile-first layout with Surface (#fdf9f2) light-first background, dark mode via class toggle. Plus Jakarta Sans font loaded via Google Fonts.
-
-- [ ] **Supabase Auth** — Email OTP / magic link signup and login. Protected routes that redirect unauthenticated users. Session management with Supabase client (browser + server helpers). No social login.
-
-- [ ] **Database schema** — At minimum, create these tables in Supabase with RLS, soft-delete, and audit columns:
-  - `users` (extends auth.users — display_name, phone, created_at, updated_at, deleted_at)
-  - `business_profiles` (user_id FK, business_name, business_type, income_range, bir_registered, created_at, updated_at, deleted_at)
-  - `ka_conversations` (user_id FK, role enum ['user','assistant'], content text, domain varchar default 'general', created_at, deleted_at)
-  > **Note:** The table name is `ka_conversations` (not `conversations`). Use this name consistently across all code.
-
-- [ ] **Chat interface UI** — Mobile-optimized chat screen with:
-  - Message bubble list (user messages right-aligned, Kai messages left-aligned)
-  - Text input bar with send button (fixed to bottom, above keyboard on mobile)
-  - Kai avatar/icon on assistant messages (use AKBai_Mark_Honey.png or brand color placeholder)
-  - Loading state while waiting for Claude response (animated indicator, not blank)
-  - Brand styling: Ink background, Warm Honey accents, Plus Jakarta Sans, rounded cards
-
-- [ ] **`/api/chat` endpoint** — Server-side Next.js API route that:
-  1. Authenticates the request via Supabase session
-  2. Reads the user's message from the request body
-  3. Fetches last 20 messages from `ka_conversations` for context
-  4. Calls Claude Sonnet 4 (`claude-sonnet-4-6`) via `@anthropic-ai/sdk` with a basic Kai system prompt
-  5. Stores both user message and Kai response in `ka_conversations`
-  6. Returns the Kai response to the client
-  - Basic Kai system prompt to use:
-    ```
-    You are Kai, the AI business partner inside AKBai. You speak in natural conversational
-    Filipino — Filipino syntactic frame (VSO word order, second-position enclitic pronouns
-    like "bago natin i-save" not "bago i-save natin"), Filipino conjunctions (kung, bago,
-    kasi, dahil, kapag) not English ones, Filipino prepositions (ayon sa, batay sa) not
-    "based sa", and Filipino time adverbs (ngayong linggo, nakaraang buwan, sa loob ng 3
-    araw) not "this week/last month/in 3 days". Use "ang" not "yung" for definite objects.
-    Keep English only for: BIR/tax/financial terms (1701Q, VAT, net income), Filipinized
-    verbs with affixes (i-save, i-scan, na-scan, i-track, i-edit), brand names (GCash,
-    Maya, Shopee), and numbers. Never bare English verbs without Filipino affix. You are
-    warm, competent, and proactive. Use "po" naturally. Heavy on particles: ba, naman,
-    kasi, pala, lang, nga, sana, pa, na. Keep messages short — max 2 lines per response.
-    Use digits for numbers (₱18,400 not "eighteen thousand"). Call the user by their first
-    name when known. Never say "Certainly!", "As an AI...", or any robotic filler. You
-    are a brilliant kababayan colleague, not a corporate chatbot.
-    ```
-
-- [ ] **Deployment config** — Vercel or Cloudflare Pages deployment configuration. Include `.env.example` with all environment variable stubs listed in Section 4. Ensure the app builds and deploys successfully.
-
-### Acceptance Criteria (Definition of Done)
-
-The scaffold is complete when:
-1. A user can open the app URL on a mobile browser
-2. They see a login/signup screen with email OTP
-3. After authenticating, they land on a chat screen
-4. They can type a message and tap send
-5. The message is sent to Claude Sonnet 4 via `/api/chat`
-6. A conversational Filipino response from Kai appears in a styled chat bubble
-7. The conversation persists in Supabase (refresh the page → messages are still there)
-8. The PWA can be installed via "Add to Home Screen" (manifest + service worker are present)
-
-### What NOT to Do
-
-Do not spend credits on any of the following:
-- Kilala Kita onboarding flow
-- Dashboard with business data cards
-- Receipt scanning or image upload
-- BIR deadline logic or tax calculations
-- Expense categorization
-- Morning briefing generation
-- Customer reply drafting
-- Payment/subscription logic
-- Multi-seat or team features
-- Complex system prompt with domain scopes (use the basic prompt above)
-- Feature flags, circuit breakers, or admin dashboards
-
-These are all Phase 1 builds that will be done incrementally after the scaffold exists.
-
----
-
-## 8. Brand Quick Reference (for UI Implementation)
+## 7. Brand Quick Reference (for UI Implementation)
 
 ### Colors (Light-First — "The Art of Warmth")
 | Role | Light Hex | Dark Hex | Use |
@@ -396,7 +309,7 @@ These are all Phase 1 builds that will be done incrementally after the scaffold 
 
 ---
 
-## 9. Known Risks and Gotchas
+## 8. Known Risks and Gotchas
 
 1. **Supabase RLS is NOT optional.** If you create a table without RLS policies, any authenticated user can read all rows. This is a data privacy violation under Philippine law (RA 10173).
 
@@ -408,13 +321,13 @@ These are all Phase 1 builds that will be done incrementally after the scaffold 
 
 5. **No official website exists yet.** Do not generate links to any AKBai domain. The app URL will be assigned during deployment.
 
-6. **Yahoo Mail deliverability.** Many Filipino users have Yahoo Mail accounts. Supabase Auth email delivery to Yahoo can fail. This is a known gap (D1 in gap registry) but not in Emergent scope.
+6. **Yahoo Mail deliverability.** Many Filipino users have Yahoo Mail accounts. Supabase Auth email delivery to Yahoo can fail. This is a known gap (D1 in gap registry) — downgraded to IMPORTANT in Sprint 4 once Supabase built-in email proved reliable for early users. Revisit when custom SMTP / domain purchase.
 
 7. **PWA "Add to Home Screen" on iOS.** iOS Safari does not show native PWA install banners. The manifest and service worker must be present, but the actual install guide UX is a post-scaffold task.
 
 ---
 
-## 10. Reference Document Index
+## 9. Reference Document Index
 
 | Document | Location | What It Contains |
 |----------|----------|-----------------|

@@ -1,7 +1,7 @@
 # AKBai — Pre-Launch Gap Registry
 > Used by: project-manager, solutions-architect, fullstack-engineer, devops-engineer, security-compliance
-> Last updated: 2026-03-25 | Source: Roadmap v14, Operations Playbook v7
-> 33 total gaps across 6 categories. 10 CRITICAL items remain (A1, A5 resolved this sprint; D1 downgraded to IMPORTANT). E4 (EWT/2307) added 2026-03-31.
+> Last updated: 2026-05-24 (Sprint 13 — Native Mobile Pivot: D2 Xendit DEFERRED; new Category G added for native pivot gaps) | Prior source: Roadmap v14, Operations Playbook v7
+> 40 total gaps across 7 categories. Category G (native mobile pivot) adds 7 new gaps.
 
 ---
 
@@ -52,7 +52,7 @@
 | # | Gap | Severity | When to Fix | Action |
 |---|-----|----------|-------------|--------|
 | D1 | OTP deliverability to Yahoo Mail PH | IMPORTANT | Phase 1 — Pre-launch | Downgraded 2026-03-25. Supabase built-in email works for dev/early users (tested Gmail OTP successfully). 4 emails/hour free tier is fine for now. Custom SMTP (Resend) deferred until domain purchased and real users onboarding. Code-side prep done: branded email templates (`lib/email/templates.ts`), Yahoo PH detection (`lib/email/verify.ts`), setup guide (`smtp-setup-guide.md`). Revisit when approaching launch. |
-| D2 | Webhook idempotency — Xendit | **CRITICAL** | Build 4 | Xendit webhook can fire twice on retry. Payment handler must deduplicate by payment_id before processing to prevent double-crediting subscriptions. |
+| D2 | Webhook idempotency — Xendit | ~~CRITICAL~~ DEFERRED | ~~Build 4~~ N/A | DEFERRED 2026-05-24 (Sprint 13). Xendit deprecated in favor of App Store / Google Play IAP via RevenueCat. Webhook idempotency requirement transfers to G2 (IAP webhook idempotency). Xendit code remains on disk but is not in critical path. |
 | D3 | OR number generation legality | **CRITICAL** | Phase 1 — Legal review | BIR requires sequentially numbered Official Receipts from a registered OR series. Auto-generating receipt numbers needs BIR legal sign-off before Automated Self-Invoicing ships. |
 | D4 | Dependency monitoring | IMPORTANT | Phase 1 — Pre-launch | Anthropic API, Supabase, Xendit each need health checks + graceful in-app fallback messages. Set up UptimeRobot or Better Uptime. |
 | D5 | Data backup strategy | IMPORTANT | Phase 0A | Supabase point-in-time recovery must be explicitly enabled on the paid plan. A tested restore procedure is required before any production financial data is stored. |
@@ -89,19 +89,35 @@
 
 ---
 
+## Category G — Native Mobile Pivot (added 2026-05-24, resequenced 2026-05-24)
+> Source: Native mobile pivot plan (`C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md`). Sprints 14-19 (Sprint 13 = redesign close-out, no pivot work).
+
+| # | Gap | Severity | When to Fix | Action |
+|---|-----|----------|-------------|--------|
+| G1 | Capacitor static export compatibility | **CRITICAL** | Sprint 15 | Convert all server components in `frontend/src/app/(app)/*/page.tsx` (~18 files) to client components. Move auth redirects to client-side guards. Verify `output: 'export'` build clean. Both iOS + Android binaries must build via `npx cap sync`. |
+| G2 | IAP webhook idempotency (RevenueCat) | **CRITICAL** | Sprint 17 | Replaces D2. RevenueCat webhook events must dedupe by event UUID before writing to `subscription_status`. Cancellation, refund, grace period transitions all need idempotent handling. |
+| G3 | Apple Developer Program + Google Play Console enrollment | IMPORTANT | Sprint 16 | $99/yr Apple + $25 one-time Google. Apple verification can take 1-2 days. Enroll early to avoid blocking Sprint 18 submission. |
+| G4 | Apple Guideline 4.2 rejection risk (webview app) | IMPORTANT | Sprint 16 | Mitigate by integrating native camera (`@capacitor/camera`), push notifications (`@capacitor/push-notifications`), biometric login (`@capacitor-community/biometric-auth`) from Sprint 16. These prove "more than a webview" to reviewers. Plan for 1 rejection cycle (1-2 weeks). |
+| G5 | App Store assets (icons, screenshots, listing copy, privacy policy) | IMPORTANT | Sprint 18 | 20+ iOS icon sizes, 8 Android sizes, screenshots per device class (iPhone 6.7"/6.1"/5.5", Android phone+tablet), conversational Filipino store listing copy, privacy policy hosted at akbai.com/privacy (NPC RA 10173 compliance), Terms of Service, demo account for reviewers. |
+| G6 | Kai character evolution (Gemini image generation) | IMPORTANT | Sprint 14 (iteration) + Sprint 18 (product integration) | Anton iterates Gemini prompts using `akbai-delivery/skills/ux-designer/references/kai-gemini-prompts.md`. Effectively ₱0 budget, hours of iteration not weeks. 8 pose set minimum + 1 hero shot. Risk: character drift across generations — mitigated by locked Character DNA preamble + reference-image input. Replace static `kai-mark.png` usages across product in Sprint 18. |
+| G7 | Pre-Launch Feature Readiness Gate | **CRITICAL** | Sprint 18 | Comprehensive 40+ item checklist (tier-defining features, payment/entitlements, brand/UX, tech health, compliance, distribution readiness) must be GREEN before Sprint 19 public release. Apps stay in TestFlight + Play Internal Testing if gate fails. Full checklist in plan §11. |
+
+---
+
 ## Gap Registry Summary
 
-| Category | CRITICAL | IMPORTANT | PLAN | Total |
-|----------|----------|-----------|------|-------|
-| A — Hard Pre-Launch Gates | 5 | 0 | 0 | 5 |
-| B — UX Gaps | 0 | 7 | 0 | 7 |
-| C — Business Logic | 0 | 2 | 1 | 3 |
-| D — Operational (Playbook) | 2 | 7 | 2 | 11 |
-| E — Pre-Build Checklist (v14) | 2 | 1 | 0 | 4 |
-| F — Security Audit (Mar 2026) | 1 | 2 | 0 | 3 |
-| **TOTAL** | **10** | **19** | **3** | **33** |
+| Category | CRITICAL | IMPORTANT | PLAN | DEFERRED | Total |
+|----------|----------|-----------|------|----------|-------|
+| A — Hard Pre-Launch Gates | 5 | 0 | 0 | 0 | 5 |
+| B — UX Gaps | 0 | 7 | 0 | 0 | 7 |
+| C — Business Logic | 0 | 2 | 1 | 0 | 3 |
+| D — Operational (Playbook) | 1 | 7 | 2 | 1 (D2) | 11 |
+| E — Pre-Build Checklist (v14) | 2 | 1 | 0 | 0 | 4 |
+| F — Security Audit (Mar 2026) | 1 | 2 | 0 | 0 | 3 |
+| **G — Native Mobile Pivot** | **3** | **4** | **0** | **0** | **7** |
+| **TOTAL** | **12** | **23** | **3** | **1** | **40** |
 
-**Rule:** All CRITICAL gaps are hard gates. No Phase 1 build proceeds until these are resolved.
+**Rule:** All CRITICAL gaps are hard gates. No public release proceeds until these are resolved. Category G3-G5 unblock store submission (Sprint 18). Category G7 unblocks public release (Sprint 19).
 
 ---
 

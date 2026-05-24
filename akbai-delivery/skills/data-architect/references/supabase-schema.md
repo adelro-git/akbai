@@ -1041,6 +1041,7 @@ ALTER TABLE public.business_profiles
 
 ```sql
 -- Migration: 006_daily_check_in.sql + 007_check_in_financials.sql
+--          + 012_morning_briefing_cache.sql + 019_morning_briefing_tone.sql
 CREATE TABLE public.daily_check_in (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id),
@@ -1049,6 +1050,10 @@ CREATE TABLE public.daily_check_in (
   kai_greeting TEXT NOT NULL,   -- the personalized greeting KA generated
   sales_amount INTEGER,         -- optional: daily sales in centavos (added Sprint 5, migration 007)
   expenses_amount INTEGER,      -- optional: daily expenses in centavos (added Sprint 5, migration 007)
+  briefing_content TEXT NULL,   -- cached morning briefing text (Build 5, migration 012)
+  briefing_generated_at TIMESTAMPTZ NULL,  -- cache freshness (migration 012)
+  briefing_tagline TEXT NULL,   -- cached one-liner ≤80 chars for Kumustahan hero (Phase 7/8, migration 019)
+  briefing_tone TEXT NULL CHECK (briefing_tone IS NULL OR briefing_tone IN ('energetic','observant','celebratory')),  -- tone register, migration 019
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ NULL,  -- soft delete (non-negotiable)
   UNIQUE(user_id, check_in_date)
@@ -1078,6 +1083,8 @@ CREATE POLICY "daily_check_in_update_own"
 - No `business_id` FK — check-ins are per-user, not per-business. This simplifies the dashboard where KA greets the user regardless of which business is active.
 - `kai_greeting` is generated server-side by Claude (Haiku for cost efficiency) during the morning check-in flow.
 - `check_in_date` is a DATE (timezone-agnostic), representing the calendar date in PHT context. See §22 Timezone Handling.
+- `briefing_content` + `briefing_generated_at` (migration 012) cache the once-per-day Claude morning briefing for `/api/morning-briefing` (Build 5).
+- `briefing_tagline` + `briefing_tone` (migration 019) cache the Phase 7 D6 tonal one-liner served on the home Kumustahan hero. Tone enum (`energetic`|`observant`|`celebratory`) is enforced via CHECK constraint. NULL values are valid — the route falls back to `pickFallback()` deterministic templates when Claude is unavailable (no_credits path).
 
 ---
 

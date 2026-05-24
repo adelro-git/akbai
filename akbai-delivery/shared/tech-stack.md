@@ -1,6 +1,32 @@
 # AKBai — Canonical Tech Stack Reference
 > Used by: solutions-architect, fullstack-engineer, data-architect, devops-engineer, ai-engineer
-> Last updated: March 2026 | Source: Roadmap v14, Operations Playbook v7
+> Last updated: 2026-05-24 (Sprint 13 — Native Mobile Pivot: Capacitor + IAP via RevenueCat, Xendit deferred) | Prior source: Roadmap v14, Operations Playbook v7
+
+---
+
+## ⚠️ Platform Pivot (Sprint 13, 2026-05-24)
+
+AKBai is pivoting from **Next.js PWA-first** to **native mobile (App Store + Google Play) via Capacitor**. The web codebase becomes the foundation; Capacitor wraps it in native iOS + Android shells. Backend (Next.js API routes, Supabase, Claude API) remains unchanged — mobile app fetches from `/api/*` over HTTPS.
+
+**What changes:**
+- Frontend: Next.js stays, but switches to static export (`output: 'export'`) for Capacitor consumption
+- Server components → client components (App Router conversion needed in Sprint 14)
+- `proxy.ts` middleware → relocated to backend API guards or Cloudflare Worker
+- PWA assets (`manifest.json`, `sw.js`, Web Push API) → replaced by Capacitor native shell
+- Payments: **Xendit deferred indefinitely.** Replaced by Apple StoreKit 2 + Google Play Billing, wrapped via **RevenueCat SDK** for cross-platform unification
+- Pricing model: Free 7-day trial + ₱299 lifetime Starter + ₱499/mo or ₱4,999/yr Pro subscription
+
+**What stays:**
+- All backend code (~90% reuse)
+- Supabase schema, RLS, auth
+- Claude API integration (still server-proxied)
+- All AI features (chat, OCR, morning briefing, weekly story, reply drafter)
+- TypeScript, Tailwind, Zod validation, all existing tests
+- Architecture principles (RLS, soft-delete, server-side keys, circuit breaker, timezone)
+
+**Full plan:** `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md`. Execution: Sprint 13 (redesign close-out) + Sprints 14-19 (native pivot).
+
+**Kai character assets:** Generated via **Gemini image generation** (not human illustrator commission). Prompt library at `akbai-delivery/skills/ux-designer/references/kai-gemini-prompts.md`. Anton iterates 8 pose set + 1 hero shot during Sprint 14. Output saved to `frontend/public/icons/kai/`.
 
 ---
 
@@ -8,15 +34,17 @@
 
 | Item | Choice | Why |
 |------|--------|-----|
-| Framework | Next.js 16 App Router | Server components reduce client bundle; App Router enables layouts and streaming |
+| Framework | Next.js 16 App Router (static export from Sprint 14+) | Server components reduce client bundle; static export feeds Capacitor native shell |
 | Language | TypeScript (strict mode) | Type safety critical for financial data |
 | Styling | Tailwind CSS only | No CSS modules, no styled-components |
 | UI Components | Shadcn/UI | Composable, accessible, ships zero unused CSS. No MUI or Bootstrap. |
-| PWA | next-pwa | Offline support for Morning Briefing cache |
-| Data Fetching | TanStack Query + Persister | Offline-first caching; queued mutations sync when connectivity returns. Critical for intermittent 4G users. |
+| **Native shell** (Sprint 13+) | **Capacitor 6+** (`@capacitor/core`, `@capacitor/ios`, `@capacitor/android`) | Wraps Next.js static export in iOS + Android shells; provides native camera, push, biometric, IAP via plugins |
+| **Native plugins** (Sprint 15+) | `@capacitor/camera`, `@capacitor/push-notifications`, `@capacitor-community/biometric-auth`, `@revenuecat/purchases-capacitor` | Replaces browser APIs (getUserMedia, Web Push) with native equivalents; biometric is Apple-rejection insurance |
+| PWA | ~~next-pwa~~ DEPRECATED (Sprint 13+) | Capacitor handles offline caching natively; PWA assets retained for web-only fallback |
+| Data Fetching | TanStack Query + Persister | Offline-first caching; queued mutations sync when connectivity returns. Critical for intermittent 4G users. Works in Capacitor WebView identically. |
 | State | React state + Supabase Realtime | No Redux; keep it simple |
 
-**Architecture:** All API routes in Next.js (`/app/api/`). No separate backend. No Python. No FastAPI.
+**Architecture:** All API routes in Next.js (`/app/api/`). No separate backend. No Python. No FastAPI. **Mobile app** ships Next.js static export bundled in Capacitor; **backend** (API routes) hosted remotely (Vercel → Cloudflare Pages Month 7+). Mobile fetches from `/api/*` over HTTPS — same endpoints as web.
 
 **Next.js 16 gotchas:**
 - Middleware uses `proxy.ts` with `export async function proxy()` (NOT `middleware.ts`)
@@ -43,7 +71,9 @@
 /lib/
   supabase/        # Supabase client (browser + server)
   claude/          # Claude API wrapper + circuit breaker
-  xendit/          # Xendit webhook handlers
+  iap/             # IAP webhooks + RevenueCat client (Sprint 16+)
+  payments/        # Subscription lifecycle (shared between legacy Xendit + new IAP)
+  xendit/          # DEPRECATED 2026-05-24 — to be removed in Sprint 17
 ```
 
 ---
@@ -136,38 +166,80 @@ export async function POST(req: Request) {
 
 ---
 
-## Payments — Xendit
+## Payments — In-App Purchase (Sprint 16+)
 
-**Primary:** Xendit subscription API (recurring billing)
-**Payment methods:** GCash (primary), credit/debit cards, OTC (Over-the-counter)
-**Fallback for first 20–50 users:** Concierge GCash (manual) if Xendit KYC pending
+> **2026-05-24 update:** Xendit deferred indefinitely (was wired but never activated — `XENDIT_SECRET_KEY` missing). Native pivot replaces it with App Store + Google Play IAP, wrapped via RevenueCat SDK for unified cross-platform handling.
 
-**Webhook handler (Supabase Edge Function):**
-- Verify Xendit signature on every webhook
-- Idempotency key to prevent duplicate processing
-- On payment success → update subscriptions table → grant tier access
-- On payment failure → send KA notification → 3-day grace period
+**Primary:** Apple StoreKit 2 (iOS) + Google Play Billing Library 8.3+ (Android), unified via **RevenueCat SDK** (`@revenuecat/purchases-capacitor`)
+**Why RevenueCat:** Wraps both stores in one library, free up to $10K MRR, handles receipt validation + subscription status reconciliation + grace period logic + cross-platform restore. Saves ~1 sprint vs raw integration. Industry standard for solo founders.
+
+**Products configured in App Store Connect + Google Play Console:**
+- `akbai_starter_lifetime` — non-consumable IAP, ₱299 one-time
+- `akbai_pro_monthly` — auto-renewing subscription, ₱499/mo
+- `akbai_pro_annual` — auto-renewing subscription, ₱4,999/yr
+
+**Webhook handler (Next.js API route):**
+- `/api/iap/webhook` — receives RevenueCat webhooks (purchase, renewal, cancellation, refund, grace period entry/exit)
+- Idempotency: dedupe by RevenueCat event UUID
+- Server-side receipt validation via RevenueCat (Apple/Google authoritative)
+- On purchase success → update `subscription_status` table → grant tier entitlements (RLS-aware)
+- On cancellation → mark grace period start (existing grace logic from Xendit ports directly)
+- On refund → revoke entitlements + audit log entry
+
+**Free 7-day trial:** Native — Apple/Google support introductory offers on subscription products. RevenueCat tracks trial entitlement; backend treats trial as "Pro tier with expiration date".
+
+**Migration from Xendit:**
+- Existing Xendit webhook handler (`/api/webhooks/xendit/route.ts`) — kept dormant; can be removed in Sprint 17 cleanup
+- Existing subscription lifecycle logic (`frontend/src/lib/payments/`) — adapted for IAP events (Sprint 16)
+- `subscription_status` table schema — preserved; add `iap_platform` column (`'apple' | 'google' | 'xendit_legacy'`) for source tracking
+
+**Anti-steering note (May 2026 regulatory state):** US allows external payment links alongside IAP (with 27% commission). EU DMA: choose IAP or alternative, not both. For AKBai, default = IAP only (simpler, cleaner). External web checkout fallback can be added later if regulatory cost-benefit shifts.
+
+---
+
+## ~~Payments — Xendit~~ (DEPRECATED 2026-05-24)
+
+Xendit subscription API was wired but never activated. Webhook handler at `/api/webhooks/xendit/route.ts` is 80% complete (signature verification, idempotent recording). Kept on disk but not in critical path. To be removed in Sprint 17 cleanup.
 
 ---
 
 ## Deployment
 
-**Phase 1 Primary:** Vercel (free tier sufficient for MVP; simpler DX for solo founder)
-**Month 7+ Migration Target:** Cloudflare Pages ($5/mo = ₱286; cost optimization when traffic justifies)
-**CDN:** Vercel Edge Network (Phase 1) → Cloudflare Edge Network (post-migration)
-**Domains:** Managed via Cloudflare DNS (regardless of hosting platform)
+**Backend (API routes + remaining web fallback):**
+- Sprint 13+: Vercel (free tier sufficient for MVP; simpler DX for solo founder)
+- Month 7+ Migration Target: Cloudflare Pages ($5/mo = ₱286; cost optimization when traffic justifies)
+- CDN: Vercel Edge Network → Cloudflare Edge Network (post-migration)
+- Domains: Managed via Cloudflare DNS
+
+**Mobile app (Sprint 17+):**
+- **iOS:** App Store (via App Store Connect + TestFlight)
+  - Apple Developer Program: $99/yr (enroll Sprint 15)
+  - Signing: Xcode automatic signing initially, manual if CI/CD added later
+  - First review: 24-48hr typical, plan for 1 rejection cycle (Guideline 4.2 webview risk)
+- **Android:** Google Play Store (via Play Console + Internal Testing track)
+  - Google Play Console: $25 one-time (enroll Sprint 15)
+  - Signing: Play App Signing (Google holds upload key)
+  - First review: same or faster than Apple
+
+**Build artifacts:**
+- Web: `next build` → static export (`out/`) → Vercel deploy
+- iOS: `npx cap sync ios` → Xcode → `.ipa` → App Store Connect
+- Android: `npx cap sync android` → Android Studio → `.aab` → Play Console
 
 **Environment variables (Vercel / Cloudflare Pages):**
 ```
 ANTHROPIC_API_KEY
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY    # Server-side only, never NEXT_PUBLIC_
-XENDIT_SECRET_KEY
-XENDIT_WEBHOOK_TOKEN
+SUPABASE_SERVICE_ROLE_KEY      # Server-side only, never NEXT_PUBLIC_
+REVENUECAT_SECRET_KEY          # Server-side IAP webhook validation
+NEXT_PUBLIC_REVENUECAT_APPLE_API_KEY    # Client-side iOS RevenueCat
+NEXT_PUBLIC_REVENUECAT_GOOGLE_API_KEY   # Client-side Android RevenueCat
 SENTRY_DSN
 NEXT_PUBLIC_POSTHOG_KEY
 RESEND_API_KEY
+# XENDIT_SECRET_KEY            # DEPRECATED 2026-05-24, not used
+# XENDIT_WEBHOOK_TOKEN          # DEPRECATED 2026-05-24, not used
 ```
 
 ---

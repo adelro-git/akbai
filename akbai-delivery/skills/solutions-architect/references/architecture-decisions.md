@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-015
-> Last updated: 2026-04-26
+> Current highest: ADR-018
+> Last updated: 2026-05-24 (Sprint 13 — ADR-018: Native Mobile via Capacitor + IAP, deprecate Xendit)
 
 ---
 
@@ -24,6 +24,9 @@
 | ADR-013 | Frontend Redesign Phase 4 — Brand Vocabulary component organization | Accepted | 2026-04-26 |
 | ADR-014 | SKIP_AUTH client consistency across server pages and API routes | Accepted | 2026-04-26 |
 | ADR-015 | Frontend Redesign Phase 7 — `/api/weekly-story` endpoint shape | Accepted | 2026-04-26 |
+| ADR-016 | Frontend Redesign Phase 8 — `/api/chat/suggestions` rule-based chips | Accepted | 2026-04-28 |
+| ADR-017 | Frontend Redesign Phase 9 — Deadline → Chat deeplink contract | Accepted | 2026-04-28 |
+| ADR-018 | Native mobile pivot via Capacitor + IAP (deprecate Xendit) | Accepted | 2026-05-24 |
 
 ---
 
@@ -749,3 +752,341 @@ The aggregation is testable in isolation (vitest). The route orchestrates auth +
 **Review Trigger:**
 - When Phase 10 adds the `weekly_stories` cache table and Sunday cron — confirm the route signature stays unchanged and only the data-source path changes (cache hit vs compute-on-fly).
 - If the takeaway templates start looking forced or overly repetitive across the 3 tones — that's an early signal Phase 10's LLM swap should land sooner.
+
+---
+
+## ADR-016: Frontend Redesign Phase 8 — `/api/chat/suggestions` Rule-Based Chips
+
+**Status:** Accepted
+**Date:** 2026-04-28
+
+**Context:**
+Phase 8 (`/chat` HYBRIDIZE per A2) adds a horizontal row of suggested-question chips above the composer. Q4 resolution (locked 2026-04-26) committed to **rule-based DB queries (no LLM)**, **30-minute server-side cache**, **4 chips minimum**, and **~$0/month cost at any scale**. The chips bridge the cold-start barrier — a new user who opens chat with no prompt sees four concrete questions Kai can answer, three personalized to their state and one evergreen. Tier scope: **Free + Pro + Business** — chat is universal, the chips are too.
+
+**Decision:**
+
+A new `GET /api/chat/suggestions` endpoint that returns 4 chip strings derived from rule-based queries against `transactions` and `bir_deadlines`, cached 30 minutes per user in-process.
+
+### 1. Route shape
+
+```ts
+// types: frontend/src/lib/chat/suggestions/types.ts
+export type ChatSuggestion = {
+  id: string;        // stable rule key, e.g. 'recent_receipts', 'evergreen_pricing'
+  text_tl: string;   // "I-summarize ang gastos this week"
+  intent: 'expenses' | 'deadlines' | 'invoices' | 'pricing' | 'expense_capture';
+};
+
+export type ChatSuggestionsResponse =
+  | { success: true; data: { suggestions: ChatSuggestion[]; cached: boolean } }
+  | { success: false; error: { code: string; message: string; message_tl: string } };
+```
+
+Always exactly 4 entries. Order: personalized rules (high-signal first) → evergreen filler.
+
+### 2. Auth + RLS (per ADR-014)
+
+Same idiom as `/api/chat`: `createClient()` for auth, `db = SKIP_AUTH ? createServiceClient() : supabase` for queries. Production reads honor RLS; dev mode bypasses to stay consistent with the chat page.
+
+### 3. Rule set (Q4 verbatim, ordered by priority)
+
+```
+R1. recent_receipts:    transactions(source='ocr', created_at >= now()-24h, deleted_at IS NULL) >= 3
+                        → "I-summarize ang gastos ngayong linggo"       (intent: expenses)
+R2. upcoming_deadline:  bir_deadlines(status='upcoming', due_date BETWEEN today AND today+7d, deleted_at IS NULL) LIMIT 1
+                        → "Ano ang {form_name}?"                         (intent: deadlines)
+R3. overdue_invoice:    invoices(status='overdue', deleted_at IS NULL) EXISTS
+                        → "Sinong may utang pa?"                         (intent: invoices)
+R4. evergreen (always): "Magkano dapat presyo ng produkto ko?"          (intent: pricing)
+```
+
+Cold-start fallback (no user data, no rules fire) — fixed 4-chip set, locked verbatim:
+1. "Saan napunta ang pera ko?" (expenses)
+2. "Kailan ang BIR deadline?" (deadlines)
+3. "Magkano dapat presyo?" (pricing)
+4. "I-record ang gastos" (expense_capture)
+
+R3 is opportunistic — if `invoices` table doesn't exist yet (Phase 10), the rule is skipped silently and R4 + cold-start fillers backfill.
+
+### 4. Caching — in-process Map, 30-minute TTL, per-user key
+
+```ts
+// frontend/src/lib/chat/suggestions/cache.ts
+const cache = new Map<string, { suggestions: ChatSuggestion[]; expiresAt: number }>();
+const TTL_MS = 30 * 60 * 1000;
+// Hard cap: 10_000 entries (DDoS valve, mirror proxy.ts rate-limit pattern from ADR-005).
+```
+
+Cache key: `user.id`. Cold start on Vercel cold boot is acceptable — first request post-cold-start runs the rules, subsequent requests within 30 min hit cache. No Redis/Vercel KV (over-engineered for ~5 SQL queries that are already index-covered).
+
+Cache invalidation: TTL only. The chips are explicitly low-stakes (`<= 30 min` staleness is fine — a receipt scanned at 10:01 doesn't need to flip the chip set until 10:31). Webhook-style invalidation is rejected as too much machinery for the payoff.
+
+### 5. Performance + cost
+
+- 3 indexed Postgres queries on cache miss; 0 on hit. Indexes already exist (`idx_transactions_user_date`, `idx_bir_deadlines_user_due`).
+- p95 cache-miss latency target: < 80ms. Cache-hit: < 5ms.
+- Zero Claude API calls. Cost stays at Supabase query rate (effectively $0 at Phase 0–1 scale).
+
+### 6. Error path
+
+Any DB error → return cold-start fallback (4 chips) with `cached: false`. The chip row should never break the chat page; degrading to the fixed default is the right failure mode.
+
+### 7. Component structure
+
+```
+frontend/src/
+  lib/chat/suggestions/
+    types.ts            -- ChatSuggestion, response types
+    rules.ts            -- runRule(db, userId): ChatSuggestion | null per R1..R4
+    cache.ts            -- in-process Map, get/set/evict, TTL
+    index.ts            -- buildSuggestions(db, userId): ChatSuggestion[]
+  app/api/chat/suggestions/
+    route.ts            -- GET handler (auth, cache check, rule run, response)
+```
+
+Rule logic is testable in isolation (vitest, mocked db). Cache eviction is unit-tested. Route orchestrates.
+
+**Alternatives Considered:**
+
+- **LLM-generated suggestions (Haiku call per visit):** rejected. Adds Claude spend per chat-page render, breaks the circuit-breaker budget, and the Q4 resolution explicitly forbade it. Rule-based gives deterministic, debuggable output at zero variable cost.
+- **Vercel Edge Cache (CDN-level cache headers):** rejected. The response is per-user (rules depend on `user.id`), and CDN caching keyed by Set-Cookie/Authorization is more brittle than an in-process Map for a single-instance Vercel deploy. Revisit if Phase 2 multi-instance scaling makes in-process caching unsafe.
+- **Database-backed cache (`chat_suggestions_cache` table):** rejected. Adds a migration, RLS policies, and a write path for what is effectively a memoized SELECT. In-process Map is simpler and resets cleanly.
+- **Realtime invalidation (Supabase channel listening to `transactions` inserts):** rejected. Added complexity with no user-visible win — chips refreshing within 30 min of a receipt scan is sufficient.
+
+**Consequences:**
+
+- **Positive:** Zero LLM cost, deterministic chip output, easy to unit-test (rules are pure functions of db state), trivially debuggable (look at the cache, look at the rules). All tiers see the same chip behaviour — no tier-gating logic in the route.
+- **Negative:** In-process cache resets on Vercel cold starts (acceptable — first user post-cold-start triggers re-computation, subsequent users in same instance hit cache). Hardcoded rule set means new chip ideas require code changes, not config — accept this until Phase 2+ when a chips registry might earn its keep.
+- **Migration cost:** none — no new tables, no new columns. Reads only.
+
+**Related Gaps:** none directly. Gap A5 (PostHog) instrumentation in `posthog.capture('chat_suggestion_tapped', { id, intent })` is engineer's call to add at the click site.
+
+**Review Trigger:** If chip variety feels stale across sessions (same 4 chips every time), promote to a chips registry table with weighted-random selection. If Vercel scales to multiple instances and cache hit-rate drops below 50%, swap the Map for Vercel KV (still cheaper than LLM).
+
+---
+
+## ADR-017: Frontend Redesign Phase 9 — Deadline → Chat Deeplink Contract
+
+**Status:** Accepted
+**Date:** 2026-04-28
+
+**Context:**
+Phase 9 `/deadlines` (A5 ADOPT HANDOFF) adds two tap targets that should "open chat with this deadline already on Kai's mind": (a) any deadline row, and (b) the pre-deadline `<PaperNote>` callout for items ≤ 7 days away. Q7 resolution (locked 2026-04-26) committed to **`/chat?topic={form_code}&context=deadline-{N}d`** as the URL contract, with a system-prompt context block prepended so Kai opens the conversation already aware of the form and how many days remain. This ADR locks the contract so engineer + ai can build the read side and assembler extension without ambiguity.
+
+**Decision:**
+
+### 1. URL contract
+
+```
+/chat?topic={form_code}&context=deadline-{N}d
+```
+
+- `form_code` — uppercase BIR form identifier matching `bir_deadlines.form_name`. Examples: `2551Q`, `1701Q`, `1601C`, `1604C`. Validated against a known-set allowlist (engineer maintains it in `lib/bir/forms.ts`); unknown values fall through to a context-free chat.
+- `N` — integer days until due. Range: `-30..30` clamped. `0` = due today; negative values = overdue (e.g. `deadline--3d` for 3 days overdue, encoded as `deadline-${N}d` where N is a signed int — so URL form is `deadline=-3d` literally, two dashes). Engineer encodes via `encodeURIComponent` if needed; spec is `${N}d` where N is the signed integer.
+- Both params optional. If only `topic` is present → context block uses just the form. If only `context` is present (no topic) → context block is dropped (insufficient signal). If neither → identical to plain `/chat`.
+
+### 2. Param parsing — server component, not client
+
+The chat page (`app/(app)/chat/page.tsx`) is a Server Component that reads `searchParams` and passes a typed `deadlineContext: DeadlineContext | null` prop into the chat client component. Rationale:
+
+- Server-side parsing means validation (form-code allowlist, N-range clamp) runs once on render, not on every keystroke in the client.
+- The first system prompt is assembled server-side anyway (existing `/api/chat` POST flow); reading params on the server lets us seed the conversation row with the deadline context in one round-trip, instead of POSTing from the client to "tell" the server about a URL it could've read itself.
+- Bookmarkable + shareable — the URL is the source of truth.
+
+```ts
+// app/(app)/chat/page.tsx (Server Component)
+type DeadlineContext = { formCode: string; daysUntilDue: number };
+
+function parseDeadlineContext(searchParams: URLSearchParams): DeadlineContext | null {
+  const topic = searchParams.get('topic');
+  const ctx = searchParams.get('context');
+  if (!topic || !ctx) return null;
+  if (!isKnownFormCode(topic)) return null;
+  const match = ctx.match(/^deadline(-?\d+)d$/);
+  if (!match) return null;
+  const days = Math.max(-30, Math.min(30, parseInt(match[1], 10)));
+  return { formCode: topic, daysUntilDue: days };
+}
+```
+
+### 3. System-prompt assembler extension
+
+Extend `PromptAssemblyInput` (`lib/claude/types.ts`) with a new optional field:
+
+```ts
+export interface PromptAssemblyInput {
+  // ...existing fields
+  deadlineContext?: { formCode: string; daysUntilDue: number };
+}
+```
+
+`assembleSystemPrompt()` adds a new **Layer 4c — Deadline Context** between the existing Layer 4 (User Context) and Layer 4b (Output Format Hint), prepended only when `deadlineContext` is truthy:
+
+```
+[DEADLINE_CONTEXT]
+The user has navigated here from the BIR deadline list. They want to discuss:
+Form: {formCode}
+Days until due: {daysUntilDue} ({urgency_label})
+Speak first. Acknowledge the form by name, confirm how many days remain in conversational Filipino,
+and offer concrete next steps ("I-prepare ko na ang numero mo?" / "Gusto mo bang i-walk-through ko ang form?").
+Do not give tax advice — gabay lamang, hindi tax advice. Defer to CPA for official guidance.
+```
+
+`urgency_label` = `'huling N araw'` if `daysUntilDue >= 0` else `'lipas na ng N araw'`.
+
+### 4. Conversation seeding — Kai speaks first
+
+When `deadlineContext` is present and the chat page renders for the first time (no existing conversation in the URL session), the page **server-side fetches `/api/chat` with a sentinel user-message** to make Kai open the conversation. The composer is **NOT pre-filled** (per project rule 7 — "Kai speaks first, proactive AI not reactive chatbot").
+
+Concretely:
+
+- Page detects `deadlineContext != null` and no recent conversation row tagged with this form_code.
+- Page issues a server-side POST to `/api/chat` with body `{ message: '__deadline_context_open__', feature: 'general_chat', deadlineContext: { formCode, daysUntilDue } }`. The sentinel string is recognised by the chat route as a "Kai opens" trigger.
+- `/api/chat` skips persisting the sentinel as a user message (filter at the insert step), but does pass `deadlineContext` into `assembleSystemPrompt()`. Claude's response is saved as a normal assistant message and rendered.
+- Subsequent user messages in the session continue to include the deadline context block until the user navigates away (URL changes).
+
+If the sentinel POST fails (network, Claude error), the chat page degrades to a plain chat with the URL params still readable — a visible toast says "Hindi na-open ni Kai ang topic, magtanong ka muna." User can ask manually.
+
+### 5. Chat route changes (`app/api/chat/route.ts`)
+
+- Extend `ChatRequestSchema` to include optional `deadlineContext: { formCode, daysUntilDue }`.
+- Validate against the same form-code allowlist + N range as the page parser.
+- Pass through to `assembleSystemPrompt({ ..., deadlineContext })`.
+- Sentinel `__deadline_context_open__` triggers: skip user-message insert, set `feature: 'general_chat'`, ensure `deadlineContext` is present (else 400). Single sentinel handler — keeps the public API surface unchanged.
+
+### 6. Tier scope
+
+Available to **all tiers** (Free + Pro + Business). Deadlines and BIR guidance are universal — the deeplink doesn't change tier gating, it just pre-seeds context. Free-tier circuit breaker still applies (the sentinel "Kai opens" call counts as 1 query).
+
+### 7. PostHog instrumentation
+
+Two new events (engineer adds at click sites):
+
+```
+deadline_chat_opened      properties: { source: 'row'|'callout', form_code, days_until_due }
+deadline_chat_seeded      properties: { form_code, days_until_due, success: true|false }
+```
+
+`opened` fires on tap (source = which UI element). `seeded` fires from the sentinel POST result.
+
+**Alternatives Considered:**
+
+- **Pre-fill the composer with a question instead of Kai speaking first:** rejected. Violates project rule 7. The composer pre-fill pattern is fine for "I'm asking Kai a question" flows; the deadline tap is "I want Kai's help with X" — Kai should lead.
+- **Use a session-scoped server cookie instead of URL params:** rejected. URL is the contract — bookmarkable, shareable, copy-pasteable into PostHog event properties. Cookies hide the state.
+- **POST body field instead of URL params (client-only chat page that POSTs context on mount):** rejected. Adds a client→server round-trip after the page already loaded, and breaks bookmarkability. Server Component reading `searchParams` is one less network hop.
+- **A dedicated `/chat/deadline/[form_code]` route segment:** rejected. Dynamic route segments couple the URL to the deadline use case; query params keep `/chat` as the single chat surface and `topic` extensible to future contexts (e.g., `/chat?topic=invoice&context=overdue-{id}` later).
+- **Inject the deadline context as a synthetic user message instead of system-prompt block:** rejected. Pollutes conversation history with a non-user-typed message and would render as a user bubble unless special-cased. System-prompt layer is the canonical place for "things Kai knows before responding."
+
+**Consequences:**
+
+- **Positive:** One URL contract serves both row taps and callout taps. Server-side parsing means validation lives in one place. The assembler extension is purely additive — existing callers without `deadlineContext` are unaffected. Kai-speaks-first preserves the brand voice on entry. The contract extends naturally to other domain deeplinks (Phase 10 invoice tap, future Phase costing tap) without re-architecture.
+- **Negative:** The sentinel `__deadline_context_open__` string is a magic value coupling page and route. Documented in this ADR + the route's JSDoc; engineer must guard insertion of this string from real user messages (sanitizer treats it as a reserved token). Each deadline tap costs 1 Claude call (Haiku for free, Sonnet for Pro+) — at ~₱0.05/call this is acceptable variable cost, capped by circuit breaker.
+- **Migration cost:** zero schema changes. Code-only: types + assembler + route + chat page param read + two click handlers in `/deadlines`.
+
+**Related Gaps:** none directly. Tier-gating (Gap-related) handled by existing circuit-breaker path. RLS unchanged (chat queries already user-scoped).
+
+**Review Trigger:**
+- When Phase 10 adds invoice deeplinks (`/chat?topic=invoice&context=overdue-{id}`) — confirm the assembler `[DEADLINE_CONTEXT]` block generalises to a `[TOPIC_CONTEXT]` block or split into typed blocks per topic family.
+- If the sentinel "Kai opens" pattern becomes flaky (sentinel leaks to user-visible message, cost spikes from accidental loops), replace with an explicit `?seed=true` flag and a separate `/api/chat/seed` route.
+- If the URL contract leaks to social shares with PII — review whether `topic`/`context` need a HMAC signature in Phase 2.
+
+---
+
+## ADR-018: Native Mobile Pivot via Capacitor + IAP (deprecate Xendit)
+
+**Status:** Accepted
+**Date:** 2026-05-24
+**Sprint:** 13
+
+**Context:**
+
+AKBai was built as a Next.js 16 PWA with planned Xendit subscription billing. Pre-launch (no live users, Xendit wired but `XENDIT_SECRET_KEY` never set), the founder reviewed Tarsi — a Filipino personal-finance app by Bryl Lim that hit #1 on the PH App Store within 48 hours of March 2026 launch and earned ₱1M+ in <30 days. Tarsi's success raised three questions:
+
+1. Should AKBai pivot from PWA to native mobile (App Store + Google Play) for distribution, trust signal, and iOS push reliability?
+2. Should AKBai change pricing model (Tarsi-style impulse-buy lifetime) to lower activation friction?
+3. Should AKBai's brand identity evolve from a static logo mark into a full character?
+
+Research (codebase audit, Tarsi competitive intel, mobile deployment paths, IAP regulatory state May 2026) surfaced several misconceptions in the original pivot premise — most notably that stores do **not** eliminate payment-gateway work (they replace one gateway with two store-specific SDKs), and that PH distribution dynamics in fact favor web links over store installs in many cases. But store distribution does deliver real wins: trust signal for a financial app, App Store search/charts discoverability (Tarsi's actual moat), iOS push reliability (web push on iOS is broken), and home-screen install rates.
+
+The economics of unit per-user costs (Claude API spend grows with active usage) ruled out pure one-time pricing — a Tarsi-style ₱299-only model bleeds money on power users. Hybrid Starter+Pro threads the needle.
+
+The brand audit revealed AKBai already has a stronger mascot foundation than Tarsi's tarsier (name etymology *akbay* = arm around the shoulder, full voice/archetype/mark all shipped) — what's missing is character extension (body, expressions, scenarios). A new mascot would dilute existing equity; evolving Kai builds on it.
+
+**Decision:**
+
+Pivot to native mobile via **Capacitor** (web codebase wrapped in iOS + Android native shells, ~90% code reuse). Replace Xendit with **In-App Purchase via RevenueCat SDK** (wraps Apple StoreKit 2 + Google Play Billing). Adopt **hybrid pricing**: 7-day free trial → ₱299 lifetime Starter (non-consumable IAP, capped to non-AI features) → ₱499/mo or ₱4,999/yr Pro subscription (auto-renewing IAP, all AI features). **Evolve Kai** from a static mark into a full illustrated character with 8+ expression poses via commissioned Filipino illustrator (₱30-80k, 2-3 week external lead time).
+
+Execution: 6 sprints (13-18). Sprint 13 = foundations + 1-day Capacitor spike + decision gate. Sprints 14-17 = production native build, IAP integration, store assets, Pre-Launch Feature Readiness Gate. Sprint 18 = soft launch + Tarsi-style organic distribution motion (founder-led TikTok/FB) + first iteration.
+
+**Alternatives Considered:**
+
+- **Stay PWA-only, ship Xendit, measure adoption first:** Lowest velocity cost (0 sprints) but loses iOS push reliability, store trust signal, store discoverability. PWA install rates in PH unmeasured — pivot is pre-emptive. Rejected because pre-launch is the cheapest moment to decide (no live customers to migrate). Kept as fallback if Sprint 13 Capacitor spike fails.
+
+- **React Native / Expo full rewrite:** True native UI, best performance for animations and complex camera UX. 8-12 sprints of UI rewrite — kills velocity and provides no upside for a bookkeeping app (no 120fps needs). Rejected as overkill for solo founder.
+
+- **PWABuilder / TWA (Trusted Web Activity) shortcut:** Cheapest path to Play Store (~1 sprint) but Google Play tolerates this only marginally; Apple App Store likely rejects (Guideline 4.2 "minimum functionality"). Rejected because financial app rejection risk too high.
+
+- **Flutter rewrite:** Dart learning curve + total code rewrite. No code reuse from current TypeScript/React codebase. Rejected for solo founder.
+
+- **Hand-written native iOS + Android shells calling existing Next.js backend:** Best native UX long-term, but 10-15 sprints for solo founder, requires hiring or outsourcing. Capacitor is the pragmatic version of this without the engineering depth requirement.
+
+- **Pure one-time pricing (₱299 lifetime, Tarsi-clone):** Maximum impulse-buy adoption, simplest IAP integration (no subscription complexity). Rejected because AKBai active users hit Claude API daily — per-user costs grow indefinitely, breaking unit economics. Subscription is required to protect margins on power users.
+
+- **Pure subscription pricing (no Starter):** Cleaner business model, higher LTV per active user. Rejected because it imports the full activation friction Tarsi avoided. Hybrid Starter+Pro gives the impulse buy AND the subscription revenue.
+
+- **Introduce a new mascot (turtle, sarimanok, maya bird, etc.):** Would dilute existing Kai brand equity (logo, name etymology, voice, archetype, ~6 months of brand investment already shipped). Rejected. Evolve Kai instead.
+
+- **Continue building features only, defer pivot to post-launch:** Highest near-term velocity. Rejected because (a) post-launch pivot costs 10x once paying customers exist, and (b) pre-launch is the unique window where Xendit can be abandoned with zero migration cost.
+
+**Consequences:**
+
+**Positive:**
+- ~90% code reuse via Capacitor wrap — preserves 559+ test baseline, all business logic, all AI integrations, all Supabase RLS, all Tailwind/UI work
+- Pre-Launch Feature Readiness Gate (Sprint 17) explicitly prevents shipping half-baked features under store branding
+- Hybrid pricing model captures both impulse-buy (Tarsi-style) AND subscription-LTV segments
+- Kai character evolution leverages existing brand foundation (cheapest brand investment available)
+- Six-sprint pivot is bounded — clear sprint definitions, clear decision gates per sprint
+- Xendit deprecation has zero migration cost (no live customers)
+- RevenueCat SDK saves ~1 sprint vs raw StoreKit 2 + Play Billing integration
+
+**Negative:**
+- 6 sprints of split focus between pivot work and continuing feature development (mitigated by Feature Continuation Track in every pivot sprint per plan §10)
+- Apple Guideline 4.2 webview rejection risk — medium likelihood, mitigated by native camera + push + biometric integrations from Sprint 15
+- Replace one payment gateway (Xendit) with two store-specific SDKs (StoreKit 2 + Play Billing, unified via RevenueCat) — net same complexity, different vendor
+- 15-30% store revenue cut (vs Xendit's ~3% transaction fee) — acceptable trade for trust + distribution + zero gateway maintenance
+- Server components in `frontend/src/app/(app)/*/page.tsx` (~18 files, 40% of pages) require conversion to client components for Capacitor static export
+- `proxy.ts` middleware (in-memory rate limiting) won't run in static export — must move to backend API guards or Cloudflare Worker (Month 7+ plan brought forward)
+- Service worker (`sw.js`) + PWA manifest deprecated — Capacitor handles offline natively
+- External lead times constrain timeline floor: illustrator (2-3 weeks), Apple App Store first review (24-48hr + 1 rejection cycle plausible)
+
+**Migration cost:**
+- Code: Sprint 14 conversion of 18 server-component files, swap getUserMedia → Capacitor Camera, deprecate proxy.ts (~12-15 hrs)
+- Schema: minor — add `iap_platform` column to `subscription_status` (`'apple' | 'google' | 'xendit_legacy'`)
+- Existing Xendit webhook handler kept dormant; can be removed in Sprint 17 cleanup
+- No data migration (no live customers)
+
+**Related Gaps:** G1-G7 (new Category G in `gap-registry.md`). D2 (Xendit webhook idempotency) deferred — replaced by G2 (IAP webhook idempotency via RevenueCat).
+
+**Affected files (Sprint 14+ implementation):**
+- `frontend/next.config.ts` — add `output: 'export'`, `images: { unoptimized: true }`
+- `frontend/src/app/(app)/*/page.tsx` — convert ~18 server components to client
+- `frontend/src/proxy.ts` — relocate or deprecate rate limiting
+- `frontend/src/components/scanner/camera-capture.tsx` — swap `getUserMedia` → `@capacitor/camera`
+- `frontend/src/lib/payments/` — adapt subscription lifecycle for IAP events (RevenueCat webhooks)
+- `frontend/src/app/api/webhooks/xendit/route.ts` — deprecate, remove in Sprint 17
+- New: `frontend/src/app/api/iap/webhook/route.ts` — RevenueCat webhook handler
+- New: `frontend/src/lib/iap/` — RevenueCat client wrapper + entitlement reconciliation
+- New: `capacitor.config.ts`, `ios/` Xcode project, `android/` Android Studio project
+- `frontend/public/manifest.json`, `frontend/public/sw.js` — deprecated (kept for web fallback)
+- `akbai-delivery/shared/{project-context,tech-stack,sprint-history,gap-registry,brand-context}.md` — updated this sprint
+- `akbai-delivery/skills/ux-designer/references/kai-character-brief.md` — new this sprint
+- `AKBAI_MASTER_BRIEF.md` — pending Sprint 13 update
+
+**Review Trigger:**
+- End of Sprint 13: if Capacitor spike fails the "feels like a real app" sniff test on real device → abort pivot, fall back to PWA
+- End of Sprint 17: if Pre-Launch Feature Readiness Gate (plan §11) is RED on any item → defer public release to Sprint 18+
+- 30 days post-launch: review actual conversion (Trial → Starter vs Trial → Pro vs Starter → Pro) against assumptions. If Starter dominates and Pro upgrade rate <10%, revisit pricing tiers.
+- Apple/Google revenue cuts shift materially: if EU DMA-style alternative payment becomes viable in PH with materially lower commission, reconsider external web checkout as Pro-tier billing path.
+- If a paying user base develops (>500 active) before Sprint 18: Xendit deferral reconsidered as a web-only backup billing channel for Pro users who prefer GCash.
+
+**Full plan reference:** `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md` — 6-sprint execution plan, parallel-session playbook, Pre-Launch Feature Readiness Gate, risk register, doc-update schedule. This ADR captures the architectural decision; the plan captures the execution details.

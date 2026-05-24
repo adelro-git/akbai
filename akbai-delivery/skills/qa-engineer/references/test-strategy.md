@@ -104,6 +104,63 @@ Each integration test creates its own test users via `supabase.auth.admin.create
 4. **BIR deadline alert:** Deadline in calendar → 7-day notification → 3-day → 1-day → user sees each
 5. **Morning Briefing:** Ang Umaga Mo loads with correct data for user's tier (teaser vs full)
 
+### Visual-Parity Gate Pattern (established Sprint 13, Phase 8-9)
+
+For redesigned screens, augment behavioral e2e with **visual-parity snapshots** that pin the rendered UI to the handoff reference within a tight pixel-diff budget. This catches regressions that automated behavior tests + code review miss (Sprint 5 retro: 17+ design-system violations slipped past engineer review on Build 2 before live testing surfaced them).
+
+**Canonical form** (see `frontend/e2e/synthesis/{chat,expenses,deadlines}.spec.ts` for live examples):
+
+```typescript
+test('visual parity — mobile FIL', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chrome', 'Pinned to mobile-chrome');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.context().addCookies([{ name: 'NEXT_LOCALE', value: 'fil', url: 'http://localhost:3000' }]);
+  await mockNonDeterministicRoutes(page);  // mock anything that drifts: rule-based APIs, dated data, server-personalized content
+  await hideDevOverlay(page);  // hide Next.js dev portal so it doesn't appear in snapshots
+
+  await page.goto('/screen-under-test');
+  await waitForReadySignals(page);  // explicit testid-based readiness, not just networkidle
+
+  await expect(page).toHaveScreenshot(['screen', 'mobile-fil.png'], {
+    fullPage: true,
+    animations: 'disabled',
+    maxDiffPixelRatio: 0.005,  // 0.5% — tight enough to catch real regressions, loose enough for font hinting drift
+  });
+});
+```
+
+**Required variants per visual-parity screen:**
+1. **FIL locale** (default — primary user audience)
+2. **EN locale** (validate i18n catalogs render without layout shift)
+3. **Reduced-motion** (assert `prefers-reduced-motion: reduce` neutralizes animations; `motion-reduce:animate-none` Tailwind class is the standard hook)
+4. **Locale flip** (set FIL cookie, render, flip to EN cookie, reload — verify no broken state)
+
+**Mocking discipline:**
+- Mock anything **non-deterministic** at the route layer (`page.route('**/api/foo', ...)`) — rule-based suggestion APIs, server-personalized chips, dated content
+- Do NOT mock the screen's own data layer — that's the regression you're testing
+- Empty-state vs data-state are SEPARATE snapshot tests, not branches in one test
+
+**Snapshot location:** `frontend/e2e/synthesis/{screen}.spec.ts-snapshots/{screen}/mobile-{locale}.png`. Commit them to git — first run generates, subsequent runs assert.
+
+**When a snapshot fails:**
+1. Run `npx playwright test --update-snapshots <spec>` locally
+2. **Eyeball the diff** before committing the new baseline — a passing `--update-snapshots` only means "the run produced a new image", not "the new image is correct"
+3. If the change is intentional (design system edit, copy change), commit the new baseline with a note in the commit msg
+4. If the change is regression, fix the regression — don't update the baseline
+
+**Why `maxDiffPixelRatio: 0.005` (0.5%):**
+- Tighter (0.001) → flaky on font hinting, sub-pixel scrollbar widths, anti-aliasing drift
+- Looser (0.05) → misses real regressions like a 4px padding bug or wrong color token
+- 0.5% is the sweet spot validated across `home.spec.ts`, `chat.spec.ts`, `expenses.spec.ts`, `deadlines.spec.ts`
+
+**Why pin to `mobile-chrome` project only:**
+- AKBai is mobile-first; tablet/desktop layouts derive from mobile
+- Multi-project snapshots multiply baseline file count without catching new regressions
+- Add a desktop snapshot only when desktop has its own divergent layout (per-screen judgment call)
+
+**Counter-pattern — do NOT do this:** Adding a visual-parity test for *every* component or page. Visual parity is for the 5-8 redesigned brand-defining screens. For components, use vitest + Testing Library DOM assertions. For routine pages, behavioral e2e is enough.
+
 **Configuration:**
 ```typescript
 // playwright.config.ts

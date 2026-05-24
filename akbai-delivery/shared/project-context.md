@@ -1,13 +1,13 @@
 # AKBai — Project Context
 > Shared reference for all akbai-delivery skills. Read this first. ~200 lines.
-> Last updated: 2026-03-25 | Source: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
+> Last updated: 2026-05-24 (Sprint 13 — Native Mobile Pivot decision: Capacitor + IAP + Kai character evolution) | Prior sources: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
 
 ---
 
 ## 1. Product Overview
 
 **Name:** AKBai ("Katuwang ng Negosyo Mo")
-**Type:** Mobile-first PWA — AI business partner for Filipino MSMEs
+**Type:** Native mobile app (iOS + Android via Capacitor) — AI business partner for Filipino MSMEs. **Pivoted 2026-05-24** from PWA-first (Sprint 13). Web app code (~90%) wrapped in Capacitor native shell; ships to App Store + Google Play. PWA may continue as web fallback during transition.
 **Tagline:** "Katuwang ng Negosyo Mo" (Your Business Partner)
 **Stage:** Pre-launch / Phase 0 (as of March 2026)
 **Founder:** Anton del Rosario (solo founder, day job at Globe Telecom)
@@ -67,14 +67,27 @@ AKBai is NOT a chatbot. It is a proactive AI business partner — "Kai" (from Ka
 
 ## 4. Tier Structure
 
-| Tier | Price | Scans/mo | AI Model | Key Features |
-|------|-------|----------|----------|--------------|
-| Free | ₱0 | 0 | Haiku only | Text queries (10/day), basic BIR deadlines |
-| Pro | ₱399/mo | 50 | Sonnet + Haiku | Full feature set, receipt scanning, morning briefing |
-| Business | ₱899/mo | 80 | Sonnet + Haiku | GSheets OAuth, multi-seat (up to 5 team members: Owner, Accountant, Viewer), priority support |
-| Scale (Phase 3) | ₱1,499/mo | Unlimited | Sonnet + Haiku | All Business + unlimited custom behaviors, API integrations, cross-channel outbound, priority support |
+> **Updated 2026-05-24 (Sprint 13 close-out)** — Native mobile pivot replaces Xendit subscription model with hybrid Starter+Pro via App Store / Google Play IAP. Previous Free/Pro/Business/Scale model (₱0/399/899/1499) superseded. Sprint 13 sign-off resolved 3 ambiguities: (a) column renamed "AI Features" → "Conversational AI" so OCR-as-tooling no longer contradicts Starter's "❌ None" entry; (b) trial Kai chat changed from 10 total → 5 messages/day (smoother distribution across 7-day trial, prevents day-1 binge lockout); (c) Starter OCR widened 50/mo → 100/mo (gentler step from trial's 20/7d, retains Starter loyalty). Full rationale: `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md` §2.
 
-**Pricing roadmap:** Pro ₱449 (Y2), ₱499 (Y3). Business ₱999 (Y2), ₱1,099 (Y3). Scale tier launches Phase 3.
+| Tier | Price | OCR | Conversational AI | Key Features |
+|------|-------|-----|-------------------|--------------|
+| Free Trial (7-day) | ₱0 | 20 scans | All features (capped: 5 Kai chats/day) | Full app access — Kai chat 5 msgs/day, morning briefings, weekly story, reply drafter (5 drafts). After trial: paywall. |
+| Starter | ₱299 lifetime (non-consumable IAP) | 100/month | ❌ None | Manual entry, receipt OCR (Haiku — parsing only, no chat), BIR deadline calendar + push, basic reports, category breakdowns, CSV export, single device. No Kai chat, no briefings, no invoicing. |
+| Pro Monthly | ₱499/mo (auto-renew IAP) | Unlimited | ✅ All (with circuit breaker) | Everything in Starter + Kai chat unlimited + morning briefings daily + weekly story (Kuwento) + reply drafter + invoicing with PDF + premium costing + multi-device sync + priority support |
+| Pro Annual | ₱4,999/yr (auto-renew IAP, save ~₱990) | Unlimited | ✅ All | Same as Pro Monthly, annual billing |
+
+**Conversion paths:**
+- Trial → Starter (₱299) — captures users who want a tool but distrust subscriptions
+- Trial → Pro (₱499/mo) — captures users who fell in love with Kai during trial
+- Starter → Pro (upgrade, prorated) — when Starter user hits AI feature paywall
+
+**Why this model:**
+- Tarsi (March 2026) validated Filipino market will pay ₱299 one-time for finance apps.
+- Pure one-time pricing breaks unit economics for AKBai because Claude API costs scale per active user — Pro subscription protects margins.
+- Starter removes activation friction; Pro captures power users.
+- Maps cleanly to store IAP (non-consumable + auto-renewing subscription).
+
+**Payment infrastructure:** App Store IAP (StoreKit 2) + Google Play Billing, wrapped via RevenueCat SDK for cross-platform unification. Xendit deferred indefinitely (was wired but never activated — `XENDIT_SECRET_KEY` missing).
 
 ---
 
@@ -144,7 +157,7 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
 - Architecture prep done in Build 0 (modular prompts, domain tags, redirect logging)
 
 ### Current Phase
-> Current: Phase 0A — Frontend Redesign Phase 7 merged to main (2026-04-26) — feel-test gate moved to Session 4 start (no Phase 8 code work until Anton's 24h notes are captured)
+> Current: Phase 0A — **Sprint 13 (Frontend Redesign Phase 8-9 close-out) SUBSTANTIALLY COMPLETE** on `claude/redesign-phase-8-9` (2026-05-24). All 4 Phase 8-9 surfaces audited and signed off: `/scan` (A4 KEEP CURRENT — token + bottom-nav invariants locked), `/chat` (A2 HYBRIDIZE — top bar + chips + paper-note composer), `/expenses` (A3 ADOPT — total card + donut + categories + Banig bars + Kai callout), `/deadlines` (A5 ADOPT — serif H1 + Kai pre-deadline callout + 56×56 chips + ADR-017 deeplink). 1290/1290 vitest tests green across 92 files. Migration 019 (`briefing_tagline` + `briefing_tone` on `daily_check_in`) shipped. Tier matrix updated 2026-05-24: column renamed "Conversational AI", trial Kai chat → 5 msgs/day, Starter OCR → 100/mo. Pre-Launch Gate (pivot plan §11) extended with 10 items (3 P0 store-rejection-risk, 4 P1 user-impact, 3 P2 polish). Sprint 14 carry-overs in flight in parallel agent streams: `/api/expenses?range=` extension, `/costing`+`/invoices` tablet breakpoint migration, `/chat` offline composer queue. Pending Anton: 24h feel-test capture (deferred from Phase 7) + live-testing pass + PR to main. **Native mobile pivot starts Sprint 14** on a fresh branch after merge. Full pivot plan: `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md` (7 sprints total: Sprint 13 redesign close-out + Sprints 14-19 native pivot). Kai character evolution via **Gemini image generation** (not human illustrator) — prompt library at `akbai-delivery/skills/ux-designer/references/kai-gemini-prompts.md`. Previous milestone: Frontend Redesign Phase 7 merged to main (2026-04-26).
 > Build 0 shipped (2026-03-20). Build 1 frontend (Sprint 3, 2026-03-22). Build 2 complete (Sprint 5, 2026-03-25). Sprint 6: Design Gates 2 & 3 closed, UX gaps B1/B2/D6 resolved, first-run polish. Sprint 7: Build 4 (Saan Napunta/Expenses) shipped. Sprint 8+9: Build 5 (Ang Umaga Mo) + Build 6 (Deadline Watcher) + Build 7 (Reply Drafter) shipped. Sprint 10: Build 5 completed (reconciliation), illustrations wired, 6 dev-mode bugs fixed. Sprint 11 (2026-04-09): Conversational Filipino voice revision across ~130 files. **Frontend Redesign session 1 (2026-04-26)** shipped Phases 1+2 (research + synthesis), 3 (Tailwind tokens, Fraunces, palette context, i18n primitives), 4 (15 brand icons, 8 motifs, Kai composition, 512×512 mark). **Frontend Redesign session 2 (2026-04-26)** shipped Phase 5 (chrome — sidebar/bottom-nav re-skin, Vaul "Higit pa…" drawer, FIL/EN toggle, persona pill, `tablet:860px` breakpoint) and Phase 6 (auth+onboarding — KaiSitting login hero, OnboardingShell + SampaguitaProgress, Kai expression mapping per step, paper-note welcome tour with `user_metadata.welcome_tour_completed` cross-device persistence). **Frontend Redesign session 3 (2026-04-26)** shipped Phase 7 — the flagship home (Kumustahan hero with KaiSitting 168px + Fraunces greeting + Squiggle, PaperNote streak-aware check-in invite, 5-tile Hicks-law action grid with Phase 4 brand icons, WovenDivider, Kuwento ng Linggo card with KPI grid + BanigBarChart + Kai takeaway, FloatingPetals deferred per Q2). New `/api/weekly-story` stub (ADR-015) + `/api/morning-briefing` D6 tonal extension with graceful Claude fallback (Anton's call: credits intentionally not topped up before the 24h feel-test). Playwright visual-parity home-gate test built (8/8 passing). 1265 tests passing. **Next: 24h feel-test, then Phase 8 + 9** — Kausap, Saan, Scan, Deadlines.
 
 ### What's Built
@@ -256,6 +269,18 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - Tests: 89 vitest files / 1265 tests passing (+77 vs Phase 6 baseline) — `compute-streak` (9), `weekly-story/{aggregate,week-bounds,takeaway-templates}` (24), morning-briefing `{tone,fallback-templates}` (33), morning-briefing route extension (5), weekly-story route (5). Playwright `e2e/synthesis/home.spec.ts`: 8 tests (4 visual-parity captures at 390×844 + 1280×800 × FIL + EN with `maxDiffPixelRatio: 0.005`, petals deferral first-visit + day-2+, reduced-motion path, locale-flip end-to-end). All green; baselines recorded in `e2e/synthesis/home.spec.ts-snapshots/home/`.
   - ADR-015 landed; ADR-014 added to the index (was authored but unindexed in Phase 6).
   - **Next: Anton's 24h feel-test gate** (the immutable session boundary per the multi-session plan). Session 4 opens with the feel-test report captured in `sprint-history.md`; only after Anton reports back does Phase 8 + 9 (Kausap, Saan, Scan, Deadlines) start.
+
+- **Frontend Redesign Phase 8-9 — Kausap, Saan, Scan, Deadlines** (Sprint 13, 2026-05-24):
+  - `/scan` (A4 KEEP CURRENT): audited and confirmed — `bg-primary-container` design token used throughout (no hardcoded `#f59e0b`), `body[data-scanning="true"]` bottom-nav suppression via globals.css §scanner, voice §4 OCR copy ("Binabasa ko ang resibo mo..." / "Hindi ko ma-scan ang resibo, boss. Baka malabo — i-try mo ulit o i-type mo manually?") exact, voice §5 permission-denied copy in place. Visual-parity invariants locked by `e2e/scanner-tokens.spec.ts`.
+  - `/chat` (A2 HYBRIDIZE): new top bar with 32px Kai avatar (`expression={loading ? 'thinking' : 'happy'}`) + Fraunces "Kai" + sage status dot (`motion-reduce:animate-none`) + "Nandito ako para sa'yo" caption; "Chat with Kai" preserved as `<h1 sr-only>`. `SuggestedChips` row (4 cold-start canon chips, hides on composer focus, `min-h-[44px]`, hides during loading) wired to `/api/chat/suggestions` rule-based engine (ADR-016 — R1..R4 rules + 30-min in-process Map cache + always-cold-start fallback). Composer wrapped in paper-note `surface-container-lowest` + `shadow-ambient`. `e2e/synthesis/chat.spec.ts` covers FIL+EN visual parity + reduced-motion + locale flip.
+  - `/expenses` (A3 ADOPT): full layout replacement. `IconPera` + "SAAN NAPUNTA ANG PERA?" eyebrow + Fraunces H1 "Heto kung saan napunta ang pera mo." Time-range pills (Linggo / Buwan / Buong Taon — Linggo + Taon initially disabled pending `?range=` API; Sprint 14 carry-over agent unlocking them in parallel). Total card with `ExpensesDonut` + Fraunces ₱ amount + sage/honey-deep Kita/Tubo delta. `CategoryBreakdownRow` (up to 5) with 6px progress bars. `PaperNote` + 32px Kai (`concerned`/`happy` based on income-vs-expense ratio via `pickKaiInsight`) + Fraunces italic 14px copy. `BanigBarChart` with `peakKitaIndex` Sampaguita marker. `e2e/synthesis/expenses.spec.ts` for visual parity + reduced-motion + locale flip.
+  - `/deadlines` (A5 ADOPT): `IconKalendaryo` + "BIR DEADLINES" eyebrow + Fraunces H1 "Hindi ka mahuhuli kay Kai." + caption "Automatic na paalala bago ang due date." Voice §3 BIR disclaimer exact wording. `DeadlinePreCallout` (`concerned` Kai, "po" register per BIR formality) appears when any deadline ≤ 7 days, taps through to `/chat?topic={code}&context=deadline-{N}d` with form-code allowlist guard + clamped N to [-30, 30]. `DeadlineRow` with 56×56 date chip (`DeadlineDateChip`), form-code pill, `buildDaysLeftCopy` ("Huling N araw" / "Lipas na ng N araw" / "Na-file na"), Fraunces 16px form name, ChevronRight, next-due row gets `ring-2 ring-honey-deep`. FIL month abbr (Ene/Peb/Mar/Abr/May/Hun/Hul/Ago/Set/Okt/Nob/Dis) hardcoded for locale stability — resolves screens/04-deadlines.md §6 Q1. ADR-017 deeplink with PostHog tracking — resolves §6 Q2.
+  - Migration 019 (`019_morning_briefing_tone.sql`): `briefing_tagline TEXT NULL` + `briefing_tone TEXT NULL CHECK IN ('energetic','observant','celebratory')` on `daily_check_in`. RLS + soft-delete inherited from migration 006. Closes Phase 7 D6 cache gap (`/api/morning-briefing` no longer re-runs Claude per day on cache hit).
+  - Tier matrix updated 2026-05-24 (project-context.md §4): column renamed "AI Features" → "Conversational AI" to resolve the Starter OCR-vs-"❌ None" contradiction; trial Kai chat tightened from 10 total to 5 msgs/day for smoother distribution; Starter OCR widened 50→100/mo as gentler step from trial cap.
+  - Pre-Launch Feature Readiness Gate (pivot plan §11) extended with 10 items: 3 P0 (reviewer demo bypass, native push APNs+FCM via Capacitor Push, Sentry symbolication for native crashes), 4 P1 (offline scan queue, cross-platform RevenueCat restore, trial countdown UI, circuit-breaker Sentry alert), 3 P2 (Filipino character rendering audit, app binary size <30MB, tax year rollover unit test).
+  - KaiSitting reduced-motion belt-and-suspenders: `animate-kai-breathe motion-reduce:animate-none` only when `animated` prop is true.
+  - Tablet breakpoint migration: `/expenses` migrated `md:` → `tablet:`; `/costing` + `/invoices` Sprint 14 carry-over in flight.
+  - **1329 vitest tests passing across 95 files** (+64 vs Phase 7 baseline — includes Stream A's 17 expenses-range tests and Stream C's 22 offline-queue/behavior tests from the same-session pre-merge polish). Sprint 13 retro captured at `akbai-delivery/shared/sprint-history.md`.
 
 ---
 
