@@ -203,5 +203,21 @@
         "description": "Auto reminders para sa deadlines."
       }
     }
+  },
+  "iap": {
+    "error": {
+      "network": "Walang koneksyon. Subukan mo ulit kapag may signal ka na.",
+      "pending": "Sandali, kinukumpleto pa ng store ang bayad mo. Babalik kami sa'yo mamaya.",
+      "invalid": "Hindi natanggap ng store ang bayad. Tingnan mo ang payment method mo.",
+      "store_unavailable": "Hindi available ang store ngayon. Subukan mo ulit mamaya.",
+      "product_not_found": "Wala pa kaming makitang plano para sa account mo. Subukan mo ulit mamaya.",
+      "nothing_to_restore": "Wala kaming nakitang dating purchase. Bumili ka muna ng plano.",
+      "web_only": "Para mag-bayad, i-download mo muna ang AKBai app sa App Store o Play Store.",
+      "unknown": "May pumalpak. Subukan mo ulit, o mag-message sa amin sa support."
+    },
+    "success": {
+      "purchase": "Yes! Welcome sa Pro. I-explore mo na lahat ng features.",
+      "restore": "Naka-restore na ang purchases mo. I-enjoy ulit ang mga features mo."
+    }
   }
 }

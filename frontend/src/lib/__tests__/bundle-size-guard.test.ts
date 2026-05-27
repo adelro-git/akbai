@@ -24,6 +24,14 @@ const APK_PATH = path.resolve(
   '../../../android/app/build/outputs/apk/debug/app-debug.apk'
 );
 
+// Sprint 17 RevenueCat SDK + native binding delta: @revenuecat/purchases-capacitor
+// adds roughly 1-2 MB to the .aab (Apple StoreKit weak-link + Google Play Billing
+// native binding). Sprint 16 closed at 20.75 MB; the architect's batch-1 guidance
+// (sprint-17-revenuecat-pattern.md §9) flagged a 22→23 MB working ceiling for the
+// engineer's own sanity-check. The Pre-Launch Gate ceiling here stays at 30 MB
+// (project-context Pre-Launch row) — we have 7+ MB of headroom before this guard
+// fails. If a future sprint inches close to 30 MB, raise this AND re-baseline
+// project-context.md per the comment block above.
 const PRE_LAUNCH_GATE_MAX_MB = 30;
 
 describe('Bundle size guard (Pre-Launch Gate <30 MB)', () => {

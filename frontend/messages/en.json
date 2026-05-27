@@ -203,5 +203,21 @@
         "description": "Auto reminders for deadlines."
       }
     }
+  },
+  "iap": {
+    "error": {
+      "network": "No connection. Try again when you have signal.",
+      "pending": "Hold on, the store is still completing your payment. We'll follow up with you shortly.",
+      "invalid": "The store didn't accept the payment. Check your payment method.",
+      "store_unavailable": "The store isn't available right now. Try again later.",
+      "product_not_found": "We couldn't find a plan for your account. Try again later.",
+      "nothing_to_restore": "We didn't find any previous purchase. Buy a plan first.",
+      "web_only": "To pay, download the AKBai app from the App Store or Play Store.",
+      "unknown": "Something went wrong. Try again, or message us at support."
+    },
+    "success": {
+      "purchase": "Yes! Welcome to Pro. Go explore all the features.",
+      "restore": "Your purchases have been restored. Enjoy your features again."
+    }
   }
 }
