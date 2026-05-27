@@ -1446,12 +1446,84 @@ These are NOT bugs — they are decisions made in-session, listed so they don't 
 - Gemini character consistency across 8 poses — if prompts drift, the character won't read as the same entity. Mitigation: lock "Character DNA preamble" first, then vary only pose/scenario per generation.
 - Sprint 14 capacity assumes Sprint 13 closed cleanly. If Phase 8-9 work slipped, Sprint 14 also runs a Feature Continuation Track for the spillover.
 
-**Sprints 15-19 outline** (per plan, condensed — full detail in `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md` Section 5):
-- **Sprint 15:** Capacitor Conversion (server components → client, both binaries build clean)
-- **Sprint 16:** Native Surface Polish (Capacitor Camera, Push, Biometric, deep linking, store account enrollment)
-- **Sprint 17:** IAP Integration (RevenueCat, StoreKit 2, Play Billing, sandbox testing)
-- **Sprint 18:** Store Assets + Pre-Launch Feature Readiness Gate (icons, screenshots, privacy policy, gate sign-off)
-- **Sprint 19:** Soft Launch + Iteration (public release + Tarsi-style founder distribution motion)
+**Sprints 15-19 outline (RESTRUCTURED 2026-05-27 — pure-dev sprints 15-18; Anton wave consolidated into Sprint 19)**
+
+> Per Anton's testing cadence decision 2026-05-27 ([[project-pivot-testing-cadence]]): defer ALL Anton-side work (paid-account enrollments, store SKU creation, sandbox testing, on-device smoke, store submission, launch motion, iteration) to a single end-of-pivot wave in Sprint 19. Sprints 15-18 produce dev assets only — no Anton blockers, no per-sprint device gates, no enrollment dependencies. Quote: *"Merge commit ill test everything after we've finished all builds so we can work on iterations after."*
+>
+> Full per-sprint detail in `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md` Section 5 — that pivot plan still reflects the ORIGINAL Sprint 16-19 distribution and will drift relative to this outline until reconciled. Sprint kickoff sessions read THIS outline first.
+
+- **Sprint 15 — Capacitor Conversion (DEV ONLY, ~2-3 hr Anton):**
+  - Convert 7 remaining `(app)/*` pages to client components (admin, costing ×3, deadlines, expenses, invoices ×3, onboarding, profile)
+  - 4 infra rewrites: `app/auth/callback`, `(app)/layout` loadPersona, `lib/i18n/{request,set-locale}`
+  - Re-integrate 17 `_api_disabled_for_spike/` folders via build-pipeline exclude from static export
+  - Relocate `proxy.ts` rate limiting to API route guards
+  - Decision gate: both binaries build clean from `main`; bundle <30 MB; 1329+ tests pass. **Device smoke deferred to Sprint 19.**
+
+- **Sprint 16 — Native Surface Polish (DEV ONLY, ~2-3 hr Anton):**
+  - `@capacitor/camera` swap in `/scan` (`getUserMedia` → native camera plugin)
+  - `@capacitor/push-notifications` integration (replace Web Push for native)
+  - `@capacitor-community/biometric-auth` integration (Face ID / fingerprint on app open — Apple Guideline 4.2 mitigation)
+  - Deep linking config: `com.akbai.app://auth/callback`
+  - Sentry native crash symbolication setup (dSYM/ProGuard mapping pipeline configured but uploads happen in Sprint 19)
+  - ~~Apple Developer + Play Console enrollment, TestFlight + Play Internal upload~~ → **MOVED TO SPRINT 19**
+
+- **Sprint 17 — IAP Integration (DEV ONLY, ~2-3 hr Anton):**
+  - `@revenuecat/purchases-capacitor` SDK integration
+  - Server-side `/api/iap/webhook` endpoint (replaces ADR-018's dormant Xendit webhook)
+  - Client-side paywall component + trigger moments (trial-ending, Starter→Pro upgrade prompts)
+  - Subscription lifecycle adapter (port existing `frontend/src/lib/payments/` to RevenueCat events)
+  - Migration: `subscription_status.iap_platform` column (`'apple' | 'google' | 'xendit_legacy'`)
+  - ~~App Store Connect SKU creation, Play Console SKU creation, RevenueCat dashboard sign-up, sandbox device testing~~ → **MOVED TO SPRINT 19**
+
+- **Sprint 18 — Store Assets + Pre-Launch Hardening (DEV ONLY, ~2-3 hr Anton + Stream B Gemini dependency):**
+  - App icon production: 20+ iOS sizes, 8 Android sizes — uses Anton's Stream B Gemini Kai assets as source
+  - Splash screens per device class
+  - Screenshot scaffolding: templates + placeholder content (actual on-device screenshots deferred to Sprint 19)
+  - Store listing copy DRAFTS (conversational Filipino) — marketing-lead agent
+  - Privacy policy DRAFT (NPC RA 10173 compliance) — review-security agent
+  - Terms of Service DRAFT
+  - Pre-Launch Feature Readiness Gate (pivot plan §11) — internal dev pass on tech-health items only (tests, RLS audit, circuit breaker verified, bundle size); store + smoke items deferred to Sprint 19
+  - Full test suite green; close out any feature-debt tests
+  - ~~Submit to both stores, host privacy policy at akbai.com/privacy, upload listings to stores~~ → **MOVED TO SPRINT 19**
+
+- **Sprint 19 — Anton Wave (Launch Prep + Submission + Soft Launch + Iteration, ~25-35 hr Anton):**
+  ALL Anton-side work concentrated here. Significantly heavier than other sprints — consider splitting into 19A/19B/19C if it gets unwieldy, but the phases below are designed to run sequentially with handoff points.
+
+  - **Phase 19A — Launch Prep (~12-15 hr Anton):**
+    - Apple Developer Program enrollment ($99/yr; 1-2 day verification — start Day 1)
+    - Google Play Console enrollment ($25 one-time, same day)
+    - RevenueCat dashboard sign-up + project setup + webhook URL configured
+    - App Store Connect SKU creation: Starter (₱299 non-consumable), Pro Monthly (₱499 auto-renew), Pro Annual (₱4,999 auto-renew)
+    - Play Console SKU creation: Starter (one-time product), Pro Monthly + Pro Annual (subscription plans)
+    - Privacy policy hosting at `akbai.com/privacy` (uses Sprint 18 draft)
+    - Pixel 5 sideload + cold-start measurement + full smoke checklist run-through (from `SPIKE_FINDINGS.md` §QA pickup notes — comprehensive across all converted routes)
+    - iPhone borrow / TestFlight install + iOS smoke
+    - Sandbox IAP testing: all 3 purchase paths + cancel + restore + cross-platform (per Pre-Launch Gate §11)
+    - TestFlight first build upload (signing cert provisioned during enrollment); Play Internal Testing first build upload
+    - Sentry dSYM (iOS) + ProGuard mapping (Android) uploads verified
+    - Pre-Launch Feature Readiness Gate full 40+ item run-through (pivot plan §11) — Anton signs off as final decision-maker
+
+  - **Phase 19B — Submission + Public Release (~5-7 hr Anton + 1-7 day passive wait):**
+    - App Store submission (with reviewer demo bypass credentials)
+    - Google Play submission (with content rating questionnaire completed)
+    - Wait for Apple review (24-48 hr typical, 1 week worst case; plan for 1 rejection cycle per ADR-018 review trigger)
+    - Public release (Anton flips switches once both stores approve)
+
+  - **Phase 19C — Launch Motion + Iteration (~10-15 hr Anton, ongoing past sprint close):**
+    - TikTok video walkthrough of first-time experience (founder-led)
+    - Facebook posts in MSME groups (sari-sari, freelancers, online sellers)
+    - LinkedIn post on the build journey
+    - X/Threads thread
+    - DM 10-20 known MSME owners directly
+    - Monitor first 50 install events, RevenueCat conversions, Sentry crashes
+    - **v1.1 bug-fix release within 7 days of public launch** (Tarsi-style cadence — reactive priorities only)
+    - Real Kai character art applied across product (Stream B deliverable finalized)
+
+**What's NOT in Sprint 19** (post-pivot iteration sprints 20+, scope TBD):
+- Multi-week iteration based on real user feedback
+- v1.2+ features prioritized from launch metrics
+- Cloudflare Worker for rate limiting (Month 7+ plan if traffic warrants)
+- Stream B character bible finalization in `brand-context.md`
 
 ---
 
