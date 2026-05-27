@@ -13,6 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
@@ -41,6 +42,12 @@ import {
 import { SENTINEL_DEADLINE_CONTEXT_OPEN } from '@/lib/bir/forms';
 
 export async function POST(req: NextRequest) {
+  // Per-route rate-limit guard. Static-export builds don't run proxy.ts, so
+  // each LLM-spend route opts in here. SSR builds layer this on top of the
+  // proxy.ts global 20/60s IP cap.
+  const limited = enforceRateLimit(req, { key: 'chat', windowMs: 60_000, maxRequests: 20 });
+  if (limited) return limited;
+
   try {
     // --- Auth Check ---
     const supabase = await createClient();

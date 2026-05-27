@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 
@@ -21,6 +22,9 @@ export type FlagAsWrongPayload = z.infer<typeof FlagAsWrongSchema>;
 // ============================================================
 
 export async function POST(req: NextRequest) {
+  const limited = enforceRateLimit(req, { key: 'flag', windowMs: 60_000, maxRequests: 10 });
+  if (limited) return limited;
+
   try {
     const supabase = await createClient();
 

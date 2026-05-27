@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { getManilaToday } from '@/lib/timezone';
 import { CreateInvoiceSchema, InvoiceStatusEnum } from '@/lib/invoices/schemas';
 import { generateInvoiceNumber } from '@/lib/invoices/number-generator';
@@ -115,6 +116,13 @@ export async function GET(req: NextRequest) {
 // ============================================================
 
 export async function POST(req: NextRequest) {
+  const limited = enforceRateLimit(req, {
+    key: 'invoices-write',
+    windowMs: 60_000,
+    maxRequests: 30,
+  });
+  if (limited) return limited;
+
   const supabase = await createClient();
 
   // --- Parse body ---

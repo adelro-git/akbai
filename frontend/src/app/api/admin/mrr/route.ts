@@ -8,11 +8,12 @@
  * Dependencies: createServiceClient(), tier pricing constants
  */
 
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { isAdmin } from '@/lib/admin/auth';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 
 // ============================================================
 // Tier Pricing — Monthly price in centavos per tier
@@ -46,7 +47,10 @@ interface MrrResponse {
 // GET — Calculate MRR from active subscriptions
 // ============================================================
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const limited = enforceRateLimit(req, { key: 'admin', windowMs: 60_000, maxRequests: 60 });
+  if (limited) return limited;
+
   // --- Auth Check ---
   if (!SKIP_AUTH) {
     const supabase = await createClient();

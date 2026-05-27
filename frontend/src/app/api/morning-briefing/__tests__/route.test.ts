@@ -9,6 +9,16 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { NextRequest } from 'next/server';
+import { _resetStore } from '@/lib/rate-limit';
+
+// Sprint 15: route GET signature gained `req: NextRequest` for the per-route
+// rate-limit guard. Tests pass a minimal mock — enforceRateLimit() only reads
+// the `headers` interface. The in-memory rate-limit store is reset in
+// beforeEach to keep tests independent (the 10/60s cap would otherwise trip
+// after the 10th test in the file).
+const reqMock = (): NextRequest =>
+  new Request('http://localhost/api/morning-briefing') as unknown as NextRequest;
 
 // ============================================================
 // Hoisted Mocks
@@ -252,6 +262,7 @@ import { GET } from '../route';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  _resetStore();
   process.env.ANTHROPIC_API_KEY = 'test-api-key-123';
   mockManilaHour = 8; // Reset to morning window
   setupDefaultMocks();
@@ -263,7 +274,7 @@ describe('GET /api/morning-briefing', () => {
   it('returns 401 when user is not authenticated', async () => {
     setupDefaultMocks({ user: null });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(401);
@@ -279,7 +290,7 @@ describe('GET /api/morning-briefing', () => {
       featureFlags: { morning_briefing_enabled: false },
     });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -294,7 +305,7 @@ describe('GET /api/morning-briefing', () => {
   it('returns tier_required for free tier users', async () => {
     setupDefaultMocks({ subscription: { tier: 'free' } });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -310,7 +321,7 @@ describe('GET /api/morning-briefing', () => {
     const cachedText = 'Magandang umaga, Maria! Eto ang update mo...';
     setupDefaultMocks({ cachedBriefing: cachedText });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -333,7 +344,7 @@ describe('GET /api/morning-briefing', () => {
     mockManilaHour = 23; // 11 PM
     setupDefaultMocks();
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -347,7 +358,7 @@ describe('GET /api/morning-briefing', () => {
     mockManilaHour = 3; // 3 AM
     setupDefaultMocks();
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.available).toBe(false);
@@ -370,7 +381,7 @@ describe('GET /api/morning-briefing', () => {
       usage: { input_tokens: 2500, output_tokens: 300 },
     });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -390,7 +401,7 @@ describe('GET /api/morning-briefing', () => {
       usage: { input_tokens: 2500, output_tokens: 300 },
     });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -411,7 +422,7 @@ describe('GET /api/morning-briefing', () => {
       usage: { input_tokens: 2500, output_tokens: 300 },
     });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.briefing).toContain('Briefing text');
@@ -423,7 +434,7 @@ describe('GET /api/morning-briefing', () => {
   it('returns deterministic fallback when Claude throws "credit balance" error', async () => {
     mockAnthropicCreate.mockRejectedValue(new Error('Your credit balance is too low to process this request.'));
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -444,7 +455,7 @@ describe('GET /api/morning-briefing', () => {
   it('returns deterministic fallback when Claude throws "insufficient" error', async () => {
     mockAnthropicCreate.mockRejectedValue(new Error('Insufficient funds for this request'));
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.available).toBe(true);
@@ -456,7 +467,7 @@ describe('GET /api/morning-briefing', () => {
     const sdkError = Object.assign(new Error('Internal server error'), { status: 503 });
     mockAnthropicCreate.mockRejectedValue(sdkError);
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.available).toBe(true);
@@ -467,7 +478,7 @@ describe('GET /api/morning-briefing', () => {
   it('returns deterministic fallback when ANTHROPIC_API_KEY is the dev placeholder', async () => {
     process.env.ANTHROPIC_API_KEY = 'your-anthropic-api-key-here';
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.available).toBe(true);
@@ -480,7 +491,7 @@ describe('GET /api/morning-briefing', () => {
   it('returns deterministic fallback when ANTHROPIC_API_KEY is empty', async () => {
     process.env.ANTHROPIC_API_KEY = '';
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.available).toBe(true);
@@ -497,7 +508,7 @@ describe('GET /api/morning-briefing', () => {
     const sdkError = Object.assign(new Error('Bad request: malformed input'), { status: 400 });
     mockAnthropicCreate.mockRejectedValue(sdkError);
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -517,7 +528,7 @@ describe('GET /api/morning-briefing', () => {
       usage: { input_tokens: 2000, output_tokens: 200 },
     });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.available).toBe(true);
@@ -533,7 +544,7 @@ describe('GET /api/morning-briefing', () => {
       usage: { input_tokens: 2000, output_tokens: 200 },
     });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     // Should proceed to generate briefing (flag not explicitly false)
