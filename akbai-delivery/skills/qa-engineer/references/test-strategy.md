@@ -451,7 +451,66 @@ const result = await Camera.getPhoto({
 
 **Tests-per-plugin (Sprint 16 final count):** camera-native +7, push +39 (across capacitor-push, send, deferred-prompt, types-schemas, routes), biometric/deep-link/sentry/profile +46, login-banner +4. Total +96 tests added in Sprint 16 (1331 → 1427).
 
-**Long-running gradle build discipline (Sprint 16 process regression):** the QA agent yielded twice mid-`gradlew bundleDebug` before the artifact landed (Sprint 14 anti-pattern violation). Resolution: gradle builds that take >2 min must be invoked with `run_in_background: true` + harness-native task-notification flow OR `Monitor.until-loop` in the same session. Sprint 17 retro action item: tighten the build-qa agent's SKILL.md gradle-build instructions.
+**Long-running gradle build discipline (Sprint 16 process regression, RESOLVED Sprint 17):** the Sprint 16 QA agent yielded twice mid-`gradlew bundleDebug` before the artifact landed (Sprint 14 anti-pattern violation). **Sprint 17 demonstrated the cleaner pattern: QA agent never touches gradle — PM owns it.** See `SKILL.md` §Gradle build discipline for the explicit rule. Sub-agent `Monitor.until-loop` is NO LONGER the recommended fallback; PM-owned `run_in_background` + task-notification flow is the canonical path because sub-agents don't receive task-notifications across tool boundaries while the PM (top-level Claude) does.
+
+### Sprint 17 extension — RevenueCat SDK mock (Capacitor plugin pattern, continued)
+
+> **Active since 2026-05-27 (Sprint 17 / Gap G2 IMPLEMENTED at plumbing level; full close-out at Sprint 19 enrollment wave).** Reference tests at `frontend/src/lib/iap/__tests__/configure.test.ts` (+9), `frontend/src/lib/iap/__tests__/entitlements.test.ts` (+7), `frontend/src/lib/iap/__tests__/purchase.test.ts` (+19), `frontend/src/app/api/webhooks/revenuecat/__tests__/route.test.ts` (+32), `frontend/src/lib/iap/__tests__/server-entitlements.test.ts` (+14), and 4 paywall component test files (+47). Total +128 tests in Sprint 17 (1427 → 1555).
+
+`@revenuecat/purchases-capacitor@13.1.2` follows the same per-file `vi.mock()` shape as the Sprint 16 Capacitor plugins. Mocks live **inline at the top of each test file under `lib/iap/__tests__/`** (no shared `__mocks__/` directory — the Sprint 16 pattern of per-file hoisted mocks remains canonical because each test controls its own `Capacitor.isNativePlatform()` return).
+
+**Mock shape (matches Sprint 16 §9 pattern; surface area = the 5 SDK calls our code makes):**
+
+```ts
+const mockConfigure = vi.fn();
+const mockGetCustomerInfo = vi.fn();
+const mockPurchasePackage = vi.fn();
+const mockRestorePurchases = vi.fn();
+const mockGetOfferings = vi.fn();
+
+vi.mock('@capacitor/core', () => ({
+  Capacitor: { isNativePlatform: () => true },  // false for web-branch tests
+}));
+
+vi.mock('@revenuecat/purchases-capacitor', () => ({
+  Purchases: {
+    configure: (...args: unknown[]) => mockConfigure(...args),
+    getCustomerInfo: (...args: unknown[]) => mockGetCustomerInfo(...args),
+    purchasePackage: (...args: unknown[]) => mockPurchasePackage(...args),
+    restorePurchases: (...args: unknown[]) => mockRestorePurchases(...args),
+    getOfferings: (...args: unknown[]) => mockGetOfferings(...args),
+  },
+  // Export enum constants matching the real SDK's runtime values
+  LOG_LEVEL: { VERBOSE: 'VERBOSE', INFO: 'INFO', WARN: 'WARN', ERROR: 'ERROR' },
+  PURCHASES_ERROR_CODE: {
+    NETWORK_ERROR: 'NETWORK_ERROR',
+    PURCHASE_CANCELLED_ERROR: 'PURCHASE_CANCELLED_ERROR',
+    PURCHASE_NOT_ALLOWED_ERROR: 'PURCHASE_NOT_ALLOWED_ERROR',
+    // ...etc — mirror the real enum so name-string assertions remain valid
+  },
+}));
+
+import { configureRevenueCat, __resetRevenueCatForTests } from '../configure';
+
+beforeEach(() => {
+  __resetRevenueCatForTests();  // module-singleton reset between runs (see below)
+  vi.clearAllMocks();
+});
+```
+
+**Module-singleton reset (`__resetRevenueCatForTests()`):** `lib/iap/configure.ts` caches a "have we already called `Purchases.configure()`?" boolean at module scope so re-renders of `(app)/layout.tsx` don't reinitialize. Tests need to reset that flag between runs. The escape hatch is a `__resetRevenueCatForTests()` export — same pattern as Sprint 16's `initSentryCapacitor()` reset in `lib/sentry/capacitor-init.ts`. Reset in `beforeEach()`; assert in the test that `Purchases.configure` is called once (or not called on the web branch).
+
+**Error-code dual-form handling (Sprint 17 batch 1 DRIFT, see sprint-history §Sprint 17 DRIFT #2):** the architect spec switch-cased `rcErr.code` against enum NAMES (`'NETWORK_ERROR'`, `'PURCHASE_CANCELLED_ERROR'`, etc.) but the real SDK exposes `code` as numeric-string values (`'10'`, `'1'`, etc., per `node_modules/@revenuecat/purchases-capacitor/dist/esm/errors.d.ts`). The engineer added a `NUMERIC_TO_NAME` normaliser in `lib/iap/purchase.ts` so both forms route to the same conversational Filipino messageKey. **Test implication:** the `purchase.test.ts` suite asserts against EITHER form interchangeably — feeding `mockPurchasePackage` a rejection with `code: '10'` and asserting the resulting messageKey is `iap.error.network` is equivalent to feeding `code: 'NETWORK_ERROR'`. Both paths flow through `NUMERIC_TO_NAME` and produce the same surface output. The normaliser itself has dedicated assertions on the numeric → name mapping.
+
+**Sprint 17 file map:**
+- `lib/iap/configure.ts` + `__tests__/configure.test.ts` (+9) — SDK init, `__resetRevenueCatForTests()` export, web fallback branch
+- `lib/iap/entitlements.ts` + `__tests__/entitlements.test.ts` (+7) — client-side entitlement read via `getCustomerInfo`
+- `lib/iap/purchase.ts` + `__tests__/purchase.test.ts` (+19) — `purchasePackage` + `restorePurchases` + `NUMERIC_TO_NAME` normaliser
+- `lib/iap/server-entitlements.ts` + `__tests__/server-entitlements.test.ts` (+14) — REST helper to RevenueCat dashboard (no SDK, mocks `fetch`)
+- `app/api/webhooks/revenuecat/route.ts` + `__tests__/route.test.ts` (+32) — webhook handler with signature verification + event-UUID dedup
+- 4 paywall component test files (+47) — paywall-modal, restore-link, paywall-trigger, morning-briefing-paywall integration
+
+**Gotcha — TS `vi.mocked` spread-arg pattern:** the 7 net-new TS errors in `configure.test.ts` come from the same `vi.mocked(...).mockImplementation((...args) => ...)` spread-arg pattern that Sprint 16's profile-test propagation surfaced. Not a Sprint 17 regression; carry-over for housekeeping cleanup (Sprint 17 retro action item).
 
 ---
 

@@ -1,6 +1,6 @@
 # AKBai — Deployment Guide
 > Reference for: devops-engineer skill
-> Last updated: 2026-03-25
+> Last updated: 2026-05-27 (Sprint 17 doc sweep)
 > Source: Tech Stack v1, Roadmap v14, Operations Playbook v7
 
 ## Table of Contents
@@ -221,6 +221,54 @@ RESEND_API_KEY                    — Resend transactional email. Server-side on
 NEXT_PUBLIC_APP_URL               — Canonical app URL (for OG tags, emails)
 ```
 
+### RevenueCat IAP Variables (Sprint 17+, real values Sprint 19)
+
+Sprint 17 wired `@revenuecat/purchases-capacitor@13.1.2` + `/api/webhooks/revenuecat` end-to-end with **placeholder** credentials. The Sprint 19 enrollment wave rotates each to real production values from the RevenueCat dashboard (after Apple Developer Program + Google Play Console enrollment + RevenueCat project setup land).
+
+```
+NEXT_PUBLIC_REVENUECAT_APPLE_API_KEY    — Public Apple-side RevenueCat SDK API key. Identifies
+                                          the iOS app to RevenueCat (NOT the developer account);
+                                          intentionally public per RevenueCat docs — safe to
+                                          ship in the native bundle. Read by
+                                          `lib/iap/configure.ts → initRevenueCat()` at app
+                                          boot when `Capacitor.getPlatform() === 'ios'`.
+
+NEXT_PUBLIC_REVENUECAT_GOOGLE_API_KEY   — Public Google-side equivalent. Same role for the
+                                          Android target; read on `'android'` platform.
+
+REVENUECAT_WEBHOOK_AUTH                 — Server-side shared secret. Used by
+                                          `/api/webhooks/revenuecat/route.ts →
+                                          verifyWebhookSignature()` for constant-time compare
+                                          against `Authorization: Bearer <secret>` header.
+                                          Fail-closed on missing env var. Sprint 17 placeholder:
+                                          `placeholder_webhook_secret_sprint17_change_before_prod`.
+                                          Sprint 19 rotates to real shared secret configured
+                                          in the RevenueCat dashboard webhook settings.
+
+REVENUECAT_REST_API_KEY                 — Server-side Bearer token for the RevenueCat REST API
+                                          (`GET /v1/subscribers/{app_user_id}`). Used by
+                                          `lib/iap/server-entitlements.ts →
+                                          fetchEntitlementsFromRevenueCat()` for entitlement
+                                          lookups (resolves Open Q 3a — lifetime + pro
+                                          coexistence at the entitlement-list level).
+                                          Sprint 17 path: missing key falls back to
+                                          `{ tier: 'free' }` (pure default; no error).
+                                          Sprint 19 wires the real key.
+```
+
+**Where set, per target:**
+
+| Var | Vercel (web target) | `capacitor.config.ts` / native bundle | Notes |
+|-----|---------------------|---------------------------------------|-------|
+| `NEXT_PUBLIC_REVENUECAT_APPLE_API_KEY` | Optional (web no-op via `Capacitor.isNativePlatform()` guard) | Required — baked into static export at `npm run build` with `CAPACITOR_BUILD=1` | Public; safe in native bundle |
+| `NEXT_PUBLIC_REVENUECAT_GOOGLE_API_KEY` | Optional (same web no-op) | Required — baked into static export at native build time | Public; safe in native bundle |
+| `REVENUECAT_WEBHOOK_AUTH` | **Required** — webhook is a Vercel server route | N/A (server-only; never reaches native bundle) | Server-side secret; rotate on dashboard secret change |
+| `REVENUECAT_REST_API_KEY` | **Required** — REST helper is server-only | N/A (server-only) | Server-side secret; Sprint 17 missing-key path is graceful |
+
+`NEXT_PUBLIC_*` vars are bundled at build time (not runtime). For the native build, that means values must be present in the env at `CAPACITOR_BUILD=1 npm run build` time before `npx cap sync android` copies the static export into the Android scaffold. Sprint 19 update procedure: rotate dashboard → update Vercel env (web routes) AND rebuild native artifacts with new values → re-submit to App Store / Play.
+
+Gradle layer: no RevenueCat keys go into `frontend/android/gradle.properties` or `frontend/android/app/build.gradle`. The SDK reads keys from JS at runtime via `Purchases.configure({ apiKey })`. The only Android-side build dependency from RevenueCat is the Maven artifact `com.revenuecat.purchases:purchases-hybrid-common:18.7.0`, fetched transitively by `npx cap sync android` (see "Capacitor Build Pipeline" below for the corporate-TLS gotcha Sprint 17 surfaced).
+
 ### Build-time-only Variables (post-Sprint 15)
 
 These are NOT runtime env vars — they switch the build target at `npm run build` time. Do NOT add them to Vercel project settings (Vercel always wants the web build).
@@ -266,9 +314,44 @@ Outputs:
 - `frontend/android/app/build/outputs/bundle/debug/app-debug.aab` — Play Console upload format
 - `frontend/android/app/build/outputs/apk/debug/app-debug.apk` — Sideload to Pixel 5 via `adb install`
 
-Verified Sprint 15: `.aab` = 14.62 MB, `.apk` = 15.35 MB (both well under <30 MB Pre-Launch Gate). **Updated Sprint 16:** `.aab` = 20.75 MB, `.apk` = 24.39 MB (after 5 plugin integrations + Sentry native; still 31% under 30 MB ceiling). Bundle-size guard test at `frontend/src/lib/__tests__/bundle-size-guard.test.ts` runs on every CI pass (gracefully skips when binaries absent).
+Verified Sprint 15: `.aab` = 14.62 MB, `.apk` = 15.35 MB (both well under <30 MB Pre-Launch Gate). **Updated Sprint 16:** `.aab` = 20.75 MB, `.apk` = 24.39 MB (after 5 plugin integrations + Sentry native; still 31% under 30 MB ceiling). **Updated Sprint 17:** `.aab` = 23.27 MB (+2.52 MB), `.apk` = 29.39 MB (+5.00 MB fat debug) after `@revenuecat/purchases-capacitor@13.1.2` + Google Play Billing + transitive Kotlin stdlib bumps. Architect's bundle-size-guard ceiling still 30 MB (Pre-Launch Gate) — Sprint 17 closed 🟡 YELLOW on bundle-size-only criterion (0.27 MB over architect <23 MB flexible target; 22% under 30 MB hard gate). **Sprint 18 architect re-review recommendation:** revise sensible ceiling to **28 MB** to retain meaningful headroom against the 30 MB Pre-Launch Gate (current 23.27 MB has ~6.7 MB slack; planned Sprint 18 G6 Kai character integration will consume part of that). Bundle-size guard test at `frontend/src/lib/__tests__/bundle-size-guard.test.ts` runs on every CI pass (gracefully skips when binaries absent).
+
+**Plugin count after `cap sync android`:**
+- Sprint 15 baseline: 1 plugin (`@capacitor/preferences`)
+- Sprint 16 added 5: `@capacitor/camera`, `@capacitor/push-notifications`, `@aparajita/capacitor-biometric-auth`, `@capacitor/app` (deep linking), `@sentry/capacitor` → **6 total**
+- Sprint 17 added 1: `@revenuecat/purchases-capacitor@13.1.2` → **7 total**
 
 For full toolchain install instructions (JDK 21 + Android SDK 36 + corporate-TLS keystore patch), see `C:\Users\Anton del Rosario\akbai-spike\SPIKE_FINDINGS.md` §Toolchain install — preserved as forensic reference until Sprint 19 close.
+
+### First-time gradle setup (Windows + corporate TLS) — Sprint 17 update
+
+The Capacitor pipeline above assumes a configured local environment. Two-layer corporate-TLS recipe has now been documented across Sprint 16 (npm side) and Sprint 17 (JVM/gradle side). Anton's machine is the reference; document in CONTRIBUTING.md as Sprint 16 carry-over still tracks (see "Open carry-overs" below).
+
+**Per-shell (or user env) — NOT covered by the gradle.properties fix:**
+```powershell
+$env:JAVA_HOME    = "C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot\"
+$env:ANDROID_HOME = "C:\Users\Anton del Rosario\android-sdk\"
+$env:PATH         = "$env:JAVA_HOME\bin;$env:ANDROID_HOME\cmdline-tools\latest\bin;$env:ANDROID_HOME\platform-tools;$env:PATH"
+```
+
+**npm side (Sprint 16 DRIFT-4 recipe):**
+```powershell
+$env:NODE_OPTIONS = "--use-system-ca"   # Node 22.10+; delegates TLS to Windows root CA store
+```
+Needed for `npm install` + `next build` (including `CAPACITOR_BUILD=1` static export) on the corporate network. Persists for the shell session; can be added to user env vars for permanence.
+
+**JVM/Gradle side (Sprint 17 DRIFT, NEW):**
+Persisted in repo at `frontend/android/gradle.properties` (commit `712c729`):
+```properties
+systemProp.javax.net.ssl.trustStoreType=Windows-ROOT
+```
+JVM-layer analog of the Sprint 16 npm recipe. Tells the JDK to delegate TLS trust to the Windows root CA store (which has the corporate root CA enrolled) instead of the bundled JDK `cacerts` (which does not). Required for the first fresh Maven fetch of the RevenueCat artifact `com.revenuecat.purchases:purchases-hybrid-common:18.7.0`. **Why Sprint 16's gradle build didn't surface this:** all Sprint 16 Capacitor plugins resolved entirely from `~/.gradle/caches/` (warmed during the Sprint 14 conversion spike). Sprint 17's RevenueCat Maven coordinate was the first uncached fetch under the corporate-TLS environment, exposing the gap.
+
+This setting is now in-repo, so no per-shell action is required for the gradle side going forward. Only `JAVA_HOME` + `ANDROID_HOME` + `NODE_OPTIONS` remain as per-shell / user-env requirements.
+
+**Open carry-overs (Sprint 16 → 17 → 18):**
+- CONTRIBUTING.md note that consolidates both TLS recipes (npm + JVM) + `JAVA_HOME` / `ANDROID_HOME` setup. Sprint 16 retro flagged this; Sprint 17 retro re-flagged with the JVM half added. Still open — Sprint 18 housekeeping target.
+- Architect doc Sprint 17 retro-correction: RevenueCat SDK error-code form (numeric-string `'10'` not name `'NETWORK_ERROR'`). Engineering carries both forms via `NUMERIC_TO_NAME` normaliser in `purchase.ts`; no deploy impact.
 
 ### Sentry Native Crash Symbolication Pipeline (Sprint 16+, executes Sprint 19)
 
@@ -305,7 +388,9 @@ This generates `frontend/android/app/build/outputs/mapping/release/mapping.txt` 
    ```
 4. **iOS dSYM extraction** requires a Mac with Xcode + an `archive` build (Sprint 19). Same `sentry-cli upload-dif` invocation against the `.dSYM` directory.
 
-**Corporate-TLS note:** if `sentry-cli` hits a TLS handshake failure on Anton's network (same root cause as the Gradle mirror patch in Sprint 14 + the `NODE_OPTIONS=--use-system-ca` npm workaround in Sprint 16), set `SENTRY_HTTPS_PROXY` or invoke `sentry-cli` via PowerShell where the system trust store is honored. Document in CONTRIBUTING.md when Sprint 17 housekeeping lands.
+**Corporate-TLS note:** if `sentry-cli` hits a TLS handshake failure on Anton's network (same root cause as the Gradle mirror patch in Sprint 14 + the `NODE_OPTIONS=--use-system-ca` npm workaround in Sprint 16 + the `Windows-ROOT` JVM trust store in Sprint 17), set `SENTRY_HTTPS_PROXY` or invoke `sentry-cli` via PowerShell where the system trust store is honored. Document in CONTRIBUTING.md alongside the consolidated TLS recipe (Sprint 18 housekeeping target).
+
+**Sprint 17 status:** symbolication pipeline unchanged. `scripts/upload-symbols.sh` + `scripts/upload-symbols.ps1` still present, still runnable, still gracefully no-op when `SENTRY_AUTH_TOKEN` is absent. Execution remains scheduled for Sprint 19 release-signed build wave.
 
 **`.gitignore` entries** (Sprint 16):
 - `frontend/android/app/build/outputs/mapping/**` — generated per-build
