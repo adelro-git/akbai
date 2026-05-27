@@ -73,8 +73,12 @@ export default function StepBiometric({ onContinue, firstName }: StepBiometricPr
       </PaperNote>
 
       {error && (
+        // No-Line Rule (design-system.md): replace the tonal border with
+        // an ambient shadow at the same emphasis level. The error-container
+        // tonal fill alone reads as the "soft retry" surface; shadow-ambient
+        // lifts it just enough to register as elevated without a hard edge.
         <div
-          className="bg-error-container/20 border border-on-error-container/20 rounded-2xl p-3"
+          className="bg-error-container/20 shadow-ambient rounded-2xl p-3"
           data-testid="biometric-step-error"
           role="alert"
         >
