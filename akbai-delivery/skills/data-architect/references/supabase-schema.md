@@ -1369,3 +1369,84 @@ auth.users
     +-- 1:N -- invoices -- 1:N -- invoice_items (optional FK to costing_cards)
     +-- 1:N -- payments (links to invoices and/or subscriptions)
 ```
+
+---
+
+## 24. Migration Log — Sprint 16 (020 + 021, Native Surface Polish)
+
+> **Doc-debt note:** This file is currently behind on migrations 011-019. Sprint 16 adds 020 + 021. A separate Sprint 17 housekeeping task should bring 011-019 into this doc (push_subscriptions from 018, costing_cards / invoices / payments from 015-017 — which §23 already drafted but never reconciled into the per-table sections — plus the earlier 011-014 work).
+
+### 020_push_subscriptions_platform_extension.sql
+
+Extends the `push_subscriptions` table (originally created in migration 018) to support BOTH Web Push (VAPID) AND native push (FCM / APNs) in a single table via a `platform` discriminator column.
+
+**Schema changes:**
+```sql
+-- Add platform discriminator
+ALTER TABLE public.push_subscriptions
+  ADD COLUMN IF NOT EXISTS platform TEXT NOT NULL DEFAULT 'web'
+    CHECK (platform IN ('web', 'android', 'ios'));
+
+-- Add native push token (FCM / APNs)
+ALTER TABLE public.push_subscriptions
+  ADD COLUMN IF NOT EXISTS native_token TEXT NULL;
+
+-- Add device identifier for multi-device disambiguation
+ALTER TABLE public.push_subscriptions
+  ADD COLUMN IF NOT EXISTS device_id TEXT NULL;
+
+-- Relax VAPID columns to NULL-able (web-only going forward)
+ALTER TABLE public.push_subscriptions
+  ALTER COLUMN p256dh_key DROP NOT NULL;
+ALTER TABLE public.push_subscriptions
+  ALTER COLUMN auth_key DROP NOT NULL;
+
+-- Replace single unique index with platform-scoped partials
+DROP INDEX IF EXISTS idx_push_subs_user_endpoint;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_push_subs_user_endpoint_web
+  ON public.push_subscriptions(user_id, endpoint)
+  WHERE deleted_at IS NULL AND platform = 'web';
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_push_subs_user_native_token
+  ON public.push_subscriptions(user_id, native_token)
+  WHERE deleted_at IS NULL AND native_token IS NOT NULL;
+```
+
+**RLS:** unchanged — existing 3 row-scoped policies on `push_subscriptions` (SELECT/INSERT/UPDATE, all `auth.uid() = user_id`) cover the new columns automatically. Row-scope is column-agnostic.
+
+**Soft-delete:** `deleted_at TIMESTAMPTZ NULL` already present from migration 018. No change.
+
+**Backfill:** automatic via `DEFAULT 'web'` on `platform` — all existing rows get `platform='web'`. No data migration step required.
+
+**Send-side fanout** (`lib/push/send.ts`): branches on `platform` — web rows → `webpush.sendNotification`; native rows → Firebase Admin SDK call (Sprint 19 work; Sprint 16 just persists the rows with a `TODO(sprint-19)` log + soft-skip on native sends).
+
+### 021_users_biometric_columns.sql
+
+Adds biometric opt-in to the canonical `users` table (created in migration 001 — see §2 of this doc). Biometric is an OPTIONAL second factor on app open; default off; user enables via OnboardingWizard step 6.25 or `/profile` toggle.
+
+**Schema changes:**
+```sql
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS biometric_enabled BOOLEAN NOT NULL DEFAULT false;
+
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS biometric_setup_at TIMESTAMPTZ NULL;
+```
+
+**RLS:** unchanged — existing `users_select_own` / `users_insert_own` / `users_update_own` policies (all `auth.uid() = id` because `users.id` IS the auth UUID via `REFERENCES auth.users(id)`) cover the new columns. The `/api/profile` PATCH endpoint writes both columns via this existing UPDATE policy.
+
+**Soft-delete:** `deleted_at` already on `users` from migration 001. No change.
+
+**Server-side derivation:** `biometric_setup_at` is server-derived (`now()`) when `biometric_enabled` is toggled from `false → true` and the existing `biometric_setup_at` is null. The `/api/profile` Zod schema does NOT accept a client-supplied `biometric_setup_at` value (rejected by Zod refine) — audit-trail integrity is server-enforced.
+
+### Updated Table Snapshots
+
+| Table | New Columns (Sprint 16) | RLS Impact |
+|-------|------------------------|------------|
+| `push_subscriptions` | `platform TEXT NOT NULL DEFAULT 'web' CHECK in (web/android/ios)`, `native_token TEXT NULL`, `device_id TEXT NULL`. `p256dh_key` + `auth_key` now nullable. | None — row-scoped policies cover new columns. |
+| `users` (§2) | `biometric_enabled BOOLEAN NOT NULL DEFAULT false`, `biometric_setup_at TIMESTAMPTZ NULL` | None — existing `users_update_own` covers. |
+
+### Architect reference
+`akbai-delivery/skills/solutions-architect/references/sprint-16-native-plugin-pattern.md` §8 (Migration A + B shapes locked 2026-05-27).
+```

@@ -266,9 +266,51 @@ Outputs:
 - `frontend/android/app/build/outputs/bundle/debug/app-debug.aab` — Play Console upload format
 - `frontend/android/app/build/outputs/apk/debug/app-debug.apk` — Sideload to Pixel 5 via `adb install`
 
-Verified Sprint 15: `.aab` = 14.62 MB, `.apk` = 15.35 MB (both well under <30 MB Pre-Launch Gate). Bundle-size guard test at `frontend/src/lib/__tests__/bundle-size-guard.test.ts` runs on every CI pass (gracefully skips when binaries absent).
+Verified Sprint 15: `.aab` = 14.62 MB, `.apk` = 15.35 MB (both well under <30 MB Pre-Launch Gate). **Updated Sprint 16:** `.aab` = 20.75 MB, `.apk` = 24.39 MB (after 5 plugin integrations + Sentry native; still 31% under 30 MB ceiling). Bundle-size guard test at `frontend/src/lib/__tests__/bundle-size-guard.test.ts` runs on every CI pass (gracefully skips when binaries absent).
 
 For full toolchain install instructions (JDK 21 + Android SDK 36 + corporate-TLS keystore patch), see `C:\Users\Anton del Rosario\akbai-spike\SPIKE_FINDINGS.md` §Toolchain install — preserved as forensic reference until Sprint 19 close.
+
+### Sentry Native Crash Symbolication Pipeline (Sprint 16+, executes Sprint 19)
+
+Sprint 16 wired `@sentry/capacitor@4.0.0` alongside the existing `@sentry/nextjs` (downgraded to exact `10.43.0` per Sentry capacitor peer-dep). Same DSN, same Sentry project — events disambiguated via the `sdk.name` field on the envelope. Saved-search `sdk.name:sentry.javascript.nextjs` separates JS errors; `sdk.name:sentry.capacitor` separates native Java/Swift crashes.
+
+**Build-time ProGuard configuration** (`frontend/android/app/build.gradle`, Sprint 16):
+```gradle
+buildTypes {
+    release {
+        minifyEnabled true
+        shrinkResources true
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+}
+```
+This generates `frontend/android/app/build/outputs/mapping/release/mapping.txt` on every release build. **Debug builds skip ProGuard** — no symbolication artifacts in `bundleDebug` / `assembleDebug`.
+
+**Upload script** (Sprint 16 scaffolding, Sprint 19 execution): `frontend/scripts/upload-symbols.sh` (cross-platform) + `frontend/scripts/upload-symbols.ps1` (Windows). Both:
+- Read `SENTRY_AUTH_TOKEN` env var — exit gracefully (logged "skipping upload") if absent
+- Invoke `sentry-cli upload-dif --include-sources <mapping.txt | dSYM dir>` for Android (ProGuard) + iOS (dSYM)
+- Need `SENTRY_ORG` + `SENTRY_PROJECT` env vars (already set per §5 above)
+
+**Sprint 19 execution checklist:**
+1. Generate a Sentry auth token (`Sentry → Settings → Auth Tokens → Create`); add to local env or release CI
+2. Run a release-signed build (requires keystore — Sprint 19 work):
+   ```bash
+   ./gradlew bundleRelease  # produces app-release.aab + mapping/release/mapping.txt
+   ```
+3. Run the upload script:
+   ```bash
+   SENTRY_AUTH_TOKEN=<token> bash scripts/upload-symbols.sh
+   # OR on Windows:
+   $env:SENTRY_AUTH_TOKEN = "<token>"; pwsh scripts/upload-symbols.ps1
+   ```
+4. **iOS dSYM extraction** requires a Mac with Xcode + an `archive` build (Sprint 19). Same `sentry-cli upload-dif` invocation against the `.dSYM` directory.
+
+**Corporate-TLS note:** if `sentry-cli` hits a TLS handshake failure on Anton's network (same root cause as the Gradle mirror patch in Sprint 14 + the `NODE_OPTIONS=--use-system-ca` npm workaround in Sprint 16), set `SENTRY_HTTPS_PROXY` or invoke `sentry-cli` via PowerShell where the system trust store is honored. Document in CONTRIBUTING.md when Sprint 17 housekeeping lands.
+
+**`.gitignore` entries** (Sprint 16):
+- `frontend/android/app/build/outputs/mapping/**` — generated per-build
+- `frontend/ios/**/*.dSYM` — generated per-build on Mac
+- Anything else under `frontend/android/app/build/` already excluded by Sprint 15's Capacitor-generated `.gitignore`
 
 ### Security Rules
 

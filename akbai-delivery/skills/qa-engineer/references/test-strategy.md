@@ -400,15 +400,62 @@ Pattern:
 - Assert `<30` (the documented Pre-Launch Gate ceiling — do NOT hardcode the current size as the threshold; that would calcify whatever bloat is present today)
 - **Graceful skip if the binary doesn't exist** — local CI runs without the Android toolchain still pass; the assertion only fires when an engineer or release pipeline has produced the actual binary. Use `console.warn` + early return; do not `it.skip()` (that hides the test from coverage reports).
 
-Sprint 15 baseline: `.aab` = 14.62 MB, `.apk` = 15.35 MB — both ~50% under the ceiling. Sprint 16 (`@capacitor/camera`, push, biometric) is expected to add 1-3 MB. Sprint 17 (RevenueCat IAP SDK) another 1-2 MB. Stay well clear of 30 MB through Sprint 19.
+Sprint 15 baseline: `.aab` = 14.62 MB, `.apk` = 15.35 MB — both ~50% under the ceiling. **Sprint 16 actual:** `.aab` = 20.75 MB (+6.13 MB) / `.apk` = 24.39 MB (+9.04 MB, fat debug). Came in at the top of architect's +3.5-6.0 MB per-plugin estimate; Firebase Messaging multi-ABI + Sentry native SDK drove most of the growth. Sprint 17 (RevenueCat IAP SDK) expected +1-2 MB. **Stay well clear of 30 MB through Sprint 19.**
 
 When to widen the guard:
-- Add `.aab-release` check once Sprint 19 produces a signed release build (R8/ProGuard will shrink it further — expect 10-12 MB)
+- Add `.aab-release` check once Sprint 19 produces a signed release build (R8/ProGuard will shrink it further — expect 14-17 MB given current 20.75 MB debug)
 - Add an iOS `.ipa` check once Sprint 17/19 produces an iOS build on a Mac
 
 ---
 
-## 9. Multi-Agent Testing Pattern (Sprint 4)
+## 9. Capacitor Plugin Mock Pattern (Sprint 16)
+
+> **Active since 2026-05-27 (Sprint 16 / Gap G4 IMPLEMENTED).** Reference tests at `frontend/src/components/scanner/__tests__/camera-capture.native.test.ts`, `frontend/src/lib/push/__tests__/capacitor-push.test.ts`, `frontend/src/lib/capacitor/__tests__/biometric.test.ts`, `frontend/src/lib/capacitor/__tests__/deep-link.test.ts`, `frontend/src/lib/sentry/__tests__/capacitor-init.test.ts`.
+
+Capacitor plugins (`@capacitor/camera`, `@capacitor/push-notifications`, `@capacitor-community/biometric-auth` family, `@capacitor/app`, `@sentry/capacitor`, `@capacitor/preferences`) crash on web import because the Java/Swift bridge isn't present. Every plugin call sits behind `if (Capacitor.isNativePlatform()) { ... } else { /* web fallback */ }`. Tests must mock the plugin entirely — never exercise the native SDK.
+
+**Pattern (per plugin):**
+
+```ts
+// 1. Hoist the mock function so it's accessible in tests
+const mockGetPhoto = vi.fn();
+
+// 2. Mock the plugin module BEFORE importing the subject under test
+vi.mock('@capacitor/core', () => ({
+  Capacitor: { isNativePlatform: () => true },  // or false for web-branch tests
+}));
+
+vi.mock('@capacitor/camera', () => ({
+  Camera: { getPhoto: (...args: unknown[]) => mockGetPhoto(...args) },
+  // Export enum constants matching the real plugin's runtime values
+  CameraResultType: { DataUrl: 'dataUrl', Uri: 'uri', Base64: 'base64' },
+  CameraSource: { Camera: 'CAMERA', Photos: 'PHOTOS', Prompt: 'PROMPT' },
+}));
+
+// 3. Import the subject AFTER mocks are declared
+import { dataUrlToFile } from '../camera-capture';
+
+// 4. In tests, use the mocked enum values (NOT raw string literals — that's a TS error)
+const result = await Camera.getPhoto({
+  source: CameraSource.Camera,        // ✅ correct
+  resultType: CameraResultType.DataUrl, // ✅ correct
+  quality: 85,
+});
+```
+
+**Gotchas (learned in Sprint 16):**
+- **Raw string literals vs enum imports.** `source: 'CAMERA'` compiles at runtime (mock returns the same string) but fails TypeScript strict check (expected `CameraSource`). Always destructure the enum from the mock and use the enum value. Two QA-surfaced TS errors landed because the engineer used raw literals; clean fix in `b43d8bf`.
+- **Global vs per-file mock.** Sprint 16 used per-file mocks so each test could control `isNativePlatform()` independently (true for native tests, false for web fallback tests). A global mock in `vitest.setup.ts` defaulting to `false` is acceptable, but per-test override is the load-bearing pattern.
+- **Don't test the plugin's own behaviour.** The plugin's contract is Capacitor's responsibility. Test only YOUR code's interaction with the plugin — mock the plugin's return, assert what your code does with it.
+- **`@capacitor/preferences` for sensitive state, NOT localStorage.** Biometric failure counter must persist in `@capacitor/preferences` (SharedPreferences/UserDefaults — native-secure) per the architect's risk #3 in `sprint-16-native-plugin-pattern.md` §1. Mock pattern: `vi.mock('@capacitor/preferences', () => ({ Preferences: { get: vi.fn(), set: vi.fn(), remove: vi.fn() } }))`.
+
+**Tests-per-plugin (Sprint 16 final count):** camera-native +7, push +39 (across capacitor-push, send, deferred-prompt, types-schemas, routes), biometric/deep-link/sentry/profile +46, login-banner +4. Total +96 tests added in Sprint 16 (1331 → 1427).
+
+**Long-running gradle build discipline (Sprint 16 process regression):** the QA agent yielded twice mid-`gradlew bundleDebug` before the artifact landed (Sprint 14 anti-pattern violation). Resolution: gradle builds that take >2 min must be invoked with `run_in_background: true` + harness-native task-notification flow OR `Monitor.until-loop` in the same session. Sprint 17 retro action item: tighten the build-qa agent's SKILL.md gradle-build instructions.
+
+---
+
+## 10. Multi-Agent Testing Pattern (Sprint 4)
 
 Sprint 4 introduced a parallel worktree workflow: 5 Claude Code agents worked simultaneously in isolated git worktrees, each writing tests for their own feature area (email templates, email provider detection, dashboard API, dashboard components, OCR pipeline). Key observations:
 

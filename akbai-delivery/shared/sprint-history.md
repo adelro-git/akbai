@@ -1701,3 +1701,124 @@ Essentially flat despite +11 pages and the persona-fetching layout — the `page
 
 **Next sprint:** Sprint 16 — Native Surface Polish (DEV ONLY, ~2-3 hr Anton). Lighter than Sprint 15 — single sprint of Capacitor plugin integrations + native crash pipeline. No new gaps expected to resolve; G4 (Apple Guideline 4.2 mitigation) gets its load-bearing implementation, full close-out at Sprint 18 Pre-Launch Gate review.
 
+---
+
+### Sprint 16 — 2026-05-27 (Native Surface Polish — DEV ONLY) — CLOSED 🟢 GREEN
+
+**Phase:** 0B — Native Mobile Pivot (sprint 3 of 6)
+**Sprint Goal:** Layer the three load-bearing Capacitor plugins (camera, push, biometric) + deep linking + Sentry native crash pipeline on top of Sprint 15's conversion. Gap G4 (Apple Guideline 4.2 rejection risk) gets its load-bearing implementation — full close-out at Sprint 18 Pre-Launch Gate review.
+**Capacity:** ~2-3 hr Anton (architect Open Questions review + PR review + self-merge); ~12-15 hr agent wall-clock budget.
+
+**Strategic context:** Third sprint of the 6-sprint Native Mobile Pivot. Per restructured outline (Sprint 14 footer), Sprints 15-18 are PURE DEV — all Anton-side work (paid-account enrollments, store SKU creation, sandbox testing, on-device smoke, store submission, launch motion, iteration) deferred to a single end-of-pivot wave in Sprint 19. Sprint 16 was forecast as the lightest of the pure-dev block; came in even lighter than Sprint 15 by Anton-time but heavier in agent wall-clock due to gradle build pipeline.
+
+**Tasks:**
+
+| # | Task | Size | Anton Time | Stream | Notes |
+|---|------|------|------------|--------|-------|
+| 1 | Architect locks 5-plugin pattern (one doc, not five) | M | XS (review 5 Open Questions) | A | Doc at `akbai-delivery/skills/solutions-architect/references/sprint-16-native-plugin-pattern.md` (975 lines) — schema decision locked: alter `push_subscriptions` |
+| 2 | Data — 2 migrations (020 push platform extension, 021 users biometric columns) | S | — | A | Build-data ran AFTER architect, BEFORE engineer per Sprint 14 lesson |
+| 3 | Engineer batch 1 — `@capacitor/camera` integration on `/scan` | M | — | A | `getUserMedia` → `Camera.getPhoto()` on native, web fallback intact via `isNativePlatform()` gate |
+| 4 | Engineer batch 2 — `@capacitor/push-notifications` + discriminated-union Zod on `/api/push/subscribe` | M | — | A | google-services.json placeholder; deferred-prompt on `/deadlines` first-view-within-14-days |
+| 5 | Engineer batch 3 — biometric (app-open guard, onboarding step 6.25, /profile toggle) + deep link + Sentry native | M | — | A | 3 surfaces, 3 commits. `@capacitor-community/biometric-auth` substituted with `@aparajita/capacitor-biometric-auth@10.0.0` (architect-spec drift). |
+| 6 | UX review — conversational Filipino copy + onboarding flow + permission prompts + design-system check | S | XS (PR review) | A | B+ voice grade; 3 copy fixes + 3 structural gaps closed in follow-up commit |
+| 7 | Security pass — biometric, push consent, camera, PKCE carry-over | S | XS (PR review) | A | MINOR ISSUES, no blockers; biometric audit clean (session-authoritative, 3-strike OTP fallback, server-derived setup_at) |
+| 8 | QA — vitest, web build, Capacitor build, .aab/.apk bundle-size | M | XS (review results) | A | Decision-gate: GREEN. .aab = 20.75 MB (under <22 MB target), .apk = 24.39 MB |
+| 9 | Sprint 16 retro + post-sprint doc sweep | S | XS (0.25hr) | A | This entry + gap-registry G4 + project-context.md updates on `chore/16-retro` |
+
+**Sprint outcome:** ✅ CLOSED 🟢 GREEN — Gap G4 IMPLEMENTED (full close-out at Sprint 18 Pre-Launch Gate review). Five native plugins + deep linking + Sentry native pipeline landed on `feat/16-native-polish` (PR #35).
+
+**What shipped (`feat/16-native-polish` → 10 commits → PR #35):**
+
+*Architecture (1 commit)*
+- `4ff9513` — `sprint-16-native-plugin-pattern.md` (975 lines, 5 Open Questions with recommendations — all 5 held at PR review)
+
+*Schema migrations (1 commit)*
+- `6446a6c` — migration 020 (push_subscriptions: add platform/native_token/device_id, relax VAPID columns to NULL, replace unique index with two platform-scoped partials) + migration 021 (users: add biometric_enabled + biometric_setup_at)
+
+*Plugin integrations (5 commits, sequential batches)*
+- `9aafb96` — `@capacitor/camera@8.2.0` + ScannerFlow native branch + AndroidManifest CAMERA + `dataUrlToFile` bridge + 1338 tests
+- `437e940` — `@capacitor/push-notifications@8.1.1` + discriminated-union Zod schema on subscribe/unsubscribe + google-services.json placeholder + Gradle plugin scaffold + `/deadlines` deferred-prompt + 1377 tests
+- `19e0e9c` — `@aparajita/capacitor-biometric-auth@10.0.0` (substituted; see DRIFT) + `(app)/layout.tsx` app-open guard + `OnboardingWizard` step 6.25 + `/profile` BiometricToggle + 3-strike OTP-fallback + `@capacitor/preferences@8.0.1` failure-counter store + 1413 tests
+- `173fc40` — `@capacitor/app@8.1.0` + `lib/capacitor/deep-link.ts` + AndroidManifest intent-filter for `com.akbai.app://auth/callback` + 1419 tests
+- `b02d402` — `@sentry/capacitor@4.0.0` native init + `(app)/layout.tsx` initSentryCapacitor() + ProGuard `minifyEnabled true` + `scripts/upload-symbols.{ps1,sh}` (Sprint 19 execution scaffolding) + 1423 tests
+
+*UX polish (2 commits)*
+- `3b7bbf8` — UX review copy fixes: `na-match` (correct affix), drop bare English "attempts", trim trailing skip-button clause, invert SVO opener in biometric-toggle web-branch note
+- `06696e1` — structural-gap close: new `LoginBanner` Suspense-wrapped client component reads `?error=biometric_failed` / `?error=auth_callback_error` with architect-prescribed Filipino copy; push deferred-prompt close button widened to 44px tap target; step-biometric error border replaced with `shadow-ambient` per No-Line Rule + 1427 tests
+
+*QA fix (1 commit)*
+- `b43d8bf` — `camera-capture.native.test.ts` enum imports (CameraSource.Camera + CameraResultType.DataUrl instead of string literals) — clears 2 new TS errors surfaced at QA pass
+
+**Decision-gate metrics:**
+
+| Check | Result | Headroom vs ceiling |
+|---|---|---|
+| Web build (Vercel target, no `CAPACITOR_BUILD`) | PASS | All 30 API routes + Proxy middleware + 17 static + 2 SSG pages intact |
+| Capacitor static export (`CAPACITOR_BUILD=1`) | PASS | `out/` = 16 MB / 302 files / 21 prerendered routes (+7 files vs Sprint 15) |
+| `npx cap sync android` | PASS | 6 plugins registered (5 new + `@capacitor/preferences`) |
+| `gradlew bundleDebug` | PASS | **`.aab` = 20.75 MB** (Sprint 15: 14.62 MB; +6.13 MB; **31% under 30 MB Pre-Launch Gate ceiling**; under <22 MB sprint target) |
+| `gradlew assembleDebug` | PASS | `.apk` = 24.39 MB (Sprint 15: 15.35 MB; +9.04 MB — fat debug includes all ABIs; Play Store delivers split-APK from AAB) |
+| Vitest | **1427/1427 pass** | +96 vs Sprint 15 baseline (1331 → 1427): camera-native +7, push +39, biometric/deep-link/sentry/profile +46, login-banner +4 |
+| TypeScript | 42 errors (38 baseline + 4 propagated profile-test Request-vs-NextRequest pattern from batch 3 — same pre-existing pattern in onboarding tests) | **0 NEW patterns introduced by Sprint 16** |
+
+**Architect's 5 Open Questions — Anton's defaults (no overrides at PR review):**
+1. Push subscription schema — alter `push_subscriptions` (one table, `platform` discriminator). ✅ Shipped.
+2. Push permission deferred-prompt trigger — `/deadlines` first-view-of-upcoming-within-14-days. ✅ Shipped.
+3. Biometric onboarding placement — step 6.25 in `OnboardingWizard`. ✅ Shipped.
+4. `@sentry/capacitor` DSN — share with `@sentry/nextjs`, disambiguate via `sdk.name`. ✅ Shipped.
+5. Step 6.25 visibility on web (PWA fallback) — skip entirely via `Capacitor.isNativePlatform()`. ✅ Shipped.
+
+**Bundle size signal (vs Sprint 15 baseline):**
+
+| Artifact | Sprint 15 (conversion only) | Sprint 16 (+5 plugins) | Delta |
+|---|---|---|---|
+| Web `out/` static-export | 16 MB / 295 files / 21 routes | 16 MB / 302 files / 21 routes | +7 files (new client components: LoginBanner, deferred-prompt, biometric step + overlay + toggle, capacitor-push/biometric/deep-link/sentry-init modules), same MB |
+| Android `.aab` (debug) | 14.62 MB | 20.75 MB | **+6.13 MB** (architect estimate was +3.5-6.0 MB; came in at top of range, likely due to Firebase Messaging multi-ABI + Sentry native SDK) |
+| Android `.apk` (debug) | 15.35 MB | 24.39 MB | +9.04 MB (fat debug includes all ABIs; Play Store split-delivery from AAB serves smaller per-device install) |
+
+**Velocity (Sprint 16):**
+- Anton time: ~0.5 hr (sprint kickoff scope review + PR #35 review + merge). Budget was 2-3 hr; came in well under (matched Sprint 15's pattern).
+- Agent time: ~4.5 hr wall-clock across architect (~7 min) + data (~2 min) + 3 engineer batches (camera ~8 min, push ~14 min, biometric/deep-link/sentry ~21 min) + UX review (~3 min) + security review (~2 min) + engineer follow-up (~6 min) + QA full suite (~25 min, dominated by gradle). Budget was 12-15 hr; came in well under.
+- Wall-clock: ~5 hr from sprint start to PR open. Sprint 16 forecast was the lightest of the pure-dev block; held to forecast.
+
+**Process success — Sprint 14 lesson applied (mostly):**
+- Architect, data, all 3 engineer batches, UX, security, follow-up engineer: all stayed synchronous with `timeout: 600000` on installs and `Monitor`-poll discipline. Zero premature exits across 7 agent runs. Pattern continues to be reliable.
+- **One regression:** QA agent yielded twice while gradle bundleDebug was mid-flight (Sprint 14 anti-pattern violation). PM took over QA in-session and completed gradle bundleDebug + assembleDebug via `run_in_background` + task-notification flow (the harness-native pattern, no agent polling). Resolution: the QA agent prompt should explicitly require `Monitor.until-loop` for gradle, OR the QA agent should hand off the long gradle build to PM directly. Track as Sprint 17 retro action item.
+
+**Process success — DRIFT items surfaced (architect spec vs reality):**
+1. **`@capacitor-community/biometric-auth` does not exist on npm.** Engineer substituted `@aparajita/capacitor-biometric-auth@10.0.0` (canonical maintained alternative; same API). Architect doc requires post-merge correction.
+2. **`@sentry/capacitor@4.0.0` peer-dep forced `@sentry/nextjs` downgrade** from `^10.45.0` to exact `10.43.0`. Minor delta.
+3. **`@sentry/capacitor` v4 init API doesn't accept `enableJavascript: false`.** Same effect achieved by omitting sibling-init function in second `init()` argument.
+4. **Corporate-TLS for npm:** batch 1 surfaced `NODE_OPTIONS=--use-system-ca` (cleaner than `strict-ssl=false`). Should be added to `.npmrc` or onboarding docs in Sprint 17.
+5. **`lib/push/register.ts` needed `platform` discriminator field** for the web path after the Zod schema migration — engineer caught and shipped the fix. Load-bearing but undocumented in architect §3.
+6. **`unregisterNativePush()` is a Sprint 19 stub** per architect §3 acceptance. Native plugin listener cannot be unbound this sprint; server-side revoke works via `/api/push/unsubscribe`. NPC data-subject-rights gap tracked.
+7. **PM/architect batch shape mismatch.** Architect §9 bundled camera + deep-link into one batch; PM split them across batches 1 + 3. No code conflict; flag at retro for reconvergence.
+
+**Branch hygiene:**
+- `feat/16-native-polish` (10 commits) → PR #35 opened, awaiting merge.
+- `chore/16-retro` (this entry + gap-registry G4 + project-context updates) → opens PR to `main` after commit.
+- `feat/capacitor-spike` worktree at `C:\Users\Anton del Rosario\akbai-spike` PRESERVED per Sprint 14 directive — keep until Sprint 19 close as forensic reference.
+
+**Action items (carry to Sprint 17+):**
+1. ⏳ Sprint 17 — RevenueCat IAP integration (per pivot plan §7). Gap G2 (IAP webhook idempotency).
+2. ⏳ Sprint 17 housekeeping (carry-over from Sprint 15 + Sprint 16 DRIFT):
+   - `react-day-picker@8 → v9` upgrade OR pin `date-fns@3.x` (eliminate `--legacy-peer-deps`)
+   - Wire `eslint.config.js` to replace broken `next lint` (Next 16 removed it; Sprint 15 flagged)
+   - `@sentry/nextjs` deprecation: move `disableLogger` + `automaticVercelMonitors` under `webpack.*` per deprecation message
+   - CONTRIBUTING.md note: Windows + corporate-TLS toolchain (procedure in `SPIKE_FINDINGS.md` §Toolchain install) + `NODE_OPTIONS=--use-system-ca` npm recipe
+   - `language-toggle.tsx` `useTransition` cleanup (overkill post-i18n-rewrite)
+   - Architect doc Sprint 16 correction: substitute `@aparajita/capacitor-biometric-auth` reference for `@capacitor-community/biometric-auth`
+   - Clean up 4 propagated `Request vs NextRequest` TS errors in `profile/__tests__/route.test.ts` (same fix applies to existing onboarding tests; ~10 min)
+3. ⏳ Stream B Gemini Kai iteration — Anton continues async; 8 poses target. Sprint 18 needs the assets.
+4. ⏳ Sprint 16 process improvement: build-qa agent prompt must explicitly require `Monitor.until-loop` for gradle commands (the agent yielded twice during this sprint's QA pass). Update qa-engineer SKILL.md accordingly.
+5. ⏳ Sprint 19 carry-over (no per-sprint device gates per testing-cadence decision):
+   - Real `google-services.json` from Firebase Console + APNs cert
+   - Mac + dSYM extraction + `sentry-cli` auth token + execute `scripts/upload-symbols.{sh,ps1}`
+   - iOS `Info.plist` `NSCameraUsageDescription` + `CFBundleURLTypes` (custom-scheme registration)
+   - On-device Pixel 5 smoke: biometric prompt + push delivery + deep-link `com.akbai.app://auth/callback` resolution
+   - PKCE `code_verifier` retrieval from Capacitor sandboxed localStorage — confirm via magic-link click on cold-started app
+   - Wire `@capacitor/preferences`-backed Supabase storage adapter if PKCE flaky on device
+   - Implement `unregisterNativePush()` (NPC data-subject-rights closure)
+
+**Next sprint:** Sprint 17 — RevenueCat IAP integration (DEV ONLY, ~2-3 hr Anton). Resolves Gap G2 (IAP webhook idempotency, replaces D2). Tier model already locked (Free trial 7-day, Starter ₱299 lifetime, Pro Monthly ₱499, Pro Annual ₱4,999) per Sprint 13 close-out. Sprint 17 wires `@revenuecat/purchases-capacitor` + `/api/webhooks/revenuecat` (event UUID dedup) + paywall UX. Fourth of six pure-dev sprints; Sprint 18 = Pre-Launch Gate review + asset readiness (G5, G6, G7); Sprint 19 = enrollment wave + on-device QA + store submission.
+
