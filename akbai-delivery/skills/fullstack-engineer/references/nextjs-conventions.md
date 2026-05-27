@@ -180,6 +180,49 @@ export default async function DeadlinesPage() {
 }
 ```
 
+### Capacitor static-export constraint (post-Sprint 15)
+
+> **Active since 2026-05-27 (Sprint 15 / Gap G1 RESOLVED).** AKBai now ships as a Capacitor-wrapped Android app from a static-export build (`CAPACITOR_BUILD=1 npm run build`). The Vercel web build (without the env var) preserves all server features.
+
+For any page under `frontend/src/app/(app)/**/page.tsx`, **default to client component** (`'use client'` at top). Reason: server components rely on `cookies()`, `headers()`, `createClient()` server, and `redirect()` which all fail under `output: 'export'`. The complete canonical conversion pattern (single template, all 15 Sprint 15 conversions followed it verbatim) lives at:
+
+`akbai-delivery/skills/solutions-architect/references/sprint-15-conversion-pattern.md`
+
+Hard rules from Sprint 15 (failure modes that crashed prerender during the spike):
+- `createClient()` from `@/lib/supabase/client` instantiated **only inside `useEffect` or event handlers** — never at module scope (throws "URL/key required" during prerender)
+- `createServiceClient` MUST NOT be imported anywhere in client code (it imports `SUPABASE_SERVICE_ROLE_KEY` — server-only secret); API routes handle `SKIP_AUTH=true` bypass server-side
+- Every `useSearchParams()` consumer wrapped in `<Suspense>` (Next 16 hard-fails the static-export build otherwise)
+- Dynamic routes (`[id]`) read params via `useParams()` not `params` prop — client components don't receive the `params` prop the way server components do
+- `export const metadata` is incompatible with `'use client'` — drop it; tab titles handled at native shell layer (accepted v1 loss)
+- No `import 'server-only'` directives in any converted file
+
+Server-only utilities (the very small remainder):
+- `app/api/**/route.ts` files — stay server-side; excluded from Capacitor build via `pageExtensions: ['tsx']` in `next.config.js` when `CAPACITOR_BUILD=1`
+- `src/proxy.ts` middleware — kept for Vercel web fallback; same exclusion mechanism for Capacitor
+- `src/lib/supabase/server.ts` and `src/lib/supabase/service.ts` — imported only by `route.ts` files, never by pages
+
+### Per-route rate-limiting (post-Sprint 15)
+
+The blanket rate-limit in `proxy.ts` no longer runs under static export. Sprint 15 relocated the logic to a callable guard at `frontend/src/lib/rate-limit/middleware.ts` exporting `enforceRateLimit(req, opts)`. **Use it on any new `/api/*` route that does LLM-spend, writes, or admin work** — webhook routes (rate-limited at provider) and read-only GETs skip. Pattern:
+
+```typescript
+// frontend/src/app/api/<route>/route.ts
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
+
+export async function POST(req: Request) {
+  const limited = await enforceRateLimit(req, { key: 'chat', limit: 20, windowSec: 60 });
+  if (limited) return limited; // 429 Response
+
+  // ... rest of handler
+}
+```
+
+Tiered limits Sprint 15 adopted (reuse these when adding similar routes):
+- LLM-spend (chat, ocr, briefing, story): 10-30 / 60s
+- Write surfaces (invoices, costing, profile, onboarding): 20-30 / 60s
+- Abuse surfaces (flag-as-wrong): 10 / 60s
+- Admin (shared key across all admin routes): 60 / 60s
+
 ### When to Use Client Components ('use client')
 
 Add `'use client'` at the top of the file only when the component needs:
@@ -188,6 +231,8 @@ Add `'use client'` at the top of the file only when the component needs:
 - Browser APIs (camera, geolocation, localStorage)
 - Real-time subscriptions (Supabase Realtime)
 - Animations or transitions that depend on state
+
+**Note (post-Sprint 15):** For pages under `frontend/src/app/(app)/**/page.tsx`, default to `'use client'` regardless — the Capacitor static-export build requires it. The list above remains the rule for non-page client components.
 
 ```typescript
 // components/features/resibo/scan-button.tsx — Client Component

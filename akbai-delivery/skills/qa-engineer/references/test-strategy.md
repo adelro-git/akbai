@@ -388,7 +388,27 @@ These waste the solo founder's limited testing budget:
 
 ---
 
-## 8. Multi-Agent Testing Pattern (Sprint 4)
+## 8. Bundle-Size Guard Pattern (Sprint 15, Capacitor Pre-Launch Gate)
+
+> **Active since 2026-05-27 (Sprint 15 / Gap G1 RESOLVED).** Reference test at `frontend/src/lib/__tests__/bundle-size-guard.test.ts`.
+
+The <30 MB Pre-Launch Gate ceiling on the Android `.aab` is a load-bearing constraint (App Store / Play Console scrutiny + cellular install friction in PH). A vitest guard catches regressions before they hit Sprint 19 store submission.
+
+Pattern:
+- Read the binary off disk at the known gradle output path (`frontend/android/app/build/outputs/bundle/debug/app-debug.aab` and `.../apk/debug/app-debug.apk`)
+- Compute size in MB via `statSync(path).size / 1024 / 1024`
+- Assert `<30` (the documented Pre-Launch Gate ceiling — do NOT hardcode the current size as the threshold; that would calcify whatever bloat is present today)
+- **Graceful skip if the binary doesn't exist** — local CI runs without the Android toolchain still pass; the assertion only fires when an engineer or release pipeline has produced the actual binary. Use `console.warn` + early return; do not `it.skip()` (that hides the test from coverage reports).
+
+Sprint 15 baseline: `.aab` = 14.62 MB, `.apk` = 15.35 MB — both ~50% under the ceiling. Sprint 16 (`@capacitor/camera`, push, biometric) is expected to add 1-3 MB. Sprint 17 (RevenueCat IAP SDK) another 1-2 MB. Stay well clear of 30 MB through Sprint 19.
+
+When to widen the guard:
+- Add `.aab-release` check once Sprint 19 produces a signed release build (R8/ProGuard will shrink it further — expect 10-12 MB)
+- Add an iOS `.ipa` check once Sprint 17/19 produces an iOS build on a Mac
+
+---
+
+## 9. Multi-Agent Testing Pattern (Sprint 4)
 
 Sprint 4 introduced a parallel worktree workflow: 5 Claude Code agents worked simultaneously in isolated git worktrees, each writing tests for their own feature area (email templates, email provider detection, dashboard API, dashboard components, OCR pipeline). Key observations:
 

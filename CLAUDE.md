@@ -2,7 +2,7 @@
 
 ## What Is AKBai
 Mobile-first PWA AI business partner for Filipino MSMEs. Solo founder (Anton), 10–15 hrs/sprint.
-Current phase: 0A — Frontend Redesign Phase 8-9 close-out (Sprint 13, 2026-05-24) on `claude/redesign-phase-8-9`. Native Mobile Pivot (Sprints 14-19) starts after merge. 1329 tests passing.
+Current phase: 0B — Native Mobile Pivot. Sprint 15 (Capacitor Conversion) CLOSED 🟢 GREEN 2026-05-27 (PR #33). Gap G1 RESOLVED. .aab = 14.62 MB / .apk = 15.35 MB (both ~50% under <30 MB Pre-Launch Gate). 1331 tests passing. Next: Sprint 16 — Native Surface Polish (`@capacitor/camera`, push, biometric).
 
 ## Master Brief
 For full product context, read: `AKBAI_MASTER_BRIEF.md` (root)

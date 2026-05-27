@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
 > Current highest: ADR-019
-> Last updated: 2026-05-27 (Sprint 14 — ADR-019: Capacitor Wrapping Pattern accepted GREEN; spike produced 15 MB .aab + .apk on Windows)
+> Last updated: 2026-05-27 (Sprint 15 — ADR-019 fully implemented on main; Gap G1 RESOLVED; .aab = 14.62 MB, .apk = 15.35 MB from main checkout)
 
 ---
 
@@ -27,7 +27,7 @@
 | ADR-016 | Frontend Redesign Phase 8 — `/api/chat/suggestions` rule-based chips | Accepted | 2026-04-28 |
 | ADR-017 | Frontend Redesign Phase 9 — Deadline → Chat deeplink contract | Accepted | 2026-04-28 |
 | ADR-018 | Native mobile pivot via Capacitor + IAP (deprecate Xendit) | Accepted | 2026-05-24 |
-| ADR-019 | Capacitor wrapping pattern (Sprint 14 spike findings) | Accepted (Green) | 2026-05-27 |
+| ADR-019 | Capacitor wrapping pattern (Sprint 14 spike findings) | Accepted (Green) — fully implemented Sprint 15 (Gap G1 RESOLVED) | 2026-05-27 |
 
 ---
 
@@ -1224,3 +1224,5 @@ Sprint 15 full conversion targets (estimated; exact list pending spike Step 3 in
 **Full plan reference:** `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md` §4 (Sprint 14), §5 (Sprint 15 Conversion), §11 (Pre-Launch Feature Readiness Gate). This ADR captures the Capacitor-specific wrapping pattern; the plan captures sprint-by-sprint execution.
 
 **Engineer pickup:** `C:\Users\Anton del Rosario\akbai-spike\SPIKE_PLAN.md` is the step-by-step plan for the spike itself. ADR-019 (this document) is what gets promoted from Draft → Accepted after the spike's decision gate returns GREEN.
+
+**Sprint 15 close-out (2026-05-27):** Full conversion shipped to `main` via PR #33. Gap G1 RESOLVED. 15 server → client page conversions + 5 infra rewrites + `CAPACITOR_BUILD=1` env-conditional `next.config.js` + per-route `enforceRateLimit()` opt-in. Bundle: `.aab` = 14.62 MB, `.apk` = 15.35 MB (both ~50% under <30 MB ceiling). All 4 architect "Open Questions for Anton" defaults held at PR review. **Canonical implementation pattern for future Capacitor work:** `akbai-delivery/skills/solutions-architect/references/sprint-15-conversion-pattern.md` — read this when adding new `(app)/*` pages, designing new `/api/*` rate-limit tiers, or extending the Capacitor build target.

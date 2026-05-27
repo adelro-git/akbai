@@ -1,7 +1,7 @@
 # AKBai — Pre-Launch Gap Registry
 > Used by: project-manager, solutions-architect, fullstack-engineer, devops-engineer, security-compliance
-> Last updated: 2026-05-24 (Sprint 13 — Native Mobile Pivot: D2 Xendit DEFERRED; new Category G added for native pivot gaps) | Prior source: Roadmap v14, Operations Playbook v7
-> 40 total gaps across 7 categories. Category G (native mobile pivot) adds 7 new gaps.
+> Last updated: 2026-05-27 (Sprint 15 — Gap G1 RESOLVED, Capacitor static-export full conversion shipped via PR #33) | Prior source: Roadmap v14, Operations Playbook v7
+> 40 total gaps across 7 categories. Category G (native mobile pivot) adds 7 new gaps; 1 resolved (G1).
 
 ---
 
@@ -94,7 +94,7 @@
 
 | # | Gap | Severity | When to Fix | Action |
 |---|-----|----------|-------------|--------|
-| G1 | Capacitor static export compatibility | **CRITICAL** | Sprint 15 | **Pattern validated 2026-05-27 (Sprint 14 spike — ADR-019 accepted Green).** Static export works with `withSentryConfig(withNextIntl(...))` wrap; 4 routes converted in spike (`/`, `/chat`, `/dashboard`, `/scan`); 15 MB `.aab` + `.apk` produced. **Sprint 15 work remaining:** convert 7 remaining `(app)/*` pages to client components (admin, costing×3, deadlines, expenses, invoices×3, onboarding, profile), rewrite 4 infra files (auth/callback, (app)/layout, lib/i18n/request, lib/i18n/set-locale), re-integrate 17 `_api_disabled_for_spike/` folders via build-pipeline exclude, relocate `proxy.ts` rate limiting to API guards. |
+| G1 | Capacitor static export compatibility | **CRITICAL** | ✅ RESOLVED 2026-05-27 (Sprint 15) | Full conversion applied on `main` via PR #33. 15 pages converted server → client (root + 14 (app)/* including 4 spike-touched re-converted cleanly). 5 infra rewrites: `(app)/layout.tsx` client persona-fetch, `auth/callback/route.ts` → `page.tsx` (`exchangeCodeForSession`), `lib/i18n/{request,set-locale}.ts` cookie+reload, `app/sitemap.ts` dropped. Build pipeline split via `CAPACITOR_BUILD=1` env conditional in `next.config.js` — `pageExtensions: ['tsx']` excludes all 30 `app/api/**/route.ts` files + `proxy.ts` by extension; default unset path preserves the Vercel web build byte-identically. `proxy.ts` rate-limit extracted to `lib/rate-limit/middleware.ts` `enforceRateLimit()` with per-route opt-in (11 routes adopted, tiered: LLM-spend 10-30/60s, writes 20-30/60s, admin 60/60s, webhooks + read-only GETs skip). Capacitor 8.3.4 scaffold + corporate-TLS Gradle mirror patched. **`.aab` = 14.62 MB (51% under <30 MB Pre-Launch Gate ceiling), `.apk` = 15.35 MB.** 1331/1331 tests passing (1329 baseline + 2 new bundle-size guard cases at `frontend/src/lib/__tests__/bundle-size-guard.test.ts`). On-device smoke deferred to Sprint 19 Phase A per testing-cadence decision. |
 | G2 | IAP webhook idempotency (RevenueCat) | **CRITICAL** | Sprint 17 | Replaces D2. RevenueCat webhook events must dedupe by event UUID before writing to `subscription_status`. Cancellation, refund, grace period transitions all need idempotent handling. |
 | G3 | Apple Developer Program + Google Play Console enrollment | IMPORTANT | Sprint 16 | $99/yr Apple + $25 one-time Google. Apple verification can take 1-2 days. Enroll early to avoid blocking Sprint 18 submission. |
 | G4 | Apple Guideline 4.2 rejection risk (webview app) | IMPORTANT | Sprint 16 | Mitigate by integrating native camera (`@capacitor/camera`), push notifications (`@capacitor/push-notifications`), biometric login (`@capacitor-community/biometric-auth`) from Sprint 16. These prove "more than a webview" to reviewers. Plan for 1 rejection cycle (1-2 weeks). |
@@ -114,8 +114,8 @@
 | D — Operational (Playbook) | 1 | 7 | 2 | 1 (D2) | 11 |
 | E — Pre-Build Checklist (v14) | 2 | 1 | 0 | 0 | 4 |
 | F — Security Audit (Mar 2026) | 1 | 2 | 0 | 0 | 3 |
-| **G — Native Mobile Pivot** | **3** | **4** | **0** | **0** | **7** |
-| **TOTAL** | **12** | **23** | **3** | **1** | **40** |
+| **G — Native Mobile Pivot** | **2** (1 resolved 2026-05-27) | **4** | **0** | **0** | **7** |
+| **TOTAL** | **11** | **23** | **3** | **1** | **40** |
 
 **Rule:** All CRITICAL gaps are hard gates. No public release proceeds until these are resolved. Category G3-G5 unblock store submission (Sprint 18). Category G7 unblocks public release (Sprint 19).
 
