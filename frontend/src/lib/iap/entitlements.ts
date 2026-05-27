@@ -30,11 +30,17 @@
 import { Capacitor } from '@capacitor/core';
 
 // ============================================================
-// Local IapTier union — Sprint 17 batch 1 does NOT extend
-// SubscriptionTierEnum in @/lib/subscriptions/types (that's
-// batch 2 scope per architect §8). We use a local union here
-// so the client surface compiles cleanly without the global
-// enum touch.
+// Local IapTier union — INTENTIONALLY narrower than the global
+// SubscriptionTierEnum. Sprint 17 batch 2 extended the global
+// enum to include 'starter' alongside the Phase 2/3 forward refs
+// 'business' | 'scale'. Client-side IAP code has no concept of
+// those tiers (RevenueCat doesn't carry them), so we keep this
+// local union narrow on purpose. The server webhook handler
+// uses the global enum since it writes to the canonical
+// `subscriptions.tier` projection.
+// TODO(Sprint 17 batch 3 cleanup): consider whether to expose
+// `IapTier` as `Extract<SubscriptionTier, 'free' | 'starter' | 'pro'>`
+// once the paywall UI lands and there is a real callsite test for it.
 // ============================================================
 
 export type IapTier = 'free' | 'starter' | 'pro';

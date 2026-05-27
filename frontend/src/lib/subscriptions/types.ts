@@ -12,8 +12,12 @@ import { z } from 'zod';
 // ============================================================
 // Subscription Tier — determines feature access and scan limits
 // ============================================================
+// Sprint 17 — 'starter' is the ₱299 lifetime IAP tier per ADR-018.
+// Resolution priority (architect Open Q 3 (a)): pro > starter > free.
+// 'business' / 'scale' are Phase 2/3 forward refs preserved for
+// backwards compatibility with Build 8 Xendit-era code.
 
-export const SubscriptionTierEnum = z.enum(['free', 'pro', 'business', 'scale']);
+export const SubscriptionTierEnum = z.enum(['free', 'starter', 'pro', 'business', 'scale']);
 export type SubscriptionTier = z.infer<typeof SubscriptionTierEnum>;
 
 // ============================================================
@@ -121,6 +125,9 @@ export type XenditWebhookPayload = z.infer<typeof XenditWebhookPayloadSchema>;
 
 export const SCAN_LIMITS: Record<SubscriptionTier, number> = {
   free: 0,
+  // Sprint 17 — Starter is the ₱299 lifetime IAP tier (100 scans/month per
+  // project-context.md §4). No Kai chat; OCR + reports only.
+  starter: 100,
   pro: 50,
   business: 80,
   scale: 200,
