@@ -28,6 +28,9 @@ interface ProfileData {
   income_range: string | null;
   bir_registered: boolean;
   bir_tax_type: string | null;
+  // Sprint 16 — biometric second factor (architect §4 + migration 021).
+  biometric_enabled: boolean;
+  biometric_setup_at: string | null;
   profile_version: number;
 }
 
@@ -116,6 +119,8 @@ export default function ProfilePage() {
           incomeRange={data.income_range}
           birRegistered={data.bir_registered}
           birTaxType={data.bir_tax_type}
+          biometricEnabled={data.biometric_enabled}
+          biometricSetupAt={data.biometric_setup_at}
           profileVersion={data.profile_version}
         />
       </div>

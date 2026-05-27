@@ -292,4 +292,107 @@ describe('PATCH /api/profile', () => {
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
   });
+
+  // ============================================================
+  // Sprint 16 — biometric_enabled field validation (architect §4 + migration 021)
+  // ============================================================
+
+  it('rejects non-boolean biometric_enabled', async () => {
+    const res = await PATCH(makePatchRequest({ biometric_enabled: 'yes' }));
+    const json = await res.json();
+    expect(res.status).toBe(400);
+    expect(json.error.code).toBe('INVALID_INPUT');
+  });
+
+  it('rejects client-supplied biometric_setup_at (server-derived only)', async () => {
+    // Zod schema must NOT accept biometric_setup_at; sending only it
+    // means refine() catches an empty-payload (no recognised fields).
+    const res = await PATCH(
+      makePatchRequest({ biometric_setup_at: '2026-05-27T12:00:00Z' })
+    );
+    const json = await res.json();
+    expect(res.status).toBe(400);
+    expect(json.error.code).toBe('INVALID_INPUT');
+  });
+
+  it('accepts biometric_enabled=true alone (architect §4 — enable path)', async () => {
+    // Mirror setupPatchChains shape but for users-only update.
+    const usersChain = mockChain();
+    let userSingleCallCount = 0;
+    usersChain.single.mockImplementation(() => {
+      userSingleCallCount++;
+      // First call: server reads current biometric_setup_at (null → stamp now).
+      if (userSingleCallCount === 1) {
+        return Promise.resolve({
+          data: { biometric_setup_at: null },
+          error: null,
+        });
+      }
+      // Second call: re-fetch after update.
+      return Promise.resolve({
+        data: {
+          display_name: 'Maria',
+          biometric_enabled: true,
+          biometric_setup_at: new Date().toISOString(),
+        },
+        error: null,
+      });
+    });
+    usersChain.update.mockReturnValue({
+      ...usersChain,
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    });
+    mockFromChains['users'] = usersChain;
+
+    // No business_profiles touched.
+    const profileChain = mockChain();
+    profileChain.single.mockResolvedValue({
+      data: null,
+      error: null,
+    });
+    mockFromChains['business_profiles'] = profileChain;
+
+    const res = await PATCH(makePatchRequest({ biometric_enabled: true }));
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(json.data.biometric_enabled).toBe(true);
+    expect(json.data.biometric_setup_at).not.toBeNull();
+  });
+
+  it('accepts biometric_enabled=false alone (architect §4 — disable path)', async () => {
+    const usersChain = mockChain();
+    let userSingleCallCount = 0;
+    usersChain.single.mockImplementation(() => {
+      userSingleCallCount++;
+      // No "current row" select happens on disable (only on enable).
+      // Single call: re-fetch after update.
+      return Promise.resolve({
+        data: {
+          display_name: 'Maria',
+          biometric_enabled: false,
+          biometric_setup_at: null,
+        },
+        error: null,
+      });
+    });
+    usersChain.update.mockReturnValue({
+      ...usersChain,
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    });
+    mockFromChains['users'] = usersChain;
+
+    const profileChain = mockChain();
+    profileChain.single.mockResolvedValue({ data: null, error: null });
+    mockFromChains['business_profiles'] = profileChain;
+
+    const res = await PATCH(makePatchRequest({ biometric_enabled: false }));
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(json.data.biometric_enabled).toBe(false);
+    expect(json.data.biometric_setup_at).toBeNull();
+  });
 });
