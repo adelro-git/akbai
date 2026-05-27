@@ -16,6 +16,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import InvoicePreview from '@/components/invoices/invoice-preview';
 import InvoiceActions from '@/components/invoices/invoice-actions';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import type { InvoiceWithItems, InvoiceStatus } from '@/lib/invoices/types';
 
 // ============================================================
@@ -30,6 +32,29 @@ export default function InvoiceDetailPage() {
   const [invoice, setInvoice] = useState<InvoiceWithItems | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // ── Auth gate (Sprint 15 Capacitor conversion) ──
+  useEffect(() => {
+    async function gate() {
+      if (SKIP_AUTH) {
+        setAuthChecked(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        router.replace('/login');
+        return;
+      }
+      setAuthChecked(true);
+    }
+    gate().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('invoice detail auth gate failed', err);
+      router.replace('/login');
+    });
+  }, [router]);
 
   // --- Fetch invoice ---
   const fetchInvoice = useCallback(async () => {
@@ -52,7 +77,10 @@ export default function InvoiceDetailPage() {
     }
   }, [invoiceId]);
 
-  useEffect(() => { fetchInvoice(); }, [fetchInvoice]);
+  useEffect(() => {
+    if (!authChecked) return;
+    fetchInvoice();
+  }, [authChecked, fetchInvoice]);
 
   // --- Status change handler ---
   const handleStatusChange = useCallback((newStatus: InvoiceStatus) => {

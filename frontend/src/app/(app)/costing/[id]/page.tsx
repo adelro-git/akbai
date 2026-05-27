@@ -14,6 +14,8 @@ import type { CostingCardWithItems } from '@/lib/costing/types';
 import { centavosToPeso } from '@/lib/utils/money';
 import CostingSummary from '@/components/costing/costing-summary';
 import CostingCardForm from '@/components/costing/costing-card-form';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 
 // ─── Page ───────────────────────────────────────────────────────────
 
@@ -28,6 +30,29 @@ export default function CostingCardDetailPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // ── Auth gate (Sprint 15 Capacitor conversion) ──
+  useEffect(() => {
+    async function gate() {
+      if (SKIP_AUTH) {
+        setAuthChecked(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        router.replace('/login');
+        return;
+      }
+      setAuthChecked(true);
+    }
+    gate().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('costing detail auth gate failed', err);
+      router.replace('/login');
+    });
+  }, [router]);
 
   const fetchCard = useCallback(async () => {
     setLoading(true);
@@ -47,7 +72,10 @@ export default function CostingCardDetailPage() {
     }
   }, [id]);
 
-  useEffect(() => { fetchCard(); }, [fetchCard]);
+  useEffect(() => {
+    if (!authChecked) return;
+    fetchCard();
+  }, [authChecked, fetchCard]);
 
   const handleDelete = useCallback(async () => {
     setDeleting(true);

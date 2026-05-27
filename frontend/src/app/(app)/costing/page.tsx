@@ -13,6 +13,8 @@ import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import CostingCardList from '@/components/costing/costing-card-list';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -36,6 +38,29 @@ export default function CostingPage() {
   const [cards, setCards] = useState<CostingCardSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // ── Auth gate (Sprint 15 Capacitor conversion) ──
+  useEffect(() => {
+    async function gate() {
+      if (SKIP_AUTH) {
+        setAuthChecked(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) {
+        router.replace('/login');
+        return;
+      }
+      setAuthChecked(true);
+    }
+    gate().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('costing page auth gate failed', err);
+      router.replace('/login');
+    });
+  }, [router]);
 
   const fetchCards = useCallback(async () => {
     setLoading(true);
@@ -55,7 +80,10 @@ export default function CostingPage() {
     }
   }, []);
 
-  useEffect(() => { fetchCards(); }, [fetchCards]);
+  useEffect(() => {
+    if (!authChecked) return;
+    fetchCards();
+  }, [authChecked, fetchCards]);
 
   const hasCards = cards.length > 0;
 
