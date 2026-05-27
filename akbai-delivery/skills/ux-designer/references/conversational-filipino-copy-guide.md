@@ -133,6 +133,27 @@ These stay English — do not Filipinize them:
 
 **Why:** "Heads up" is casual urgency, not panic. The question ("Handa ka na ba?") invites engagement. No ALERT/WARNING. No threatening language about penalties.
 
+**Day-count fork (Sprint 13 `/deadlines` Kai pre-deadline callout, ADR-017 deeplink):** BIR copy uses "po" register (BIR is formal). The fork below covers every day-count branch; all variants end with an *engagement question*, never a flat warning:
+
+| Days until due | Tone | Canonical copy |
+|---|---|---|
+| Lipas na (overdue) | Recovery, no blame | "Lipas na po ang {form_code} ng {N} araw. Tingnan natin kung paano mauunahan?" |
+| Due ngayong araw (0) | Calm urgency | "Ngayon na po ang due ng {form_code}. Andito pa po ako — i-prepare ko na ang numero mo?" |
+| Bukas (1) | Light urgency | "Bukas na po ang {form_code}. Nandiyan pa ang 1 araw — i-walk-through ko na ba ang form?" |
+| 2-7 days | Warm reminder | "Paparating na po ang {form_code} sa {Mon DD}. Nandiyan pa ang {N} araw — i-prepare ko na ang numero mo?" |
+| > 7 days | No callout | (Hide the pre-deadline paper-note entirely — too early to surface a Kai prompt.) |
+
+**Days-left counter on the row itself** (no "po" — it's a label, not a sentence):
+- Lipas na: `Lipas na ng {N} araw` (error color `#F87171`)
+- Due today: `Due ngayong araw` (urgent honey-deep)
+- Tomorrow: `Huling 1 araw` (urgent honey-deep)
+- 2-7 days: `Huling {N} araw` (urgent honey-deep)
+- > 7 days: `Huling {N} araw` (neutral ink-soft)
+- Filed: `Na-file na` (faded ink-faint)
+
+**Filipino month abbreviations** (hardcoded for locale stability across Node/browser runtimes — `fil-PH` Intl.DateTimeFormat coverage varies):
+`Ene · Peb · Mar · Abr · May · Hun · Hul · Ago · Set · Okt · Nob · Dis`
+
 ### Example 4: Successful Receipt Scan
 - ✅ "Na-scan ko na — ₱3,450 sa Ingredients. I-save ko ba?"
 - ❌ "Receipt successfully processed. Amount: PHP 3,450.00. Category: Ingredients. Would you like to save this entry?"

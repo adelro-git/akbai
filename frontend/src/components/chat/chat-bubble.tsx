@@ -1,6 +1,7 @@
 import type { ChatMessage } from './chat-interface'
 import FlagButton from './flag-button'
 import { formatManilaDate } from '@/lib/timezone'
+import { Clock } from 'lucide-react'
 
 /**
  * Format a message timestamp for display.
@@ -31,10 +32,24 @@ export default function ChatBubble({ message }: { message: ChatMessage }) {
             {message.content}
           </p>
         </div>
-        {timestamp && (
-          <span className="text-[10px] text-on-surface-variant mt-1 mr-1" data-testid="message-timestamp">
-            {timestamp}
-          </span>
+        {(timestamp || message.queued) && (
+          <div className="flex items-center gap-1 mt-1 mr-1">
+            {message.queued && (
+              <span
+                className="inline-flex items-center text-ink-faint"
+                title="Naka-queue — i-send pag may connection"
+                aria-label="Naka-queue — i-send pag may connection"
+                data-testid="message-queued-indicator"
+              >
+                <Clock size={12} aria-hidden="true" />
+              </span>
+            )}
+            {timestamp && (
+              <span className="text-[10px] text-on-surface-variant" data-testid="message-timestamp">
+                {timestamp}
+              </span>
+            )}
+          </div>
         )}
       </div>
     )

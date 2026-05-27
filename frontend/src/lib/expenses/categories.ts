@@ -2,35 +2,44 @@
  * Expense & Income Categories — Filipino MSME context
  *
  * Categories are designed around real Filipino micro/small business spending patterns.
- * Each category has a Taglish label for UI display and a color token for charts.
+ * Each category has a Taglish label for UI display and a color token for charts +
+ * the Saan Napunta category breakdown progress bars (Phase 8 redesign, Q5 of
+ * design_handoff_akbai_redesign/synthesis/screens/02-expenses.md).
+ *
+ * Color tokens use the honey/sage/ink palette from tailwind.config.js. `color`
+ * is a Tailwind background class (`bg-*`) so consumers can apply it directly to
+ * a div for the progress-bar fill or chart segment.
  */
 
 export interface CategoryDef {
   key: string;
   label: string;       // Taglish UI label
   icon: string;        // Lucide icon name
-  color: string;       // Tailwind color class for charts
+  color: string;       // Tailwind bg-* class — honey/sage/ink palette for progress bars + charts
 }
 
 // ─── Expense Categories ─────────────────────────────────────────────
+// Color rationale: warm honey tones for goods/operations spend, sage for labor,
+// ink neutrals for transport/rent/other, destructive for BIR fees only.
 export const EXPENSE_CATEGORIES: CategoryDef[] = [
-  { key: 'ingredients', label: 'Ingredients / Sangkap', icon: 'shopping-basket', color: 'bg-primary-container' },
-  { key: 'supplies', label: 'Supplies / Gamit', icon: 'package', color: 'bg-secondary-container' },
-  { key: 'transport', label: 'Transportation / Pamasahe', icon: 'truck', color: 'bg-tertiary-container' },
-  { key: 'utilities', label: 'Kuryente, Tubig, Internet', icon: 'zap', color: 'bg-primary-fixed-dim' },
-  { key: 'rent', label: 'Renta / Upa', icon: 'home', color: 'bg-outline' },
-  { key: 'labor', label: 'Sahod / Labor', icon: 'users', color: 'bg-tertiary' },
-  { key: 'packaging', label: 'Packaging / Balot', icon: 'box', color: 'bg-secondary' },
-  { key: 'marketing', label: 'Marketing / Ads', icon: 'megaphone', color: 'bg-primary' },
+  { key: 'ingredients', label: 'Ingredients / Sangkap', icon: 'shopping-basket', color: 'bg-honey-deep' },
+  { key: 'supplies', label: 'Supplies / Gamit', icon: 'package', color: 'bg-honey-pale' },
+  { key: 'transport', label: 'Transportation / Pamasahe', icon: 'truck', color: 'bg-ink-soft' },
+  { key: 'utilities', label: 'Kuryente, Tubig, Internet', icon: 'zap', color: 'bg-honey-bright' },
+  { key: 'rent', label: 'Renta / Upa', icon: 'home', color: 'bg-ink-faint' },
+  { key: 'labor', label: 'Sahod / Labor', icon: 'users', color: 'bg-sage-deep' },
+  { key: 'packaging', label: 'Packaging / Balot', icon: 'box', color: 'bg-honey-cream' },
+  { key: 'marketing', label: 'Marketing / Ads', icon: 'megaphone', color: 'bg-sage' },
   { key: 'tax_fee', label: 'BIR / Government Fees', icon: 'landmark', color: 'bg-destructive' },
-  { key: 'other_expense', label: 'Iba pa', icon: 'more-horizontal', color: 'bg-outline-variant' },
+  { key: 'other_expense', label: 'Iba pa', icon: 'more-horizontal', color: 'bg-ink-faint' },
 ];
 
 // ─── Income Categories ──────────────────────────────────────────────
+// Money-in stays in the sage family for visual cohesion (kita = green/positive).
 export const INCOME_CATEGORIES: CategoryDef[] = [
-  { key: 'sales', label: 'Sales / Benta', icon: 'banknote', color: 'bg-tertiary-container' },
-  { key: 'check_in_sales', label: 'Daily Check-In Sales', icon: 'sparkles', color: 'bg-tertiary' },
-  { key: 'other_income', label: 'Iba pang Kita', icon: 'plus-circle', color: 'bg-primary-container' },
+  { key: 'sales', label: 'Sales / Benta', icon: 'banknote', color: 'bg-sage-deep' },
+  { key: 'check_in_sales', label: 'Daily Check-In Sales', icon: 'sparkles', color: 'bg-sage' },
+  { key: 'other_income', label: 'Iba pang Kita', icon: 'plus-circle', color: 'bg-sage-pale' },
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────

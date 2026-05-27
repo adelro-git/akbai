@@ -72,7 +72,7 @@ export default function CostingCardDetailPage() {
   }
 
   return (
-    <div className="min-h-dvh pb-20 md:pb-6" data-testid="costing-detail-page">
+    <div className="min-h-dvh pb-20 tablet:pb-6" data-testid="costing-detail-page">
       {/* ── Header ── */}
       <header className="px-4 pt-5 pb-3 flex items-center gap-3">
         <button

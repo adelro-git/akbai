@@ -96,16 +96,16 @@ export default function InvoicesPage() {
   const hasInvoices = data && data.invoices.length > 0;
 
   return (
-    <div className="min-h-dvh pb-20 md:pb-6" data-testid="invoices-page">
+    <div className="min-h-dvh pb-20 tablet:pb-6" data-testid="invoices-page">
       {/* ── Header ── */}
-      <header className="px-4 pt-5 pb-3 md:px-8 md:pt-8 md:pb-5">
+      <header className="px-4 pt-5 pb-3 tablet:px-8 tablet:pt-8 tablet:pb-5">
         <div className="flex items-center justify-between mb-3">
-          <h1 className="text-on-surface text-lg md:text-2xl font-extrabold">
+          <h1 className="text-on-surface text-lg tablet:text-2xl font-extrabold">
             Mga Invoice Mo
           </h1>
           <button
             onClick={() => router.push('/invoices/new')}
-            className="hidden md:inline-flex items-center gap-1.5 bg-primary-container text-on-primary text-sm font-semibold rounded-xl px-4 py-2.5 min-h-[44px] transition-colors"
+            className="hidden tablet:inline-flex items-center gap-1.5 bg-primary-container text-on-primary text-sm font-semibold rounded-xl px-4 py-2.5 min-h-[44px] transition-colors"
             type="button"
             data-testid="new-invoice-desktop"
           >
@@ -187,7 +187,7 @@ export default function InvoicesPage() {
 
       {/* ── Empty State ── */}
       {data && !loading && !error && !hasInvoices && (
-        <div className="px-4 py-10 text-center md:py-20">
+        <div className="px-4 py-10 text-center tablet:py-20">
           <div className="flex justify-center mb-3">
             <IllustrationWrapper
               src="empty-states/invoice-empty.webp"
@@ -215,7 +215,7 @@ export default function InvoicesPage() {
 
       {/* ── Invoice List ── */}
       {data && !loading && !error && hasInvoices && (
-        <div className="px-4 md:px-8">
+        <div className="px-4 tablet:px-8">
           <InvoiceList invoices={data.invoices} />
         </div>
       )}
@@ -224,7 +224,7 @@ export default function InvoicesPage() {
       {!loading && (
         <button
           onClick={() => router.push('/invoices/new')}
-          className="md:hidden fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px)+0.75rem)] right-4 w-14 h-14 bg-primary-container text-on-primary rounded-2xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95 z-40"
+          className="tablet:hidden fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px)+0.75rem)] right-4 w-14 h-14 bg-primary-container text-on-primary rounded-2xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95 z-40"
           aria-label="Gumawa ng bagong invoice"
           data-testid="new-invoice-fab"
           type="button"

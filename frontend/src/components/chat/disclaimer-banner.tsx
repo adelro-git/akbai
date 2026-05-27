@@ -1,22 +1,22 @@
 'use client';
 
-/**
- * DisclaimerBanner — Persistent informational banner at the top of chat
- * Design Gate 2: Trust Recovery — NOT dismissible, always visible.
- * Uses surface-container-low bg, on-surface-variant text, text-xs.
- */
+// ============================================================
+// DisclaimerBanner — Phase 8c restyle
+// Voice manual §3 canonical copy, soft honey-pale tint, ink-soft
+// text, no harsh border. Persistent + non-dismissible (Design
+// Gate 2: Trust Recovery).
+// ============================================================
 
 export default function DisclaimerBanner() {
   return (
     <div
-      className="flex-shrink-0 bg-surface-container-low px-4 py-2.5"
+      className="flex-shrink-0 bg-honey-cream/40 px-4 py-2"
       data-testid="disclaimer-banner"
       role="status"
-      aria-label="Disclaimer"
+      aria-label="BIR disclaimer"
     >
-      <p className="text-xs text-on-surface-variant leading-relaxed text-center">
-        AKBai provides informational guidance only — hindi ito professional
-        financial or tax advice.
+      <p className="text-[11px] text-ink-soft leading-snug text-center">
+        Ito ay gabay lamang, hindi tax advice.
       </p>
     </div>
   );

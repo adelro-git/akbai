@@ -85,9 +85,9 @@ export default function InvoiceDetailPage() {
   }, [invoiceId, router]);
 
   return (
-    <div className="min-h-dvh pb-20 md:pb-6" data-testid="invoice-detail-page">
+    <div className="min-h-dvh pb-20 tablet:pb-6" data-testid="invoice-detail-page">
       {/* ── Back button ── */}
-      <header className="px-4 pt-5 pb-3 md:px-8 md:pt-8">
+      <header className="px-4 pt-5 pb-3 tablet:px-8 tablet:pt-8">
         <button
           onClick={() => router.push('/invoices')}
           className="inline-flex items-center gap-1.5 text-on-surface-variant text-sm font-semibold p-2 -ml-2 rounded-lg min-h-[44px]"
@@ -117,7 +117,7 @@ export default function InvoiceDetailPage() {
 
       {/* ── Invoice Detail ── */}
       {invoice && !loading && !error && (
-        <div className="px-4 md:px-8 space-y-4">
+        <div className="px-4 tablet:px-8 space-y-4">
           {/* Actions */}
           <InvoiceActions
             invoiceId={invoiceId}

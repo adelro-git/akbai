@@ -8,6 +8,7 @@ import {
   UpdateTransactionSchema,
   ExpensesQuerySchema,
 } from '@/lib/expenses/schemas';
+import { resolveRange } from '@/lib/expenses/range';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 // ============================================================
@@ -84,6 +85,16 @@ export async function GET(req: NextRequest) {
 
   const parsed = ExpensesQuerySchema.safeParse(rawParams);
   if (!parsed.success) {
+    // Surface a range-specific message when the user sent an unknown
+    // pill value (Sprint 14). Falls through to the generic message for
+    // any other bad param (month format, etc.).
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    if (fieldErrors.range && fieldErrors.range.length > 0) {
+      return NextResponse.json(
+        { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Hindi tama ang saklaw ng panahon.' } },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { success: false, error: { code: 'INVALID_INPUT', message_tl: 'Mali ang query parameters.' } },
       { status: 400 }
@@ -91,6 +102,21 @@ export async function GET(req: NextRequest) {
   }
 
   const filters = parsed.data;
+
+  // ── Sprint 14 — `?range=` pill shorthand ────────────────────────────
+  // `range` wins over `month` when both are present; warn-log so the
+  // ambiguity is visible during /expenses adoption. No params at all →
+  // default to current Manila month (parity with existing default).
+  if (filters.range && filters.month) {
+    console.warn(
+      '[api/expenses] both ?range= and ?month= sent — ?range= wins',
+      { range: filters.range, month: filters.month }
+    );
+  }
+  if (!filters.range && !filters.month && !filters.from && !filters.to) {
+    // Implicit default — current Manila month.
+    filters.range = 'buwan';
+  }
 
   let userId: string;
 
@@ -133,8 +159,14 @@ export async function GET(req: NextRequest) {
     query = query.eq('category', filters.category);
   }
 
-  // Date range: either explicit from/to or month shorthand
-  if (filters.month) {
+  // Date range — precedence:
+  //   1. `range` (linggo|buwan|taon) — Sprint 14 pill shorthand, always wins
+  //   2. `month` (YYYY-MM) — legacy, used by older callers (page falls back)
+  //   3. explicit `from` / `to` — power-user filters
+  if (filters.range) {
+    const { from, to } = resolveRange(filters.range, getManilaToday());
+    query = query.gte('transaction_date', from).lte('transaction_date', to);
+  } else if (filters.month) {
     const [year, month] = filters.month.split('-').map(Number);
     const from = `${filters.month}-01`;
     const lastDay = new Date(year, month, 0).getDate();

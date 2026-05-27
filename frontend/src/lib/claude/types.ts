@@ -38,6 +38,13 @@ export interface PromptAssemblyInput {
    * unchanged.
    */
   outputFormatHint?: string;
+  /**
+   * Phase 9b — ADR-017 Layer 4c. Pre-seeds Kai with the BIR form the user
+   * navigated from on the /deadlines page. When set, assembler injects a
+   * deadline-context block so Kai opens the conversation already aware of
+   * the form name and how many days remain.
+   */
+  deadlineContext?: { formCode: string; daysUntilDue: number };
 }
 
 /** User profile data injected into the prompt at runtime. */

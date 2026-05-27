@@ -67,3 +67,4 @@ venv/
 **/*.tgz
 Archive/
 .firecrawl/
+.firecrawl-converted/

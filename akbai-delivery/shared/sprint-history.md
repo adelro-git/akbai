@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-04-26 (Frontend Redesign Phase 7 — Flagship Home — merged to main; feel-test gate deferred to Session 4 start)
+> Last updated: 2026-05-24 (Sprint 13 — Frontend Redesign Phase 8-9 close-out IN PROGRESS; Sprint 14 onward = Native Mobile Pivot via Capacitor + Kai-via-Gemini-prompts)
 
 ---
 
@@ -412,8 +412,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 
 **Key decisions:** Morning briefing cached 1x/day via `daily_check_in.briefing_content` (ADR-011). Prompt v1.1.0 with structured `[BRIEFING_DATA]` JSON injection. Migration 012 adds cache columns. No share button on monthly summary (deferred). Uses static BIR knowledge base for deadline alerts (Build 6 adds dynamic table).
 
-**Actual Anton hours:** TBD — updated during retro
-**Sprint outcome:** IN PROGRESS
+**Actual Anton hours:** ~2 hrs (live testing carried into Sprint 10)
+**Sprint outcome:** ✅ DONE (status backfilled 2026-05-24) — Morning Briefing shipped in Sprint 8; Weekly + Monthly Reconciliation completed in Sprint 10 per Sprint 8+9+10 retro. Build 5 fully closed. Original entry was left "IN PROGRESS" because reconciliation continued into Sprint 10.
 
 ### Sprint 9 — 2026-03-28
 
@@ -763,8 +763,8 @@ A user review suggested conversational Filipino would better serve the 30–50 y
 - **Sequential:** Task 3 — Build 8 schema design (after merge)
 - **Sequential:** Task 4 — Anton reviews (April 12)
 
-**Actual Anton hours:** TBD — updated during retro
-**Sprint outcome:** IN PROGRESS
+**Actual Anton hours:** ~2.3 hrs (per planned capacity)
+**Sprint outcome:** ✅ DONE (status backfilled 2026-05-24) — Tech debt + architecture cleanup wrapped before Frontend Redesign Initiative started 2026-04-25. Sprint 10 retro action items #1 (dev bypass audit) and #2 (Reply Drafter → Chat integration) were the explicit Sprint 12 goals. Action item #3 (query caps) carried forward as a strategic decision item resolved 2026-05-24 via the new tier matrix (Sprint 13 doc sweep). Original entry was left "IN PROGRESS" because no retro was written before Frontend Redesign Initiative took over.
 
 ---
 
@@ -1307,3 +1307,150 @@ These are NOT bugs — they are decisions made in-session, listed so they don't 
 4. **Spawn `/build` Phase 8 team first** (chat + expenses are the two M-features). Suggested team: team-lead PM + build-architect (only if `/api/chat/suggestions` lands here per Q4) + build-engineer (lead) + build-ux (mandatory — chat + expenses both have heavy paper-note + chart density) + build-qa (Playwright visual-parity for chat + expenses) + build-data (Q5 — add `color` field to `EXPENSE_CATEGORIES`). Skip build-ai unless the chat suggestions extend the prompt assembler. Skip build-marketing (strings already in i18n). Skip review-security unless `/api/chat/suggestions` opens a new auth surface (it shouldn't — same RLS as `/api/chat`).
 5. **Then Phase 9 in the same session** — Scan is "polish only", Deadlines is the larger work. Suggested team: team-lead PM + build-engineer + build-ux + build-qa. Add build-ai if the deadline-callout taps want to inject system-prompt context cleanly.
 6. **Commit at end of session** — same branch `claude/redesign-phase-3-4` (or fork to `claude/redesign-phase-8-9` per Anton's call). Multi-session plan says Session 4 ends with handoff to Session 5 (Phase 10 alone — Costing/Invoices/Drafts/Check-in/Kuwento + cron).
+
+---
+
+### Sprint 13 — 2026-05-24 onward (Frontend Redesign Phase 8-9 Close-out)
+
+**Phase:** 0A — Frontend Redesign Initiative close-out
+**Sprint Goal:** Complete the in-flight Frontend Redesign Phase 8 (Kausap chat + Saan expenses) and Phase 9 (Scan + Deadlines) work on the `claude/redesign-phase-8-9` branch. Merge to main. Capture Anton's 24h feel-test notes deferred from Phase 7. **Sprint 13 does NOT touch the native mobile pivot** — that work begins Sprint 14 cleanly, on a fresh branch, without context-switching cost.
+**Capacity:** ~12-15 hrs Anton Time
+
+**Strategic context:** Anton confirmed sequencing decision 2026-05-24 — Phase 8-9 redesign work completes first as a discrete sprint, then the native mobile pivot starts in Sprint 14. Rationale: don't context-switch between two major initiatives; let the redesign land cleanly so Sprint 14's Capacitor spike works against a stable codebase.
+
+**Tasks (in flight on `claude/redesign-phase-8-9`):**
+
+| # | Task | Size | Anton Time | Status | Notes |
+|---|------|------|------------|--------|-------|
+| 1 | Phase 7 feel-test capture (deferred from Session 3) | S | XS (24h real-phone use + 0.5hr write-up) | PENDING | Capture into the placeholder block at line ~1248 of this file |
+| 2 | Phase 8 — `/chat` (Kausap si Kai) HYBRIDIZE | M | S (1hr review) | DONE 2026-05-24 | A2 verdict — adopt handoff top-bar + status + chips + paper-note composer; keep current branded framing. Audit: top bar with 32px Kai avatar + Fraunces "Kai" + sage status dot + "Nandito ako para sa'yo" caption shipped; "Chat with Kai" preserved as `<h1 sr-only>`; SuggestedChips row (4 cold-start canon chips, hides on composer focus, `min-h-[44px]`) wired to `/api/chat/suggestions`; composer wrapped in paper-note `surface-container-lowest` + `shadow-ambient`; `motion-reduce:animate-none` on status dot. 76/76 chat vitest tests green; `e2e/synthesis/chat.spec.ts` locks FIL+EN visual parity + reduced-motion + locale flip. **Punt:** offline composer queue (spec §7) NOT implemented — current shows error bubble on fetch fail, no local queue. Worth a Sprint 14 Feature Continuation slot if push priority. |
+| 3 | Phase 8 — `/expenses` (Saan napunta) ADOPT HANDOFF | M | S (1hr review) | DONE 2026-05-24 | A3 verdict — total card + donut + delta + breakdown rows + Banig 7-day bars. Audit: IconPera + "SAAN NAPUNTA" eyebrow + Fraunces H1 shipped; ExpensesDonut + Fraunces ₱ amount + sage/honey-deep delta line working; CategoryBreakdownRow (up to 5) with 6px progress bars; PaperNote + 32px Kai (concerned/happy by income-vs-expense ratio) + Fraunces italic 14px insight; BanigBarChart with peakKitaIndex marker; "Wala ka pang naka-log" empty state with scanner CTA; reduced-motion safe. 22/22 expenses vitest green; `e2e/synthesis/expenses.spec.ts` locks FIL+EN parity + reduced-motion + locale flip. **Known gap (flagged in code, lines 62-69):** `/api/expenses` only accepts `?month=YYYY-MM` — Linggo + Taon pills render but are disabled with `cursor-not-allowed opacity-60` until backend supports `?range=linggo|taon`. Buwan pill works correctly. Belongs in Sprint 14 Feature Continuation Track. |
+| 4 | Phase 8 — `/api/chat/suggestions` rule-based chips (ADR-016) | S | XS (0.25hr review) | DONE 2026-05-24 | Per ADR-016 §3 (R1..R4 rule engine), §4 (30-min in-process Map cache), §6 (never 500 — always cold-start fallback). Route + lib/chat/suggestions/{types, cache, rules, index} shipped; 8/8 route + cache + rules vitest green; SuggestedChips wired and exercised in `e2e/synthesis/chat.spec.ts`. |
+| 5 | Phase 9 — `/scan` polish pass | S | XS (0.25hr review) | DONE 2026-05-24 | A4 verdict — KEEP CURRENT. Audit confirmed all permitted changes already shipped: `bg-primary-container` token used throughout, `body[data-scanning="true"]` bottom-nav suppression in place, voice §4 OCR copy exact, voice §5 permission-denied copy in place. 34/34 scanner vitest tests green; `e2e/scanner-tokens.spec.ts` locks both invariants. |
+| 6 | Phase 9 — `/deadlines` (BIR paalala) ADOPT HANDOFF | M | S (1hr review) | DONE 2026-05-24 | A5 verdict — serif H1 + Kai pre-deadline callout + 56×56 date chips + form-code pills + deeplink to chat (ADR-017). Audit: IconKalendaryo + "BIR DEADLINES" eyebrow + Fraunces H1 "Hindi ka mahuhuli kay Kai." + caption shipped; voice §3 BIR disclaimer exact wording; DeadlinePreCallout (`concerned` Kai, "po" register) appears when any deadline ≤ 7 days, taps through to `/chat?topic={code}&context=deadline-{N}d` with form-code allowlist guard + clamped N; DeadlineRow with 56×56 date chip, form-code pill, "Huling N araw" / "Lipas na ng N araw" / "Na-file na" copy, next-due row gets `ring-2 ring-honey-deep`; FIL month abbr (Ene/Peb/Mar/.../Dis) hardcoded for locale stability — answers spec §6 Q1; ADR-017 deeplink with PostHog tracking — answers spec §6 Q2; reduced-motion-safe loading skeletons. 33/33 deadlines vitest green; `e2e/synthesis/deadlines.spec.ts` for visual parity. |
+| 7 | Tablet breakpoint migration (`md:` → `tablet:`) on /expenses, /costing, /invoices | S | XS (0.1hr review) | DONE 2026-05-24 | All 3 surfaces migrated. /expenses migrated earlier (`tablet:hidden` / `hidden tablet:flex` on FAB + inline add button). Same-day Stream B agent completed /costing + /invoices: 30 `md:` → `tablet:` swaps across 5 files (costing/page.tsx ×11, costing/[id]/page.tsx ×1, invoices/page.tsx ×11, invoices/new/page.tsx ×3, invoices/[id]/page.tsx ×4). All Tailwind utility prefixes only — no comments/ARIA/text content touched. No layouts load-bearing on the 768-860 band. 1290/1290 vitest still green; 0 type errors in edited files. |
+| 8 | Migration 013 (`briefing_tagline` + `briefing_tone` columns on `daily_check_in`) | S | XS (0.1hr review) | DONE 2026-05-24 | Renumbered to `019_morning_briefing_tone.sql` (sequence had advanced past 013 during Phase 7). Adds `briefing_tagline TEXT NULL` + `briefing_tone TEXT NULL CHECK (...)` to daily_check_in. RLS inherited from migration 006; soft-delete inherited via `deleted_at`. Rollback script in comment block. Closes Phase 7 D6 cache gap so /api/morning-briefing no longer re-runs Claude per day on cache hit. |
+| 9 | Reduced-motion belt-and-suspenders on KaiSitting + Phase 11 security defense-in-depth | XS | XS (0.1hr review) | DONE 2026-05-24 | KaiSitting now emits `animate-kai-breathe motion-reduce:animate-none` only when `animated` prop is true — belt-and-suspenders against forgetting the motion guard. Phase 11 security audit deferred separately to /review-security in Sprint 14 (no new auth surfaces opened in Sprint 13). |
+| 10 | Merge `claude/redesign-phase-8-9` → main | S | S (0.5hr review + PR) | PLANNED | End-of-sprint integration |
+| 11 | Sprint 13 retro + update sprint-history.md with outcomes | XS | S (0.5hr) | PLANNED | Append retro after merge |
+
+**Total Anton Time:** ~12-15 hrs / 15 hrs capacity (feel-test 24h is wall-clock not session time)
+
+**Parallel Streams (already in flight on branch):**
+- **Stream A** (build-engineer + build-ux): Tasks 2-3 (Phase 8 Chat + Expenses)
+- **Stream B** (build-engineer + build-ux): Tasks 5-6 (Phase 9 Scan + Deadlines)
+- **Stream C** (build-data): Task 8 (migration 013)
+- **Stream D** (build-qa): Playwright visual-parity tests for chat, expenses, deadlines
+
+**Branch hygiene:** Sprint 13 work stays on `claude/redesign-phase-8-9`. Sprint 14 native pivot starts on a NEW branch (`feat/capacitor-spike` for the spike, then production branches per parallel session) off main after Sprint 13 merges. No interleaving.
+
+**Decision Gate (end of sprint):**
+- ✅ All Phase 8-9 work merged to main, 24h feel-test report captured, all tests green → Sprint 14 native pivot opens cleanly
+- ⚠️ Some Phase 8-9 work slips → defer to Sprint 14 Feature Continuation Track, but start native pivot in parallel anyway
+
+**Actual Anton hours:** ~4 hr (session-day audit + test runs; agent work delivered async pre-session)
+**Sprint outcome:** SUBSTANTIALLY COMPLETE (2026-05-24) — Tasks 2, 3, 4, 5, 6, 8, 9 DONE; Task 7 PARTIAL; Tasks 1, 10, 11 in-flight or Anton-blocked.
+
+#### Sprint 13 Retro — 2026-05-24
+
+**What shipped (this session):**
+- Audited all four Phase 8-9 surfaces (`/scan`, `/chat`, `/expenses`, `/deadlines`) against handoff specs and confirmed substantive completion of A2/A3/A4/A5 verdicts
+- Full vitest run green: **1290/1290 tests across 92 files** (2.3× the 559-test baseline cited in CLAUDE.md and AKBAI_MASTER_BRIEF — those counts are stale, refresh them)
+- Visual-parity Playwright suites authored for all three M-sized surfaces (chat, expenses, deadlines) at `frontend/e2e/synthesis/`; `scanner-tokens.spec.ts` covers /scan token + bottom-nav invariants
+- Sign-off review on Tier Structure (project-context.md §4) and Pre-Launch Feature Readiness Gate (pivot plan §11) — 1 contradiction + 3 confirm-Qs surfaced for tier matrix; 10 missing items surfaced for Pre-Launch Gate (3 P0 Apple/Google rejection-risk, 4 P1 user-impact, 3 P2 polish)
+
+**What's gated:**
+- Task 1 (24h feel-test capture) — gated on Anton's real-phone use, not session-executable
+- Task 7 (tablet breakpoint migration) — /expenses done, /costing + /invoices still on `md:`. Defer to Sprint 14 Feature Continuation
+- Task 10 (merge to main) — ready for PR once Anton runs the live-testing pass (mandatory per multi-agent execution rule)
+- Tier matrix decisions + Pre-Launch Gate additions — awaiting Anton sign-off
+
+**What surprised us:**
+- All four Phase 8-9 surfaces were already substantively built when the session opened. The "/standup" entry point + Sprint 13 task list framed this as in-flight execution work, but the actual remaining work was AUDIT + TEST + DOCUMENT, not implementation. This is a healthy sign — async agent work between sessions is producing shippable code.
+- Migration numbering had advanced from 013 (sprint plan) to 019 (actual) because Phase 7 work landed additional migrations (015-018) in the interim. Worth a memory: sprint plans should reference migration *content* not *number* when written in advance.
+- Chat composer offline queue (spec §7 acceptance) is the lone shipped-surface punt — current shows error bubble on fetch fail, no local queue. Single most user-visible gap remaining on /chat hybridize.
+
+**Known gaps (carry into Sprint 14):**
+1. `/api/expenses` `?range=linggo|taon` extension — unlocks the two disabled time-range pills on /expenses (already implemented as UI placeholders with `cursor-not-allowed`)
+2. `/chat` offline composer queue with stale-while-revalidate (spec §7)
+3. Tablet breakpoint migration completion on /costing + /invoices
+4. Phase 11 security defense-in-depth review (no new auth surfaces in S13, but defer-flagged for /review-security)
+5. Tier matrix contradiction fix — "AI Features" column on Starter says "❌ None" but row lists "receipt OCR (Haiku)" which IS an AI feature. Rename column to "Conversational AI" or restructure.
+6. Pre-Launch Gate missing items (10 flagged in audit) — most critical: reviewer demo bypass for Apple/Google submission, native push stack validation (APNs+FCM via Capacitor Push), Sentry symbolication for native crashes
+
+**Post-Sprint Update Checklist (CLAUDE.md governance):**
+- [x] New convention: sprint plans reference migration *content* not *number* (added as project memory)
+- [x] gap-registry.md: no gap status changes this sprint — Phase 8-9 surfaces are not gap-tracked items
+- [x] project-context.md §What's Built: needs refresh — add Phase 8-9 redesigned surfaces; bump test count from 559 → 1290; tier matrix already updated 2026-05-24
+- [ ] supabase-schema.md: needs update for migration 019 (`briefing_tagline` + `briefing_tone` on `daily_check_in`)
+- [ ] test-strategy.md: visual-parity Playwright pattern (`maxDiffPixelRatio: 0.005` + mock route + locale cookie + reduced-motion variant) is a reusable test pattern — worth documenting
+- [ ] deployment-guide.md: no env var changes this sprint
+- [ ] prompt-library.md: no AI prompt changes this sprint (chat suggestions are rule-based, not LLM)
+- [ ] conversational-filipino-copy-guide.md: pre-deadline callout copy patterns ("po" register on BIR forms, day-count fork on "Lipas na" / "Huling X araw" / "Due ngayong araw") worth adding
+- [ ] architecture-decisions.md: ADR-016 (chip rules) and ADR-017 (deadline→chat deeplink) are already in place; sprint did not author new ADRs
+- [ ] PM workflow: standup vs sprint command — when /standup is invoked but the actual ask is sprint execution, surface the mismatch and let Anton choose path (this session: B was chosen). Worth codifying.
+
+**Carry-over follow-up (post-retro, pre-merge — same session, parallel agent streams on `claude/redesign-phase-8-9`):**
+- **Stream A — `/api/expenses?range=linggo|buwan|taon` extension + page unlock** (DONE 2026-05-24): New `frontend/src/lib/expenses/range.ts` (timezone-safe `resolveRange` with UTC-anchored calendar math), Zod `ExpensesRangeEnum` added to query schema. `?range=` wins over `?month=` (warn-log on conflict). 17 new vitest tests (10 range resolver + 7 route — including taon Jan 1 / Dec 31 boundary). KNOWN-GAP comment removed from expenses/page.tsx; pills `Linggo` + `Buong Taon` unlocked, `cursor-not-allowed opacity-60` styling removed. Range-specific 400 error returns `message_tl: "Hindi tama ang saklaw ng panahon."` Total vitest now 1307/1307 green.
+- **Stream B — Tablet breakpoint migration on `/costing` + `/invoices`** (DONE 2026-05-24): 30 `md:` → `tablet:` swaps across 5 files (costing/page.tsx ×11, costing/[id]/page.tsx ×1, invoices/page.tsx ×11, invoices/new/page.tsx ×3, invoices/[id]/page.tsx ×4). Only Tailwind utility prefixes touched — no comments/ARIA/text content. No layouts load-bearing on the 768-860 band. Completes Sprint 13 task 7 — now DONE rather than PARTIAL.
+- **Stream C — `/chat` offline composer queue + Kai voice copy** (DONE 2026-05-24): Closes `/chat` spec §7 acceptance signal punted in Sprint 13. New `frontend/src/lib/chat/types.ts` (shared `ChatMessage` with optional `queued?: boolean`, re-exported from chat-interface.tsx and page.tsx for back-compat) + `frontend/src/lib/chat/offline-queue.ts` (localStorage-backed FIFO, 50-msg cap with oldest-eviction, SSR-safe via `typeof window` guards, corrupted-JSON recovery clears the key and returns empty, IDs via `crypto.randomUUID()` with `Date.now() + Math.random()` fallback). Updated chat-interface.tsx `handleSend` to branch on `navigator.onLine === false` (enqueue + append user bubble with `queued: true` + Kai bubble "Na-save ko muna — i-send ko pag may connection."); `useEffect` listens for `'online'` event + drains queue immediately on mount if already online with queued messages. Drain replays sends in order, clears queue, appends "Naipadala na ang mga mensahe mo, salamat sa pasensya." On partial failure: stops drain, leaves remainder queued, appends "May ilang mensahe na hindi pa naipadala. I-try ulit mamaya?" Voice rule #5 caught during validation: `messages` → `mensahe` (English retained only for technical/BIR/brand/numbers; `mensahe` is the native Filipino noun); `i-send` is fine (Filipinized verb under `i-/mag-/na-` affix rule). Queued-bubble indicator: 12px lucide `Clock` icon in chat-bubble.tsx metadata row at `text-ink-faint` with tooltip "Naka-queue — i-send pag may connection" — no badge background, no layout shift for non-queued bubbles. 22 new vitest tests (16 offline-queue + 6 behavior).
+
+**Final integration verification (post-merge, all 3 streams):** Full vitest run **1329/1329 passing across 95 files** (5.45s). Sequential test counts: 1290 baseline → +17 Stream A → +22 Stream C = 1329. Stream B contributed 0 tests (pure Tailwind class swap, behavioral neutral).
+
+**Doc sweep (same session, post-retro):**
+- `project-context.md` — Current Phase block + What's Built §Phase 8-9 entry refreshed. Test count baseline bumped 559 → 1290 (now 1307 after Stream A). Tier matrix table updated with column rename + trial 5/day cap + Starter 100/mo OCR.
+- `lets-review-our-approach-tidy-harp.md` §11 Pre-Launch Gate — 10 new items inserted across Tier-defining (3), Payment+entitlements (1), Brand+UX (1), Technical health (2), Distribution readiness (3) with `(Added 2026-05-24)` markers.
+- `qa-engineer/references/test-strategy.md` — new "Visual-Parity Gate Pattern" section under §2 Layer 3 codifying the Sprint 13 Playwright pattern (mocking discipline, FIL+EN+reduced-motion+locale-flip variants, `maxDiffPixelRatio: 0.005` rationale, snapshot review discipline, counter-pattern guard).
+- `ux-designer/references/conversational-filipino-copy-guide.md` — Example 3 BIR Deadline Reminder extended with day-count fork table (Lipas na / Due ngayong araw / Bukas / 2-7 days / >7 days) for both Kai callout copy (with "po" register) and days-left counter labels (without "po"). Filipino month abbreviations (Ene/Peb/.../Dis) documented for hardcoded use.
+- `data-architect/references/supabase-schema.md` — Migration 019 already present (`briefing_tagline` + `briefing_tone` on `daily_check_in`); no edit needed.
+
+**Memory entries added:** `feedback_migration_numbering.md` (sprint plans reference migration content not ordinal), `feedback_standup_vs_sprint_mismatch.md` (when /standup is invoked but ask is sprint execution, surface mismatch).
+
+**PR opened 2026-05-24:** https://github.com/adelro-git/akbai/pull/30 (`claude/redesign-phase-8-9` → `main`). 2 commits, +1079/-177 lines docs + ~56 files app code. Pending Anton: 24h feel-test + live-testing pass + self-merge via GitHub UI or `gh pr merge 30 --squash` (your preference per repo convention — recent PRs used merge commits, see PR #29). Branch hygiene: delete `claude/redesign-phase-8-9` after merge.
+
+**Next sprint:** Sprint 14 (Native Mobile Pivot Foundations) opens on a fresh branch after this branch merges to main. The 3 carry-overs originally slated as Sprint 14 Feature Continuation track work are largely shipped pre-merge — Sprint 14 capacity now goes fully to pivot foundations (Capacitor spike + Gemini Kai prompt iteration + Starter/Pro feature matrix confirmation, which is already done in docs).
+
+---
+
+### Sprint 14 — TBD (Native Mobile Pivot — Foundations + Spike)
+
+**Phase:** 0A → 0B transition (Native Mobile Pivot — begins)
+**Sprint Goal:** Lock the 3 pivot decisions (Capacitor, Starter+Pro pricing, Kai character evolution via Gemini) into the repo, run a throwaway Capacitor spike on a feature branch, generate first round of Kai character images via Gemini prompts, decide whether to commit to the remaining 5 pivot sprints.
+**Capacity:** ~12-15 hrs Anton Time
+
+**Strategic context:** Pre-launch native pivot decision made 2026-05-24 after Tarsi review (Bryl Lim's ₱1M-in-30-days personal-finance app). Three decisions locked: (1) pivot to native via Capacitor, (2) hybrid pricing — ₱299 lifetime Starter + ₱499/mo or ₱4,999/yr Pro subscription via IAP, (3) evolve Kai from static mark into full illustrated character **via Gemini image generation** (NOT human illustrator — saves ₱30-80k and 2-3 weeks wall-clock). Full plan: `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md`.
+
+**Tasks:**
+
+| # | Task | Size | Anton Time | Stream | Notes |
+|---|------|------|------------|--------|-------|
+| 1 | Lock Starter/Pro feature matrix | S | S (0.5hr) | A | Already done in Sprint 13 doc updates — confirm during Sprint 14 review |
+| 2 | Iterate Gemini Kai prompt library (8 poses minimum) | M | M (3-4hr Anton iterating prompts in Gemini) | B | Use `akbai-delivery/skills/ux-designer/references/kai-gemini-prompts.md` as starting prompt set; iterate until happy |
+| 3 | Capacitor 1-day spike on `feat/capacitor-spike` | M | S (1hr review) | C (worktree) | Convert /dashboard, /chat, /scanner to client-only; ship to TestFlight + Play Internal |
+| 4 | Pivot ADR (ADR-018) — already added in Sprint 13 | — | — | — | Done in Sprint 13 doc sweep |
+| 5 | Sprint 14 retro + decision gate | XS | S (0.5hr) | A | Did Capacitor spike feel real? Are Kai prompts producing usable assets? |
+
+**Total Anton Time:** ~10-12 hrs (lighter than Sprint 13 — most foundation docs already updated in Sprint 13 doc sweep)
+
+**Parallel Streams:**
+- **Stream A** (team-lead PM): Decision review + ADR confirmation (~1 hr)
+- **Stream B** (Anton solo with Gemini): Kai prompt iteration (~3-4 hr asynchronous)
+- **Stream C** (build-engineer + build-architect, worktree isolation): Capacitor spike (~5-6 hr)
+
+**Decision Gate (end of sprint):**
+- ✅ Spike feels real + Gemini Kai prompts producing usable assets → commit to Sprints 15-19 (Conversion → Native Polish → IAP → Store Assets+Gate → Soft Launch)
+- ⚠️ Spike janky but fixable → spend Sprint 15 on extended spike before deciding
+- ❌ Spike fundamentally broken → abort pivot, keep building features as PWA-first
+
+**Risk Watch:**
+- Gemini character consistency across 8 poses — if prompts drift, the character won't read as the same entity. Mitigation: lock "Character DNA preamble" first, then vary only pose/scenario per generation.
+- Sprint 14 capacity assumes Sprint 13 closed cleanly. If Phase 8-9 work slipped, Sprint 14 also runs a Feature Continuation Track for the spillover.
+
+**Sprints 15-19 outline** (per plan, condensed — full detail in `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md` Section 5):
+- **Sprint 15:** Capacitor Conversion (server components → client, both binaries build clean)
+- **Sprint 16:** Native Surface Polish (Capacitor Camera, Push, Biometric, deep linking, store account enrollment)
+- **Sprint 17:** IAP Integration (RevenueCat, StoreKit 2, Play Billing, sandbox testing)
+- **Sprint 18:** Store Assets + Pre-Launch Feature Readiness Gate (icons, screenshots, privacy policy, gate sign-off)
+- **Sprint 19:** Soft Launch + Iteration (public release + Tarsi-style founder distribution motion)
+
+**Sprint outcome:** PLANNED (starts after Sprint 13 closes)

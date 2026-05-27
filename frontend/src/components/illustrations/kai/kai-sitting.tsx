@@ -26,7 +26,7 @@ export function KaiSitting({ size = 168, animated = false, className }: KaiSitti
   );
   return (
     <span
-      className={`inline-block shadow-ambient-lg ${animated ? 'animate-kai-breathe' : ''} ${className ?? ''}`}
+      className={`inline-block shadow-ambient-lg ${animated ? 'animate-kai-breathe motion-reduce:animate-none' : ''} ${className ?? ''}`}
       style={{ borderRadius: '50%', width: `${size}px`, height: `${size}px` }}
     >
       {image}

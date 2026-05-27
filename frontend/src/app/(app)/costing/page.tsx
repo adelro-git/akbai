@@ -60,17 +60,17 @@ export default function CostingPage() {
   const hasCards = cards.length > 0;
 
   return (
-    <div className="min-h-dvh pb-20 md:pb-6" data-testid="costing-page">
+    <div className="min-h-dvh pb-20 tablet:pb-6" data-testid="costing-page">
       {/* ── Header ── */}
-      <header className="px-4 pt-5 pb-3 md:px-8 md:pt-8 md:pb-5 md:flex md:items-center md:justify-between">
-        <h1 className="text-on-surface text-lg md:text-2xl font-extrabold mb-3 md:mb-0">
+      <header className="px-4 pt-5 pb-3 tablet:px-8 tablet:pt-8 tablet:pb-5 tablet:flex tablet:items-center tablet:justify-between">
+        <h1 className="text-on-surface text-lg tablet:text-2xl font-extrabold mb-3 tablet:mb-0">
           Mga Costing Card Mo
         </h1>
         {hasCards && (
           <button
             type="button"
             onClick={() => router.push('/costing/new')}
-            className="hidden md:flex items-center gap-2 bg-primary-container text-on-primary font-semibold rounded-xl px-5 py-2.5 transition-colors hover:bg-primary"
+            className="hidden tablet:flex items-center gap-2 bg-primary-container text-on-primary font-semibold rounded-xl px-5 py-2.5 transition-colors hover:bg-primary"
           >
             <Plus className="w-4 h-4" />
             Bagong Costing Card
@@ -97,7 +97,7 @@ export default function CostingPage() {
 
       {/* ── Empty state ── */}
       {!loading && !error && !hasCards && (
-        <div className="px-4 py-10 text-center md:py-20">
+        <div className="px-4 py-10 text-center tablet:py-20">
           <div className="flex justify-center mb-3">
             <IllustrationWrapper
               src="empty-states/costing-empty.webp"
@@ -124,7 +124,7 @@ export default function CostingPage() {
 
       {/* ── Card list ── */}
       {!loading && !error && hasCards && (
-        <div className="px-4 md:px-8">
+        <div className="px-4 tablet:px-8">
           <CostingCardList cards={cards} />
         </div>
       )}
@@ -134,7 +134,7 @@ export default function CostingPage() {
         <button
           type="button"
           onClick={() => router.push('/costing/new')}
-          className="md:hidden fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px)+0.75rem)] right-4 w-14 h-14 bg-primary-container text-on-primary rounded-2xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95 z-40"
+          className="tablet:hidden fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px)+0.75rem)] right-4 w-14 h-14 bg-primary-container text-on-primary rounded-2xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95 z-40"
           aria-label="Bagong costing card"
           data-testid="add-costing-fab"
         >

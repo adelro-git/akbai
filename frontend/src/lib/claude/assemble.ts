@@ -69,6 +69,26 @@ BIR registered: ${ctx.birRegistered ? 'Yes' : 'No'}`
     );
   }
 
+  // Layer 4c — Deadline Context (Phase 9b, ADR-017)
+  // Prepended only when arriving via the /deadlines deeplink so Kai opens
+  // the conversation already aware of the form and remaining days.
+  if (input.deadlineContext) {
+    const { formCode, daysUntilDue } = input.deadlineContext;
+    const urgency =
+      daysUntilDue >= 0
+        ? `huling ${daysUntilDue} araw`
+        : `lipas na ng ${Math.abs(daysUntilDue)} araw`;
+    layers.push(
+      `[DEADLINE_CONTEXT]
+The user has navigated here from the BIR deadline list. They want to discuss:
+Form: ${formCode}
+Days until due: ${daysUntilDue} (${urgency})
+Speak first. Acknowledge the form by name, confirm how many days remain in conversational Filipino,
+and offer concrete next steps ("I-prepare ko na ang numero mo?" / "Gusto mo bang i-walk-through ko ang form?").
+Do not give tax advice — gabay lamang, hindi tax advice. Defer to CPA for official guidance.`
+    );
+  }
+
   // Layer 4b — Output Format Hint (optional, non-breaking)
   // Appended last so it overrides any format guidance baked into the feature
   // block. Used by morning_briefing (Phase 7) for the tagline JSON shape.

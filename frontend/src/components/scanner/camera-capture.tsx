@@ -70,6 +70,28 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
   }, [stopCamera, previewUrl]);
 
   // ============================================================
+  // Bottom-nav suppression — while the live camera feed is active,
+  // set body[data-scanning="true"] so globals.css hides the bottom
+  // nav and the viewfinder owns the thumb zone. Cleared on every
+  // transition out of camera-active and on unmount to guarantee
+  // we never strand the nav hidden mid-flow.
+  // ============================================================
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (state === 'camera-active') {
+      document.body.dataset.scanning = 'true';
+    } else {
+      delete document.body.dataset.scanning;
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        delete document.body.dataset.scanning;
+      }
+    };
+  }, [state]);
+
+  // ============================================================
   // Camera Start — getUserMedia with rear camera preference
   // ============================================================
 
@@ -348,10 +370,10 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
           <div className="bg-surface-container-low rounded-2xl p-6 text-center">
             <Camera className="w-10 h-10 text-on-surface-variant mx-auto mb-3" />
             <p className="text-on-surface font-semibold text-sm mb-1">
-              Kailangan ng camera access
+              Kailangan ko ng camera access
             </p>
             <p className="text-on-surface-variant text-xs mb-4">
-              I-allow ang camera sa settings ng phone mo para makapag-scan.
+              Para ma-scan ko ang resibo mo, i-enable mo ang camera sa Settings.
             </p>
 
             <button
