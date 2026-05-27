@@ -1,9 +1,18 @@
+'use client';
+
 /**
- * Admin Dashboard Page — Overview with stats, users, MRR, flags
+ * Admin Dashboard Page — Client Component (Sprint 15 Capacitor conversion)
+ *
+ * Per sprint-15-conversion-pattern.md §3 row 5: this page was already
+ * client-component-shaped (all child components fetch their own data).
+ * The only conversion is adding the `'use client'` directive — no fetch,
+ * no useEffect needed here.
+ *
+ * Each child component (AdminStats, MrrCard, UserTable, FeatureFlagPanel,
+ * FlagReviewQueue) holds its own client-side auth guard; the (app) layout
+ * also gates the surface. No additional auth check needed at this level.
+ *
  * Feature: Admin Dashboard (Gap D10)
- * Role: Server page that renders admin components.
- *       Data fetching happens client-side in each component
- *       to keep the page simple and allow independent refresh.
  */
 
 import AdminStats from '@/components/admin/admin-stats';

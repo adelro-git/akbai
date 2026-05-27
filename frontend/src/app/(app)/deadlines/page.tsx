@@ -1,20 +1,57 @@
+'use client';
+
 // ============================================================
-// /deadlines — Phase 9b ADOPT HANDOFF (A5)
-// Header eyebrow + Fraunces H1 + caption, then the redesigned
-// DeadlineList with Kai pre-deadline callout + tap-through chat
-// deeplinks (ADR-017).
+// /deadlines — Client Component (Sprint 15 Capacitor conversion)
+//
+// Per sprint-15-conversion-pattern.md §3 row 9: page does no server work
+// of its own — it just renders <DeadlineList /> which fetches its own
+// data client-side. Conversion = add `'use client'` + auth gate, remove
+// Metadata export.
 // ============================================================
 
-import { Metadata } from 'next';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import DeadlineList from '@/components/deadlines/deadline-list';
 import { PageBackground } from '@/components/ui/page-background';
 import { IconKalendaryo } from '@/components/illustrations/icons';
 
-export const metadata: Metadata = {
-  title: 'BIR Deadlines — AKBai',
-};
-
 export default function DeadlinesPage() {
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    async function gate() {
+      if (SKIP_AUTH) {
+        setReady(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        router.replace('/login');
+        return;
+      }
+      setReady(true);
+    }
+    gate().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('deadlines page bootstrap failed', err);
+      router.replace('/login');
+    });
+  }, [router]);
+
+  if (!ready) {
+    return (
+      <PageBackground variant="deadlines">
+        <div className="min-h-dvh flex items-center justify-center text-on-surface-variant">
+          Loading...
+        </div>
+      </PageBackground>
+    );
+  }
+
   return (
     <PageBackground variant="deadlines">
       <div

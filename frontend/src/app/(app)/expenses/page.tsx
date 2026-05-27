@@ -12,6 +12,7 @@
 // ============================================================
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import { PageBackground } from '@/components/ui/page-background';
@@ -20,6 +21,8 @@ import { Kai } from '@/components/illustrations/kai/kai';
 import { IconPera } from '@/components/illustrations/icons';
 import { BanigBarChart } from '@/components/ui/banig-bar-chart';
 import { getManilaToday } from '@/lib/timezone';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import AddTransactionModal from '@/components/expenses/add-transaction-modal';
 import ExpensesDonut from '@/components/expenses/expenses-donut';
 import CategoryBreakdownRow from '@/components/expenses/category-breakdown-row';
@@ -134,12 +137,38 @@ function pickKaiInsight(totalExpensesCentavos: number, totalIncomeCentavos: numb
 
 export default function ExpensesPage() {
   const today = getManilaToday();
+  const router = useRouter();
 
   const [range, setRange] = useState<TimeRange>('buwan');
   const [data, setData] = useState<ExpensesData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // ── Auth gate (Sprint 15 Capacitor conversion) ──
+  // The (app) layout no longer hard-redirects unauthenticated users on the
+  // server; each page enforces its own client-side gate before fetching.
+  useEffect(() => {
+    async function gate() {
+      if (SKIP_AUTH) {
+        setAuthChecked(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) {
+        router.replace('/login');
+        return;
+      }
+      setAuthChecked(true);
+    }
+    gate().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('expenses page auth gate failed', err);
+      router.replace('/login');
+    });
+  }, [router]);
 
   const fetchExpenses = useCallback(async () => {
     setLoading(true);
@@ -161,8 +190,9 @@ export default function ExpensesPage() {
   }, [range]);
 
   useEffect(() => {
+    if (!authChecked) return;
     fetchExpenses();
-  }, [fetchExpenses]);
+  }, [authChecked, fetchExpenses]);
 
   const handleAddSuccess = useCallback(() => {
     setIsAddOpen(false);
