@@ -22,6 +22,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Sprint 16: deep linking (per sprint-16-native-plugin-pattern.md §5)
+                 Custom scheme com.akbai.app://auth/callback?code=…&next=…
+                 routes inbound URLs (typically clicked magic-link emails) into
+                 the WebView. autoVerify="false" because this is a custom scheme,
+                 not an https App Link with a .well-known file — the OS doesn't
+                 need to verify domain ownership for proprietary schemes. -->
+            <intent-filter android:label="@string/title_activity_main" android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.akbai.app" android:host="auth" />
+            </intent-filter>
+
         </activity>
 
         <provider
