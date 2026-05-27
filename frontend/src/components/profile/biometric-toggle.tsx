@@ -70,8 +70,8 @@ export default function BiometricToggle({
           <h2 className="text-base font-semibold text-on-surface">Biometric</h2>
         </div>
         <p className="text-xs text-on-surface-variant" data-testid="biometric-web-note">
-          Available sa AKBai app — i-install mo muna ang AKBai sa Android o iOS para
-          ma-secure mo ang account mo gamit ang Face ID o fingerprint.
+          Para ma-secure mo ang account mo gamit ang Face ID o fingerprint,
+          i-install mo muna ang AKBai sa Android o iOS.
         </p>
       </section>
     );

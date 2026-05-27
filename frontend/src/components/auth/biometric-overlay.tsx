@@ -12,7 +12,7 @@
  *
  * Conversational Filipino copy locked per architect §4 + copy guide §3:
  *   verifying → "Sandali, kinukumpirma ka namin." (enclitic `ka namin` after `kinukumpirma`)
- *   failed     → "Hindi nag-match. Subukan mo ulit." (Filipinized `nag-match` verb)
+ *   failed     → "Hindi na-match. Subukan mo ulit." (Filipinized `na-match` verb; na- affix = completed state)
  *
  * Reference: sprint-16-native-plugin-pattern.md §4.
  */
@@ -65,7 +65,7 @@ export default function BiometricOverlay({
               className="font-serif text-xl font-medium text-on-surface"
               data-testid="biometric-failed-title"
             >
-              Hindi nag-match. Subukan mo ulit.
+              Hindi na-match. Subukan mo ulit.
             </h2>
             {typeof attemptsRemaining === 'number' && attemptsRemaining > 0 && (
               <p
@@ -73,8 +73,8 @@ export default function BiometricOverlay({
                 data-testid="biometric-attempts-remaining"
               >
                 {attemptsRemaining === 1
-                  ? 'Huling 1 attempt na lang.'
-                  : `Natitira pa: ${attemptsRemaining} attempts.`}
+                  ? 'Huling 1 na lang — subukan mo ulit.'
+                  : `${attemptsRemaining} na lang ang natitira.`}
               </p>
             )}
             {onRetry && (

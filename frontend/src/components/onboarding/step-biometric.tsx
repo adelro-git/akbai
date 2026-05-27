@@ -99,7 +99,7 @@ export default function StepBiometric({ onContinue, firstName }: StepBiometricPr
           className="w-full text-on-surface-variant font-medium py-3 px-4 min-h-[44px] disabled:opacity-60"
           data-testid="biometric-step-skip-btn"
         >
-          Skip muna — puwede ko itong i-enable mamaya sa Settings.
+          Skip muna
         </button>
       </div>
     </div>
