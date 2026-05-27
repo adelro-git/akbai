@@ -219,5 +219,67 @@
       "purchase": "Yes! Welcome to Pro. Go explore all the features.",
       "restore": "Your purchases have been restored. Enjoy your features again."
     }
+  },
+  "paywall": {
+    "title": {
+      "chat": "You've hit the free trial limit. Upgrade to keep chatting with Kai.",
+      "morning_briefing": "Upgrade to Pro to unlock your daily briefing.",
+      "weekly_story": "Upgrade to Pro to unlock the Weekly Story.",
+      "reply_drafter": "Upgrade to Pro so Kai can draft replies for you.",
+      "scan_limit": "You've used all your scans. Get Starter for ₱299 lifetime, or go Pro for unlimited.",
+      "manual": "Pick a plan for AKBai."
+    },
+    "body": {
+      "starter_only": "Kai chat isn't included in Starter — pick Pro if you want chat."
+    },
+    "cta": {
+      "restore": "Already purchased? Restore your purchase here.",
+      "close": "Close paywall",
+      "upgrade": "Upgrade"
+    },
+    "web_fallback": {
+      "title": "To pay, use the app.",
+      "body": "Download AKBai from the App Store or Play Store to upgrade your account."
+    },
+    "badge": {
+      "most_worth_it": "Best value"
+    },
+    "cards": {
+      "starter": {
+        "title": "Starter",
+        "subtitle": "₱299 lifetime — one-time payment",
+        "bullets": [
+          "100 receipt scans per month",
+          "BIR deadline reminders",
+          "Basic reports + CSV export"
+        ],
+        "note": "Starter doesn't include Kai chat — go Pro if you want that",
+        "cta": "Get Starter"
+      },
+      "pro_monthly": {
+        "title": "Pro Monthly",
+        "subtitle": "₱499 per month",
+        "bullets": [
+          "Everything in Starter +",
+          "Unlimited Kai chat",
+          "Daily morning briefing",
+          "Weekly story",
+          "Customer reply drafter"
+        ],
+        "cta": "Get Pro"
+      },
+      "pro_annual": {
+        "title": "Pro Annual",
+        "subtitle": "₱4,999 per year — save almost ₱990",
+        "bullets": [
+          "Everything in Starter +",
+          "Unlimited Kai chat",
+          "Daily morning briefing",
+          "Weekly story",
+          "Customer reply drafter"
+        ],
+        "cta": "Get Pro Annual"
+      }
+    }
   }
 }

@@ -219,5 +219,67 @@
       "purchase": "Yes! Welcome sa Pro. I-explore mo na lahat ng features.",
       "restore": "Naka-restore na ang purchases mo. I-enjoy ulit ang mga features mo."
     }
+  },
+  "paywall": {
+    "title": {
+      "chat": "Naka-max ka na sa free trial. Mag-upgrade para tuloy ang chat kay Kai.",
+      "morning_briefing": "Para sa daily briefing mo, i-Pro mo ang account.",
+      "weekly_story": "Para sa Kuwento ng Linggo, i-Pro mo ang account.",
+      "reply_drafter": "Para i-draft ni Kai ang reply mo, i-Pro mo ang account.",
+      "scan_limit": "Naubos na ang scans mo. I-Starter mo for ₱299 lifetime o i-Pro mo para sa unlimited.",
+      "manual": "Pumili ka ng plano para sa AKBai."
+    },
+    "body": {
+      "starter_only": "Walang Kai sa Starter — kung gusto mo ng chat, kunin ang Pro."
+    },
+    "cta": {
+      "restore": "May dating purchase ka na? I-restore mo dito.",
+      "close": "Isara ang paywall",
+      "upgrade": "Mag-upgrade"
+    },
+    "web_fallback": {
+      "title": "Para mag-bayad, gamitin mo ang app.",
+      "body": "I-download mo ang AKBai mula sa App Store o Play Store para i-upgrade ang account mo."
+    },
+    "badge": {
+      "most_worth_it": "Pinaka-sulit"
+    },
+    "cards": {
+      "starter": {
+        "title": "Starter",
+        "subtitle": "₱299 lifetime — bayad mo isang beses lang",
+        "bullets": [
+          "100 receipt scans kada buwan",
+          "BIR deadline reminders",
+          "Basic reports + CSV export"
+        ],
+        "note": "Walang Kai chat sa Starter — i-Pro mo kung gusto mo",
+        "cta": "Kunin ang Starter"
+      },
+      "pro_monthly": {
+        "title": "Pro Monthly",
+        "subtitle": "₱499 kada buwan",
+        "bullets": [
+          "Lahat sa Starter +",
+          "Unlimited Kai chat",
+          "Morning briefing araw-araw",
+          "Kuwento ng linggo",
+          "Reply drafter para sa customers"
+        ],
+        "cta": "Kunin ang Pro"
+      },
+      "pro_annual": {
+        "title": "Pro Annual",
+        "subtitle": "₱4,999 kada taon — save ka ng halos ₱990",
+        "bullets": [
+          "Lahat sa Starter +",
+          "Unlimited Kai chat",
+          "Morning briefing araw-araw",
+          "Kuwento ng linggo",
+          "Reply drafter para sa customers"
+        ],
+        "cta": "Kunin ang Pro Annual"
+      }
+    }
   }
 }
