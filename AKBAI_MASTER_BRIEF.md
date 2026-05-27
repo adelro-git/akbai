@@ -1,13 +1,21 @@
 # AKBAI_MASTER_BRIEF.md
 > **Single entry-point document for AI app builders.**
-> Last updated: 2026-05-24 (Sprint 13 — Native Mobile Pivot banner added; full doc rewrite deferred) | Original prepared: 2026-03-19 by Anton del Rosario (Founder)
+> Last updated: 2026-05-27 (Sprint 16 — status banner refreshed; full doc rewrite still deferred) | Original prepared: 2026-03-19 by Anton del Rosario (Founder)
 > Read this ENTIRE file before writing a single line of code.
 
 ---
 
-## ⚠️ STATUS UPDATE — 2026-05-24 (Sprint 13)
+## ⚠️ STATUS UPDATE — 2026-05-27 (Sprint 16 close)
 
-**Several sections of this brief are now stale.** The product has pivoted in three major ways since the original March 2026 draft. **Authoritative current state lives in `akbai-delivery/shared/project-context.md` and `akbai-delivery/shared/tech-stack.md` — read those FIRST** for current architecture, pricing, and phase status. This brief retains its historical/strategic value (market research, personas, pillar definitions, brand voice) but the platform + pricing sections below are superseded.
+**Several sections of this brief are now stale.** The product has pivoted significantly since the original March 2026 draft. **Authoritative current state lives in `akbai-delivery/shared/project-context.md` and `akbai-delivery/shared/tech-stack.md` — read those FIRST** for current architecture, pricing, and phase status. This brief retains its historical/strategic value (market research, personas, pillar definitions, brand voice) but the platform + pricing sections below are superseded.
+
+**Sprint-status snapshot (2026-05-27):**
+- Phase 0B — Native Mobile Pivot, sprint 3 of 6 closed.
+- Sprint 14 (Foundations + Capacitor spike) → PR #31 — ADR-019 Accepted Green.
+- Sprint 15 (Capacitor Conversion) → PR #33 — **Gap G1 RESOLVED**.
+- Sprint 16 (Native Surface Polish) → PR #35 + #36 — **Gap G4 IMPLEMENTED** (Apple Guideline 4.2 mitigation; full close-out at Sprint 18 Pre-Launch Gate review).
+- Bundle: `.aab` = 20.75 MB (31% under 30 MB Pre-Launch Gate ceiling). 1427 tests passing.
+- Next: Sprint 17 — RevenueCat IAP integration (resolves Gap G2).
 
 **What changed (full plan: `C:\Users\Anton del Rosario\.claude\plans\lets-review-our-approach-tidy-harp.md`):**
 
@@ -17,9 +25,9 @@
 
 3. **Payment integration — Xendit → App Store / Google Play IAP via RevenueCat SDK.** Xendit code remains on disk but is deferred indefinitely (was never activated — no live customers, zero migration cost). RevenueCat wraps StoreKit 2 + Play Billing in one library, free up to $10K MRR.
 
-4. **Kai character evolution.** Existing Kai mark + persona being extended into a full illustrated character (body, 8+ expressions, scenarios) via Filipino illustrator commission. Brief at `akbai-delivery/skills/ux-designer/references/kai-character-brief.md`. NOT replacing Kai with a new mascot.
+4. **Kai character evolution.** Existing Kai mark + persona being extended into a full illustrated character (body, 8+ expressions, scenarios) via **Gemini image generation** (decided 2026-05-24 — supersedes the original "Filipino illustrator commission" plan, saving ~₱30-80k + 2-3 weeks external lead time). Prompt library at `akbai-delivery/skills/ux-designer/references/kai-gemini-prompts.md`. Anton iterates async (Stream B). Sprint 18 needs the assets. NOT replacing Kai with a new mascot.
 
-**Execution:** Sprints 13-18 (~6-9 weeks compressed, ~12-14 weeks sequential). Pre-launch — no paying users yet.
+**Execution:** Sprints 13-19 — 13 (redesign close-out) + 14-19 (6-sprint Native Mobile Pivot wave). Per Sprint 14's restructured outline, Sprints 15-18 are PURE DEV; all Anton-side enrollment + store submission + on-device QA concentrated in Sprint 19. Pre-launch — no paying users yet.
 
 **This brief will be rewritten end-to-end in a future sprint.** For now, treat Sections 4 (tech stack) and 6 (pricing) as historical. Sections 1 (product summary), 2 (folder structure), 3 (market/personas), 5 (brand voice), 7 (brand quick reference), 8 (known risks) remain authoritative.
 

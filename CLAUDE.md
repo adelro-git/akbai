@@ -1,8 +1,8 @@
 # AKBai — Claude Code Project Instructions
 
 ## What Is AKBai
-Mobile-first PWA AI business partner for Filipino MSMEs. Solo founder (Anton), 10–15 hrs/sprint.
-Current phase: 0B — Native Mobile Pivot. Sprint 15 (Capacitor Conversion) CLOSED 🟢 GREEN 2026-05-27 (PR #33). Gap G1 RESOLVED. .aab = 14.62 MB / .apk = 15.35 MB (both ~50% under <30 MB Pre-Launch Gate). 1331 tests passing. Next: Sprint 16 — Native Surface Polish (`@capacitor/camera`, push, biometric).
+Mobile-first native mobile (iOS + Android via Capacitor) AI business partner for Filipino MSMEs. Solo founder (Anton), 10–15 hrs/sprint.
+Current phase: 0B — Native Mobile Pivot. **Sprint 16 (Native Surface Polish) CLOSED 🟢 GREEN 2026-05-27 (PR #35 + #36).** Gap G4 (Apple Guideline 4.2 mitigation) IMPLEMENTED — full close-out at Sprint 18 Pre-Launch Gate review. 5 Capacitor plugins integrated (`@capacitor/camera`, `@capacitor/push-notifications`, `@aparajita/capacitor-biometric-auth`, `@capacitor/app` deep linking, `@sentry/capacitor` native crash). `.aab` = **20.75 MB** (31% under <30 MB Pre-Launch Gate). **1427 tests passing.** Next: Sprint 17 — RevenueCat IAP integration (Gap G2).
 
 ## Master Brief
 For full product context, read: `AKBAI_MASTER_BRIEF.md` (root)
