@@ -1014,9 +1014,9 @@ The brand audit revealed AKBai already has a stronger mascot foundation than Tar
 
 **Decision:**
 
-Pivot to native mobile via **Capacitor** (web codebase wrapped in iOS + Android native shells, ~90% code reuse). Replace Xendit with **In-App Purchase via RevenueCat SDK** (wraps Apple StoreKit 2 + Google Play Billing). Adopt **hybrid pricing**: 7-day free trial → ₱299 lifetime Starter (non-consumable IAP, capped to non-AI features) → ₱499/mo or ₱4,999/yr Pro subscription (auto-renewing IAP, all AI features). **Evolve Kai** from a static mark into a full illustrated character with 8+ expression poses via commissioned Filipino illustrator (₱30-80k, 2-3 week external lead time).
+Pivot to native mobile via **Capacitor** (web codebase wrapped in iOS + Android native shells, ~90% code reuse). Replace Xendit with **In-App Purchase via RevenueCat SDK** (wraps Apple StoreKit 2 + Google Play Billing). Adopt **hybrid pricing**: 7-day free trial → ₱299 lifetime Starter (non-consumable IAP, capped to non-AI features) → ₱499/mo or ₱4,999/yr Pro subscription (auto-renewing IAP, all AI features). **Evolve Kai** from a static mark into a full illustrated character with 8+ expression poses via **Gemini image generation** (Anton-driven prompt iteration against a locked Character DNA preamble — supersedes the original "commissioned Filipino illustrator" plan, saving ~₱30-80k + 2-3 weeks external lead time, decided same day 2026-05-24).
 
-Execution: 6 sprints (13-18). Sprint 13 = foundations + 1-day Capacitor spike + decision gate. Sprints 14-17 = production native build, IAP integration, store assets, Pre-Launch Feature Readiness Gate. Sprint 18 = soft launch + Tarsi-style organic distribution motion (founder-led TikTok/FB) + first iteration.
+Execution sequencing (confirmed 2026-05-24): **Sprint 13 = Frontend Redesign Phase 8-9 close-out** (no pivot work — clean stable codebase first). **Sprint 14 = pivot foundations + 1-day Capacitor spike + decision gate.** Sprints 15-18 = production native build, IAP integration, native polish, store assets + Pre-Launch Feature Readiness Gate. Sprint 19 = soft launch + Tarsi-style organic distribution motion (founder-led TikTok/FB) + first iteration. Total pivot: 6 sprints (14-19), with Sprint 13 redesign close-out preceding.
 
 **Alternatives Considered:**
 
@@ -1057,10 +1057,10 @@ Execution: 6 sprints (13-18). Sprint 13 = foundations + 1-day Capacitor spike + 
 - Server components in `frontend/src/app/(app)/*/page.tsx` (~18 files, 40% of pages) require conversion to client components for Capacitor static export
 - `proxy.ts` middleware (in-memory rate limiting) won't run in static export — must move to backend API guards or Cloudflare Worker (Month 7+ plan brought forward)
 - Service worker (`sw.js`) + PWA manifest deprecated — Capacitor handles offline natively
-- External lead times constrain timeline floor: illustrator (2-3 weeks), Apple App Store first review (24-48hr + 1 rejection cycle plausible)
+- External lead times constrain timeline floor: Apple App Store first review (24-48hr + 1 rejection cycle plausible). Illustrator lead time eliminated by Gemini approach (was 2-3 weeks in original plan); residual risk is character-consistency drift across Gemini generations (mitigated by locked Character DNA preamble in `kai-gemini-prompts.md`).
 
 **Migration cost:**
-- Code: Sprint 14 conversion of 18 server-component files, swap getUserMedia → Capacitor Camera, deprecate proxy.ts (~12-15 hrs)
+- Code: Sprint 15 conversion of ~18 server-component files + `proxy.ts` relocation (~10 hrs). Sprint 16 swap `getUserMedia` → Capacitor Camera + push + biometric (~10 hrs).
 - Schema: minor — add `iap_platform` column to `subscription_status` (`'apple' | 'google' | 'xendit_legacy'`)
 - Existing Xendit webhook handler kept dormant; can be removed in Sprint 17 cleanup
 - No data migration (no live customers)
@@ -1080,11 +1080,12 @@ Execution: 6 sprints (13-18). Sprint 13 = foundations + 1-day Capacitor spike + 
 - `frontend/public/manifest.json`, `frontend/public/sw.js` — deprecated (kept for web fallback)
 - `akbai-delivery/shared/{project-context,tech-stack,sprint-history,gap-registry,brand-context}.md` — updated this sprint
 - `akbai-delivery/skills/ux-designer/references/kai-character-brief.md` — new this sprint
-- `AKBAI_MASTER_BRIEF.md` — pending Sprint 13 update
+- `akbai-delivery/skills/ux-designer/references/kai-gemini-prompts.md` — new this sprint (Gemini prompt library, Character DNA preamble + 8 pose prompts; supersedes external illustrator workflow)
+- `AKBAI_MASTER_BRIEF.md` — updated Sprint 13 (commit 1a1f1c6)
 
 **Review Trigger:**
-- End of Sprint 13: if Capacitor spike fails the "feels like a real app" sniff test on real device → abort pivot, fall back to PWA
-- End of Sprint 17: if Pre-Launch Feature Readiness Gate (plan §11) is RED on any item → defer public release to Sprint 18+
+- End of Sprint 14: if Capacitor spike fails the "feels like a real app" sniff test on real device → abort pivot, fall back to PWA (sprint renumbered 2026-05-24 — was Sprint 13 in original ADR draft, rescoped same day when Sprint 13 became redesign close-out)
+- End of Sprint 18: if Pre-Launch Feature Readiness Gate (plan §11) is RED on any item → defer public release to Sprint 19+
 - 30 days post-launch: review actual conversion (Trial → Starter vs Trial → Pro vs Starter → Pro) against assumptions. If Starter dominates and Pro upgrade rate <10%, revisit pricing tiers.
 - Apple/Google revenue cuts shift materially: if EU DMA-style alternative payment becomes viable in PH with materially lower commission, reconsider external web checkout as Pro-tier billing path.
 - If a paying user base develops (>500 active) before Sprint 18: Xendit deferral reconsidered as a web-only backup billing channel for Pro users who prefer GCash.
