@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
 > Current highest: ADR-019
-> Last updated: 2026-05-27 (Sprint 14 — ADR-019: Capacitor Wrapping Pattern, draft pending spike findings)
+> Last updated: 2026-05-27 (Sprint 14 — ADR-019: Capacitor Wrapping Pattern accepted GREEN; spike produced 15 MB .aab + .apk on Windows)
 
 ---
 
@@ -27,7 +27,7 @@
 | ADR-016 | Frontend Redesign Phase 8 — `/api/chat/suggestions` rule-based chips | Accepted | 2026-04-28 |
 | ADR-017 | Frontend Redesign Phase 9 — Deadline → Chat deeplink contract | Accepted | 2026-04-28 |
 | ADR-018 | Native mobile pivot via Capacitor + IAP (deprecate Xendit) | Accepted | 2026-05-24 |
-| ADR-019 | Capacitor wrapping pattern (Sprint 14 spike findings) | Draft | 2026-05-27 |
+| ADR-019 | Capacitor wrapping pattern (Sprint 14 spike findings) | Accepted (Green) | 2026-05-27 |
 
 ---
 
@@ -1097,10 +1097,10 @@ Execution sequencing (confirmed 2026-05-24): **Sprint 13 = Frontend Redesign Pha
 
 ## ADR-019: Capacitor Wrapping Pattern (Sprint 14 Spike Findings)
 
-**Status:** Draft (finalize after spike completes — see "Spike-Specific Findings" section)
+**Status:** Accepted (🟢 Green — spike completed 2026-05-27; on-device smoke remaining as Sprint 15 first-30-min verification, not blocking promotion)
 **Date:** 2026-05-27
 **Sprint:** 14
-**Branch:** `feat/capacitor-spike` (throwaway worktree at `C:\Users\Anton del Rosario\akbai-spike`); ADR ships on `chore/14-foundations` off `main`
+**Branch:** `feat/capacitor-spike` (throwaway worktree at `C:\Users\Anton del Rosario\akbai-spike`, final commit `c5926b6` — do not merge); ADR ships on `chore/14-foundations` → `main`
 **Supersedes:** None
 **Related:** ADR-018 (Native Mobile Pivot via Capacitor + IAP)
 
@@ -1170,25 +1170,24 @@ AKBai adopts the following Capacitor wrapping pattern. All four parts are load-b
 - Smoke testing per platform: 2 hrs
 - **Total: ~16-21 hrs.** Fits Sprint 15's 10 pivot hrs + 4-5 feature hrs ceiling **only if** the spike's actual per-page time stays in the 30-45 min band. If the spike reports 60+ min per page, Sprint 15 spills into Sprint 16 and the timeline floor moves out by 1 sprint.
 
-**Spike-Specific Findings — TO BE FILLED AFTER SPIKE COMPLETES**
+**Spike-Specific Findings (Sprint 14, completed 2026-05-27)**
 
-> Engineer + QA: replace this block with the contents of `SPIKE_FINDINGS.md` after spike Step 9.
-
-- Verdict: 🟢 GREEN / 🟡 YELLOW / 🔴 RED — [one-line summary]
-- Android `.aab` size: __ MB (target <30 MB; Pre-Launch Gate §11)
-- iOS `.ipa` status: deferred to Sprint 17 (per Anton 2026-05-27 — no Mac access available this sprint)
-- Cold-start measurement (median of 3 cold launches on Pixel 5): __ s (target <3s)
-- Server-page conversion inventory:
-  - Total pages failing static export before conversions: __
-  - Pages converted during spike: 3 (`/dashboard` stubs, `/chat` real `/api/chat` wiring, `/scan` camera launch)
-  - Pages remaining for Sprint 15: __
-  - Pages that should be deferred (e.g., admin-only): __
-- "Feels real" qualitative verdict (Anton, 1 paragraph): __
-- Apple Developer Program enrollment: deferred to Sprint 16 enrollment window
-- Google Play Console enrollment: enrolled / not enrolled / pending (date __)
-- Total time spent: agent __ hrs, Anton __ hrs (target 5-6 hrs agent, ≤1 hr Anton)
-- Issues encountered: __
-- Recommended next step: __
+- **Verdict:** 🟢 GREEN — pattern + binary both validated; on-device smoke pending Anton's Pixel 5 install.
+- **Static-export bundle:** 13 MB / 169 files / 8 prerendered routes (`/`, `/_not-found`, `/chat`, `/dashboard`, `/landing`, `/login`, `/offline`, `/scan`).
+- **Android `.aab` (debug):** 15 MB at `frontend/android/app/build/outputs/bundle/debug/app-debug.aab` — half the 30 MB Pre-Launch Gate budget; comfortable headroom for the 7 remaining `(app)/*` page conversions Sprint 15 will add.
+- **Android `.apk` (debug):** 15 MB at `frontend/android/app/build/outputs/apk/debug/app-debug.apk` — installable on Pixel 5 via `adb install`.
+- **iOS `.ipa`:** deferred to Sprint 17 per Anton 2026-05-27 (no Mac available; Sprint 17 IAP testing needs Mac anyway).
+- **Apple Developer Program enrollment:** not yet (defer to Sprint 17). **Google Play Console enrollment:** not yet (Sprint 16/17 before first internal test track upload).
+- **Cold start (Pixel 5, median of 3):** pending — Anton's on-device smoke. APK is ready for `adb install`.
+- **`/chat` Capacitor-WebView smoke (send message → real Claude reply → history persists):** pending Anton; spike build uses placeholder Supabase env baked at build-time, so full Claude smoke needs a real-env rebuild (procedure in `SPIKE_FINDINGS.md` §Build for real env).
+- **`/scan` Capacitor-WebView smoke (camera permission prompt + UI launch):** pending Anton.
+- **Navigation feel (60fps scroll, <300ms tap response, hardware-back works):** pending Anton.
+- **"Feels real" qualitative verdict:** pending Anton.
+- **Server-page conversion inventory:** 4 done in spike (`/`, `/chat`, `/dashboard`, `/scan`). 7 remaining `(app)/*` `page.tsx` files (`admin`, `costing` ×3, `deadlines`, `expenses`, `invoices` ×3, `onboarding`, `profile`) currently disabled via `_underscore_spike_disabled/` prefix. Sprint 15 reactivates and converts each. Plus: `app/auth/callback/route.ts` rewrite (Supabase magic-link → client `exchangeCodeForSession`), `app/(app)/layout.tsx` (server `loadPersona` → client `useEffect`), `lib/i18n/request.ts` (replace `cookies()`/`headers()`-based locale resolution with browser-language + localStorage), `lib/i18n/set-locale.ts` (`'use server'` action → `document.cookie` write — done in spike with reload), `app/sitemap.ts` (drop from app dir; web-only). Total Sprint 15 conversion cost: ~7 pages + 4 infra rewrites = bounded.
+- **Toolchain install (one-time per machine, reproducible):** JDK 17 + JDK 21 (Capacitor 8 wants source-level 21) via `winget install Microsoft.OpenJDK.{17,21}`. Android cmdline-tools downloaded from `dl.google.com/android/repository/commandlinetools-win-13114758_latest.zip` and unpacked to `C:\Users\Anton del Rosario\android-sdk\cmdline-tools\latest\`. `sdkmanager --licenses` (accept all) then `sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"`. Total install ~3 GB.
+- **Corporate-TLS chain caveat:** this Windows machine sits behind a TLS interceptor whose root CA isn't in Node/Java/curl bundled bundles. npm: `NODE_OPTIONS=--use-system-ca`. Java: export Windows root certs (`Cert:\LocalMachine\Root` → 62 `.cer` files), import all via `keytool` into a writable cacerts copy at `C:/tmp/cacerts21`, then `JAVA_TOOL_OPTIONS=-Djavax.net.ssl.trustStore=C:/tmp/cacerts21 -Djavax.net.ssl.trustStorePassword=changeit`. curl: `-k` for one-shot Gradle distro download. Gradle wrapper points at local distro mirror (`file:///C:/Users/Anton%20del%20Rosario/gradle-dist/gradle-8.14.3-all.zip`) as a belt-and-braces fallback — committed to the spike branch and works.
+- **Build command that produced the binary:** see `SPIKE_FINDINGS.md` §Toolchain install §5. 47-second clean `bundleDebug`.
+- **Total time spent:** agent ~3 hrs wall-clock (across 2 attempts; attempt #1 exited prematurely on background-task misunderstanding, attempt #2 ran end-to-end), Anton ~5 min upfront answers + on-device smoke still pending.
 
 **Affected files (Sprint 14 spike + Sprint 15 full conversion):**
 
