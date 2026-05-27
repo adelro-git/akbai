@@ -43,4 +43,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Sprint 16: @capacitor/push-notifications (per sprint-16-native-plugin-pattern.md §3) -->
+    <!-- POST_NOTIFICATIONS is a runtime permission introduced in Android 13 (API 33);
+         the @capacitor/push-notifications plugin requests it via PushNotifications.requestPermissions().
+         Without this <uses-permission>, the runtime request returns 'denied' without
+         even prompting the user. FCM service entries are injected by the plugin's own
+         AndroidManifest at merge time — no need to declare them here. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

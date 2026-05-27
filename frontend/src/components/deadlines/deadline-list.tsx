@@ -15,7 +15,17 @@ import DeadlineRow from './deadline-row'
 import DeadlineEmpty from './deadline-empty'
 import DeadlinePreCallout from './deadline-pre-callout'
 
-export default function DeadlineList() {
+interface DeadlineListProps {
+  /**
+   * Sprint 16: optional callback invoked after each fetch with whether the
+   * user has at least one upcoming deadline within 14 days. The /deadlines
+   * page consumes this signal to decide whether to render the native push
+   * deferred-prompt card (architect §3 Open Q 2 recommendation (a)).
+   */
+  onImminentDeadlineSignal?: (hasImminentDeadline: boolean) => void
+}
+
+export default function DeadlineList({ onImminentDeadlineSignal }: DeadlineListProps = {}) {
   const [deadlines, setDeadlines] = useState<DeadlineWithUrgency[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -62,6 +72,21 @@ export default function DeadlineList() {
   const nextDueId = useMemo(() => {
     return sorted.find((d) => d.status !== 'filed')?.id ?? null
   }, [sorted])
+
+  // Sprint 16: surface "any non-filed deadline due within 14 days" so the
+  // parent page can mount the native-push deferred-prompt card. Recomputes
+  // every time `sorted` changes (post-fetch); a single useEffect calls the
+  // callback so React doesn't trigger setState-during-render warnings.
+  const hasImminentDeadline = useMemo(() => {
+    return sorted.some(
+      (d) => d.status !== 'filed' && d.days_until >= 0 && d.days_until <= 14
+    )
+  }, [sorted])
+
+  useEffect(() => {
+    if (loading) return
+    onImminentDeadlineSignal?.(hasImminentDeadline)
+  }, [hasImminentDeadline, loading, onImminentDeadlineSignal])
 
   // ── Loading
   if (loading) {

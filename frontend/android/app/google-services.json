@@ -1,0 +1,24 @@
+{
+  "_comment": "PLACEHOLDER — replace with real google-services.json from Firebase Console in Sprint 19. See gap-registry.md G4 + sprint-history Sprint 19 entry. This stub lets the com.google.gms.google-services Gradle plugin parse the file so the build succeeds; it does NOT deliver real pushes. Sprint 16 source: sprint-16-native-plugin-pattern.md §3.",
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "akbai-placeholder",
+    "storage_bucket": "akbai-placeholder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "android_client_info": {
+          "package_name": "com.akbai.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [{ "current_key": "PLACEHOLDER_DO_NOT_USE" }],
+      "services": {
+        "appinvite_service": { "other_platform_oauth_client": [] }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

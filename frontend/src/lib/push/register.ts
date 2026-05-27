@@ -100,10 +100,13 @@ export async function subscribeToPush(): Promise<{ success: boolean; error?: str
     }
 
     // --- POST to backend ---
+    // Sprint 16: explicit `platform: 'web'` discriminator. Web rows still
+    // ship the VAPID triple; native rows POST through lib/push/capacitor-push.ts
+    // with `platform: 'android' | 'ios'` and `native_token`.
     const response = await fetch('/api/push/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ endpoint, p256dh_key, auth_key }),
+      body: JSON.stringify({ platform: 'web', endpoint, p256dh_key, auth_key }),
     });
 
     if (!response.ok) {
@@ -140,10 +143,11 @@ export async function unsubscribeFromPush(): Promise<{ success: boolean; error?:
     await subscription.unsubscribe();
 
     // --- Notify backend ---
+    // Sprint 16: include `platform: 'web'` discriminator (symmetric with subscribe).
     await fetch('/api/push/unsubscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ endpoint }),
+      body: JSON.stringify({ platform: 'web', endpoint }),
     });
 
     return { success: true };

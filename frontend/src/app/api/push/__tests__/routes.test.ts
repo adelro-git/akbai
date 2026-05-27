@@ -84,11 +84,11 @@ describe('POST /api/push/subscribe', () => {
     expect(json.error.code).toBe('INVALID_INPUT');
   });
 
-  it('returns 400 for missing endpoint', async () => {
+  it('returns 400 for missing endpoint (web branch)', async () => {
     const { POST } = await import('../subscribe/route');
     const req = new Request('http://localhost/api/push/subscribe', {
       method: 'POST',
-      body: JSON.stringify({ p256dh_key: 'key', auth_key: 'auth' }),
+      body: JSON.stringify({ platform: 'web', p256dh_key: 'key', auth_key: 'auth' }),
       headers: { 'Content-Type': 'application/json' },
     });
 
@@ -99,11 +99,12 @@ describe('POST /api/push/subscribe', () => {
     expect(json.success).toBe(false);
   });
 
-  it('returns 201 for valid subscription data', async () => {
+  it('returns 201 for valid subscription data (web branch)', async () => {
     const { POST } = await import('../subscribe/route');
     const req = new Request('http://localhost/api/push/subscribe', {
       method: 'POST',
       body: JSON.stringify({
+        platform: 'web',
         endpoint: 'https://fcm.googleapis.com/fcm/send/abc123',
         p256dh_key: 'BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_test',
         auth_key: 'tBHItJI5svbpC7sc3fAhFQ',
@@ -118,6 +119,81 @@ describe('POST /api/push/subscribe', () => {
     expect(json.success).toBe(true);
     expect(json.data.subscribed).toBe(true);
   });
+
+  // ===== Sprint 16: native branch =====
+
+  it('returns 201 for valid native (android) subscription payload', async () => {
+    const { POST } = await import('../subscribe/route');
+    const req = new Request('http://localhost/api/push/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({
+        platform: 'android',
+        native_token: 'fcm-token-abcdef1234567890',
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const res = await POST(req as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(201);
+    expect(json.success).toBe(true);
+    expect(json.data.subscribed).toBe(true);
+  });
+
+  it('returns 201 for valid native (ios) subscription payload with device_id', async () => {
+    const { POST } = await import('../subscribe/route');
+    const req = new Request('http://localhost/api/push/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({
+        platform: 'ios',
+        native_token: 'apns-token-zyxwvu9876543210',
+        device_id: 'device-uuid-1',
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const res = await POST(req as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(201);
+    expect(json.success).toBe(true);
+  });
+
+  it('returns 400 when native payload is missing native_token', async () => {
+    const { POST } = await import('../subscribe/route');
+    const req = new Request('http://localhost/api/push/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({ platform: 'android' }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const res = await POST(req as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe('INVALID_INPUT');
+  });
+
+  it('returns 400 when platform discriminator is missing', async () => {
+    const { POST } = await import('../subscribe/route');
+    const req = new Request('http://localhost/api/push/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({
+        endpoint: 'https://fcm.googleapis.com/fcm/send/abc',
+        p256dh_key: 'key',
+        auth_key: 'auth',
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const res = await POST(req as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+  });
 });
 
 // ============================================================
@@ -129,7 +205,7 @@ describe('POST /api/push/unsubscribe', () => {
     resetChain();
   });
 
-  it('returns 400 for missing endpoint', async () => {
+  it('returns 400 for missing platform discriminator', async () => {
     const { POST } = await import('../unsubscribe/route');
     const req = new Request('http://localhost/api/push/unsubscribe', {
       method: 'POST',
@@ -144,11 +220,12 @@ describe('POST /api/push/unsubscribe', () => {
     expect(json.success).toBe(false);
   });
 
-  it('returns 200 for valid unsubscribe', async () => {
+  it('returns 200 for valid unsubscribe (web branch)', async () => {
     const { POST } = await import('../unsubscribe/route');
     const req = new Request('http://localhost/api/push/unsubscribe', {
       method: 'POST',
       body: JSON.stringify({
+        platform: 'web',
         endpoint: 'https://fcm.googleapis.com/fcm/send/abc123',
       }),
       headers: { 'Content-Type': 'application/json' },
@@ -160,6 +237,42 @@ describe('POST /api/push/unsubscribe', () => {
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
     expect(json.data.unsubscribed).toBe(true);
+  });
+
+  // ===== Sprint 16: native branch =====
+
+  it('returns 200 for valid unsubscribe (android branch)', async () => {
+    const { POST } = await import('../unsubscribe/route');
+    const req = new Request('http://localhost/api/push/unsubscribe', {
+      method: 'POST',
+      body: JSON.stringify({
+        platform: 'android',
+        native_token: 'fcm-token-abcdef1234567890',
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const res = await POST(req as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(json.data.unsubscribed).toBe(true);
+  });
+
+  it('returns 400 when native unsubscribe payload is missing native_token', async () => {
+    const { POST } = await import('../unsubscribe/route');
+    const req = new Request('http://localhost/api/push/unsubscribe', {
+      method: 'POST',
+      body: JSON.stringify({ platform: 'ios' }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const res = await POST(req as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
   });
 });
 
