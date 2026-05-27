@@ -18,8 +18,19 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Sprint 16 (architect §6): ProGuard minify enabled on release
+            // builds so Sentry native crash reports can be symbolicated.
+            // Generates `app/build/outputs/mapping/release/mapping.txt`,
+            // which scripts/upload-symbols.ps1 uploads to Sentry. The
+            // mapping file path is the artifact sentry-cli targets;
+            // gitignored per frontend/.gitignore (rebuilt every release).
+            //
+            // Symbolication upload is CONFIGURED here but EXECUTED in
+            // Sprint 19 with a real SENTRY_AUTH_TOKEN in CI (architect §6
+            // risk #5).
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

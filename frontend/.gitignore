@@ -36,3 +36,20 @@ playwright-report/
 test-results/
 
 .vercel
+
+# Sprint 16+: a real google-services.json (with real project_number + api_key)
+# must NEVER be committed. The tracked placeholder at
+# android/app/google-services.json lets the com.google.gms.google-services
+# Gradle plugin parse the file at build time so the APK still assembles.
+# When dropping a REAL Firebase config locally in Sprint 19, rename it to
+# google-services.local.json and configure Gradle to prefer it. See
+# sprint-16-native-plugin-pattern.md §3.
+android/app/google-services.local.json
+
+# Sprint 16+: Sentry symbolication artifacts. Rebuilt every release;
+# uploaded via scripts/upload-symbols (Sprint 19). Never committed.
+# Architect ref: sprint-16-native-plugin-pattern.md §6.
+android/app/build/outputs/mapping/
+ios/build/**/dSYMs/
+*.dSYM/
+*.dSYM.zip

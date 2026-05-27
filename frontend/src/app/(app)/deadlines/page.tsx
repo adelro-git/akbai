@@ -9,17 +9,25 @@
 // Metadata export.
 // ============================================================
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import DeadlineList from '@/components/deadlines/deadline-list';
+import DeferredPushPrompt from '@/components/push/deferred-prompt';
 import { PageBackground } from '@/components/ui/page-background';
 import { IconKalendaryo } from '@/components/illustrations/icons';
 
 export default function DeadlinesPage() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
+  // Sprint 16: imminent-deadline signal drives the native-push deferred-prompt
+  // card (architect §3 Open Q 2 recommendation (a)). DeferredPushPrompt owns
+  // its own native+localStorage gating; this page just forwards the signal.
+  const [hasImminentDeadline, setHasImminentDeadline] = useState(false);
+  const handleImminentSignal = useCallback((value: boolean) => {
+    setHasImminentDeadline(value);
+  }, []);
 
   useEffect(() => {
     async function gate() {
@@ -92,8 +100,14 @@ export default function DeadlinesPage() {
           </p>
         </div>
 
+        {/* ── Sprint 16: native push deferred-prompt (renders only when
+              Capacitor.isNativePlatform() AND at least one deadline ≤ 14 days
+              AND localStorage flag absent — see DeferredPushPrompt for the
+              full decision logic). ── */}
+        <DeferredPushPrompt hasImminentDeadline={hasImminentDeadline} />
+
         {/* ── Deadline list (client) ── */}
-        <DeadlineList />
+        <DeadlineList onImminentDeadlineSignal={handleImminentSignal} />
       </div>
     </PageBackground>
   );

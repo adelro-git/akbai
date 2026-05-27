@@ -1,10 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import { Capacitor } from '@capacitor/core';
 import BottomNav from '@/components/dashboard/bottom-nav';
 import SidebarNav from '@/components/dashboard/sidebar-nav';
 import SessionGuard from '@/components/auth/session-guard';
+import BiometricOverlay from '@/components/auth/biometric-overlay';
+import {
+  verifyBiometric,
+  resetFailureCount,
+  MAX_BIOMETRIC_FAILURES,
+} from '@/lib/capacitor/biometric';
+import { initSentryCapacitor } from '@/lib/sentry/capacitor-init';
+import { registerDeepLink } from '@/lib/capacitor/deep-link';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 // ============================================================
 // (app) layout — Sprint 15 Capacitor conversion.
@@ -57,7 +68,20 @@ interface ProfileApiPayload {
   display_name: string | null;
   business_name: string | null;
   business_type: string | null;
+  // Sprint 16 — biometric second factor (architect §4).
+  biometric_enabled?: boolean;
 }
+
+// ============================================================
+// Sprint 16 — biometric guard state.
+// 'pending'     — initial, before we know whether biometric is required
+// 'not-required'— web OR native-with-feature-off → render children
+// 'verifying'   — native + enabled, BiometricAuth.authenticate() in flight
+// 'failed'      — failed (<3) — show retry overlay
+// 'verified'    — render children
+// ============================================================
+
+type BiometricStatus = 'pending' | 'not-required' | 'verifying' | 'failed' | 'verified';
 
 export default function AppGroupLayout({
   children,
@@ -65,7 +89,47 @@ export default function AppGroupLayout({
   children: React.ReactNode;
 }) {
   const t = useTranslations('nav');
+  const router = useRouter();
   const [persona, setPersona] = useState<PersonaState>({ name: null, tagline: null });
+  const [biometricStatus, setBiometricStatus] = useState<BiometricStatus>('pending');
+  const [biometricAttemptsRemaining, setBiometricAttemptsRemaining] = useState<number>(
+    MAX_BIOMETRIC_FAILURES,
+  );
+
+  // ----------------------------------------------------------
+  // Sprint 16 — biometric verify loop, extracted as a callable
+  // so the retry button on the overlay can re-fire it without
+  // re-running the persona fetch. Side effects:
+  //   - sets biometricStatus
+  //   - on ≥3 failures: signs the user out + redirects to /login
+  // ----------------------------------------------------------
+  const runBiometricVerify = useCallback(async () => {
+    setBiometricStatus('verifying');
+    const { verified, failureCount } = await verifyBiometric();
+    if (verified) {
+      setBiometricStatus('verified');
+      return;
+    }
+    if (failureCount >= MAX_BIOMETRIC_FAILURES) {
+      // Hard fallback — sign out, force OTP. Reset the counter so a
+      // future enable doesn't start from 3-strikes-already-bricked.
+      await resetFailureCount();
+      try {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+      } catch {
+        // signOut should never throw, but if it does the redirect
+        // below still happens — the session-watcher will catch up.
+      }
+      // window.location.href instead of router.replace: we want the
+      // hardest possible context reset (clear React tree, dump any
+      // in-memory state, force a full re-bootstrap on /login).
+      window.location.href = '/login?error=biometric_failed';
+      return;
+    }
+    setBiometricAttemptsRemaining(MAX_BIOMETRIC_FAILURES - failureCount);
+    setBiometricStatus('failed');
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,16 +142,21 @@ export default function AppGroupLayout({
           // session is still rehydrating; the per-page auth gate
           // will then push to /login. Leave persona null — sidebar
           // degrades to "AKBai" until the gate resolves.
+          // Biometric guard: also skip — we can't verify a user
+          // we don't have a session for (per architect §4: biometric
+          // is a SECOND factor, never first).
+          if (!cancelled) setBiometricStatus('not-required');
           return;
         }
         const json = (await res.json()) as
           | { success: true; data: ProfileApiPayload }
           | { success: false };
         if (cancelled || !json.success) {
+          if (!cancelled) setBiometricStatus('not-required');
           return;
         }
 
-        const { display_name, business_name, business_type } = json.data;
+        const { display_name, business_name, business_type, biometric_enabled } = json.data;
         const name = business_name ?? display_name ?? null;
 
         let tagline: string | null = null;
@@ -101,9 +170,32 @@ export default function AppGroupLayout({
         }
 
         setPersona({ name, tagline });
+
+        // ----------------------------------------------------------
+        // Sprint 16 — biometric on-open guard (architect §4 + §7 #3).
+        // Branches:
+        //   web                              → not-required
+        //   native + biometric_enabled=false → not-required
+        //   native + biometric_enabled=true  → run verify
+        // ----------------------------------------------------------
+        if (!Capacitor.isNativePlatform()) {
+          if (!cancelled) setBiometricStatus('not-required');
+          return;
+        }
+        if (biometric_enabled !== true) {
+          if (!cancelled) setBiometricStatus('not-required');
+          return;
+        }
+        if (!cancelled) {
+          void runBiometricVerify();
+        }
       } catch {
         // Network failure — leave persona null. SidebarNav already
         // renders a safe fallback so there's no visible break.
+        // Biometric also defaults to not-required: a no-network app
+        // open shouldn't hard-brick on a biometric verify we couldn't
+        // even decide to fire.
+        if (!cancelled) setBiometricStatus('not-required');
       }
     }
 
@@ -111,14 +203,57 @@ export default function AppGroupLayout({
     return () => {
       cancelled = true;
     };
-  }, [t]);
+  }, [t, runBiometricVerify]);
+
+  // ----------------------------------------------------------
+  // Sprint 16 — deep-link listener (architect §5). Native-only;
+  // returns a no-op cleanup on web. Mount once per layout life.
+  // ----------------------------------------------------------
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    const cleanup = registerDeepLink((path) => {
+      router.replace(path);
+    });
+    return () => {
+      void cleanup();
+    };
+  }, [router]);
+
+  // ----------------------------------------------------------
+  // Sprint 16 — Sentry native crash SDK init (architect §6).
+  // Native-only; web continues with @sentry/nextjs unchanged.
+  // ----------------------------------------------------------
+  useEffect(() => {
+    void initSentryCapacitor();
+  }, []);
+
+  // ----------------------------------------------------------
+  // Render gate: while biometric is verifying or failed, the overlay
+  // covers children completely. NEVER render children underneath an
+  // unverified session (Apple Guideline 4.2 reviewer signal).
+  //
+  // 'pending' renders the shell scaffolding but with no children
+  // body — keeps SidebarNav warmed up while the persona fetch
+  // resolves. (The shell itself doesn't leak any user-scoped data.)
+  // ----------------------------------------------------------
+  const showOverlay =
+    biometricStatus === 'verifying' || biometricStatus === 'failed';
+  const showChildren =
+    biometricStatus === 'not-required' || biometricStatus === 'verified';
 
   return (
     <>
       <SessionGuard />
       <SidebarNav persona={persona} />
-      <div className="tablet:ml-60">{children}</div>
+      <div className="tablet:ml-60">{showChildren ? children : null}</div>
       <BottomNav />
+      {showOverlay && (
+        <BiometricOverlay
+          status={biometricStatus === 'verifying' ? 'verifying' : 'failed'}
+          attemptsRemaining={biometricAttemptsRemaining}
+          onRetry={biometricStatus === 'failed' ? () => void runBiometricVerify() : undefined}
+        />
+      )}
       <script
         dangerouslySetInnerHTML={{
           __html: `

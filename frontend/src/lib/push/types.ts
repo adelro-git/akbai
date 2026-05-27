@@ -83,13 +83,24 @@ export interface NotificationRow {
 
 // ============================================================
 // Push Subscription Row — shape returned from the database
+// Sprint 16: extended with `platform` discriminator, `native_token`, and
+// `device_id` (migration 020). Web Push rows keep their VAPID columns;
+// native rows carry the FCM/APNs token in `native_token` and write the
+// same token into `endpoint` to satisfy the NOT NULL column carried over
+// from migration 018 (architect §3 recommendation — keeps the column NOT
+// NULL while letting downstream reads disambiguate via `platform`).
 // ============================================================
+
+export type PushPlatform = 'web' | 'android' | 'ios';
 
 export interface PushSubscriptionRow {
   id: string;
   user_id: string;
   endpoint: string;
-  p256dh_key: string;
-  auth_key: string;
+  p256dh_key: string | null;
+  auth_key: string | null;
   created_at: string;
+  platform: PushPlatform;
+  native_token: string | null;
+  device_id: string | null;
 }

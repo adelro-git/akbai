@@ -1,18 +1,28 @@
 /**
  * Push Subscribe API Route — Save push subscription to database
- * Feature: Push Notifications (Gap B6)
- * Role: Receives a Web Push subscription from the browser and persists it.
- *       Also ensures default notification preferences exist for the user.
+ * Feature: Push Notifications (Gap B6) + Native Push (Sprint 16, Gap G4 mitigation)
+ * Role: Receives a push subscription from the browser (Web Push) or the
+ *       Capacitor app (FCM/APNs native token) and persists it. Also ensures
+ *       default notification preferences exist for the user.
  *
- * Flow: Auth check → validate body → soft-delete existing same-endpoint
- *       → insert new subscription → ensure default preferences → respond
+ * Flow: Auth check → validate body (discriminated on `platform`)
+ *       → branch on platform:
+ *           web    → soft-delete existing same-endpoint    → insert
+ *           native → soft-delete existing same-native_token → insert
+ *                    (writes the FCM token into BOTH `native_token` AND `endpoint`
+ *                     to satisfy the NOT NULL endpoint column carried over from
+ *                     migration 018 — architect §3 recommendation)
+ *       → ensure default preferences → respond.
+ *
+ * Architect reference: sprint-16-native-plugin-pattern.md §3.
+ * Schema reference:    migration 020_push_subscriptions_platform_extension.sql.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
-import { SubscribePushSchema } from '@/lib/push/schemas';
+import { SubscribePushSchema, type SubscribePushPayload } from '@/lib/push/schemas';
 import { NOTIFICATION_TYPES } from '@/lib/push/types';
 
 // ============================================================
@@ -41,6 +51,94 @@ async function ensureDefaultPreferences(
         enabled: true,
       });
     }
+  }
+}
+
+// ============================================================
+// Helper — build the insert/upsert payload for one push_subscriptions row,
+// branching on the discriminator. Web rows ship VAPID columns; native rows
+// ship `native_token` + `device_id` AND duplicate the token into `endpoint`
+// (architect §3 — the endpoint column stayed NOT NULL after migration 020,
+// so we satisfy it with the same FCM/APNs token).
+// ============================================================
+
+type PushInsertRow = {
+  user_id: string;
+  platform: 'web' | 'android' | 'ios';
+  endpoint: string;
+  p256dh_key: string | null;
+  auth_key: string | null;
+  native_token: string | null;
+  device_id: string | null;
+};
+
+function buildInsertRow(userId: string, payload: SubscribePushPayload): PushInsertRow {
+  if (payload.platform === 'web') {
+    return {
+      user_id: userId,
+      platform: 'web',
+      endpoint: payload.endpoint,
+      p256dh_key: payload.p256dh_key,
+      auth_key: payload.auth_key,
+      native_token: null,
+      device_id: null,
+    };
+  }
+  // Native (android | ios) — token goes into BOTH columns.
+  return {
+    user_id: userId,
+    platform: payload.platform,
+    endpoint: payload.native_token,
+    p256dh_key: null,
+    auth_key: null,
+    native_token: payload.native_token,
+    device_id: payload.device_id ?? null,
+  };
+}
+
+// ============================================================
+// Helper — soft-delete any existing row that would collide with the new
+// insert. Web collides on (user_id, endpoint, platform='web'); native
+// collides on (user_id, native_token). These match the two partial unique
+// indexes added by migration 020.
+// ============================================================
+
+type SupabaseLike = {
+  from: (table: string) => {
+    update: (values: { deleted_at: string }) => {
+      eq: (col: string, val: string) => {
+        eq: (col: string, val: string) => {
+          eq: (col: string, val: string) => {
+            is: (col: string, val: null) => Promise<unknown>;
+          };
+          is: (col: string, val: null) => Promise<unknown>;
+        };
+      };
+    };
+  };
+};
+
+async function softDeleteCollidingRow(
+  supabase: SupabaseLike,
+  userId: string,
+  payload: SubscribePushPayload
+): Promise<void> {
+  const deletedAt = new Date().toISOString();
+  const update = supabase
+    .from('push_subscriptions')
+    .update({ deleted_at: deletedAt });
+
+  if (payload.platform === 'web') {
+    await update
+      .eq('user_id', userId)
+      .eq('endpoint', payload.endpoint)
+      .eq('platform', 'web')
+      .is('deleted_at', null);
+  } else {
+    await update
+      .eq('user_id', userId)
+      .eq('native_token', payload.native_token)
+      .is('deleted_at', null);
   }
 }
 
@@ -76,25 +174,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { endpoint, p256dh_key, auth_key } = parsed.data;
+  const payload = parsed.data;
 
   // --- Dev bypass: use service client ---
   if (SKIP_AUTH) {
     const svc = createServiceClient();
     const userId = DEV_USER.id;
 
-    // Soft-delete existing subscription with same endpoint
-    await svc
-      .from('push_subscriptions')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('user_id', userId)
-      .eq('endpoint', endpoint)
-      .is('deleted_at', null);
+    await softDeleteCollidingRow(svc as unknown as SupabaseLike, userId, payload);
 
-    // Insert new subscription
     const { error: insertError } = await svc
       .from('push_subscriptions')
-      .insert({ user_id: userId, endpoint, p256dh_key, auth_key });
+      .insert(buildInsertRow(userId, payload));
 
     if (insertError) {
       return NextResponse.json(
@@ -121,18 +212,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // --- Soft-delete existing subscription with same endpoint ---
-  await supabase
-    .from('push_subscriptions')
-    .update({ deleted_at: new Date().toISOString() })
-    .eq('user_id', user.id)
-    .eq('endpoint', endpoint)
-    .is('deleted_at', null);
+  // --- Soft-delete colliding row (web: same endpoint; native: same native_token) ---
+  await softDeleteCollidingRow(supabase as unknown as SupabaseLike, user.id, payload);
 
   // --- Insert new subscription ---
   const { error: insertError } = await supabase
     .from('push_subscriptions')
-    .insert({ user_id: user.id, endpoint, p256dh_key, auth_key });
+    .insert(buildInsertRow(user.id, payload));
 
   if (insertError) {
     return NextResponse.json(

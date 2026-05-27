@@ -19,6 +19,14 @@ export const ProfilePatchSchema = z
     income_range: IncomeRangeEnum.optional(),
     bir_registered: z.boolean().optional(),
     bir_tax_type: z.enum(BIR_TAX_TYPES).optional(),
+    // ----------------------------------------------------------
+    // Sprint 16 — biometric toggle (architect §4 + migration 021).
+    // biometric_setup_at is INTENTIONALLY NOT accepted from the
+    // client: the server derives it from `now()` on first enable
+    // and nulls it on disable. A client-supplied timestamp would
+    // be a forgery surface (an attacker could backdate enrolment).
+    // ----------------------------------------------------------
+    biometric_enabled: z.boolean().optional(),
   })
   .refine(
     (data) =>
@@ -27,7 +35,8 @@ export const ProfilePatchSchema = z
       data.business_type !== undefined ||
       data.income_range !== undefined ||
       data.bir_registered !== undefined ||
-      data.bir_tax_type !== undefined,
+      data.bir_tax_type !== undefined ||
+      data.biometric_enabled !== undefined,
     { message: 'Walang data na i-update.' }
   );
 
@@ -41,6 +50,9 @@ export interface ProfileData {
   income_range: string | null;
   bir_registered: boolean;
   bir_tax_type: string | null;
+  // Sprint 16 — biometric second factor (architect §4 + migration 021).
+  biometric_enabled: boolean;
+  biometric_setup_at: string | null;
   profile_version: number;
 }
 
@@ -63,7 +75,7 @@ export async function GET() {
 
     const { data: devUserData } = await svc
       .from('users')
-      .select('display_name')
+      .select('display_name, biometric_enabled, biometric_setup_at')
       .eq('id', userId)
       .single();
 
@@ -82,6 +94,8 @@ export async function GET() {
       income_range: devProfile?.income_range ?? null,
       bir_registered: devProfile?.bir_registered ?? false,
       bir_tax_type: devProfile?.bir_tax_type ?? null,
+      biometric_enabled: devUserData?.biometric_enabled ?? false,
+      biometric_setup_at: devUserData?.biometric_setup_at ?? null,
       profile_version: 1,
     };
 
@@ -107,7 +121,7 @@ export async function GET() {
   // Fetch user data
   const { data: userData } = await supabase
     .from('users')
-    .select('display_name')
+    .select('display_name, biometric_enabled, biometric_setup_at')
     .eq('id', userId)
     .single();
 
@@ -127,6 +141,8 @@ export async function GET() {
     income_range: profile?.income_range ?? null,
     bir_registered: profile?.bir_registered ?? false,
     bir_tax_type: profile?.bir_tax_type ?? null,
+    biometric_enabled: userData?.biometric_enabled ?? false,
+    biometric_setup_at: userData?.biometric_setup_at ?? null,
     profile_version: 1,
   };
 
@@ -178,12 +194,34 @@ export async function PATCH(req: NextRequest) {
     const svc = createServiceClient();
     const data = parsed.data;
 
-    // Update users table if display_name provided
+    // Update users table for display_name and/or biometric_enabled.
+    // We coalesce both into a single UPDATE so a payload that touches
+    // both fields doesn't issue two round-trips.
+    const devUserFields: Record<string, string | boolean | null> = {};
     if (data.display_name !== undefined) {
-      await svc
-        .from('users')
-        .update({ display_name: data.display_name })
-        .eq('id', userId);
+      devUserFields.display_name = data.display_name;
+    }
+    if (data.biometric_enabled !== undefined) {
+      devUserFields.biometric_enabled = data.biometric_enabled;
+      // Server-derived audit trail (architect §4): first enable stamps
+      // biometric_setup_at; disable clears it. Only stamp on first enable
+      // — we read the current row first to avoid overwriting an older
+      // (legitimate) setup timestamp on a re-enable.
+      if (data.biometric_enabled === true) {
+        const { data: currentRow } = await svc
+          .from('users')
+          .select('biometric_setup_at')
+          .eq('id', userId)
+          .single();
+        if (!currentRow?.biometric_setup_at) {
+          devUserFields.biometric_setup_at = new Date().toISOString();
+        }
+      } else {
+        devUserFields.biometric_setup_at = null;
+      }
+    }
+    if (Object.keys(devUserFields).length > 0) {
+      await svc.from('users').update(devUserFields).eq('id', userId);
     }
 
     // Update business_profiles if any business field provided
@@ -213,7 +251,7 @@ export async function PATCH(req: NextRequest) {
     // Re-fetch updated data
     const { data: devUser } = await svc
       .from('users')
-      .select('display_name')
+      .select('display_name, biometric_enabled, biometric_setup_at')
       .eq('id', userId)
       .single();
 
@@ -232,6 +270,8 @@ export async function PATCH(req: NextRequest) {
       income_range: devProfile?.income_range ?? 'below_50k',
       bir_registered: devProfile?.bir_registered ?? false,
       bir_tax_type: devProfile?.bir_tax_type ?? null,
+      biometric_enabled: devUser?.biometric_enabled ?? false,
+      biometric_setup_at: devUser?.biometric_setup_at ?? null,
       profile_version: 1,
     };
 
@@ -281,16 +321,42 @@ export async function PATCH(req: NextRequest) {
 
   const data = parsed.data;
 
-  // Update users table if display_name provided
+  // ----------------------------------------------------------
+  // Users table — display_name + biometric_enabled (+ derived
+  // biometric_setup_at) coalesced into a single UPDATE.
+  // Sprint 16: server-side derivation of biometric_setup_at —
+  // client-supplied timestamps are intentionally rejected by the
+  // Zod schema above. Only stamp on first enable (preserve existing
+  // setup timestamp on re-enable).
+  // ----------------------------------------------------------
+  const userFields: Record<string, string | boolean | null> = {};
   if (data.display_name !== undefined) {
+    userFields.display_name = data.display_name;
+  }
+  if (data.biometric_enabled !== undefined) {
+    userFields.biometric_enabled = data.biometric_enabled;
+    if (data.biometric_enabled === true) {
+      const { data: currentRow } = await supabase
+        .from('users')
+        .select('biometric_setup_at')
+        .eq('id', userId)
+        .single();
+      if (!currentRow?.biometric_setup_at) {
+        userFields.biometric_setup_at = new Date().toISOString();
+      }
+    } else {
+      userFields.biometric_setup_at = null;
+    }
+  }
+  if (Object.keys(userFields).length > 0) {
     const { error: userError } = await supabase
       .from('users')
-      .update({ display_name: data.display_name })
+      .update(userFields)
       .eq('id', userId);
 
     if (userError) {
       return NextResponse.json(
-        { success: false, error: { code: 'DB_ERROR', message_tl: 'Hindi ma-save ang pangalan. Subukan muli.' } },
+        { success: false, error: { code: 'DB_ERROR', message_tl: 'Hindi ma-save. Subukan muli.' } },
         { status: 500 }
       );
     }
@@ -342,7 +408,7 @@ export async function PATCH(req: NextRequest) {
   // Re-fetch updated data
   const { data: updatedUser } = await supabase
     .from('users')
-    .select('display_name')
+    .select('display_name, biometric_enabled, biometric_setup_at')
     .eq('id', userId)
     .single();
 
@@ -361,6 +427,8 @@ export async function PATCH(req: NextRequest) {
     income_range: updatedProfile?.income_range ?? null,
     bir_registered: updatedProfile?.bir_registered ?? false,
     bir_tax_type: updatedProfile?.bir_tax_type ?? null,
+    biometric_enabled: updatedUser?.biometric_enabled ?? false,
+    biometric_setup_at: updatedUser?.biometric_setup_at ?? null,
     profile_version: 1,
   };
 

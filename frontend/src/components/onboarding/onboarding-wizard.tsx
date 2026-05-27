@@ -3,12 +3,14 @@
 import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Capacitor } from '@capacitor/core';
 import StepWelcome from './step-welcome';
 import StepBusinessType from './step-business-type';
 import StepIncomeRange from './step-income-range';
 import StepPainPoint from './step-pain-point';
 import StepBirConsent from './step-bir-consent';
 import StepBirTaxType from './step-bir-tax-type';
+import StepBiometric from './step-biometric';
 import OnboardingShell from './onboarding-shell';
 import InstallGuide from '@/components/pwa/install-guide';
 import { KaiSitting, type KaiExpression } from '@/components/illustrations/kai';
@@ -197,6 +199,17 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
     };
     const redirectTo = painpointRedirect[savedData.primary_pain ?? ''] ?? '/dashboard';
 
+    // Sprint 16 (architect §4 + Open Q 5): native users see step 6.25
+    // (biometric prompt) between celebrate and PWA install; web users
+    // skip 6.25 entirely (no Web Authentication path in scope).
+    const advanceFromCelebrate = () => {
+      if (Capacitor.isNativePlatform()) {
+        setCurrentStep(6.25);
+      } else {
+        setCurrentStep(6.5);
+      }
+    };
+
     return (
       <div
         className="flex flex-col gap-6 animate-in fade-in duration-500"
@@ -216,12 +229,24 @@ export default function OnboardingWizard({ initialState }: OnboardingWizardProps
         </PaperNote>
         <button
           type="button"
-          onClick={() => setCurrentStep(6.5)}
+          onClick={advanceFromCelebrate}
           className="w-full bg-gradient-to-r from-honey to-honey-deep text-white font-semibold py-3.5 px-4 rounded-full shadow-ambient transition-all min-h-[48px]"
         >
           {t('celebrate.cta')}
         </button>
       </div>
+    );
+  }
+
+  // Step 6.25: biometric enable prompt (native-only — wizard guards
+  // entry; this branch is unreachable on web). Skip persists; on
+  // confirm we PATCH /api/profile and continue to the PWA install step.
+  if (currentStep === 6.25) {
+    return (
+      <StepBiometric
+        firstName={firstName}
+        onContinue={() => setCurrentStep(6.5)}
+      />
     );
   }
 

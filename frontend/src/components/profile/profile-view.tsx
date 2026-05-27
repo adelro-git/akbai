@@ -11,6 +11,7 @@ import ProfileEditForm from './profile-edit-form';
 import ThemeToggle from './theme-toggle';
 import InstallGuide from '@/components/pwa/install-guide';
 import NotificationSettings from './notification-settings';
+import BiometricToggle from './biometric-toggle';
 
 interface ProfileViewProps {
   displayName: string | null;
@@ -20,6 +21,9 @@ interface ProfileViewProps {
   incomeRange: string | null;
   birRegistered: boolean;
   birTaxType: string | null;
+  // Sprint 16 — biometric second factor (architect §4 + migration 021).
+  biometricEnabled: boolean;
+  biometricSetupAt: string | null;
   profileVersion: number;
 }
 
@@ -31,6 +35,8 @@ export default function ProfileView({
   incomeRange,
   birRegistered,
   birTaxType,
+  biometricEnabled,
+  biometricSetupAt,
   profileVersion,
 }: ProfileViewProps) {
   const router = useRouter();
@@ -211,6 +217,12 @@ export default function ProfileView({
 
         {/* ─── Notification Settings Section ─── */}
         <NotificationSettings />
+
+        {/* ─── Biometric Section (Sprint 16, architect §4) ─── */}
+        <BiometricToggle
+          initialEnabled={biometricEnabled}
+          initialSetupAt={biometricSetupAt}
+        />
 
         {/* ─── PWA Install Section ─── */}
         <section

@@ -22,6 +22,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Sprint 16: deep linking (per sprint-16-native-plugin-pattern.md §5)
+                 Custom scheme com.akbai.app://auth/callback?code=…&next=…
+                 routes inbound URLs (typically clicked magic-link emails) into
+                 the WebView. autoVerify="false" because this is a custom scheme,
+                 not an https App Link with a .well-known file — the OS doesn't
+                 need to verify domain ownership for proprietary schemes. -->
+            <intent-filter android:label="@string/title_activity_main" android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.akbai.app" android:host="auth" />
+            </intent-filter>
+
         </activity>
 
         <provider
@@ -38,4 +51,17 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Sprint 16: @capacitor/camera (per sprint-16-native-plugin-pattern.md §2) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Sprint 16: @capacitor/push-notifications (per sprint-16-native-plugin-pattern.md §3) -->
+    <!-- POST_NOTIFICATIONS is a runtime permission introduced in Android 13 (API 33);
+         the @capacitor/push-notifications plugin requests it via PushNotifications.requestPermissions().
+         Without this <uses-permission>, the runtime request returns 'denied' without
+         even prompting the user. FCM service entries are injected by the plugin's own
+         AndroidManifest at merge time — no need to declare them here. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

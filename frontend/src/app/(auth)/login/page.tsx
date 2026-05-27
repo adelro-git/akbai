@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import LoginForm from '@/components/auth/login-form';
+import LoginBanner from '@/components/auth/login-banner';
 import { PageBackground } from '@/components/ui/page-background';
 import { KaiSitting } from '@/components/illustrations/kai';
 import { CapizPattern } from '@/components/illustrations/svg/decorative/CapizPattern';
@@ -44,6 +45,16 @@ export default async function LoginPage() {
               </p>
             </div>
           </header>
+
+          {/*
+            Sprint 16 UX gap 1 — surfaces ?error=biometric_failed and
+            ?error=auth_callback_error. The (app) layout hard-redirects
+            here after 3 consecutive biometric failures (Apple 4.2
+            reviewer signal); without this banner the user lands on a
+            silent sign-out and assumes the app crashed.
+            LoginBanner ships its own <Suspense> wrapper internally.
+          */}
+          <LoginBanner />
 
           <LoginForm />
 
