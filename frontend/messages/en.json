@@ -204,6 +204,11 @@
       }
     }
   },
+  "profile": {
+    "section": {
+      "subscription": "Your Plan"
+    }
+  },
   "iap": {
     "error": {
       "network": "No connection. Try again when you have signal.",
@@ -230,7 +235,7 @@
       "manual": "Pick a plan for AKBai."
     },
     "body": {
-      "starter_only": "Kai chat isn't included in Starter — pick Pro if you want chat."
+      "starter_only": "Kai chat is Pro-only — upgrading is easy if you need it."
     },
     "cta": {
       "restore": "Already purchased? Restore your purchase here.",
@@ -247,13 +252,13 @@
     "cards": {
       "starter": {
         "title": "Starter",
-        "subtitle": "₱299 lifetime — one-time payment",
+        "subtitle": "₱299 — one-time payment, yours forever",
         "bullets": [
           "100 receipt scans per month",
           "BIR deadline reminders",
           "Basic reports + CSV export"
         ],
-        "note": "Starter doesn't include Kai chat — go Pro if you want that",
+        "note": "Unlock Kai chat — just upgrade.",
         "cta": "Get Starter"
       },
       "pro_monthly": {
@@ -266,11 +271,11 @@
           "Weekly story",
           "Customer reply drafter"
         ],
-        "cta": "Get Pro"
+        "cta": "Subscribe to Pro"
       },
       "pro_annual": {
         "title": "Pro Annual",
-        "subtitle": "₱4,999 per year — save almost ₱990",
+        "subtitle": "₱4,999 per year — save ₱990",
         "bullets": [
           "Everything in Starter +",
           "Unlimited Kai chat",
@@ -278,7 +283,7 @@
           "Weekly story",
           "Customer reply drafter"
         ],
-        "cta": "Get Pro Annual"
+        "cta": "Subscribe to Pro Annual"
       }
     }
   }

@@ -204,6 +204,11 @@
       }
     }
   },
+  "profile": {
+    "section": {
+      "subscription": "Plano Mo"
+    }
+  },
   "iap": {
     "error": {
       "network": "Walang koneksyon. Subukan mo ulit kapag may signal ka na.",
@@ -230,7 +235,7 @@
       "manual": "Pumili ka ng plano para sa AKBai."
     },
     "body": {
-      "starter_only": "Walang Kai sa Starter — kung gusto mo ng chat, kunin ang Pro."
+      "starter_only": "Chat sa Pro lang — madali lang mag-upgrade kung kailangan mo."
     },
     "cta": {
       "restore": "May dating purchase ka na? I-restore mo dito.",
@@ -247,13 +252,13 @@
     "cards": {
       "starter": {
         "title": "Starter",
-        "subtitle": "₱299 lifetime — bayad mo isang beses lang",
+        "subtitle": "₱299 — isang beses lang ang bayad",
         "bullets": [
           "100 receipt scans kada buwan",
           "BIR deadline reminders",
           "Basic reports + CSV export"
         ],
-        "note": "Walang Kai chat sa Starter — i-Pro mo kung gusto mo",
+        "note": "I-unlock mo ang Kai chat — upgrade lang.",
         "cta": "Kunin ang Starter"
       },
       "pro_monthly": {
@@ -266,11 +271,11 @@
           "Kuwento ng linggo",
           "Reply drafter para sa customers"
         ],
-        "cta": "Kunin ang Pro"
+        "cta": "Mag-subscribe sa Pro"
       },
       "pro_annual": {
         "title": "Pro Annual",
-        "subtitle": "₱4,999 kada taon — save ka ng halos ₱990",
+        "subtitle": "₱4,999 kada taon — matitipid mo ang ₱990",
         "bullets": [
           "Lahat sa Starter +",
           "Unlimited Kai chat",
@@ -278,7 +283,7 @@
           "Kuwento ng linggo",
           "Reply drafter para sa customers"
         ],
-        "cta": "Kunin ang Pro Annual"
+        "cta": "Mag-subscribe sa Pro Annual"
       }
     }
   }

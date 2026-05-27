@@ -31,7 +31,7 @@ export default function FreeTierBanner({ queriesUsed, tier, onUpgrade }: FreeTie
   if (queriesUsed >= 10) {
     return (
       <div
-        className="mx-4 mb-2 rounded-xl px-4 py-3 bg-error/10 border border-error/30"
+        className="mx-4 mb-2 rounded-xl px-4 py-3 bg-error/10 shadow-ambient"
         data-testid="free-tier-block-banner"
         role="alert"
       >
@@ -44,7 +44,7 @@ export default function FreeTierBanner({ queriesUsed, tier, onUpgrade }: FreeTie
           className="text-xs text-error underline underline-offset-2 mt-1 inline-block min-h-[44px]"
           data-testid="free-tier-block-upgrade-cta"
         >
-          Learn about Pro
+          Alamin ang Pro
         </button>
       </div>
     )
@@ -55,12 +55,12 @@ export default function FreeTierBanner({ queriesUsed, tier, onUpgrade }: FreeTie
     const remaining = 10 - queriesUsed
     return (
       <div
-        className="mx-4 mb-2 rounded-xl px-4 py-3 bg-amber-500/10 border border-amber-500/30"
+        className="mx-4 mb-2 rounded-xl px-4 py-3 bg-amber-500/10 shadow-ambient"
         data-testid="free-tier-warning-banner"
         role="alert"
       >
         <p className="text-sm text-amber-700 dark:text-amber-400 font-medium">
-          {remaining} na lang ang tanong mo for today. Bukas ulit, or upgrade to Pro!
+          {remaining} na lang ang tanong mo ngayon. Bukas ulit, o mag-upgrade sa Pro!
         </p>
       </div>
     )

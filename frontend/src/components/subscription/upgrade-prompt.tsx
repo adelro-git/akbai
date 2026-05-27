@@ -64,7 +64,7 @@ export function UpgradePrompt({ onUpgrade, className = '' }: UpgradePromptProps)
               </svg>
             </span>
             <span className="text-sm text-on-surface-variant">
-              50 receipt scans kada buwan
+              Unlimited na receipt scans
             </span>
           </li>
           <li className="flex items-start gap-2">

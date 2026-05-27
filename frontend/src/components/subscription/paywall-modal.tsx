@@ -111,6 +111,9 @@ export function PaywallModal({
   const tBody = useTranslations('paywall.body');
   const tCta = useTranslations('paywall.cta');
   const tWebFallback = useTranslations('paywall.web_fallback');
+  // UX review fix: error strip used to render raw messageKey
+  // ("iap.error.network") to users. Resolve via the iap.error.* namespace.
+  const tIapError = useTranslations('iap.error');
 
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [errorKey, setErrorKey] = useState<string | null>(null);
@@ -183,11 +186,17 @@ export function PaywallModal({
       />
 
       {/* ── Centered dialog ── */}
+      {/* UX review: aria-labelledby points to <h2> + aria-describedby to    */}
+      {/* the body <p>, so screen readers announce title + context together. */}
+      {/* aria-describedby only set when the body sub-line actually renders. */}
       <div
         className="relative w-full max-w-md bg-surface-container-lowest rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-ambient-lg"
         role="dialog"
         aria-modal="true"
-        aria-label={tTitle(source)}
+        aria-labelledby="paywall-modal-title"
+        {...((source === 'chat' || source === 'manual') && {
+          'aria-describedby': 'paywall-modal-desc',
+        })}
       >
         {/* ── Close button (Apple a11y — aria-label required) ── */}
         <button
@@ -202,19 +211,26 @@ export function PaywallModal({
 
         {/* ── Source-keyed title ── */}
         <h2
+          id="paywall-modal-title"
           className="text-on-surface text-lg font-bold leading-tight pr-12"
           data-testid="paywall-modal-title"
         >
           {tTitle(source)}
         </h2>
 
-        {/* ── Body sub-line under cards (always rendered for context) ── */}
-        <p
-          className="mt-2 text-xs text-on-surface-variant"
-          data-testid="paywall-modal-body"
-        >
-          {tBody('starter_only')}
-        </p>
+        {/* ── Body sub-line — only relevant when the user reaches the    */}
+        {/*    paywall via the chat gate or manual /profile CTA. For       */}
+        {/*    morning_briefing / weekly_story / reply_drafter / scan_limit*/}
+        {/*    the "Starter has no Kai chat" framing is a non-sequitur.    */}
+        {(source === 'chat' || source === 'manual') && (
+          <p
+            id="paywall-modal-desc"
+            className="mt-2 text-xs text-on-surface-variant"
+            data-testid="paywall-modal-body"
+          >
+            {tBody('starter_only')}
+          </p>
+        )}
 
         {/* ── Native branch: 3 tier cards + restore ── */}
         {isNative && (
@@ -296,6 +312,9 @@ export function PaywallModal({
         )}
 
         {/* ── Inline error toast (purchase + restore failures both land here) ── */}
+        {/* UX review fix: messageKey shape is "iap.error.*"; strip the      */}
+        {/* "iap.error." prefix before resolving via the iap.error namespace */}
+        {/* so we render Filipino copy, not the raw key.                     */}
         {errorKey && (
           <div
             className="mt-4 rounded-xl bg-error-container/30 px-4 py-3"
@@ -303,7 +322,9 @@ export function PaywallModal({
             data-testid="paywall-modal-error"
             data-message-key={errorKey}
           >
-            <p className="text-sm text-on-error-container">{errorKey}</p>
+            <p className="text-sm text-on-error-container">
+              {tIapError(errorKey.replace(/^iap\.error\./, ''))}
+            </p>
           </div>
         )}
       </div>
