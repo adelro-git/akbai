@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-05-24 (Sprint 13 — Frontend Redesign Phase 8-9 close-out IN PROGRESS; Sprint 14 onward = Native Mobile Pivot via Capacitor + Kai-via-Gemini-prompts)
+> Last updated: 2026-05-27 (Sprint 14 — Native Mobile Pivot Foundations + Spike closed GREEN; ADR-019 accepted; committed to Sprints 15-19)
 
 ---
 
@@ -1412,7 +1412,7 @@ These are NOT bugs — they are decisions made in-session, listed so they don't 
 
 ---
 
-### Sprint 14 — TBD (Native Mobile Pivot — Foundations + Spike)
+### Sprint 14 — 2026-05-27 (Native Mobile Pivot — Foundations + Spike) — CLOSED 🟢 GREEN
 
 **Phase:** 0A → 0B transition (Native Mobile Pivot — begins)
 **Sprint Goal:** Lock the 3 pivot decisions (Capacitor, Starter+Pro pricing, Kai character evolution via Gemini) into the repo, run a throwaway Capacitor spike on a feature branch, generate first round of Kai character images via Gemini prompts, decide whether to commit to the remaining 5 pivot sprints.
@@ -1453,4 +1453,70 @@ These are NOT bugs — they are decisions made in-session, listed so they don't 
 - **Sprint 18:** Store Assets + Pre-Launch Feature Readiness Gate (icons, screenshots, privacy policy, gate sign-off)
 - **Sprint 19:** Soft Launch + Iteration (public release + Tarsi-style founder distribution motion)
 
-**Sprint outcome:** PLANNED (starts after Sprint 13 closes)
+---
+
+**Sprint outcome:** ✅ CLOSED 🟢 GREEN — committed to Sprints 15-19.
+
+**What shipped this sprint (Stream A — docs on `chore/14-foundations` → 3 commits):**
+- **766bab4** — ADR-018 drift fix: "commissioned Filipino illustrator (₱30-80k)" → "Gemini image generation"; sprint renumbering (Sprint 13 = redesign close-out, Sprint 14 = spike, Sprint 18 = Pre-Launch Gate, Sprint 19 = soft launch); master-brief TODO closed.
+- **38eca00** — ADR-019 Draft authored (Capacitor wrapping pattern): four-part decision (static export config, client-component conversion, Capacitor init params, single build pipeline). Alternatives reviewed: keep server components via SSR shim (rejected), full SPA rewrite (rejected), PWABuilder/TWA (already rejected ADR-018), conditional dual-build (rejected — drift risk). Plus ADR-018 `/scanner` → `/scan` and `next.config.ts` → `.js` drift fixes.
+- **fe382c7** — ADR-019 Draft → Accepted (Green); spike findings folded in. Index header bumped (Current highest: ADR-019, status Accepted).
+
+**What shipped this sprint (Stream C — Capacitor spike on `feat/capacitor-spike`, THROWAWAY branch, do not merge):**
+- **f653f86** — Architect's `SPIKE_PLAN.md` committed for traceability.
+- **ca1f368** — Installed `@capacitor/core`, `@capacitor/cli`, `@capacitor/android` v8.3.4.
+- **09b8d3f** — Static export config + 3-page client conversion (`/dashboard` stubs, `/chat` real `/api/chat` wiring with Suspense around `useSearchParams`, `/scan` flag-removed). 9-iteration build loop landed at 8 prerendered routes. 17 API folders moved to `_api_disabled_for_spike/`; `app/sitemap.ts` dropped; 7 non-target `(app)/*` pages disabled with `_underscore` prefix; `app/auth/callback`, `(app)/layout`, `lib/i18n/{request,set-locale}` all stub/rewritten for static export.
+- **56396ac** — `npx cap init AKBai com.akbai.app --web-dir=out` + `npx cap add android` produced 12.72 MB Android Gradle scaffold (218 files: MainActivity at `com/akbai/app/`, splash + launcher mipmaps per density, ProGuard rules).
+- **930d1a3** — Mid-sprint findings doc with YELLOW verdict (binary deferred — JDK/SDK toolchain gap).
+- **c5926b6** — Final GREEN findings: JDK 17 + JDK 21 (Capacitor 8 wants source-level 21) installed via `winget install Microsoft.OpenJDK.{17,21}`; Android cmdline-tools 13114758 + platform 36 + build-tools 36 via `sdkmanager`; corporate-TLS chain patched into Java's `cacerts21` keystore (62 Windows root certs imported via `keytool`); `gradlew bundleDebug` + `gradlew assembleDebug` both produced **15 MB binaries** at `frontend/android/app/build/outputs/{bundle,apk}/debug/`. 47-second clean Gradle build.
+
+**Stream B — Anton solo Gemini iteration:** in-flight async, not blocking sprint closure. Anton continues iterating poses on his own schedule.
+
+**Decision gate verdict:** ✅ 🟢 GREEN — both architectural risks resolved (static export tractability + Gradle build tractability). On-device Pixel 5 smoke is Sprint 15's first-30-min verification, not a promotion blocker. Apk is at `feat/capacitor-spike` commit `c5926b6` waiting for `adb install`.
+
+**Commit:** Sprints 15-19 (Conversion → Native Polish → IAP → Store Assets+Gate → Soft Launch). Per ADR-018 and ADR-019. No conditions attached.
+
+**Bundle size signal (vs <30 MB Pre-Launch Gate target):**
+| Artifact | Size | Headroom |
+|---|---|---|
+| Web `out/` static-export bundle | 13 MB / 169 files | input to Capacitor |
+| Android `.apk` (debug, signed) | 15 MB | 50% headroom |
+| Android `.aab` (Play Console upload) | 15 MB | 50% headroom |
+
+Comfortable headroom for the 7 remaining `(app)/*` page conversions Sprint 15 will add. R8/ProGuard is on by default in release builds; spike used debug builds (no R8), so release will likely be smaller still.
+
+**Sprint 15 conversion inventory (inherited from spike):**
+- 7 remaining `(app)/*` `page.tsx` conversions: `admin`, `costing` (×3 — `page`/`new`/`[id]`), `deadlines`, `expenses`, `invoices` (×3), `onboarding`, `profile`
+- `app/auth/callback/route.ts` — Supabase magic-link → client-side `exchangeCodeForSession` (Capacitor deep-link handler)
+- `app/(app)/layout.tsx` — server `loadPersona()` → client `useEffect`
+- `lib/i18n/request.ts` — `cookies()`/`headers()`-based locale resolution → browser language + localStorage
+- `lib/i18n/set-locale.ts` — `'use server'` action → `document.cookie` write (already done in spike with reload)
+- Move 17 `_api_disabled_for_spike/*` folders back to `src/app/api/` AND configure the build pipeline to exclude them from static export (likely a build-time symlink or `next.config` rewrite — Sprint 15 implements)
+- `proxy.ts` middleware — inventory what it does + pick replacement pattern (top-level layout `useEffect` mirroring middleware logic is the typical Capacitor approach)
+
+**Pre-existing repo issues surfaced (Sprint 15 triage, NOT pivot-blocking):**
+1. `react-day-picker@8 ↔ date-fns@4` peer-dep conflict — `npm install` requires `--legacy-peer-deps`. Either upgrade RDP to v9 or pin date-fns to 3.x.
+2. Static-export prerender needs build-time placeholder Supabase env. Defensive fix: lazy-init `createClient()` inside `useEffect`, or guard `useRef(createClient())` with `typeof window` check at module level.
+3. `@sentry/nextjs` warns `disableLogger` + `automaticVercelMonitors` deprecated — move under `webpack.*` per deprecation message.
+4. `proxy.ts` middleware silently disabled in static export — Sprint 15 explicitly handles.
+5. Windows + corporate-TLS quirks (NODE_OPTIONS=--use-system-ca, Java keystore patch, JDK install paths) — worth a `CONTRIBUTING.md` note so the next corporate-Windows contributor doesn't repeat the discovery loop.
+
+**Velocity (Sprint 14):**
+- Anton time: ~30 min (consent answers + decision-gate verdict + this doc review). Budget was 10-12 hrs; came in way under because Stream A doc work was pre-positioned in Sprint 13 and Stream C agent ran the spike end-to-end.
+- Agent time: ~3 hrs wall-clock across 2 attempts (attempt #1 exited prematurely on a background-task misunderstanding; attempt #2 ran end-to-end including JDK + Android SDK install + Java keystore patch + Gradle build). Budget was 5-6 hrs.
+- Wall-clock: half a day (kickoff ~10:30 AM → close ~12:00 PM Asia/Manila).
+
+**Process learning — agent failure mode worth documenting:**
+- Attempt #1 of the build-engineer agent exited prematurely after firing `npm install` with `run_in_background: true`, expecting a "completion notification" to wake it later. The notification mechanism only delivers within an active agent session; ending the session orphans the background task. **Rule for build-engineer prompts going forward: install commands run synchronously with `timeout: 600000` (10-min max). For genuinely long-running builds (>10 min), `run_in_background: true` is fine BUT the agent must stay in-session and use Monitor to poll for completion — not exit and expect a wake-up.** Memory entry being added separately.
+
+**Branch hygiene:**
+- `chore/14-foundations` (3 commits ahead of main) → open PR to `main`
+- `feat/capacitor-spike` (6 commits, throwaway) → do NOT merge. Keep branch for forensic reference (build attempt logs, exact toolchain notes). After PR merge to main, optional cleanup: `git worktree remove ../akbai-spike` + `git branch -D feat/capacitor-spike` if Anton wants a clean repo.
+
+**Action items (carry to Sprint 15):**
+1. ⏳ Anton on-device Pixel 5 smoke (`adb install app-debug.apk` from spike worktree). Smoke checklist in `SPIKE_FINDINGS.md` §QA pickup notes. Time-box 30 min. If issues surface, log as Sprint 15 polish work.
+2. ⏳ Stream B Gemini Kai iteration — Anton continues async; 8 poses target. Reference: `kai-gemini-prompts.md`.
+3. ⏳ CONTRIBUTING.md note on Windows + corporate-TLS toolchain (low priority, but high value when next contributor hits it).
+4. ⏳ Sprint 15 kicks off with conversion inventory above — exact file list already on disk in spike worktree.
+
+**Next sprint:** Sprint 15 — Capacitor Conversion. 10 pivot hrs + 4-5 feature hrs. Decision gate: both binaries build clean from main (not the spike branch). Bundle size <30 MB after release build (R8/ProGuard on).
