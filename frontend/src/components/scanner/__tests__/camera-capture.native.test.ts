@@ -137,14 +137,14 @@ describe('Capacitor mocks — module load sanity', () => {
   });
 
   it('Camera.getPhoto is the mocked function', async () => {
-    const { Camera } = await import('@capacitor/camera');
+    const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
     mockGetPhoto.mockResolvedValueOnce({
       dataUrl: SAMPLE_JPEG_DATA_URL,
       format: 'jpeg',
     });
     const result = await Camera.getPhoto({
-      source: 'CAMERA',
-      resultType: 'dataUrl',
+      source: CameraSource.Camera,
+      resultType: CameraResultType.DataUrl,
       quality: 85,
       width: 1600,
     });
