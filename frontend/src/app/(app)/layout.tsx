@@ -1,36 +1,37 @@
-import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import BottomNav from '@/components/dashboard/bottom-nav';
 import SidebarNav from '@/components/dashboard/sidebar-nav';
 import SessionGuard from '@/components/auth/session-guard';
-import { createClient } from '@/lib/supabase/server';
-import { createServiceClient } from '@/lib/supabase/service';
-import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
-
-export const metadata: Metadata = {
-  manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'AKBai',
-  },
-};
 
 // ============================================================
-// (app) layout — sidebar (≥ 860px tablet:) + bottom nav (< 860px),
-// PWA enabled. Phase 5: fetches persona data server-side and
-// pipes it into SidebarNav so the persona pill renders without
-// a client-side round trip.
+// (app) layout — Sprint 15 Capacitor conversion.
+//
+// Previously a server component that called `loadPersona()` via
+// the server Supabase client. Static export forbids `cookies()`
+// (transitively used by the server client), so the persona fetch
+// moves to a client `useEffect` that calls `GET /api/profile`.
+//
+// Why a SKELETON not a placeholder-then-redirect: the layout
+// wraps every (app) page. A flash of empty `null` persona is
+// visually fine (SidebarNav already degrades) but the sidebar
+// itself stays mounted across navigations, so we keep the layout
+// shell rendered immediately and only the persona pill swaps
+// once `/api/profile` resolves. No skeleton block needed —
+// SidebarNav handles `name: null` (renders "AKBai") and `tagline:
+// null` (falls back to `t('personaFallbackTagline')` via its own
+// `useTranslations` hook).
+//
+// Auth gate: every (app)/** page already adds its own client
+// auth-gate `useEffect` (Sprint 15 batch 1). The layout itself
+// stays auth-agnostic — belt-and-braces would re-check the
+// session here but adds a duplicate round-trip per page mount.
+//
+// `metadata` export removed (server-only); the root `app/layout.tsx`
+// still ships the PWA manifest reference.
 // ============================================================
-
-interface BusinessProfileRow {
-  business_name: string | null;
-  business_type: string | null;
-}
-
-interface UserRow {
-  display_name: string | null;
-}
 
 const KNOWN_BUSINESS_TYPES = [
   'food_baking',
@@ -47,60 +48,70 @@ function isKnownBusinessType(value: string | null): value is KnownBusinessType {
   return value !== null && (KNOWN_BUSINESS_TYPES as readonly string[]).includes(value);
 }
 
-async function loadPersona(): Promise<{ name: string | null; tagline: string | null }> {
-  const t = await getTranslations('nav');
-
-  let userId: string | null = null;
-  let supabaseClient: Awaited<ReturnType<typeof createClient>> | null = null;
-
-  if (SKIP_AUTH) {
-    userId = DEV_USER.id;
-  } else {
-    supabaseClient = await createClient();
-    const { data } = await supabaseClient.auth.getUser();
-    userId = data.user?.id ?? null;
-  }
-
-  if (!userId) {
-    return { name: null, tagline: null };
-  }
-
-  const db = SKIP_AUTH || !supabaseClient ? createServiceClient() : supabaseClient;
-
-  const { data: userData } = await db
-    .from('users')
-    .select('display_name')
-    .eq('id', userId)
-    .maybeSingle<UserRow>();
-
-  const { data: profile } = await db
-    .from('business_profiles')
-    .select('business_name, business_type')
-    .eq('user_id', userId)
-    .is('deleted_at', null)
-    .maybeSingle<BusinessProfileRow>();
-
-  const name = profile?.business_name ?? userData?.display_name ?? null;
-
-  let tagline: string | null = null;
-  if (profile?.business_type) {
-    const raw = profile.business_type;
-    if (raw.startsWith('other:')) {
-      tagline = raw.slice('other:'.length).trim() || t('businessTypeLabel.other');
-    } else if (isKnownBusinessType(raw)) {
-      tagline = t(`businessTypeLabel.${raw}`);
-    }
-  }
-
-  return { name, tagline };
+interface PersonaState {
+  name: string | null;
+  tagline: string | null;
 }
 
-export default async function AppGroupLayout({
+interface ProfileApiPayload {
+  display_name: string | null;
+  business_name: string | null;
+  business_type: string | null;
+}
+
+export default function AppGroupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const persona = await loadPersona();
+  const t = useTranslations('nav');
+  const [persona, setPersona] = useState<PersonaState>({ name: null, tagline: null });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPersona() {
+      try {
+        const res = await fetch('/api/profile');
+        if (!res.ok) {
+          // 401 (no session yet) is expected on first paint when
+          // session is still rehydrating; the per-page auth gate
+          // will then push to /login. Leave persona null — sidebar
+          // degrades to "AKBai" until the gate resolves.
+          return;
+        }
+        const json = (await res.json()) as
+          | { success: true; data: ProfileApiPayload }
+          | { success: false };
+        if (cancelled || !json.success) {
+          return;
+        }
+
+        const { display_name, business_name, business_type } = json.data;
+        const name = business_name ?? display_name ?? null;
+
+        let tagline: string | null = null;
+        if (business_type) {
+          if (business_type.startsWith('other:')) {
+            const custom = business_type.slice('other:'.length).trim();
+            tagline = custom.length > 0 ? custom : t('businessTypeLabel.other');
+          } else if (isKnownBusinessType(business_type)) {
+            tagline = t(`businessTypeLabel.${business_type}`);
+          }
+        }
+
+        setPersona({ name, tagline });
+      } catch {
+        // Network failure — leave persona null. SidebarNav already
+        // renders a safe fallback so there's no visible break.
+      }
+    }
+
+    void loadPersona();
+    return () => {
+      cancelled = true;
+    };
+  }, [t]);
 
   return (
     <>
