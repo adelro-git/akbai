@@ -45,3 +45,11 @@ test-results/
 # google-services.local.json and configure Gradle to prefer it. See
 # sprint-16-native-plugin-pattern.md §3.
 android/app/google-services.local.json
+
+# Sprint 16+: Sentry symbolication artifacts. Rebuilt every release;
+# uploaded via scripts/upload-symbols (Sprint 19). Never committed.
+# Architect ref: sprint-16-native-plugin-pattern.md §6.
+android/app/build/outputs/mapping/
+ios/build/**/dSYMs/
+*.dSYM/
+*.dSYM.zip
