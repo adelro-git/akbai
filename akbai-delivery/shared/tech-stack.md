@@ -1,6 +1,6 @@
 # AKBai — Canonical Tech Stack Reference
 > Used by: solutions-architect, fullstack-engineer, data-architect, devops-engineer, ai-engineer
-> Last updated: 2026-05-24 (Sprint 13 — Native Mobile Pivot: Capacitor + IAP via RevenueCat, Xendit deferred) | Prior source: Roadmap v14, Operations Playbook v7
+> Last updated: 2026-05-27 (Sprint 16 — 5 Capacitor plugins integrated; Gap G4 IMPLEMENTED. Sprints 13-15 doc-banner items unchanged.) | Prior source: Roadmap v14, Operations Playbook v7
 
 ---
 
@@ -38,8 +38,9 @@ AKBai is pivoting from **Next.js PWA-first** to **native mobile (App Store + Goo
 | Language | TypeScript (strict mode) | Type safety critical for financial data |
 | Styling | Tailwind CSS only | No CSS modules, no styled-components |
 | UI Components | Shadcn/UI | Composable, accessible, ships zero unused CSS. No MUI or Bootstrap. |
-| **Native shell** (Sprint 13+) | **Capacitor 6+** (`@capacitor/core`, `@capacitor/ios`, `@capacitor/android`) | Wraps Next.js static export in iOS + Android shells; provides native camera, push, biometric, IAP via plugins |
-| **Native plugins** (Sprint 15+) | `@capacitor/camera`, `@capacitor/push-notifications`, `@capacitor-community/biometric-auth`, `@revenuecat/purchases-capacitor` | Replaces browser APIs (getUserMedia, Web Push) with native equivalents; biometric is Apple-rejection insurance |
+| **Native shell** (Sprint 13+ planned, Sprint 14 spike, Sprint 15 landed on main) | **Capacitor 8.3.4** (`@capacitor/core`, `@capacitor/cli`, `@capacitor/android` — iOS scaffold deferred to Sprint 17/19) | Wraps Next.js static export in iOS + Android shells; provides native camera, push, biometric, IAP via plugins. Toolchain: JDK 21 + Android SDK 36 + corporate-TLS keystore (recipe at `SPIKE_FINDINGS.md`). |
+| **Native plugins** (Sprint 16 integrated) | `@capacitor/camera@8.2.0`, `@capacitor/push-notifications@8.1.1`, `@aparajita/capacitor-biometric-auth@10.0.0` (substituted from architect-spec `@capacitor-community/biometric-auth` which doesn't exist on npm; same API), `@capacitor/app@8.1.0` (deep linking for `com.akbai.app://auth/callback`), `@capacitor/preferences@8.0.1` (biometric failure counter — native-secure storage, not localStorage), `@sentry/capacitor@4.0.0` (native crash SDK alongside `@sentry/nextjs`) | Replaces browser APIs (getUserMedia, Web Push) with native equivalents; biometric is Apple-rejection insurance. Gap G4 IMPLEMENTED 2026-05-27 — full close-out at Sprint 18 Pre-Launch Gate review. All plugins gated on `Capacitor.isNativePlatform()` so web/PWA fallback continues to work. |
+| **IAP plugin** (Sprint 17 — RevenueCat integration) | `@revenuecat/purchases-capacitor` (planned; ~1-2 MB bundle add) | Wraps Apple StoreKit 2 + Google Play Billing. Sprint 17 work resolves Gap G2 (IAP webhook idempotency). |
 | PWA | ~~next-pwa~~ DEPRECATED (Sprint 13+) | Capacitor handles offline caching natively; PWA assets retained for web-only fallback |
 | Data Fetching | TanStack Query + Persister | Offline-first caching; queued mutations sync when connectivity returns. Critical for intermittent 4G users. Works in Capacitor WebView identically. |
 | State | React state + Supabase Realtime | No Redux; keep it simple |
@@ -71,7 +72,7 @@ AKBai is pivoting from **Next.js PWA-first** to **native mobile (App Store + Goo
 /lib/
   supabase/        # Supabase client (browser + server)
   claude/          # Claude API wrapper + circuit breaker
-  iap/             # IAP webhooks + RevenueCat client (Sprint 16+)
+  iap/             # IAP webhooks + RevenueCat client (Sprint 17)
   payments/        # Subscription lifecycle (shared between legacy Xendit + new IAP)
   xendit/          # DEPRECATED 2026-05-24 — to be removed in Sprint 17
 ```
@@ -166,7 +167,7 @@ export async function POST(req: Request) {
 
 ---
 
-## Payments — In-App Purchase (Sprint 16+)
+## Payments — In-App Purchase (Sprint 17)
 
 > **2026-05-24 update:** Xendit deferred indefinitely (was wired but never activated — `XENDIT_SECRET_KEY` missing). Native pivot replaces it with App Store + Google Play IAP, wrapped via RevenueCat SDK for unified cross-platform handling.
 
@@ -189,8 +190,8 @@ export async function POST(req: Request) {
 **Free 7-day trial:** Native — Apple/Google support introductory offers on subscription products. RevenueCat tracks trial entitlement; backend treats trial as "Pro tier with expiration date".
 
 **Migration from Xendit:**
-- Existing Xendit webhook handler (`/api/webhooks/xendit/route.ts`) — kept dormant; can be removed in Sprint 17 cleanup
-- Existing subscription lifecycle logic (`frontend/src/lib/payments/`) — adapted for IAP events (Sprint 16)
+- Existing Xendit webhook handler (`/api/webhooks/xendit/route.ts`) — kept dormant; removable in Sprint 17 cleanup
+- Existing subscription lifecycle logic (`frontend/src/lib/payments/`) — adapted for IAP events in Sprint 17
 - `subscription_status` table schema — preserved; add `iap_platform` column (`'apple' | 'google' | 'xendit_legacy'`) for source tracking
 
 **Anti-steering note (May 2026 regulatory state):** US allows external payment links alongside IAP (with 27% commission). EU DMA: choose IAP or alternative, not both. For AKBai, default = IAP only (simpler, cleaner). External web checkout fallback can be added later if regulatory cost-benefit shifts.
@@ -211,13 +212,13 @@ Xendit subscription API was wired but never activated. Webhook handler at `/api/
 - CDN: Vercel Edge Network → Cloudflare Edge Network (post-migration)
 - Domains: Managed via Cloudflare DNS
 
-**Mobile app (Sprint 17+):**
+**Mobile app (Sprint 19 — Anton-side enrollment wave per Sprint 14 restructured outline):**
 - **iOS:** App Store (via App Store Connect + TestFlight)
-  - Apple Developer Program: $99/yr (enroll Sprint 15)
+  - Apple Developer Program: $99/yr (enroll Sprint 19)
   - Signing: Xcode automatic signing initially, manual if CI/CD added later
   - First review: 24-48hr typical, plan for 1 rejection cycle (Guideline 4.2 webview risk)
 - **Android:** Google Play Store (via Play Console + Internal Testing track)
-  - Google Play Console: $25 one-time (enroll Sprint 15)
+  - Google Play Console: $25 one-time (enroll Sprint 19)
   - Signing: Play App Signing (Google holds upload key)
   - First review: same or faster than Apple
 

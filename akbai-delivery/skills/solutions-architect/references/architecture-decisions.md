@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
 > Current highest: ADR-019
-> Last updated: 2026-05-27 (Sprint 15 — ADR-019 fully implemented on main; Gap G1 RESOLVED; .aab = 14.62 MB, .apk = 15.35 MB from main checkout)
+> Last updated: 2026-05-27 (Sprint 16 — ADR-019 surface-polish layer added; Gap G4 IMPLEMENTED via 5 Capacitor plugins; `.aab` = 20.75 MB / 1427 tests. ADR-019 surface stays Accepted Green.)
 
 ---
 
@@ -27,7 +27,7 @@
 | ADR-016 | Frontend Redesign Phase 8 — `/api/chat/suggestions` rule-based chips | Accepted | 2026-04-28 |
 | ADR-017 | Frontend Redesign Phase 9 — Deadline → Chat deeplink contract | Accepted | 2026-04-28 |
 | ADR-018 | Native mobile pivot via Capacitor + IAP (deprecate Xendit) | Accepted | 2026-05-24 |
-| ADR-019 | Capacitor wrapping pattern (Sprint 14 spike findings) | Accepted (Green) — fully implemented Sprint 15 (Gap G1 RESOLVED) | 2026-05-27 |
+| ADR-019 | Capacitor wrapping pattern (Sprint 14 spike findings) | Accepted (Green) — Sprint 15 conversion (Gap G1) + Sprint 16 plugins (Gap G4) both landed on main | 2026-05-27 |
 
 ---
 
@@ -1226,3 +1226,5 @@ Sprint 15 full conversion targets (estimated; exact list pending spike Step 3 in
 **Engineer pickup:** `C:\Users\Anton del Rosario\akbai-spike\SPIKE_PLAN.md` is the step-by-step plan for the spike itself. ADR-019 (this document) is what gets promoted from Draft → Accepted after the spike's decision gate returns GREEN.
 
 **Sprint 15 close-out (2026-05-27):** Full conversion shipped to `main` via PR #33. Gap G1 RESOLVED. 15 server → client page conversions + 5 infra rewrites + `CAPACITOR_BUILD=1` env-conditional `next.config.js` + per-route `enforceRateLimit()` opt-in. Bundle: `.aab` = 14.62 MB, `.apk` = 15.35 MB (both ~50% under <30 MB ceiling). All 4 architect "Open Questions for Anton" defaults held at PR review. **Canonical implementation pattern for future Capacitor work:** `akbai-delivery/skills/solutions-architect/references/sprint-15-conversion-pattern.md` — read this when adding new `(app)/*` pages, designing new `/api/*` rate-limit tiers, or extending the Capacitor build target.
+
+**Sprint 16 close-out (2026-05-27):** Surface polish layer shipped to `main` via PR #35. **Gap G4 (Apple Guideline 4.2 rejection risk) IMPLEMENTED** — full close-out at Sprint 18 Pre-Launch Gate review. 5 Capacitor plugins integrated on top of the Sprint 15 conversion: `@capacitor/camera@8.2.0` (native `Camera.getPhoto` on `/scan` with `getUserMedia` web fallback), `@capacitor/push-notifications@8.1.1` (FCM/APNs via discriminated-union Zod on `/api/push/subscribe`; deferred prompt on `/deadlines` first-view-within-14-days), `@aparajita/capacitor-biometric-auth@10.0.0` (substituted from architect-spec `@capacitor-community/biometric-auth` which doesn't exist on npm — same API; onboarding step 6.25, `(app)/layout.tsx` app-open guard with 3-strike OTP fallback via `@capacitor/preferences`, `/profile` toggle), `@capacitor/app@8.1.0` (deep link `com.akbai.app://auth/callback`), `@sentry/capacitor@4.0.0` (native crash SDK alongside `@sentry/nextjs`; ProGuard `minifyEnabled true` + `scripts/upload-symbols.{ps1,sh}` configured for Sprint 19 execution). Plus migrations 020 (push_subscriptions platform extension) + 021 (users biometric columns). Bundle: `.aab` = **20.75 MB** (+6.13 MB vs Sprint 15; **31% under 30 MB ceiling, under <22 MB sprint target**); `.apk` = 24.39 MB. **1427/1427 tests passing.** All 5 architect Open Questions held at PR review. Security pass MINOR ISSUES only (no blockers). UX B+ voice grade. **Canonical implementation pattern for future Capacitor plugin work:** `akbai-delivery/skills/solutions-architect/references/sprint-16-native-plugin-pattern.md` — read this when adding new Capacitor plugins, designing native-vs-web fallback branches, or wiring native crash symbolication.
