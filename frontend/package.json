@@ -5,6 +5,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
     "@capacitor/android": "^8.3.4",
+    "@capacitor/camera": "^8.2.0",
     "@capacitor/cli": "^8.3.4",
     "@capacitor/core": "^8.3.4",
     "@hookform/resolvers": "^5.0.1",

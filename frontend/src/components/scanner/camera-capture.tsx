@@ -2,18 +2,32 @@
 
 /**
  * Camera Capture — Receipt image capture for OCR scanning
- * Feature: Resibo Scanner (Build 3)
- * Role: Client-side camera/file capture. Primary: getUserMedia (rear camera).
- *       Fallback: file input for gallery upload.
+ * Feature: Resibo Scanner (Build 3) + Sprint 16 native polish (Gap G4 mitigation)
+ * Role: Client-side camera/file capture.
+ *       - Web (Vercel PWA target): getUserMedia (rear camera) + file input fallback.
+ *       - Native (Capacitor Android/iOS): @capacitor/camera single-shot Camera.getPhoto.
+ *       The branching is gated by Capacitor.isNativePlatform() and happens at the
+ *       "Kunan ng litrato" click handler. The component external API
+ *       (onCapture(file), onCancel()) is unchanged — only the internal capture
+ *       mechanism differs.
  *
- * Flow: Camera feed / file select -> preview captured image -> confirm or retake
+ * Flow (web): idle -> camera-active -> previewing -> onCapture
+ * Flow (native): idle -> previewing -> onCapture   (no camera-active intermediate;
+ *                Camera.getPhoto is a modal OS sheet that returns or throws)
  *
- * Dependencies: None (standalone capture component)
+ * Reference: akbai-delivery/skills/solutions-architect/references/sprint-16-native-plugin-pattern.md §2
+ * Dependencies: @capacitor/core (platform detection), @capacitor/camera (native only)
  * Design: useRef + onClick (React 19 bug), 44px+ touch targets, design system tokens
  */
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { Camera, Upload, RotateCcw, Check, X } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import {
+  Camera as CapacitorCamera,
+  CameraResultType,
+  CameraSource,
+} from '@capacitor/camera';
 import { SUPPORTED_MIME_TYPES, MAX_IMAGE_SIZE_BYTES } from '@/lib/ocr/types';
 
 // ============================================================
@@ -34,6 +48,49 @@ type CaptureState = 'idle' | 'camera-active' | 'previewing' | 'permission-denied
 // ============================================================
 
 const ACCEPTED_TYPES = SUPPORTED_MIME_TYPES.join(',');
+
+// --- Evaluate platform once at module load. Capacitor.isNativePlatform()
+//     returns false in browser/JSDOM/Vercel; true inside the Capacitor WebView.
+const isNative = Capacitor.isNativePlatform();
+
+// ============================================================
+// dataUrlToFile — bridges Camera.getPhoto's dataUrl into the File-typed
+// contract that ScannerFlow.handleCapture expects.
+// Exported for unit tests (the bridge is the load-bearing native logic).
+// Reference: sprint-16-native-plugin-pattern.md §2 "Image format bridge".
+// ============================================================
+
+export async function dataUrlToFile(
+  dataUrl: string,
+  format: string
+): Promise<File> {
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  const ext = format === 'png' ? 'png' : 'jpg';
+  const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+  return new File([blob], `resibo-${Date.now()}.${ext}`, { type: mimeType });
+}
+
+// ============================================================
+// Error classification for native Camera.getPhoto throws.
+// The plugin doesn't separate "user cancelled" vs "permission denied"
+// cleanly across platforms — we sniff the message. Uses `unknown` +
+// type guard (no `any`) per TypeScript strict policy.
+// ============================================================
+
+type NativeCameraErrorKind = 'cancelled' | 'permission-denied' | 'other';
+
+function classifyNativeCameraError(err: unknown): NativeCameraErrorKind {
+  const msg =
+    err instanceof Error
+      ? err.message.toLowerCase()
+      : typeof err === 'string'
+      ? err.toLowerCase()
+      : '';
+  if (msg.includes('cancel') || msg.includes('user denied')) return 'cancelled';
+  if (msg.includes('permission')) return 'permission-denied';
+  return 'other';
+}
 
 // ============================================================
 // Component
@@ -128,6 +185,56 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
       }
     }
   }, []);
+
+  // ============================================================
+  // Native Camera — @capacitor/camera single-shot capture (Sprint 16).
+  // Active only when Capacitor.isNativePlatform() === true. On web this
+  // callback is wired but never invoked (the idle button below picks
+  // startCamera instead). The plugin auto-prompts for OS camera permission
+  // on first call; subsequent calls reuse. State flow on native collapses
+  // to idle -> previewing (no 'camera-active' intermediate).
+  // ============================================================
+
+  const startNativeCamera = useCallback(async () => {
+    setError(null);
+    try {
+      const photo = await CapacitorCamera.getPhoto({
+        source: CameraSource.Camera,
+        resultType: CameraResultType.DataUrl,
+        quality: 85,
+        width: 1600,
+        saveToGallery: false,
+      });
+
+      if (!photo.dataUrl) {
+        setError('Walang nakuhang larawan. Subukan muli.');
+        return;
+      }
+
+      const file = await dataUrlToFile(photo.dataUrl, photo.format);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      setCapturedFile(file);
+      setState('previewing');
+    } catch (err) {
+      const kind = classifyNativeCameraError(err);
+      if (kind === 'cancelled') {
+        // User backed out of the OS modal — treat like idle (no error toast).
+        setState('idle');
+        return;
+      }
+      if (kind === 'permission-denied') {
+        setState('permission-denied');
+        return;
+      }
+      setError('Hindi makapag-bukas ang camera. Subukan muli.');
+      setState('idle');
+    }
+  }, []);
+
+  // --- Branch the "Kunan ng litrato" handler: native -> single-shot
+  //     OS modal; web -> existing getUserMedia live-feed flow. ---
+  const handleStartCamera = isNative ? startNativeCamera : startCamera;
 
   // ============================================================
   // Camera Capture — Snap frame from video to canvas -> File
@@ -251,10 +358,11 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
             </p>
 
             <div className="flex flex-col gap-3">
-              {/* Primary: Open camera */}
+              {/* Primary: Open camera (native -> single-shot OS modal,
+                  web -> live getUserMedia feed; gated by handleStartCamera) */}
               <button
                 type="button"
-                onClick={startCamera}
+                onClick={handleStartCamera}
                 className="flex items-center justify-center gap-2 w-full min-h-[44px] bg-primary-container text-on-primary font-semibold rounded-xl py-3 transition-opacity hover:opacity-90 active:scale-[0.98]"
                 data-testid="open-camera-btn"
               >
@@ -364,16 +472,16 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
         </div>
       )}
 
-      {/* --- Permission Denied --- */}
+      {/* --- Permission Denied (architect §2 locked copy) --- */}
       {state === 'permission-denied' && (
         <div className="w-full space-y-4">
           <div className="bg-surface-container-low rounded-2xl p-6 text-center">
             <Camera className="w-10 h-10 text-on-surface-variant mx-auto mb-3" />
             <p className="text-on-surface font-semibold text-sm mb-1">
-              Kailangan ko ng camera access
+              Kailangan ng access sa camera
             </p>
             <p className="text-on-surface-variant text-xs mb-4">
-              Para ma-scan ko ang resibo mo, i-enable mo ang camera sa Settings.
+              Para ma-scan natin ang resibo mo, i-allow mo muna ang camera sa Settings.
             </p>
 
             <button
