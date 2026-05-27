@@ -221,6 +221,55 @@ RESEND_API_KEY                    — Resend transactional email. Server-side on
 NEXT_PUBLIC_APP_URL               — Canonical app URL (for OG tags, emails)
 ```
 
+### Build-time-only Variables (post-Sprint 15)
+
+These are NOT runtime env vars — they switch the build target at `npm run build` time. Do NOT add them to Vercel project settings (Vercel always wants the web build).
+
+```
+CAPACITOR_BUILD                   — Set to "1" to produce a Capacitor-targeted static export.
+                                    When set: next.config.js enables `output: 'export'`,
+                                    `images.unoptimized: true`, and `pageExtensions: ['tsx']`
+                                    (excludes all 30 app/api/**/route.ts + src/proxy.ts by extension).
+                                    When unset/empty: byte-identical to the prior Vercel web build.
+                                    Used only for the Android/iOS native build pipeline (run locally
+                                    or on a future native-build CI; never in the Vercel deployment).
+
+NODE_OPTIONS=--use-system-ca      — Windows + corporate-TLS workaround for local builds on Anton's
+                                    machine. Required for npm install + next build to trust the
+                                    Windows root CA store. Not needed on Vercel.
+```
+
+### Capacitor Build Pipeline (Android, Sprint 15+)
+
+The native build runs locally (no CI yet — Sprint 19 may add one). Documented recipe:
+
+```bash
+cd frontend
+
+# 1. Produce static export
+CAPACITOR_BUILD=1 NODE_OPTIONS=--use-system-ca npm run build
+
+# 2. Copy static bundle into Android scaffold
+npx cap sync android
+
+# 3. Build Android binaries (toolchain env vars per SPIKE_FINDINGS.md §Toolchain)
+cd android
+export ANDROID_HOME="C:\Users\Anton del Rosario\android-sdk"
+export JAVA_HOME="C:\Program Files\Microsoft\jdk-21.x-hotspot"
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+export JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=C:/tmp/cacerts21 -Djavax.net.ssl.trustStorePassword=changeit"
+./gradlew bundleDebug    # produces app-debug.aab
+./gradlew assembleDebug  # produces app-debug.apk
+```
+
+Outputs:
+- `frontend/android/app/build/outputs/bundle/debug/app-debug.aab` — Play Console upload format
+- `frontend/android/app/build/outputs/apk/debug/app-debug.apk` — Sideload to Pixel 5 via `adb install`
+
+Verified Sprint 15: `.aab` = 14.62 MB, `.apk` = 15.35 MB (both well under <30 MB Pre-Launch Gate). Bundle-size guard test at `frontend/src/lib/__tests__/bundle-size-guard.test.ts` runs on every CI pass (gracefully skips when binaries absent).
+
+For full toolchain install instructions (JDK 21 + Android SDK 36 + corporate-TLS keystore patch), see `C:\Users\Anton del Rosario\akbai-spike\SPIKE_FINDINGS.md` §Toolchain install — preserved as forensic reference until Sprint 19 close.
+
 ### Security Rules
 
 - Variables prefixed `NEXT_PUBLIC_` are bundled into the client — only use for genuinely public values

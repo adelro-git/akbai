@@ -1592,3 +1592,112 @@ Comfortable headroom for the 7 remaining `(app)/*` page conversions Sprint 15 wi
 4. ⏳ Sprint 15 kicks off with conversion inventory above — exact file list already on disk in spike worktree.
 
 **Next sprint:** Sprint 15 — Capacitor Conversion. 10 pivot hrs + 4-5 feature hrs. Decision gate: both binaries build clean from main (not the spike branch). Bundle size <30 MB after release build (R8/ProGuard on).
+
+---
+
+### Sprint 15 — 2026-05-27 (Capacitor Conversion — DEV ONLY) — CLOSED 🟢 GREEN
+
+**Phase:** 0B — Native Mobile Pivot (sprint 2 of 6)
+**Sprint Goal:** Complete the spike's inherited conversion inventory on `main` (not the throwaway spike branch). Produce both web (Vercel target) and Capacitor (Android `.aab`/`.apk`) binaries from the same `main` checkout. Mark Gap G1 RESOLVED.
+**Capacity:** ~2-3 hr Anton time (scope clarification + PR review + branch cleanup); ~12-15 hr agent wall-clock budget.
+
+**Strategic context:** Second sprint of the 6-sprint Native Mobile Pivot. Per restructured outline (PR #32), Sprints 15-18 are PURE DEV — all Anton-side work (paid-account enrollments, store SKU creation, sandbox testing, on-device smoke, store submission, launch motion, iteration) deferred to a single end-of-pivot wave in Sprint 19. Sprint 15 is the heaviest of the pure-dev block.
+
+**Tasks:**
+
+| # | Task | Size | Anton Time | Stream | Notes |
+|---|------|------|------------|--------|-------|
+| 1 | Architect locks conversion pattern (one template, not 15) | M | XS (decide on 4 Open Questions at PR review) | A | Doc at `akbai-delivery/skills/solutions-architect/references/sprint-15-conversion-pattern.md` |
+| 2 | Engineer batch 1 — 15 page conversions (root + 14 (app)/*) | L | — | A | Real `/api/dashboard` fetch on dashboard (not stubs); OCR flag gate dropped on /scan with Sprint-16 TODO |
+| 3 | Engineer batch 2 — 5 infra rewrites ((app)/layout, auth/callback route→page, lib/i18n/*, drop sitemap.ts) | M | — | A | PKCE preserved on auth/callback; flagged for review-security follow-up if needed |
+| 4 | Engineer batch 3 — `next.config.js` CAPACITOR_BUILD conditional + per-route `enforceRateLimit()` opt-in | M | — | A | 11 routes adopted across tiered limits; webhooks + read-only GETs skip |
+| 5 | Engineer batch 3 ext — Capacitor 8.3.4 scaffold (`npm install`, `cap init`, `cap add android`, Gradle mirror patch) | S | — | A | Toolchain (JDK 21 + SDK 36 + cacerts21) already installed from Sprint 14 |
+| 6 | QA — full vitest + bundle-size guard test + dual-build verification (web + Capacitor `.aab`/`.apk` via gradle) | M | XS (review results) | A | Decision-gate verdict GREEN: .aab = 14.62 MB, .apk = 15.35 MB |
+| 7 | Sprint 15 retro + post-sprint doc sweep | S | XS (0.25hr) | A | This entry + gap-registry.md + project-context.md updates on `chore/15-retro` |
+
+**Sprint outcome:** ✅ CLOSED 🟢 GREEN — Gap G1 RESOLVED. Both binaries build clean from `main`. Bundle 51% under Pre-Launch Gate ceiling.
+
+**What shipped (`feat/15-capacitor-conversion` → 17 commits → PR #33 merged):**
+
+*Page conversions (5 commits, batch 1)*
+- `4b10539` — extend `/api/dashboard` GET with Phase-7 hero/tiles/streak payload (non-breaking, all 18 existing tests pass)
+- `dedbe5d` — convert root + dashboard + chat + scan (4 spike-touched pages re-converted cleanly on main)
+- `4d4675f` — convert admin + deadlines + expenses + profile
+- `fef6c0b` — convert costing ×3 + invoices ×3 (dynamic `[id]` via `useParams()`; client-page split for static-export compatibility)
+- `bde0af6` — convert onboarding
+
+*Infra rewrites (4 commits, batch 2)*
+- `94c6e51` — rewrite `lib/i18n/request.ts` + `lib/i18n/set-locale.ts` for static export
+- `b084952` — convert `(app)/layout.tsx` to client component (persona via `/api/profile` `useEffect`, loading skeleton)
+- `9256e3d` — rewrite `auth/callback/route.ts` → `auth/callback/page.tsx` (client `exchangeCodeForSession`, `<Suspense>`-wrapped, PKCE preserved)
+- `90f15e2` — drop `app/sitemap.ts` (web-only, not needed in static bundle)
+
+*Build pipeline (3 commits, batch 3)*
+- `a11c150` — conditional `CAPACITOR_BUILD=1` in `next.config.js`: sets `output: 'export'`, `images.unoptimized: true`, `pageExtensions: ['tsx']`. Default unset path byte-identical to prior web build.
+- `942e586` — extract rate-limit middleware: new `frontend/src/lib/rate-limit/middleware.ts` exporting `enforceRateLimit(req, opts)`; `proxy.ts` retained for Vercel web fallback
+- `f278930` — adopt `enforceRateLimit` on 11 `/api/*` routes per architect's tiering (LLM-spend, writes, abuse, admin)
+
+*Capacitor scaffold (2 commits, batch 3 ext)*
+- `cc03b36` — install `@capacitor/{core,cli,android}@8.3.4` + `npx cap init AKBai com.akbai.app --web-dir=out`
+- `7234da3` — `npx cap add android` scaffold (53 files; build outputs gitignored via Capacitor-generated `.gitignore`) + corporate-TLS Gradle mirror patch in `frontend/android/gradle/wrapper/gradle-wrapper.properties`
+
+*Verification + chore (3 commits)*
+- `ec91d50` — bundle-size guard vitest test at `frontend/src/lib/__tests__/bundle-size-guard.test.ts` (graceful skip when binaries absent; passes when present + <30 MB)
+- `b383c4a` — commit architect's `sprint-15-conversion-pattern.md` reference doc (engineer agents followed verbatim)
+- `8421785` — `.gitattributes` locks `capacitor.build.gradle` + `capacitor.settings.gradle` to LF (eliminates noisy CRLF diffs on every `cap sync` on Windows)
+
+**Decision-gate metrics:**
+
+| Check | Result | Headroom vs ceiling |
+|---|---|---|
+| Web build (Vercel target, no `CAPACITOR_BUILD`) | PASS | 30 API routes + Proxy middleware + 17 static + 2 SSG pages |
+| Capacitor static export (`CAPACITOR_BUILD=1`) | PASS | `out/` = 16 MB / 295 files / 21 prerendered routes; no `out/api/*` |
+| `npx cap sync android` | PASS | 297 files in `android/app/src/main/assets/public/` |
+| `gradlew bundleDebug` | PASS | **`.aab` = 14.62 MB (51% under 30 MB Pre-Launch Gate)** |
+| `gradlew assembleDebug` | PASS | **`.apk` = 15.35 MB (49% under 30 MB)** |
+| Vitest | **1331/1331 pass** | +2 vs Sprint 14 baseline (bundle-size guard cases) |
+| TypeScript | 38 pre-existing baseline errors, **0 new** | Stable |
+
+**Architect's 4 Open Questions — Anton's defaults (no overrides at PR review):**
+1. `/dashboard` — real `/api/dashboard` fetch (not spike stubs). ✅ Shipped as default.
+2. `/scan` — OCR feature-flag client gate dropped with Sprint-16 TODO. ✅ Shipped as default.
+3. `auth/callback` — rewritten to client page despite OTP being the documented happy path (cheap, ~30 LOC; magic-link still works in Capacitor). ✅ Shipped as default; `review-security` follow-up flagged but not blocking.
+4. next-intl plugin kept; client-side locale swap via `document.cookie` + `localStorage` + `window.location.reload()`. ✅ Shipped as default.
+
+**Bundle size signal (vs Sprint 14 baseline):**
+| Artifact | Sprint 14 (4 pages converted) | Sprint 15 (15 pages converted) | Delta |
+|---|---|---|---|
+| Web `out/` static-export bundle | 13 MB / 169 files / 8 routes | 16 MB / 295 files / 21 routes | +3 MB / +13 routes |
+| Android `.aab` (debug) | 15 MB | 14.62 MB | **-0.38 MB** |
+| Android `.apk` (debug) | 15 MB | 15.35 MB | +0.35 MB |
+
+Essentially flat despite +11 pages and the persona-fetching layout — the `pageExtensions: ['tsx']` API exclusion is doing its job; client-rendered routes don't bloat the bundle the way server components would have.
+
+**Velocity (Sprint 15):**
+- Anton time: ~0.5 hr (initial scope clarification on 4 spike-touched pages + PR merge directive + branch cleanup + Sprint 16 prompt request). Budget was 2-3 hr; came in well under.
+- Agent time: ~3 hr wall-clock across architect (1) + engineer batches (4 sequential) + QA (1) + retro (1). Budget was 12-15 hr; came in well under.
+- Wall-clock: half a day. Sprint 15 was supposed to be the heaviest pure-dev sprint; came in close to the lightest.
+
+**Process success — Sprint 14 lesson successfully applied:**
+- Sprint 14 retro flagged: "build-engineer must NOT exit expecting cross-session 'background task complete' notifications" (memory entry [[feedback_agent_background_tasks]]). Sprint 15: all 4 engineer agent runs stayed synchronous with explicit `timeout: 600000` on installs and `Monitor`-poll discipline on long builds. Zero premature exits across architect + 3 engineer batches + scaffold extension + QA. Pattern is now reliable; trust the rule.
+- Three sequential batches (pages → infra → build-pipeline) preserved each agent's context window while the architect's pattern doc (`sprint-15-conversion-pattern.md`) carried decisions across handoffs. Engineer ran end-to-end without coming back for clarification.
+- Architect's "Open Questions for Anton" section in the pattern doc (rather than blocking the engineer) let the conversion proceed at full speed — Anton's defaults all held at PR review.
+
+**Branch hygiene:**
+- `feat/15-capacitor-conversion` (17 commits) → merged to `main` via PR #33 (merge commit `d38ca81`), remote branch deleted via `gh pr merge --delete-branch`. Local-tracking ref pruned via `git fetch --prune`.
+- `chore/15-retro` (this entry + gap-registry + project-context updates) → opens PR to `main` after commit.
+- `feat/capacitor-spike` worktree at `C:\Users\Anton del Rosario\akbai-spike` PRESERVED per Sprint 14 directive — keep until Sprint 19 close as forensic reference (build attempt logs, exact toolchain notes, comparison reference). Do NOT delete yet.
+
+**Action items (carry to Sprint 16):**
+1. ⏳ Sprint 16 — Native Surface Polish: `@capacitor/camera` swap in `/scan` (`getUserMedia` → `Camera.getPhoto`), `@capacitor/push-notifications` integration, `@capacitor-community/biometric-auth` on app open (Apple Guideline 4.2 mitigation — proves "more than a webview"), deep-link config `com.akbai.app://auth/callback`, Sentry native crash symbolication pipeline configured (dSYM/ProGuard upload script ready; actual uploads happen in Sprint 19).
+2. ⏳ Stream B Gemini Kai iteration — Anton continues async; 8 poses target. Sprint 18 needs the assets.
+3. ⏳ Sprint 16 housekeeping (low priority, do when convenient):
+   - `react-day-picker@8 → v9` upgrade OR pin `date-fns@3.x` (eliminates `--legacy-peer-deps` requirement)
+   - Wire `eslint.config.js` to replace the now-broken `next lint` (Next 16 removed it)
+   - `@sentry/nextjs` deprecation: move `disableLogger` + `automaticVercelMonitors` under `webpack.*` per deprecation message
+   - CONTRIBUTING.md note on Windows + corporate-TLS toolchain (procedure already documented in spike worktree's `SPIKE_FINDINGS.md` §Toolchain install)
+   - `language-toggle.tsx` `useTransition` cleanup (now overkill post-i18n-rewrite)
+4. ⏳ Optional `review-security` agent pass on `auth/callback/page.tsx` to verify Capacitor's sandboxed `localStorage` PKCE `code_verifier` retrieval works as expected (cheap belt-and-braces).
+
+**Next sprint:** Sprint 16 — Native Surface Polish (DEV ONLY, ~2-3 hr Anton). Lighter than Sprint 15 — single sprint of Capacitor plugin integrations + native crash pipeline. No new gaps expected to resolve; G4 (Apple Guideline 4.2 mitigation) gets its load-bearing implementation, full close-out at Sprint 18 Pre-Launch Gate review.
+
