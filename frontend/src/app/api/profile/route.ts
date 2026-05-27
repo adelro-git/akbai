@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { BusinessTypeEnum, IncomeRangeEnum } from '@/lib/kilala-kita/schemas';
@@ -137,6 +138,9 @@ export async function GET() {
 // ============================================================
 
 export async function PATCH(req: NextRequest) {
+  const limited = enforceRateLimit(req, { key: 'profile', windowMs: 60_000, maxRequests: 20 });
+  if (limited) return limited;
+
   const supabase = await createClient();
 
   let userId: string;

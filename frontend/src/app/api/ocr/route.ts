@@ -14,6 +14,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import {
@@ -27,6 +28,9 @@ import { generateReceiptHash, checkDuplicate } from '@/lib/ocr/dedup';
 import { SUPPORTED_MIME_TYPES, MAX_IMAGE_SIZE_BYTES } from '@/lib/ocr/types';
 
 export async function POST(req: NextRequest) {
+  const limited = enforceRateLimit(req, { key: 'ocr', windowMs: 60_000, maxRequests: 10 });
+  if (limited) return limited;
+
   try {
     // --- Auth Check ---
     const supabase = await createClient();

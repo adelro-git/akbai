@@ -16,18 +16,26 @@
  * all tiers (per ADR-015 §6).
  */
 
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { aggregateWeeklyStory } from '@/lib/weekly-story/aggregate';
 import type { WeeklyStoryResponse } from '@/lib/weekly-story/types';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 
 // ============================================================
 // GET — compute and return the weekly story for the current Manila week
 // ============================================================
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const limited = enforceRateLimit(req, {
+    key: 'weekly-story',
+    windowMs: 60_000,
+    maxRequests: 10,
+  });
+  if (limited) return limited;
+
   try {
     const supabase = await createClient();
 

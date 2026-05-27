@@ -1,76 +1,124 @@
-import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { createServiceClient } from '@/lib/supabase/service';
-import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
+'use client';
+
+// ============================================================
+// /profile — Client Component (Sprint 15 Capacitor conversion)
+//
+// Per sprint-15-conversion-pattern.md §3 row 15: standard §2 template,
+// fetches the existing /api/profile GET (returns ProfileData). The
+// server page used service-client to bypass RLS in SKIP_AUTH=true dev
+// mode; that path moves to the API route, which already handles it.
+//
+// `profileVersion = 1` was a hard-coded constant on the server page; the
+// API already exposes `profile_version` so we read it from the response
+// rather than re-asserting client-side.
+// ============================================================
+
+import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import ProfileView from '@/components/profile/profile-view';
 import { PageBackground } from '@/components/ui/page-background';
 
-export const metadata: Metadata = {
-  title: 'Profile — AKBai',
-};
+interface ProfileData {
+  display_name: string | null;
+  email: string | null;
+  business_name: string | null;
+  business_type: string | null;
+  income_range: string | null;
+  bir_registered: boolean;
+  bir_tax_type: string | null;
+  profile_version: number;
+}
 
-export default async function ProfilePage() {
-  const supabase = await createClient();
+export default function ProfilePage() {
+  const router = useRouter();
+  const [data, setData] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  let userId: string;
-  let email: string | null = null;
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/profile');
+      const json = await res.json();
+      if (!json.success) {
+        setError(json.error?.message_tl ?? 'Hindi makuha ang profile.');
+        return;
+      }
+      setData(json.data as ProfileData);
+    } catch {
+      setError('Hindi makakonekta. I-check mo ang internet mo.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  // Use service client in dev mode to bypass RLS (no real auth session)
-  const db = SKIP_AUTH ? createServiceClient() : supabase;
+  useEffect(() => {
+    async function bootstrap() {
+      if (!SKIP_AUTH) {
+        const supabase = createClient();
+        const { data: authData } = await supabase.auth.getUser();
+        if (!authData.user) {
+          router.replace('/login');
+          return;
+        }
+      }
+      await fetchData();
+    }
+    bootstrap().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('profile page bootstrap failed', err);
+      setError('Hindi makapag-load. Subukan muli.');
+      setLoading(false);
+    });
+  }, [router, fetchData]);
 
-  if (SKIP_AUTH) {
-    userId = DEV_USER.id;
-    email = DEV_USER.email ?? 'dev@akbai.test';
-  } else {
-    const { data } = await supabase.auth.getUser();
-    const user = data.user;
-    if (!user) redirect('/login');
-    userId = user.id;
-    email = user.email ?? null;
+  if (loading) {
+    return (
+      <PageBackground variant="profile">
+        <div className="min-h-dvh flex items-center justify-center text-on-surface-variant">
+          Loading...
+        </div>
+      </PageBackground>
+    );
   }
 
-  // Fetch user profile
-  const { data: userData } = await db
-    .from('users')
-    .select('display_name')
-    .eq('id', userId)
-    .single();
-
-  const displayName = userData?.display_name ?? null;
-
-  // Fetch business profile
-  const { data: profile } = await db
-    .from('business_profiles')
-    .select('business_name, business_type, income_range, bir_registered, bir_tax_type')
-    .eq('user_id', userId)
-    .is('deleted_at', null)
-    .single();
-
-  const businessName = profile?.business_name ?? null;
-  const businessType = profile?.business_type ?? null;
-  const incomeRange = profile?.income_range ?? null;
-  const birRegistered = profile?.bir_registered ?? false;
-  const birTaxType = profile?.bir_tax_type ?? null;
-  const profileVersion = 1;
+  if (error || !data) {
+    return (
+      <PageBackground variant="profile">
+        <div className="min-h-dvh flex flex-col items-center justify-center px-4 text-center">
+          <p className="text-destructive text-sm mb-2">{error ?? 'Walang data.'}</p>
+          <button
+            onClick={fetchData}
+            type="button"
+            className="text-primary text-sm font-semibold"
+          >
+            Subukan muli
+          </button>
+        </div>
+      </PageBackground>
+    );
+  }
 
   return (
     <PageBackground variant="profile">
-    <div
-      className="min-h-dvh pb-20"
-      data-testid="profile-page"
-    >
-      <ProfileView
-        displayName={displayName}
-        email={email}
-        businessName={businessName}
-        businessType={businessType}
-        incomeRange={incomeRange}
-        birRegistered={birRegistered}
-        birTaxType={birTaxType}
-        profileVersion={profileVersion}
-      />
-    </div>
+      <div
+        className="min-h-dvh pb-20"
+        data-testid="profile-page"
+      >
+        <ProfileView
+          displayName={data.display_name}
+          email={data.email}
+          businessName={data.business_name}
+          businessType={data.business_type}
+          incomeRange={data.income_range}
+          birRegistered={data.bir_registered}
+          birTaxType={data.bir_tax_type}
+          profileVersion={data.profile_version}
+        />
+      </div>
     </PageBackground>
   );
 }

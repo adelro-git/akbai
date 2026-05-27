@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { CreateCostingCardSchema } from '@/lib/costing/schemas';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import {
   calculateTotalCost,
   calculateItemTotalCost,
@@ -80,6 +81,13 @@ export async function GET() {
 // ============================================================
 
 export async function POST(req: NextRequest) {
+  const limited = enforceRateLimit(req, {
+    key: 'costing-write',
+    windowMs: 60_000,
+    maxRequests: 30,
+  });
+  if (limited) return limited;
+
   const supabase = await createClient();
   const auth = await getAuthUserId(supabase);
   if (auth.error) return auth.error;

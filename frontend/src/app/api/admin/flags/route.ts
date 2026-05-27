@@ -13,6 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { createServiceClient } from '@/lib/supabase/service';
 import { isAdmin } from '@/lib/admin/auth';
 import { ResolveFlagSchema } from '@/lib/admin/schemas';
@@ -53,7 +54,10 @@ async function adminAuthCheck(): Promise<string | NextResponse> {
 // GET — List unresolved flag-as-wrong reports
 // ============================================================
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const limited = enforceRateLimit(req, { key: 'admin', windowMs: 60_000, maxRequests: 60 });
+  if (limited) return limited;
+
   const authResult = await adminAuthCheck();
   if (authResult instanceof NextResponse) return authResult;
 
@@ -85,6 +89,9 @@ export async function GET() {
 // ============================================================
 
 export async function PATCH(req: NextRequest) {
+  const limited = enforceRateLimit(req, { key: 'admin', windowMs: 60_000, maxRequests: 60 });
+  if (limited) return limited;
+
   const authResult = await adminAuthCheck();
   if (authResult instanceof NextResponse) return authResult;
 

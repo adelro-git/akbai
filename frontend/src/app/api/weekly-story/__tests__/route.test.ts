@@ -13,6 +13,15 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { NextRequest } from 'next/server';
+import { _resetStore } from '@/lib/rate-limit';
+
+// Sprint 15: route GET signature gained `req: NextRequest` for the per-route
+// rate-limit guard. Tests pass a minimal mock — enforceRateLimit() only reads
+// the `headers` interface. The in-memory store is reset in beforeEach so the
+// 10/60s cap never trips between tests.
+const reqMock = (): NextRequest =>
+  new Request('http://localhost/api/weekly-story') as unknown as NextRequest;
 
 // ============================================================
 // Hoisted Mocks
@@ -119,6 +128,7 @@ import { GET } from '../route';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  _resetStore();
   setupUsersTable('Maria');
 });
 
@@ -144,7 +154,7 @@ describe('GET /api/weekly-story', () => {
       tone: 'celebratory',
     });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -166,7 +176,7 @@ describe('GET /api/weekly-story', () => {
   it('returns no_data shape when the aggregator returns null', async () => {
     mockAggregate.mockResolvedValue(null);
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -182,7 +192,7 @@ describe('GET /api/weekly-story', () => {
   it('returns error shape when the aggregator throws', async () => {
     mockAggregate.mockRejectedValue(new Error('db down'));
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200); // Route swallows DB errors — UI degrades gracefully
@@ -197,7 +207,7 @@ describe('GET /api/weekly-story', () => {
     setupUsersTable(null);
     mockAggregate.mockResolvedValue(null);
 
-    await GET();
+    await GET(reqMock());
 
     expect(mockAggregate).toHaveBeenCalledTimes(1);
     // 3rd arg is the user's display name; null → undefined per the route.
@@ -210,7 +220,7 @@ describe('GET /api/weekly-story', () => {
       throw new Error('service client unavailable');
     });
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);

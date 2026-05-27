@@ -13,6 +13,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { isAdmin } from '@/lib/admin/auth';
 import { setFeatureFlag } from '@/lib/feature-flags/admin';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { ToggleFeatureFlagSchema } from '@/lib/admin/schemas';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 
@@ -50,7 +51,10 @@ async function adminAuthCheck(): Promise<string | NextResponse> {
 // GET — List all users with their feature flags
 // ============================================================
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const limited = enforceRateLimit(req, { key: 'admin', windowMs: 60_000, maxRequests: 60 });
+  if (limited) return limited;
+
   const authResult = await adminAuthCheck();
   if (authResult instanceof NextResponse) return authResult;
 
@@ -78,6 +82,9 @@ export async function GET() {
 // ============================================================
 
 export async function PATCH(req: NextRequest) {
+  const limited = enforceRateLimit(req, { key: 'admin', windowMs: 60_000, maxRequests: 60 });
+  if (limited) return limited;
+
   const authResult = await adminAuthCheck();
   if (authResult instanceof NextResponse) return authResult;
 

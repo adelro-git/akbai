@@ -1,81 +1,69 @@
+'use client';
+
 /**
- * Resibo Scanner — Server Page
- * Feature: Resibo Scanner (Build 3)
- * Role: Entry point for the scan flow. Performs auth check and
- *       OCR_ENABLED feature flag gate server-side before rendering
- *       the client-side ScannerFlow orchestrator.
+ * Resibo Scanner — Client Component (Sprint 15 Capacitor conversion)
  *
- * Flow: Auth -> Feature flag check -> Render ScannerFlow (client)
+ * Per sprint-15-conversion-pattern.md §3 row 4 + Open Question 2:
+ * OCR_ENABLED feature-flag gate is REMOVED for Sprint 15. FLAGS.OCR_ENABLED
+ * is server-only; building a dedicated /api/feature-flags/[key] GET surface
+ * for one tile-gate is out of scope. Always render ScannerFlow.
  *
- * Dependencies: Supabase auth, feature flags, ScannerFlow component
+ * TODO(sprint-16): wire client-side OCR_ENABLED gate via a new
+ * /api/feature-flags route (returns { enabled: boolean } per key for the
+ * authenticated user).
+ *
+ * Conversions made vs server version:
+ *   - 'use client' directive
+ *   - Removed server createClient + redirect + Metadata
+ *   - Removed getFeatureFlag (OCR gate)
+ *   - Auth check moved into useEffect using browser supabase client
+ *   - redirect('/login') → router.replace('/login')
  */
 
-import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
-import { getFeatureFlag } from '@/lib/feature-flags';
-import { FLAGS } from '@/lib/feature-flags/flags';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import { PageBackground } from '@/components/ui/page-background';
 import { ScannerFlow } from '@/components/scanner/scanner-flow';
 
-export const metadata: Metadata = {
-  title: 'Resibo Scanner — AKBai',
-};
+export default function ScanPage() {
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
 
-// ============================================================
-// Feature Gated State — shown when OCR is disabled for the user
-// ============================================================
+  useEffect(() => {
+    async function gate() {
+      if (SKIP_AUTH) {
+        setReady(true);
+        return;
+      }
 
-function FeatureGated() {
-  return (
-    <PageBackground variant="scan">
-      <div className="min-h-dvh flex items-center justify-center px-4">
-        <div className="bg-surface-container-low rounded-2xl p-6 text-center max-w-sm">
-          <p className="text-on-surface font-semibold text-base mb-2">
-            Hindi pa available ang Resibo Scanner
-          </p>
-          <p className="text-on-surface-variant text-sm mb-4">
-            Malapit na! Abangan ang feature na ito sa susunod na update.
-          </p>
-          <a
-            href="/dashboard"
-            className="inline-flex items-center gap-2 min-h-[44px] bg-primary-container text-on-primary font-semibold rounded-xl px-5 py-2.5"
-          >
-            Bumalik sa Dashboard
-          </a>
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        router.replace('/login');
+        return;
+      }
+      setReady(true);
+    }
+
+    gate().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('scan page bootstrap failed', err);
+      router.replace('/login');
+    });
+  }, [router]);
+
+  if (!ready) {
+    return (
+      <PageBackground variant="scan">
+        <div className="min-h-dvh flex items-center justify-center text-on-surface-variant">
+          Loading...
         </div>
-      </div>
-    </PageBackground>
-  );
-}
-
-// ============================================================
-// Page Component
-// ============================================================
-
-export default async function ScanPage() {
-  // --- Auth Check ---
-  const supabase = await createClient();
-
-  let userId: string;
-
-  if (SKIP_AUTH) {
-    userId = DEV_USER.id;
-  } else {
-    const { data } = await supabase.auth.getUser();
-    const user = data.user;
-    if (!user) redirect('/login');
-    userId = user.id;
+      </PageBackground>
+    );
   }
 
-  // --- Feature Flag Gate: OCR_ENABLED ---
-  const ocrEnabled = await getFeatureFlag(userId, FLAGS.OCR_ENABLED);
-  if (!ocrEnabled) {
-    return <FeatureGated />;
-  }
-
-  // --- Render Scanner Flow ---
   return (
     <PageBackground variant="scan">
       <ScannerFlow />

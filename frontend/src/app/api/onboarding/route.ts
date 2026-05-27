@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { OnboardingStepSchema } from '@/lib/kilala-kita/schemas';
@@ -10,6 +11,13 @@ import type { PainPoint } from '@/lib/kilala-kita/schemas';
 // POST — Save one onboarding step
 // ============================================================
 export async function POST(req: NextRequest) {
+  const limited = enforceRateLimit(req, {
+    key: 'onboarding',
+    windowMs: 60_000,
+    maxRequests: 20,
+  });
+  if (limited) return limited;
+
   const supabase = await createClient();
 
   let user;

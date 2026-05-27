@@ -16,6 +16,8 @@ import { Plus, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import InvoiceList from '@/components/invoices/invoice-list';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import type { Invoice, InvoiceStatus } from '@/lib/invoices/types';
 
 // ============================================================
@@ -59,6 +61,29 @@ export default function InvoicesPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<InvoiceStatus | 'all'>('all');
   const searchRef = useRef<HTMLInputElement>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // ── Auth gate (Sprint 15 Capacitor conversion) ──
+  useEffect(() => {
+    async function gate() {
+      if (SKIP_AUTH) {
+        setAuthChecked(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) {
+        router.replace('/login');
+        return;
+      }
+      setAuthChecked(true);
+    }
+    gate().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('invoices page auth gate failed', err);
+      router.replace('/login');
+    });
+  }, [router]);
 
   // --- Fetch invoices ---
   const fetchInvoices = useCallback(async (search?: string) => {
@@ -85,7 +110,10 @@ export default function InvoicesPage() {
     }
   }, [activeTab]);
 
-  useEffect(() => { fetchInvoices(); }, [fetchInvoices]);
+  useEffect(() => {
+    if (!authChecked) return;
+    fetchInvoices();
+  }, [authChecked, fetchInvoices]);
 
   // --- Search handler ---
   const handleSearch = useCallback(() => {

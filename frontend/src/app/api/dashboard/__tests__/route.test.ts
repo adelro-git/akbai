@@ -21,6 +21,14 @@ vi.mock('@/lib/timezone', () => ({
 
 const mockUser = { id: 'user-maria-123', email: 'maria@test.local' };
 
+// Sprint 15: the GET /api/dashboard handler was extended to compute
+// streak + tiles, which fan out into additional chained methods
+// (`.order`, `.maybeSingle`, `.lt`, `.gte`, `.in`, plus a count-style
+// `.select` second-argument). The chain factory exposes all of them as
+// stubs that resolve to "empty" by default so the legacy tests (which
+// only set up users/business_profiles/daily_check_in) continue to pass
+// — any newly-queried table falls through to undefined data + null
+// error, which the handler treats as "no rows".
 const mockChain = () => {
   const chain: Record<string, ReturnType<typeof vi.fn>> = {
     select: vi.fn(),
@@ -29,9 +37,19 @@ const mockChain = () => {
     upsert: vi.fn(),
     eq: vi.fn(),
     is: vi.fn(),
+    gte: vi.fn(),
+    lt: vi.fn(),
+    in: vi.fn(),
+    order: vi.fn(),
+    limit: vi.fn(),
     single: vi.fn(),
+    maybeSingle: vi.fn(),
   };
   Object.values(chain).forEach((fn) => fn.mockReturnValue(chain));
+  // Default terminals return { data: null, error: null } so any table
+  // the test forgets to wire up doesn't blow up the handler.
+  chain.single.mockResolvedValue({ data: null, error: null });
+  chain.maybeSingle.mockResolvedValue({ data: null, error: null });
   return chain;
 };
 

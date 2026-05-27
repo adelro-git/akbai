@@ -16,15 +16,23 @@
  * Tier: all tiers (Free + Pro + Business). Chips are universal.
  */
 
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { buildSuggestions, getColdStartFallback } from '@/lib/chat/suggestions';
 import { getSuggestions, setSuggestions } from '@/lib/chat/suggestions/cache';
 import type { ChatSuggestionsResponse } from '@/lib/chat/suggestions/types';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const limited = enforceRateLimit(req, {
+    key: 'chat-suggestions',
+    windowMs: 60_000,
+    maxRequests: 30,
+  });
+  if (limited) return limited;
+
   try {
     // --- Auth Check (mirrors /api/chat) ---
     const supabase = await createClient();

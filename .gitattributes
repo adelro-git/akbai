@@ -1,0 +1,4 @@
+# Capacitor regenerates these files on every `npx cap sync` with LF endings.
+# Locking them to LF prevents noisy CRLF diffs on Windows checkouts.
+frontend/android/app/capacitor.build.gradle text eol=lf
+frontend/android/capacitor.settings.gradle text eol=lf

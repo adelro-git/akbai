@@ -35,9 +35,10 @@
  *               morning-briefing/tone, morning-briefing/fallback-templates
  */
 
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/rate-limit/middleware';
 import { createServiceClient } from '@/lib/supabase/service';
 import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { getManilaToday, toManila } from '@/lib/timezone';
@@ -218,7 +219,14 @@ function buildFallbackResponse(
 // GET — Generate or return cached morning briefing
 // ============================================================
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const limited = enforceRateLimit(req, {
+    key: 'morning-briefing',
+    windowMs: 60_000,
+    maxRequests: 10,
+  });
+  if (limited) return limited;
+
   let pickedTone: MorningTone | null = null;
   let userFirstName: string | null = null;
   let briefingDate = getManilaToday();

@@ -22,6 +22,15 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { NextRequest } from 'next/server';
+import { _resetStore } from '@/lib/rate-limit';
+
+// Sprint 15: route GET signature gained `req: NextRequest` for the per-route
+// rate-limit guard. Tests construct a minimal Request mock — only the
+// `headers` interface is touched by enforceRateLimit(). The in-memory store
+// is reset in beforeEach so the 30/60s cap never trips between tests.
+const reqMock = (): NextRequest =>
+  new Request('http://localhost/api/chat/suggestions') as unknown as NextRequest;
 
 // ============================================================
 // Hoisted Mocks
@@ -126,6 +135,7 @@ import { GET } from '../route';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  _resetStore();
   mockGetSuggestions.mockReturnValue(null); // default: cache miss
 });
 
@@ -134,7 +144,7 @@ describe('GET /api/chat/suggestions', () => {
 
   it('returns 401 when unauthenticated (no SKIP_AUTH bypass)', async () => {
     authAs(null);
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
     expect(res.status).toBe(401);
     expect(json.success).toBe(false);
@@ -148,7 +158,7 @@ describe('GET /api/chat/suggestions', () => {
     authAs(USER_A);
     mockBuildSuggestions.mockResolvedValueOnce(PERSONALIZED_FOUR);
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -164,7 +174,7 @@ describe('GET /api/chat/suggestions', () => {
     authAs(USER_A);
     mockBuildSuggestions.mockResolvedValueOnce(PERSONALIZED_FOUR);
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.suggestions).toHaveLength(4);
@@ -176,7 +186,7 @@ describe('GET /api/chat/suggestions', () => {
     authAs(USER_A);
     mockGetSuggestions.mockReturnValue(PERSONALIZED_FOUR);
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(json.data.cached).toBe(true);
@@ -191,7 +201,7 @@ describe('GET /api/chat/suggestions', () => {
     mockGetSuggestions.mockReturnValueOnce(null);
     mockBuildSuggestions.mockResolvedValueOnce(PERSONALIZED_FOUR);
 
-    const resA = await GET!();
+    const resA = await GET!(reqMock());
     expect((await resA.json()).data.cached).toBe(false);
     expect(mockGetSuggestions).toHaveBeenCalledWith(USER_A.id);
     expect(mockSetSuggestions).toHaveBeenCalledWith(USER_A.id, PERSONALIZED_FOUR);
@@ -201,7 +211,7 @@ describe('GET /api/chat/suggestions', () => {
     mockGetSuggestions.mockReturnValueOnce(null); // user B: distinct key, distinct miss
     mockBuildSuggestions.mockResolvedValueOnce(COLD_START_FOUR);
 
-    const resB = await GET!();
+    const resB = await GET!(reqMock());
     expect(mockGetSuggestions).toHaveBeenLastCalledWith(USER_B.id);
     expect((await resB.json()).data.cached).toBe(false);
   });
@@ -212,7 +222,7 @@ describe('GET /api/chat/suggestions', () => {
     authAs(USER_A);
     mockBuildSuggestions.mockRejectedValueOnce(new Error('Postgres connection refused'));
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     // Per ADR-016 §6: DB failure → fallback, NEVER 500.
@@ -231,7 +241,7 @@ describe('GET /api/chat/suggestions', () => {
       { id: 'evergreen_pricing', text_tl: 'Magkano dapat presyo ng produkto ko?', intent: 'pricing' },
     ]);
 
-    const res = await GET();
+    const res = await GET(reqMock());
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -244,7 +254,7 @@ describe('GET /api/chat/suggestions', () => {
     authAs(USER_A);
     mockBuildSuggestions.mockResolvedValueOnce(PERSONALIZED_FOUR);
 
-    const res = await GET();
+    const res = await GET(reqMock());
     expect(res.status).toBe(200);
     // We don't directly assert "subscription table NOT queried" because the
     // engineer might still load it for context; instead, assert no

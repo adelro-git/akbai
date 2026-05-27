@@ -12,18 +12,46 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import InvoiceForm from '@/components/invoices/invoice-form';
+import { createClient } from '@/lib/supabase/client';
+import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 
 // ============================================================
 // Page Component
 // ============================================================
 
 export default function NewInvoicePage() {
+  const router = useRouter();
   const [invoiceNumber, setInvoiceNumber] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // ── Auth gate (Sprint 15 Capacitor conversion) ──
+  useEffect(() => {
+    async function gate() {
+      if (SKIP_AUTH) {
+        setAuthChecked(true);
+        return;
+      }
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        router.replace('/login');
+        return;
+      }
+      setAuthChecked(true);
+    }
+    gate().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('new invoice auth gate failed', err);
+      router.replace('/login');
+    });
+  }, [router]);
 
   // --- Generate invoice number on mount ---
   useEffect(() => {
+    if (!authChecked) return;
     async function generateNumber() {
       try {
         // Use current date to generate number format: INV-YYYYMM-NNN
@@ -58,7 +86,7 @@ export default function NewInvoicePage() {
     }
 
     generateNumber();
-  }, []);
+  }, [authChecked]);
 
   if (loading || !invoiceNumber) {
     return (
