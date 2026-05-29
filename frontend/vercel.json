@@ -3,6 +3,12 @@
   "buildCommand": "next build",
   "outputDirectory": ".next",
   "installCommand": "yarn install",
+  "crons": [
+    {
+      "path": "/api/cron/deadline-notifications",
+      "schedule": "0 1 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/sw.js",

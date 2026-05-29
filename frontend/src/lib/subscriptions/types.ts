@@ -46,6 +46,8 @@ export interface Subscription {
   user_id: string;
   tier: SubscriptionTier;
   status: SubscriptionStatus;
+  /** Trial/subscription anchor (subscriptions.started_at, NOT NULL DEFAULT now()). Trial countdown reads this. */
+  started_at: string;
   xendit_subscription_id: string | null;
   xendit_customer_id: string | null;
   payment_method: string | null;

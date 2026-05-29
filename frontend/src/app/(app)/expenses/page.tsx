@@ -24,6 +24,7 @@ import { getManilaToday } from '@/lib/timezone';
 import { createClient } from '@/lib/supabase/client';
 import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import AddTransactionModal from '@/components/expenses/add-transaction-modal';
+import ExportCsvButton from '@/components/expenses/export-csv-button';
 import ExpensesDonut from '@/components/expenses/expenses-donut';
 import CategoryBreakdownRow from '@/components/expenses/category-breakdown-row';
 import type { WeeklyStoryDay } from '@/lib/weekly-story/types';
@@ -412,6 +413,11 @@ export default function ExpensesPage() {
                 </div>
               </div>
             </section>
+
+            {/* Export CSV (Sprint 18 §11) — exports the current range's transactions */}
+            <div className="mb-5 flex justify-end">
+              <ExportCsvButton transactions={data.transactions} />
+            </div>
 
             {/* Bawat Kategorya */}
             <section className="mb-5">

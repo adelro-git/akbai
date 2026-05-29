@@ -34,6 +34,15 @@ const APK_PATH = path.resolve(
 // project-context.md per the comment block above.
 const PRE_LAUNCH_GATE_MAX_MB = 30;
 
+// Sprint 18 interim target (SOFT — documentation only, NOT a hard gate).
+// Sprint 17 closed at 23.27 MB. Before Pre-Launch we want to keep clawing
+// headroom back, so 28 MB is our self-imposed working ceiling: well under the
+// 30 MB hard gate but tight enough to flag bloat early. This is asserted
+// log-only (the test never FAILS on it) so it can never weaken or mask the
+// 30 MB Pre-Launch Gate above. If a build legitimately needs >28 MB, bump
+// this AND note it in sprint-history — but the 30 MB gate stays authoritative.
+const INTERIM_TARGET_MAX_MB = 28;
+
 describe('Bundle size guard (Pre-Launch Gate <30 MB)', () => {
   it('.aab is under 30 MB if it exists', () => {
     if (!existsSync(AAB_PATH)) {
@@ -54,6 +63,29 @@ describe('Bundle size guard (Pre-Launch Gate <30 MB)', () => {
       return;
     }
     const sizeMB = statSync(APK_PATH).size / 1024 / 1024;
+    expect(sizeMB).toBeLessThan(PRE_LAUNCH_GATE_MAX_MB);
+  });
+
+  // --- SOFT interim target (Sprint 18) — log-only, never fails the suite. ---
+  // This documents the 28 MB working ceiling without touching the 30 MB hard
+  // gate. It always passes; it only emits a warning when the .aab drifts past
+  // the interim target so a future sprint notices the creep before it threatens
+  // the real gate. Keeping the 30 MB assertions above the single source of
+  // truth for pass/fail is intentional.
+  it('.aab warns (does not fail) if it exceeds the 28 MB interim target', () => {
+    if (!existsSync(AAB_PATH)) {
+      console.warn(`[bundle-size-guard] .aab not found at ${AAB_PATH}; skipping interim check`);
+      return;
+    }
+    const sizeMB = statSync(AAB_PATH).size / 1024 / 1024;
+    if (sizeMB >= INTERIM_TARGET_MAX_MB) {
+      console.warn(
+        `[bundle-size-guard] .aab is ${sizeMB.toFixed(2)} MB — over the ` +
+          `${INTERIM_TARGET_MAX_MB} MB Sprint 18 interim target (still under the ` +
+          `${PRE_LAUNCH_GATE_MAX_MB} MB hard gate). Investigate bundle growth.`
+      );
+    }
+    // Always-true assertion: the interim target is advisory, not a gate.
     expect(sizeMB).toBeLessThan(PRE_LAUNCH_GATE_MAX_MB);
   });
 });

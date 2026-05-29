@@ -28,7 +28,11 @@ import CheckInSection from '@/components/dashboard/check-in-section';
 import WelcomeTour from '@/components/onboarding/welcome-tour';
 import KumustahanHero from '@/components/dashboard/kumustahan-hero';
 import KuwentoCard from '@/components/dashboard/kuwento-card';
+import WeeklyReconciliationCard from '@/components/dashboard/weekly-reconciliation-card';
+import MonthlyReconciliationCard from '@/components/dashboard/monthly-reconciliation-card';
 import FloatingPetalsLayer from '@/components/dashboard/floating-petals-layer';
+import { TrialCountdownBanner } from '@/components/subscription/trial-countdown-banner';
+import { computeTrialState } from '@/lib/subscriptions/trial';
 import { PageBackground } from '@/components/ui/page-background';
 import { WovenDivider } from '@/components/illustrations/svg/decorative/WovenDivider';
 import type { StreakStatus } from '@/lib/streak/compute-streak';
@@ -71,6 +75,7 @@ interface DashboardPayload {
   streak: number;
   streakStatus: StreakStatus;
   actionTiles: ActionTile[];
+  subscription: { tier: string; status: string; started_at: string } | null;
 }
 
 export default function DashboardPage() {
@@ -163,6 +168,14 @@ export default function DashboardPage() {
           initiallyCompleted={data.welcomeTourCompleted}
         />
 
+        {/* Trial countdown (Sprint 18 §11) — only while trialing; self-hides for paid tiers */}
+        {data.subscription?.status === 'trialing' && (
+          <TrialCountdownBanner
+            trialState={computeTrialState(data.subscription.started_at)}
+            tier={data.subscription.tier}
+          />
+        )}
+
         {/* Kumustahan hero */}
         <KumustahanHero
           userName={data.userName}
@@ -207,6 +220,10 @@ export default function DashboardPage() {
 
         {/* Kuwento ng Linggo summary card */}
         <KuwentoCard />
+
+        {/* Sprint 18 — data-completeness reconciliation (Build 5) */}
+        <WeeklyReconciliationCard />
+        <MonthlyReconciliationCard />
 
         {/* Closing — centered Fraunces italic 13px "— Kai" */}
         <footer className="text-center">

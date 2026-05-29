@@ -8,6 +8,7 @@
 
 import type { BirTaxType } from './types';
 import { TAX_TYPE_FORMS, type FormSchedule } from './constants';
+import { getManilaToday } from '@/lib/timezone';
 
 // ============================================================
 // Generated Deadline shape (before DB insert)
@@ -70,14 +71,19 @@ function generateForForm(schedule: FormSchedule, year: number): GeneratedDeadlin
  * Generate all BIR deadlines for a given tax type and year.
  *
  * @param taxType - The BIR tax type from the user's profile
- * @param year - The fiscal year to generate deadlines for (defaults to current year)
+ * @param year - The fiscal year to generate deadlines for (defaults to the
+ *   current year in Manila / UTC+8). Using the Manila clock — not the
+ *   runtime's local clock — guarantees the calendar rolls to the new tax year
+ *   at Manila New Year (Sprint 18 §11) even on a UTC-configured server/CI box.
  * @returns Array of generated deadlines sorted by due_date
  */
 export function generateDeadlines(
   taxType: BirTaxType,
   year?: number
 ): GeneratedDeadline[] {
-  const targetYear = year ?? new Date().getFullYear();
+  // getManilaToday() → 'YYYY-MM-DD' in Asia/Manila; first 4 chars are the
+  // Manila-local year regardless of the host timezone.
+  const targetYear = year ?? Number(getManilaToday().slice(0, 4));
   const forms = TAX_TYPE_FORMS[taxType];
 
   if (!forms) {

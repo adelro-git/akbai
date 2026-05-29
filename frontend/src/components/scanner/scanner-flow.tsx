@@ -16,10 +16,16 @@
  * Dependencies: /api/ocr, /api/expenses, DedupWarning, CameraCapture, ScanResults
  */
 
-import { useState, useCallback } from 'react';
-import { ArrowLeft, Camera, Home, Save } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { ArrowLeft, Camera, Home, Save, WifiOff } from 'lucide-react';
 import Link from 'next/link';
 import type { ReceiptParseResult } from '@/lib/ocr/types';
+import {
+  enqueueScan,
+  flushScanQueue,
+  scanQueueSize,
+  type QueuedScan,
+} from '@/lib/ocr/offline-queue';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import { DedupWarning } from '@/components/ocr/dedup-warning';
 import { CameraCapture } from './camera-capture';
@@ -30,7 +36,9 @@ import type { EditedScanData } from './scan-results';
 // Types
 // ============================================================
 
-type FlowState = 'idle' | 'uploading' | 'reviewing' | 'saving' | 'done' | 'error';
+// Sprint 18 §11 — added 'queued' for the offline-capture state: the resibo
+// is saved locally and will sync on reconnect.
+type FlowState = 'idle' | 'uploading' | 'reviewing' | 'saving' | 'done' | 'error' | 'queued';
 
 interface DedupInfo {
   is_duplicate: boolean;
@@ -45,6 +53,40 @@ interface OcrApiResponse {
 }
 
 // ============================================================
+// Offline bridge helpers (Sprint 18 §11)
+//
+// The offline queue persists images as base64 data URLs in localStorage; the
+// OCR submit path consumes a `File`. These two helpers bridge the gap so a
+// scan captured offline can be replayed byte-for-byte on reconnect.
+// ============================================================
+
+/** Read a captured File into a base64 data URL for localStorage persistence. */
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error ?? new Error('FileReader failed'));
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Reconstruct a File from a persisted queued scan for OCR replay. */
+async function queuedScanToFile(scan: QueuedScan): Promise<File> {
+  const res = await fetch(scan.image_data_url);
+  const blob = await res.blob();
+  return new File([blob], scan.meta.filename, { type: scan.meta.mime_type });
+}
+
+/**
+ * Treat fetch's TypeError ("Failed to fetch" / "Load failed") as a network
+ * error so we know to enqueue rather than surface a hard error. A non-network
+ * throw (rare) falls through to the normal error state.
+ */
+function isNetworkError(err: unknown): boolean {
+  return err instanceof TypeError;
+}
+
+// ============================================================
 // Component
 // ============================================================
 
@@ -55,44 +97,163 @@ export function ScannerFlow() {
   const [showDedup, setShowDedup] = useState(false);
   const [pendingSaveData, setPendingSaveData] = useState<EditedScanData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [queuedCount, setQueuedCount] = useState<number>(0);
 
   // ============================================================
-  // Step 1: Image Captured -> Upload to OCR API
+  // OCR submit — POST a File to /api/ocr and return the parsed payload.
+  // Shared by the live-capture path and the offline-queue flush replay.
+  // Throws a TypeError on network failure (fetch semantics) so callers can
+  // distinguish "no signal" from "server said no".
   // ============================================================
 
-  const handleCapture = useCallback(async (file: File) => {
-    setFlowState('uploading');
-    setErrorMessage('');
-
-    try {
+  const submitToOcr = useCallback(
+    async (file: File): Promise<ReceiptParseResult & { dedup: DedupInfo }> => {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch('/api/ocr', {
-        method: 'POST',
-        body: formData,
-      });
-
+      const res = await fetch('/api/ocr', { method: 'POST', body: formData });
       const json: OcrApiResponse = await res.json();
 
       if (!json.success || !json.data) {
-        setErrorMessage(
-          json.error?.message_tl ?? 'Hindi ko ma-scan ang resibo, boss. Baka malabo — i-try mo ulit o i-type mo manually?'
+        throw new Error(
+          json.error?.message_tl ??
+            'Hindi ko ma-scan ang resibo, boss. Baka malabo — i-try mo ulit o i-type mo manually?'
         );
-        setFlowState('error');
+      }
+      return json.data;
+    },
+    []
+  );
+
+  // ============================================================
+  // Step 1: Image Captured -> Upload to OCR API
+  //
+  // Sprint 18 §11 — offline resilience: if the device is offline at capture
+  // time, OR the OCR request fails with a network error, persist the resibo to
+  // the local queue and show a warm "naka-offline ka" state instead of a hard
+  // error. The queue is drained on the 'online' event (see effect below).
+  // ============================================================
+
+  const handleCapture = useCallback(
+    async (file: File) => {
+      setErrorMessage('');
+
+      // --- Pre-flight: already offline → queue without even trying. ---
+      const offline =
+        typeof navigator !== 'undefined' && navigator.onLine === false;
+      if (offline) {
+        try {
+          const dataUrl = await fileToDataUrl(file);
+          enqueueScan({
+            imageDataUrl: dataUrl,
+            meta: { filename: file.name, mime_type: file.type || 'image/jpeg' },
+          });
+          setQueuedCount(scanQueueSize());
+          setFlowState('queued');
+        } catch {
+          setErrorMessage('Hindi ma-save ang resibo offline. Subukan ulit.');
+          setFlowState('error');
+        }
         return;
       }
 
-      // --- Store scan result and dedup info ---
-      const { dedup, ...parseResult } = json.data;
-      setScanResult(parseResult);
-      setDedupInfo(dedup);
-      setFlowState('reviewing');
-    } catch {
-      setErrorMessage('Hindi makapag-connect. I-check ang internet mo.');
-      setFlowState('error');
+      setFlowState('uploading');
+
+      try {
+        const data = await submitToOcr(file);
+        const { dedup, ...parseResult } = data;
+        setScanResult(parseResult);
+        setDedupInfo(dedup);
+        setFlowState('reviewing');
+      } catch (err) {
+        // --- Network failure mid-request → queue for sync on reconnect. ---
+        if (isNetworkError(err)) {
+          try {
+            const dataUrl = await fileToDataUrl(file);
+            enqueueScan({
+              imageDataUrl: dataUrl,
+              meta: { filename: file.name, mime_type: file.type || 'image/jpeg' },
+            });
+            setQueuedCount(scanQueueSize());
+            setFlowState('queued');
+            return;
+          } catch {
+            /* fall through to the generic error below */
+          }
+        }
+        setErrorMessage(
+          err instanceof Error
+            ? err.message
+            : 'Hindi makapag-connect. I-check ang internet mo.'
+        );
+        setFlowState('error');
+      }
+    },
+    [submitToOcr]
+  );
+
+  // ============================================================
+  // Flush — replay queued scans through the OCR submit path. Called on the
+  // 'online' event and on mount (in case the app reopened with a backlog).
+  // Successes are removed from the queue inside flushScanQueue; we just keep
+  // the visible counter in sync.
+  // ============================================================
+
+  const flushOfflineQueue = useCallback(async () => {
+    if (scanQueueSize() === 0) return;
+    await flushScanQueue(async (scan) => {
+      const file = await queuedScanToFile(scan);
+      // Replay through OCR + auto-save as an expense. A failed submit throws,
+      // which keeps the scan queued for the next flush.
+      const data = await submitToOcr(file);
+      const { fields } = data;
+      const amount =
+        typeof fields.total?.value === 'number' ? fields.total.value : 0;
+      const res = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'expense',
+          amount,
+          category: 'other_expense',
+          merchant_name:
+            typeof fields.merchant?.value === 'string'
+              ? fields.merchant.value
+              : undefined,
+          transaction_date:
+            typeof fields.date?.value === 'string'
+              ? fields.date.value
+              : undefined,
+          source: 'ocr',
+        }),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error('expense save failed');
+    });
+    setQueuedCount(scanQueueSize());
+  }, [submitToOcr]);
+
+  useEffect(() => {
+    // Seed the visible counter + attempt a flush if the app reopened online
+    // with a backlog from a previous offline session.
+    setQueuedCount(scanQueueSize());
+    if (typeof navigator !== 'undefined' && navigator.onLine) {
+      flushOfflineQueue().catch(() => {
+        /* leave queued; will retry on next 'online' */
+      });
     }
-  }, []);
+
+    const onOnline = () => {
+      flushOfflineQueue().catch(() => {
+        /* leave queued; will retry on next 'online' */
+      });
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', onOnline);
+      return () => window.removeEventListener('online', onOnline);
+    }
+    return undefined;
+  }, [flushOfflineQueue]);
 
   // ============================================================
   // Step 2: User Edited Results -> Save Transaction
@@ -180,6 +341,7 @@ export function ScannerFlow() {
     setPendingSaveData(null);
     setShowDedup(false);
     setErrorMessage('');
+    setQueuedCount(scanQueueSize());
     setFlowState('idle');
   }, []);
 
@@ -316,6 +478,49 @@ export function ScannerFlow() {
                 href="/dashboard"
                 className="flex items-center justify-center gap-2 w-full min-h-[44px] bg-surface-container-high text-on-surface font-semibold rounded-xl py-3"
                 data-testid="back-dashboard-btn"
+              >
+                <Home className="w-5 h-5" />
+                Bumalik sa Dashboard
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* --- Queued: captured offline, will sync on reconnect (Sprint 18 §11) --- */}
+        {flowState === 'queued' && (
+          <div className="py-8 text-center space-y-5" data-testid="queued-state">
+            <div className="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mx-auto">
+              <WifiOff className="w-7 h-7 text-on-surface-variant" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-on-surface font-bold text-base">
+                Naka-offline ka.
+              </p>
+              <p className="text-on-surface-variant text-sm max-w-xs mx-auto">
+                Na-save ko ang resibo — i-sye-sync ko &apos;to pag may signal na ulit.
+              </p>
+              {queuedCount > 1 && (
+                <p className="text-on-surface-variant text-xs">
+                  {queuedCount} resibo ang naka-queue.
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-3 max-w-xs mx-auto">
+              <button
+                type="button"
+                onClick={handleScanAnother}
+                className="flex items-center justify-center gap-2 w-full min-h-[44px] bg-primary-container text-on-primary font-semibold rounded-xl py-3"
+                data-testid="queued-scan-another-btn"
+              >
+                <Camera className="w-5 h-5" />
+                Mag-scan ulit
+              </button>
+
+              <Link
+                href="/dashboard"
+                className="flex items-center justify-center gap-2 w-full min-h-[44px] bg-surface-container-high text-on-surface font-semibold rounded-xl py-3"
+                data-testid="queued-back-dashboard-btn"
               >
                 <Home className="w-5 h-5" />
                 Bumalik sa Dashboard
