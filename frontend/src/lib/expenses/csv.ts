@@ -22,6 +22,7 @@
 
 import { formatManilaDate } from '@/lib/timezone';
 import { getCategoryLabel } from '@/lib/expenses/categories';
+import { centavosToPlainDecimal } from '@/lib/utils/money';
 
 // ============================================================
 // Input shape — the subset of a transaction row needed for export.
@@ -92,16 +93,6 @@ function escapeCsvText(value: string): string {
   return escapeCsvField(neutralizeFormula(value));
 }
 
-/** Integer centavos → fixed 2-decimal peso string (no glyph, no grouping). */
-function centavosToPesoDecimal(centavos: number): string {
-  // Avoid float drift: work in integer space, then place the decimal point.
-  const sign = centavos < 0 ? '-' : '';
-  const abs = Math.abs(Math.trunc(centavos));
-  const whole = Math.floor(abs / 100);
-  const frac = abs % 100;
-  return `${sign}${whole}.${String(frac).padStart(2, '0')}`;
-}
-
 /** Map the stored `type` to a Filipino label for the "Uri" column. */
 function typeLabel(type: string): string {
   if (type === 'income') return 'Kita';
@@ -160,7 +151,7 @@ export function transactionsToCsv(transactions: ExportableTransaction[]): string
       // Category + description are user/OCR-controlled → formula-injection guard.
       escapeCsvText(getCategoryLabel(tx.category)),
       escapeCsvText(tx.description ?? ''),
-      escapeCsvField(centavosToPesoDecimal(tx.amount)),
+      escapeCsvField(centavosToPlainDecimal(tx.amount)),
       escapeCsvField(sourceLabel(tx.source)),
     ];
     lines.push(row.join(','));

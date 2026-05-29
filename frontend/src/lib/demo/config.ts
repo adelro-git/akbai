@@ -26,6 +26,8 @@
  *   Arbitrary emails are NEVER accepted — only the fixed DEMO_EMAIL below.
  */
 
+import { constantTimeEquals } from '@/lib/security/constant-time';
+
 /** The one and only account the demo path may ever sign in. Hard-coded — never user-supplied. */
 export const DEMO_EMAIL = 'demo@akbai.app' as const;
 
@@ -51,19 +53,10 @@ export function isDemoButtonVisible(): boolean {
 /**
  * Constant-time string equality. Used to compare the requested email against
  * DEMO_EMAIL without leaking, via timing, how many leading characters matched.
- * Length is compared first (unavoidable) but no early-exit on content.
- * Mirrors the constant-time pattern in the cron / RevenueCat verifiers.
+ * Re-exported from the shared security primitive so existing consumers (this
+ * module's `isDemoEmail`, plus the demo config tests) keep their import path.
  */
-export function constantTimeEquals(a: string, b: string): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-  let mismatch = 0;
-  for (let i = 0; i < a.length; i++) {
-    mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  }
-  return mismatch === 0;
-}
+export { constantTimeEquals };
 
 /**
  * Is `email` the demo account email? Normalises case/whitespace the same way

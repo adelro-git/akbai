@@ -48,6 +48,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { RevenueCatEventSchema, type RevenueCatEvent } from '@/lib/iap/schemas';
 import { fetchEntitlementsFromRevenueCat } from '@/lib/iap/server-entitlements';
+import { verifyBearer } from '@/lib/security/constant-time';
 
 // ============================================================
 // Signature Verification — Bearer token constant-time compare
@@ -68,17 +69,12 @@ function verifyWebhookSignature(req: NextRequest): boolean {
     return false;
   }
 
-  const token = auth.slice('Bearer '.length);
-
-  // --- Constant-time comparison ---
-  if (token.length !== expected.length) {
-    return false;
-  }
-  let mismatch = 0;
-  for (let i = 0; i < token.length; i++) {
-    mismatch |= token.charCodeAt(i) ^ expected.charCodeAt(i);
-  }
-  return mismatch === 0;
+  // Constant-time Bearer compare via the shared security primitive. The two
+  // guards above stay here so the handler's log lines (missing env →
+  // console.error, malformed header → console.warn) are preserved exactly;
+  // verifyBearer re-checks both fail-closed, then constant-time compares the
+  // token against REVENUECAT_WEBHOOK_AUTH.
+  return verifyBearer(auth, expected);
 }
 
 // ============================================================

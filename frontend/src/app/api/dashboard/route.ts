@@ -180,52 +180,109 @@ export async function GET() {
   // Dev bypass uses service client to bypass RLS; auth path uses normal client
   const db = SKIP_AUTH ? createServiceClient() : supabase;
 
-  // Fetch user profile
-  const { data: userData } = await db
-    .from('users')
-    .select('display_name')
-    .eq('id', userId)
-    .single();
+  // Manila calendar date — needed by several of the batched reads below.
+  const today = getManilaToday();
+
+  // ── Batch all mutually-independent reads concurrently (home hot path). ──
+  // Every query below depends ONLY on `userId` (+ the precomputed `today`),
+  // so they fan out in parallel instead of ~11 sequential round-trips. The
+  // Supabase query builders are thenables; Promise.all awaits them together.
+  // Order of destructuring matches the original sequential code so the derived
+  // values (and the response shape) are byte-identical. The morning-briefing
+  // cache read stays AFTER this batch because its fallback needs `userName`.
+  const [
+    { data: userData },
+    { data: businessProfile },
+    { data: subscriptionRow },
+    { data: todayCheckIn },
+    { data: checkInDateRows },
+    { count: convoCount },
+    { count: ccCount },
+    { data: nextDeadline },
+    { count: odCount },
+    { count: invPendingCount },
+    { count: invOverdueCount },
+  ] = await Promise.all([
+    // Fetch user profile
+    db.from('users').select('display_name').eq('id', userId).single(),
+    // Fetch business profile — Phase-7 needs primary_pain + bir_registered too.
+    db
+      .from('business_profiles')
+      .select('business_name, business_type, bir_registered, primary_pain')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .single(),
+    // ── Subscription (Sprint 18) — for the trial-countdown banner. Best-effort:
+    //    a missing row (or pre-migration column) degrades to null → no banner. ──
+    db
+      .from('subscriptions')
+      .select('tier, status, started_at')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .maybeSingle(),
+    // Check if user has checked in today
+    db
+      .from('daily_check_in')
+      .select('id, mood, kai_greeting, check_in_date, sales_amount, expenses_amount')
+      .eq('user_id', userId)
+      .eq('check_in_date', today)
+      .is('deleted_at', null)
+      .single(),
+    // ── Streak (Phase-7) — all check_in_dates DESC then computeStreak walks. ──
+    db
+      .from('daily_check_in')
+      .select('check_in_date')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .order('check_in_date', { ascending: false }),
+    // ── Action-grid summary counts (Hicks's law — 5 tiles, fixed order). ──
+    db
+      .from('ka_conversations')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .is('deleted_at', null),
+    db
+      .from('costing_cards')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .is('deleted_at', null),
+    // Next deadline + overdue
+    db
+      .from('bir_deadlines')
+      .select('due_date')
+      .eq('user_id', userId)
+      .eq('status', 'upcoming')
+      .is('deleted_at', null)
+      .gte('due_date', today)
+      .order('due_date', { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+    db
+      .from('bir_deadlines')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('status', 'upcoming')
+      .is('deleted_at', null)
+      .lt('due_date', today),
+    // Invoice counts
+    db
+      .from('invoices')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .in('status', ['draft', 'sent'])
+      .is('deleted_at', null),
+    db
+      .from('invoices')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('status', 'overdue')
+      .is('deleted_at', null),
+  ]);
 
   userName = userData?.display_name ?? 'Boss';
 
-  // Fetch business profile — Phase-7 needs primary_pain + bir_registered too.
-  const { data: businessProfile } = await db
-    .from('business_profiles')
-    .select('business_name, business_type, bir_registered, primary_pain')
-    .eq('user_id', userId)
-    .is('deleted_at', null)
-    .single();
-
   const birRegistered = businessProfile?.bir_registered === true;
   const primaryPain = businessProfile?.primary_pain ?? null;
-
-  // ── Subscription (Sprint 18) — for the trial-countdown banner. Best-effort:
-  //    a missing row (or pre-migration column) degrades to null → no banner. ──
-  const { data: subscriptionRow } = await db
-    .from('subscriptions')
-    .select('tier, status, started_at')
-    .eq('user_id', userId)
-    .is('deleted_at', null)
-    .maybeSingle();
-
-  // Check if user has checked in today
-  const today = getManilaToday();
-  const { data: todayCheckIn } = await db
-    .from('daily_check_in')
-    .select('id, mood, kai_greeting, check_in_date, sales_amount, expenses_amount')
-    .eq('user_id', userId)
-    .eq('check_in_date', today)
-    .is('deleted_at', null)
-    .single();
-
-  // ── Streak (Phase-7) — all check_in_dates DESC then computeStreak walks. ──
-  const { data: checkInDateRows } = await db
-    .from('daily_check_in')
-    .select('check_in_date')
-    .eq('user_id', userId)
-    .is('deleted_at', null)
-    .order('check_in_date', { ascending: false });
 
   const checkInDates = (checkInDateRows ?? [])
     .map((r) => (r as { check_in_date: string | null }).check_in_date)
@@ -233,32 +290,8 @@ export async function GET() {
 
   const streakResult = computeStreak(checkInDates, today);
 
-  // ── Action-grid summary counts (Hicks's law — 5 tiles, fixed order). ──
-  const { count: convoCount } = await db
-    .from('ka_conversations')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .is('deleted_at', null);
   const conversationCount = convoCount ?? 0;
-
-  const { count: ccCount } = await db
-    .from('costing_cards')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .is('deleted_at', null);
   const costingCardCount = ccCount ?? 0;
-
-  // Next deadline + overdue
-  const { data: nextDeadline } = await db
-    .from('bir_deadlines')
-    .select('due_date')
-    .eq('user_id', userId)
-    .eq('status', 'upcoming')
-    .is('deleted_at', null)
-    .gte('due_date', today)
-    .order('due_date', { ascending: true })
-    .limit(1)
-    .maybeSingle();
 
   let nextDeadlineDate: string | null = null;
   if (nextDeadline?.due_date) {
@@ -266,30 +299,8 @@ export async function GET() {
     nextDeadlineDate = d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
   }
 
-  const { count: odCount } = await db
-    .from('bir_deadlines')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .eq('status', 'upcoming')
-    .is('deleted_at', null)
-    .lt('due_date', today);
   const overdueCount = odCount ?? 0;
-
-  // Invoice counts
-  const { count: invPendingCount } = await db
-    .from('invoices')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .in('status', ['draft', 'sent'])
-    .is('deleted_at', null);
   const invoicePendingCount = invPendingCount ?? 0;
-
-  const { count: invOverdueCount } = await db
-    .from('invoices')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .eq('status', 'overdue')
-    .is('deleted_at', null);
   const invoiceOverdueCount = invOverdueCount ?? 0;
 
   // ── Time-of-day for the hero pill (deterministic from Manila clock). ──
