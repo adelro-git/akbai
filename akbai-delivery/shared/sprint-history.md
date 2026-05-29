@@ -1822,3 +1822,143 @@ Essentially flat despite +11 pages and the persona-fetching layout — the `page
 
 **Next sprint:** Sprint 17 — RevenueCat IAP integration (DEV ONLY, ~2-3 hr Anton). Resolves Gap G2 (IAP webhook idempotency, replaces D2). Tier model already locked (Free trial 7-day, Starter ₱299 lifetime, Pro Monthly ₱499, Pro Annual ₱4,999) per Sprint 13 close-out. Sprint 17 wires `@revenuecat/purchases-capacitor` + `/api/webhooks/revenuecat` (event UUID dedup) + paywall UX. Fourth of six pure-dev sprints; Sprint 18 = Pre-Launch Gate review + asset readiness (G5, G6, G7); Sprint 19 = enrollment wave + on-device QA + store submission.
 
+---
+
+### Sprint 17 — 2026-05-27 (RevenueCat IAP Integration — DEV ONLY) — CLOSED 🟡 YELLOW
+
+**Phase:** 0B — Native Mobile Pivot (sprint 4 of 6)
+**Sprint Goal:** Integrate `@revenuecat/purchases-capacitor` on top of Sprint 16 base, wire `/api/webhooks/revenuecat` with event-UUID idempotent dedup (resolves Gap G2 CRITICAL), and ship paywall UX (post-trial gate). Apple/Google sandbox SKU creation + sandbox-account testing defer to Sprint 19 enrollment wave per pivot plan.
+**Capacity:** ~2-3 hr Anton (architect Open Questions review + schema migration approval + paywall copy review + PR review + self-merge); ~12-15 hr agent wall-clock budget.
+
+**Strategic context:** Fourth sprint of the 6-sprint Native Mobile Pivot. Per restructured outline (Sprint 14 footer), Sprints 15-18 are PURE DEV — all Anton-side work (paid-account enrollments, store SKU creation, sandbox testing, on-device smoke, store submission, launch motion) deferred to Sprint 19. Sprint 17 creates IAP plumbing; Sprint 19 lights it up against real store credentials.
+
+**Tasks:**
+
+| # | Task | Size | Anton Time | Stream | Notes |
+|---|------|------|------------|--------|-------|
+| 1 | Architect locks RevenueCat client + webhook + paywall pattern (one doc) | M | XS (review 5 Open Questions) | A | `akbai-delivery/skills/solutions-architect/references/sprint-17-revenuecat-pattern.md` (1200 lines) — mirrors Sprint 16 doc shape, schema decision locked: new `revenuecat_events` table + `set_user_tier_v2()` RPC |
+| 2 | Data — migration 022 (revenuecat_events + set_user_tier_v2 + tier CHECK) | S | — | A | Build-data ran AFTER architect, BEFORE engineer per Sprint 14 lesson; flagged 2 schema drift items (protect_feature_flags trigger missing from migrations, lifecycle.ts writes 9 columns not in migration 003) for Anton verification |
+| 3 | Engineer batch 1 — RevenueCat client foundations (configure + entitlements + purchase + schemas + layout init) | M | — | A | `@revenuecat/purchases-capacitor@13.1.2` installed via Sprint 16 corporate-TLS recipe. 5 new TS modules + 10 conversational Filipino iap.* keys + bundle-size-guard comment |
+| 4 | Engineer batch 2 — Webhook handler + dedup + tier-mapping + SubscriptionTierEnum extension | M | — | A | `/api/webhooks/revenuecat/route.ts` mirrors Xendit handler shape; event_id PRIMARY KEY → 23505 dedup; environment guard; SubscriptionTierEnum extended `'starter'`; new `server-entitlements.ts` REST helper |
+| 5 | Engineer batch 3 — Paywall UX (modal + 3 tier cards + restore link + 5 surface wirings) | M | — | A | `<PaywallModal />` + `<PaywallTierCard />` + `<RestorePurchasesLink />` (Apple Guideline 3.1.1); 5 surfaces routed (chat 429, free-tier banner, upgrade prompt, morning briefing, /profile manual); 22 paywall.* string keys |
+| 6 | UX + marketing reviews (parallel) — B+ / A- voice grades | S | XS (PR review) | A | UX: 2 a11y blockers + 5 copy fixes; marketing: 3 HIGH rewrites (Starter "isang beses lang" anchor, Annual "matitipid mo", Starter no-chat aspirational reframe) + CTA verb differentiation (Starter "Kunin", Pro tiers "Mag-subscribe"). Engineer follow-up commit applied all 10 items. |
+| 7 | Security pass — 4 audit surfaces CLEAN | S | XS (PR review) | A | Webhook idempotency end-to-end ✅; signature verification ✅; environment guard ✅; subscriptions write-path ZERO direct `.tier` writes outside `set_user_tier_v2` RPC ✅. 1 minor (length short-circuit on constant-time compare — inherited from Xendit). |
+| 8 | QA — vitest + web build + Capacitor static export + cap sync + PM-owned gradle | M | XS (review results) | A | Decision-gate: YELLOW. .aab = 23.27 MB (Sprint 16 20.75 MB; +2.52 MB; 22% under 30 MB Pre-Launch Gate; 0.27 MB OVER architect's <23 MB flexible target). All other criteria GREEN. |
+| 9 | Sprint 17 retro + post-sprint doc sweep | S | XS (0.25hr) | A | This entry + gap-registry G2 + project-context updates on `chore/17-retro` |
+
+**Sprint outcome:** 🟡 CLOSED YELLOW per bundle-size-only criterion — Gap G2 IMPLEMENTED at architecture + plumbing level (full Gap G2 close-out at Sprint 19 enrollment wave with real RevenueCat dashboard + sandbox SKUs + on-device testing). RevenueCat client + webhook + paywall + retro all landed on `feat/17-revenuecat-iap` (PR #38).
+
+**What shipped (`feat/17-revenuecat-iap` → 7 commits → PR #38):**
+
+*Architecture (1 commit)*
+- `3cc9820` — `sprint-17-revenuecat-pattern.md` (1200 lines, 13 sections + 5 Open Questions — all 5 held at PR review)
+
+*Schema migrations (1 commit)*
+- `335f346` — migration 022 (revenuecat_events table with event_id TEXT PRIMARY KEY = G2 invariant, service-role-only RLS, partial indexes on (app_user_id, event_at DESC) and unprocessed events) + `set_user_tier_v2()` RPC (5-arg, SECURITY DEFINER, `p_reset_started_at` BOOLEAN preserves `started_at` on renewals — fixes v1's unconditional reset; v1 untouched for legacy Xendit callsites) + `subscriptions_tier_check` CHECK constraint locking tier enum to `('free','starter','pro','business','scale')`
+
+*RevenueCat integration (3 commits, sequential batches)*
+- `4a5e5af` — `@revenuecat/purchases-capacitor@13.1.2` + 5 new TS modules in `lib/iap/` (configure, entitlements, purchase, schemas, server-entitlements deferred to batch 2) + 4th `useEffect` in `(app)/layout.tsx` + 10 conversational Filipino iap.error.* / iap.success.* keys + 1462 tests (+35 vs Sprint 16 baseline 1427)
+- `48c5ef6` — `/api/webhooks/revenuecat/route.ts` (signature verify mirroring Xendit lines 54-62, body parse + Zod validation, idempotent insert with 23505 dedup → 200 OK `{ deduped: true }`, environment guard for SANDBOX events in production, dispatch to `handleEvent` calling `set_user_tier_v2` with correct `p_reset_started_at` per event type, mark processed_at post-success) + `lib/iap/server-entitlements.ts` REST helper + SubscriptionTierEnum extended to `['free', 'starter', 'pro', 'business', 'scale']` + 1508 tests (+46)
+- `fb5e7c7` — `<PaywallModal />` (Capacitor.isNativePlatform() native/web branches, source-keyed titles for 6 sources, 3 tier cards on native + web fallback CTA only) + `<PaywallTierCard />` (reusable, called 3x, "Pinaka-sulit" badge on annual) + `<RestorePurchasesLink />` (Apple Guideline 3.1.1, mounted in modal footer + /profile) + 5 surface wirings (chat-interface 429 catch, free-tier-banner /pricing → onUpgrade, upgrade-prompt default → PaywallModal, morning-briefing-card reason='tier_required' → PaywallModal, profile-view new Subscription section) + 22 paywall.* string keys in fil.json + en.json + 1555 tests (+47)
+
+*UX polish (1 commit)*
+- `f3b7ec1` — UX + marketing review fixes: No-Line Rule violation removed in `free-tier-banner.tsx` (borders → tonal bg + shadow-ambient, Sprint 16 design convention); `aria-labelledby` + `aria-describedby` on PaywallModal dialog; PaywallModal error strip now translates `iap.error.*` keys via `useTranslations` (was rendering raw key as literal text); 3 English-SVO leaks fixed in free-tier-banner ("Learn about Pro" → "Alamin ang Pro"; "for today" → "ngayon"; ", or upgrade to Pro" → ", o mag-upgrade sa Pro"); profile section heading "Subscription" → "Plano Mo" (matches Filipino-only sibling headings); upgrade-prompt wrong scan count "50 receipt scans kada buwan" → "Unlimited na receipt scans" (correct for Pro upsell); marketing voice rewrites: Starter subtitle "₱299 lifetime — bayad mo isang beses lang" → "₱299 — isang beses lang ang bayad" (dropped "lifetime" English label), Annual "save ka ng halos ₱990" → "matitipid mo ang ₱990" (more aspirational verb, dropped "halos"), Starter no-chat note "Walang Kai sa Starter — kung gusto mo ng chat, kunin ang Pro" → "Chat sa Pro lang — madali lang mag-upgrade kung kailangan mo" (aspirational reframe), CTA verb differentiation (Starter keeps "Kunin", Pro Monthly/Annual now "Mag-subscribe sa Pro / Pro Annual" — signals subscription nature for recurring tiers); conditional `paywall.body.starter_only` body renders only when source ∈ {'chat', 'manual'} (non-sequitur on morning_briefing/weekly_story sources)
+
+*Housekeeping (1 commit)*
+- `712c729` — `frontend/android/gradle.properties` persists `systemProp.javax.net.ssl.trustStoreType=Windows-ROOT` so future builds don't need the CLI flag. JVM-layer analog of Sprint 16 DRIFT-4's npm `--use-system-ca` recipe. Sprint 17 DRIFT (new corporate-TLS surface — Maven fetch for `com.revenuecat.purchases:purchases-hybrid-common:18.7.0`).
+
+**Decision-gate metrics:**
+
+| Check | Result | Headroom vs ceiling |
+|---|---|---|
+| Web build (Vercel target, no `CAPACITOR_BUILD`) | PASS | All 49 routes; new `/api/webhooks/revenuecat` registered as dynamic ƒ |
+| Capacitor static export (`CAPACITOR_BUILD=1`) | PASS | `out/` = 16 MB / 304 files / 21 prerendered routes (+2 files vs Sprint 16 — new paywall components, same MB) |
+| `npx cap sync android` | PASS | 7 plugins registered (+`@revenuecat/purchases-capacitor@13.1.2` over Sprint 16's 6) |
+| `gradlew bundleDebug` | PASS | **`.aab` = 23.27 MB** (Sprint 16: 20.75 MB; +2.52 MB; **22% under 30 MB Pre-Launch Gate**; **0.27 MB OVER architect's <23 MB flexible target → YELLOW signal**) |
+| `gradlew assembleDebug` | PASS | `.apk` = 29.39 MB (Sprint 16: 24.39 MB; +5.00 MB — fat debug includes all ABIs; Play Store delivers split-APK from AAB) |
+| Vitest | **1555/1555 pass** | +128 vs Sprint 16 baseline 1427 (matches architect §12 high-end expectation 1517-1552): configure +9, entitlements +7, purchase +19, webhook route +32, server-entitlements +14, paywall-modal/restore-link/paywall-trigger/morning-briefing-paywall +47 |
+| TypeScript | 49 errors (42 baseline + 7 new in `lib/iap/__tests__/configure.test.ts` — same vi.mocked spread-arg pattern as Sprint 16's profile-test propagation) | **0 NEW PATTERNS introduced by Sprint 17 production code** |
+
+**Architect's 5 Open Questions — Anton's defaults (no overrides at PR review yet):**
+1. Sandbox vs production env-var split — recommend single project + env-keyed events. Held.
+2. Trial-expiration timing — recommend read-side `expires_at < NOW()` checks (no cron). Held.
+3. Lifetime-Starter + Pro coexistence — recommend Pro→Starter fallback on Pro cancellation. Held.
+4. Webhook IP allowlist — recommend shared-secret only this sprint, edge-WAF allowlist Sprint 19. Held.
+5. `set_user_tier_v2()` shape — recommend new v2 RPC (not in-place v1 modification). Held.
+
+**Marketing strategy questions (Anton-level, defer or test):**
+- Annual savings framing: A/B test `"matitipid mo ang ₱990"` vs `"₱14 lang kada araw"` (daily cost anchor)? Different MSME decision frames.
+- Paywall opening tone: Current `"Naka-max ka na sa free trial"` is honest/transactional. Alternative warmer reframe `"Trial mo ay tapos na. Gusto mo ba ng unlimited chat with Kai?"` lifts Partnership pillar.
+
+**Bundle size signal (vs Sprint 16 baseline):**
+
+| Artifact | Sprint 16 (5 plugins) | Sprint 17 (+RevenueCat) | Delta |
+|---|---|---|---|
+| Web `out/` static-export | 16 MB / 302 files / 21 routes | 16 MB / 304 files / 21 routes | +2 files (paywall components: paywall-modal, paywall-tier-card, restore-purchases-link) |
+| Android `.aab` (debug) | 20.75 MB | **23.27 MB** | **+2.52 MB** (architect estimate was +1-2 MB; came in slightly over — Google Play Billing + RevenueCat SDK + transitive Kotlin) |
+| Android `.apk` (debug) | 24.39 MB | 29.39 MB | +5.00 MB (fat debug includes all ABIs; Play Store split-APK from AAB is the user-facing payload — true install delta will be ~half this) |
+
+**Velocity (Sprint 17):**
+- Anton time: ~0.5 hr (sprint kickoff scope review + PR #38 review + merge once Anton lands). Budget was 2-3 hr; came in well under (matches Sprint 15/16 pattern — third consecutive pure-dev sprint where Anton time came in 4-6x under budget).
+- Agent time: ~5 hr wall-clock across architect (~10 min) + data (~2 min) + 3 engineer batches (client ~6 min, webhook ~10 min, paywall ~14 min) + UX + marketing reviews in parallel (~2 min each) + engineer follow-up (~6 min) + QA full suite (~3 min vitest + web build + Capacitor + cap sync) + security review (~2 min) + PM-owned gradle bundleDebug+assembleDebug+verify (~3 min wall-clock after corporate-TLS recipe applied; first 2 gradle attempts failed due to missing JAVA_HOME + ANDROID_HOME + corporate cert chain — ~10 min total exploration time before gradle.properties persist-fix). Total agent: ~6 hr. Budget was 12-15 hr; came in well under.
+- Wall-clock: ~7 hr from sprint start to PR open. Slightly heavier than Sprint 16 (~5 hr) due to PM-owned gradle TLS exploration; the persist-fix in `gradle.properties` means Sprint 18+ avoid this entirely.
+
+**Process successes — Sprint 14/15/16 lessons applied (cleanly this time):**
+- Architect, data, all 3 engineer batches, UX/marketing reviews (parallel), engineer follow-up, QA, security: all stayed synchronous with `timeout: 600000` on installs and Monitor-poll discipline. Zero premature exits across 9 agent runs.
+- QA agent NEVER attempted gradle this sprint (Sprint 16 lesson explicitly applied — QA agent prompt forbade gradle, PM took it via `run_in_background` + task-notification flow). Worked cleanly.
+- UX + marketing reviews ran in parallel (same diff, different concerns) — saved ~2 min vs sequential.
+
+**DRIFT items surfaced (architect spec vs reality):**
+
+1. **Corporate-TLS at JVM/Gradle layer (NEW Sprint 17 DRIFT).** Fetching `com.revenuecat.purchases:purchases-hybrid-common:18.7.0` from Maven hit `PKIX SunCertPathBuilderException` — JDK cacerts trust store doesn't contain the corporate root CA. Resolved with `-Djavax.net.ssl.trustStoreType=Windows-ROOT` flag; persisted to `gradle.properties` (commit `712c729`). JVM-layer analog of Sprint 16 DRIFT-4's npm `--use-system-ca` recipe. **Sprint 16's gradle build succeeded only because all Capacitor plugins were already cached in `~/.gradle/caches/`; the first fresh Maven fetch this sprint surfaced the gap.** All future gradle invocations on this machine (and any corporate-managed Windows env) will pick up the fix automatically. CONTRIBUTING.md docs update remains a carry-over.
+2. **RevenueCat SDK error code form drift (architect §2 vs reality).** Architect's spec switch-cased `rcErr.code` against enum NAMES (`'NETWORK_ERROR'` etc.) but the SDK actually exposes `code` as numeric-string values (`'10'` etc., per `errors.d.ts`). Engineer kept both forms via a `NUMERIC_TO_NAME` normaliser in `purchase.ts` so architect-spec tests + real-runtime numeric errors both route correctly. Defensive; flagged for architect doc retro-correction.
+3. **Bundle-size guard ceiling architect vs codebase.** Architect §9 proposed raising 22 MB → 23 MB but the on-disk `bundle-size-guard.test.ts` ceiling was already at 30 MB (Pre-Launch Gate). Engineer kept 30 MB intact (architect's "raise" would have lowered the existing gate). Worth architect re-review for Sprint 18 (28 MB might be the new sensible target — currently we're at 23.27 MB, +2.52 MB headroom available before bumping into the actual ceiling).
+4. **SubscriptionTierEnum cross-batch propagation.** Engineer batch 1 used a local `IapTier = 'free' | 'starter' | 'pro'` union because the global `SubscriptionTierEnum` (in `lib/subscriptions/types.ts`) didn't include `'starter'` yet — architect §8 explicitly put the enum extension in batch 2. Batch 2 extended the global enum to `['free', 'starter', 'pro', 'business', 'scale']`; engineer kept the local union narrow and TODO-commented for future cleanup. Clean cross-batch handoff.
+5. **Toast helper vs inline error strip.** Architect §4 specified "toast via existing toast system" but the codebase's `use-toast.js` is unused in app code (only lib modules). Engineer surfaced error messageKeys via inline error strip with `useTranslations('iap.error')` — preserves messageKey contract + testable + accessible. Build-ux can swap to toast helper in a future sprint if needed; messageKey-renaming is mechanical.
+6. **Modal primitive fallback.** vitest's node env (no jsdom) blocks the existing Radix `dialog.jsx`. Engineer used fixed-overlay div + `role="dialog"` + `aria-modal` + Escape-to-close keydown listener (Sprint 7+ `check-in-modal.tsx` precedent). Architect-allowed fallback; UX review confirmed a11y correct after follow-up adds `aria-labelledby` + `aria-describedby`.
+7. **/profile structural assumption.** Architect §8 said modify `app/(app)/profile/page.tsx` but that file is a thin wrapper around `<ProfileView />`. Engineer added the Subscription section to `profile-view.tsx` (the actual UI component). Same effective surface, correct location.
+8. **Store badges placeholders.** App Store / Play Store badges in PWA fallback branch use text-only placeholder spans (no asset files yet). Aria-labels correct; real PNG badges land in a Sprint 18+ follow-up.
+
+**Branch hygiene:**
+- `feat/17-revenuecat-iap` (7 commits) → PR #38 opened, awaiting merge.
+- `chore/17-retro` (this entry + gap-registry G2 + project-context updates + doc sweep) → opens PR to `main` after commit.
+- `feat/capacitor-spike` worktree at `C:\Users\Anton del Rosario\akbai-spike` PRESERVED per Sprint 14 directive — keep until Sprint 19 close as forensic reference.
+
+**Action items (carry to Sprint 18+):**
+
+1. ⏳ Sprint 18 — Pre-Launch Feature Readiness Gate review + asset readiness (G5, G6, G7). Gap G2 full close-out at Sprint 18 gate review (this sprint resolved at architecture level only; sandbox testing + real credentials happen Sprint 19).
+2. ⏳ Sprint 18 — known IAP wiring gaps (UX surfaced):
+   - `<PaywallModal source="weekly_story">` not wired on `kuwento-card.tsx` (key exists in fil.json; surface lacks the mount)
+   - `<PaywallModal source="reply_drafter">` — no reply-drafter component file exists yet (Sprint 18+ feature; fil.json key is forward-compat)
+   - `<PaywallModal source="scan_limit">` — scanner-flow gate routing to PaywallModal not in batch 3 scope; needs surface review + wire
+   - Grace period banner — webhook handles `BILLING_ISSUE` event server-side, but no client-side banner surfaces grace state to user (Gap G2-grace)
+3. ⏳ Sprint 17 housekeeping carry-over (still open from Sprint 15 + Sprint 16 + Sprint 17 DRIFT):
+   - `react-day-picker@8 → v9` upgrade OR pin `date-fns@3.x` (eliminate `--legacy-peer-deps`)
+   - Wire `eslint.config.js` to replace broken `next lint`
+   - `@sentry/nextjs` deprecation: move `disableLogger` + `automaticVercelMonitors` under `webpack.*`
+   - CONTRIBUTING.md note: Windows + corporate-TLS toolchain — Sprint 16 covered npm side (`NODE_OPTIONS=--use-system-ca`); Sprint 17 covered gradle side (`systemProp.javax.net.ssl.trustStoreType=Windows-ROOT` in `gradle.properties`); also document JAVA_HOME + ANDROID_HOME setup
+   - `language-toggle.tsx` `useTransition` cleanup
+   - Architect doc Sprint 16 correction: substitute `@aparajita/capacitor-biometric-auth` reference for `@capacitor-community/biometric-auth`
+   - Architect doc Sprint 17 correction: RevenueCat SDK error code form (numeric-string `'10'` not name `'NETWORK_ERROR'`)
+   - Clean up 4 propagated `Request vs NextRequest` TS errors in `profile/__tests__/route.test.ts` (~10 min)
+   - Clean up 7 net-new `vi.mocked` spread-arg TS errors in `lib/iap/__tests__/configure.test.ts` (Sprint 17 batch 1 baseline)
+   - Tighten build-qa SKILL.md gradle-build instructions per Sprint 16 process regression (Sprint 17 demonstrated the PM-owned gradle pattern works cleanly)
+   - Bring `supabase-schema.md` up to date with migrations 011-022
+4. ⏳ Stream B (Anton solo Gemini Kai iteration) — continues async; 8 poses target. Sprint 18 needs the assets.
+5. ⏳ Sprint 18 — architect re-review of bundle-size-guard ceiling (currently 30 MB Pre-Launch Gate). Recommend 28 MB as sensible Sprint 18 target after Sprint 17 came in at 23.27 MB with +2.52 MB delta. ProGuard rule tuning if any future plugin pushes against 28 MB.
+6. ⏳ Sprint 18 — `protect_feature_flags()` trigger drift surfaced by build-data: referenced in `project-context.md` line 177 + `gap-registry.md` line 85 as deployed Sprint 3, but no CREATE TRIGGER in any migration file. Anton verifies in Supabase Studio (`SELECT tgname FROM pg_trigger WHERE tgname LIKE '%feature_flags%';`) + decides whether to backfill `999_security_hardening_backfill.sql`. RevenueCat write path doesn't touch `users.feature_flags` so zero intersection with Sprint 17 — but audit-trail gap is real.
+7. ⏳ Sprint 18 — `subscriptions` schema drift surfaced by build-data: `lib/subscriptions/lifecycle.ts` writes 9 columns (`xendit_customer_id`, `payment_method`, `current_period_start/_end`, `scan_limit`, `scans_used_this_period`, `grace_period_end`, `grace_notifications_sent`, `cancelled_at`) not in migration 003. Either added via Studio direct SQL (Xendit code works) or absent (Xendit code silently broken; Sprint 17 inherits the gap). Anton runs `\d subscriptions` against staging.
+8. ⏳ Sprint 19 carry-over (no per-sprint device gates per testing-cadence decision):
+   - Real `NEXT_PUBLIC_REVENUECAT_APPLE_API_KEY` + `NEXT_PUBLIC_REVENUECAT_GOOGLE_API_KEY` from RevenueCat dashboard
+   - Real `REVENUECAT_WEBHOOK_AUTH` shared secret (rotate from `placeholder_webhook_secret_sprint17_change_before_prod`)
+   - `REVENUECAT_REST_API_KEY` (Server-side, separate from public client keys) for entitlement REST lookup
+   - RevenueCat dashboard configuration: 2 entitlements (`pro_unlimited`, `starter_lifetime`); 3 products (`akbai_pro_monthly`, `akbai_pro_annual`, `akbai_starter_lifetime`); 1 offering with all 3 packages
+   - Apple App Store Connect SKU creation (sandbox-tested before production)
+   - Google Play Console SKU creation (sandbox-tested before production)
+   - iOS `Info.plist` `CFBundleURLTypes` for custom-scheme deep link (Sprint 16 carry-over)
+   - On-device Pixel 5 smoke: paywall renders, purchasePackage flows, restorePurchases works, webhook fires on test purchase, tier write reflects in user UI
+   - Curl smoke test: hand-crafted INITIAL_PURCHASE event POSTed to staging webhook with real shared secret → 200 OK + row in `revenuecat_events` + tier write via `set_user_tier_v2` + `processed_at` set; duplicate POST → 200 + `{ deduped: true }`
+   - Sprint 16 stub `unregisterNativePush()` implementation (NPC data-subject-rights closure)
+
+**Next sprint:** Sprint 18 — Pre-Launch Feature Readiness Gate review (per pivot plan §11, 40+ item checklist) + asset readiness (G5 App Store assets, G6 Kai character integration, G7 Pre-Launch Gate). Fifth of six pure-dev sprints. Sprint 19 = enrollment wave (Apple Developer Program, Google Play Console, RevenueCat dashboard) + on-device Pixel 5 smoke + Sentry symbolication execution + store submission.
+

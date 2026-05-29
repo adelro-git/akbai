@@ -81,6 +81,47 @@ Since Sprint 4, development uses multi-agent parallel execution where multiple a
 - Agents must not modify tests written by other agents
 - Shared test utilities (mocks, fixtures) should be created only if no existing utility covers the need
 
+## Gradle Build Discipline (Sprint 17 — PM-owned, supersedes Sprint 16 retro action #4)
+
+> **Active since 2026-05-27 (Sprint 17 retro).** This rule SUPERSEDES the Sprint 16 retro action that required the build-qa agent to use `Monitor.until-loop` for gradle commands. Sprint 17 demonstrated the cleaner pattern: **the QA agent never touches gradle**, full stop. PM (top-level Claude in the session) owns gradle invocations.
+
+**The rule:**
+- QA agent scope for native verification STOPS at:
+  - `npx vitest run` (the full unit + integration suite)
+  - `npm run build` (Next.js web build)
+  - `CAPACITOR_BUILD=1 npm run build` (Capacitor static export to `out/`)
+  - `npx cap sync android` (copies `out/` into `frontend/android/app/src/main/assets/public/` + plugin registration)
+- QA agent **must NOT invoke** `gradlew bundleDebug`, `gradlew assembleDebug`, or any other long-running gradle task. If a verification plan needs the `.aab` / `.apk`, the QA agent reports completion of cap-sync and hands off to PM.
+- PM handles gradle via `Bash` with `run_in_background: true` + the harness-native task-notification flow. Do NOT use `Monitor.until-loop` polling — task-notifications deliver across PM tool-call boundaries naturally; polling adds latency for no benefit.
+
+**Why sub-agents can't run gradle:**
+- Gradle cold-builds are 4-10 min (long enough to make a sub-agent feel "let me yield back to parent" but short enough that chunking doesn't apply).
+- Sub-agents do NOT receive task-notifications across tool-call boundaries — when the sub-agent ends a turn with a pending background task, the task is orphaned and the agent gets no resumption signal.
+- PM (top-level Claude) DOES receive task-notifications because they're delivered intra-session as part of the parent's tool-call stream.
+- Sprint 16 retro logged this as the build-qa agent yielding twice mid-gradle; Sprint 17 retro confirmed the PM-owned pattern works cleanly (zero yields across 9 agent runs).
+
+**See also:** `feedback_agent_background_tasks` user memory + `references/test-strategy.md` §9 "Long-running gradle build discipline."
+
+### Sprint 17 gradle TLS recipe (Windows + corporate-MITM env)
+
+If you (PM) need to run gradle on a Windows machine behind a corporate TLS-intercepting proxy, the load-bearing setup is:
+
+1. **`JAVA_HOME`** — point to JDK 21 install (Sprint 14 toolchain baseline)
+2. **`ANDROID_HOME`** — point to Android SDK 36 install (Sprint 14 toolchain baseline)
+3. **Windows root CA trust** — gradle's JVM does NOT trust the Windows certificate store by default; Maven fetches (e.g. `com.revenuecat.purchases:purchases-hybrid-common:18.7.0` in Sprint 17) fail with `PKIX path building failed`
+
+**One-shot CLI flag (Sprint 17 first-run):**
+```bash
+cd frontend/android
+./gradlew bundleDebug -Djavax.net.ssl.trustStoreType=Windows-ROOT
+```
+
+**Persistent recipe (Sprint 17 commit `712c729`, now in repo):** `frontend/android/gradle.properties` contains:
+```
+systemProp.javax.net.ssl.trustStoreType=Windows-ROOT
+```
+This means Sprint 18+ builds do NOT need the `-Djavax.net.ssl.trustStoreType=...` CLI flag — invoke gradle normally. The recipe is the JVM-layer analog of Sprint 16 DRIFT-4's npm `NODE_OPTIONS=--use-system-ca`.
+
 ## Priority 1: BIR Deadline Calculations
 
 This is the highest-priority test area because a wrong BIR deadline means a user gets fined by the government. BIR deadline logic is pure computation — no side effects — which makes it perfect for exhaustive unit testing.

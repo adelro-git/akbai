@@ -1,6 +1,6 @@
 # AKBai — Conversational Filipino Copy Guide
 > Kai voice rules, do/don't examples, tone calibration, and microcopy patterns for every UI surface.
-> Last updated: 2026-04-09 | Replaces: taglish-copy-guide.md (prior Taglish framing)
+> Last updated: 2026-05-27 | Replaces: taglish-copy-guide.md (prior Taglish framing)
 > Source: Brand Guide v1.0, Brand Context, Project Context
 
 ---
@@ -20,6 +20,7 @@
 11. [Login / Auth Microcopy](#11-login--auth-microcopy)
 12. [Dashboard Microcopy](#12-dashboard-microcopy)
 13. [Quick Reference Card — 8 Markers + Fixes](#13-quick-reference-card--8-markers--fixes)
+14. [Pricing / Paywall Copy Patterns — Sprint 17](#14-pricing--paywall-copy-patterns--sprint-17)
 
 ---
 
@@ -545,3 +546,84 @@ Use this table as a quick audit checklist before shipping any copy.
 - [ ] **4. Filipino conjunctions?** Did I use kung/bago/kasi/dahil/kapag instead of if/before/because/when?
 - [ ] **5. Filipino time adverbs?** Did I replace “this week”/“last month” with ngayong linggo/nakaraang buwan?
 - [ ] **6. “Ang” instead of “yung”?** In written copy, is it “ang resibo” not “yung receipt”?
+
+---
+
+## 14. Pricing / Paywall Copy Patterns — Sprint 17
+
+> Added Sprint 17 (2026-05-27). Source: marketing voice review of PaywallModal + PaywallTierCard (commit f3b7ec1). Applies to pricing/paywall surface only; do not extrapolate to other surfaces without a separate review.
+
+---
+
+### Pattern 14-A: CTA verb differentiation by tier type
+
+Use a different verb for one-time purchases vs recurring subscriptions. The verb signals the nature of the commitment before the user reads the pricing.
+
+| Tier type | CTA verb | Example | Rationale |
+|-----------|----------|---------|-----------|
+| One-time / lifetime (non-consumable IAP) | Kunin | "Kunin ang Starter" | Physical-goods metaphor — "grab it, it's yours." Signals a single finite action with no renewal. |
+| Monthly or annual subscription (recurring IAP) | Mag-subscribe | "Mag-subscribe sa Pro" / "Mag-subscribe sa Pro Annual" | Filipinized mag- verb — MSME-recognizable framing for recurring commitment + renewal cycle. |
+
+**Production examples shipped Sprint 17 (frontend/messages/fil.json, paywall.cards.*):**
+- paywall.cards.starter.cta: "Kunin ang Starter" (lifetime, one-time)
+- paywall.cards.pro_monthly.cta: "Mag-subscribe sa Pro" (monthly recurring)
+- paywall.cards.pro_annual.cta: "Mag-subscribe sa Pro Annual" (annual recurring)
+
+**Why this matters:** "Kunin" on a subscription under-signals that billing recurs — users may not realize they are committing to monthly or annual charges. "Mag-subscribe" on a lifetime purchase over-signals commitment and may deter a user from a straightforward single purchase. Tier-typed verb choice reduces post-purchase confusion and potential chargeback friction.
+
+**Taglish anti-patterns:**
+- "Buy Starter" — bare English verb, no Filipino frame
+- "Mag-subscribe sa Starter" — subscription verb on a one-time product misleads
+- "Kumuha ng Pro Monthly" — kumuha is transactional but too generic; loses the recurring-commitment signal
+
+---
+
+### Pattern 14-B: Pricing anchor — lead with Filipino action framing, drop the English SaaS label
+
+For lifetime / one-time pricing copy, put the emotional action anchor first. Drop the English loanword "lifetime" — it reads as SaaS jargon to Filipino MSMEs and the action phrase makes it redundant.
+
+| Version | Copy | Verdict |
+|---------|------|---------|
+| REJECTED (original) | "₱299 lifetime — bayad mo isang beses lang" | English loanword "lifetime" leads; the Filipino emotional anchor is buried as a subordinate clause |
+| SHIPPED (Sprint 17) | "₱299 — isang beses lang ang bayad" | Filipino anchor leads; "lifetime" label dropped entirely |
+
+**Why this matters:** "Isang beses lang ang bayad" (your payment is just once) is concrete, action-oriented, and fits AKBai's market-vendor voice. "Lifetime" is a foreign syntactic element in an otherwise Filipino sentence — it adds a category label but removes warmth. MSMEs respond to direct action framing over SaaS category terms.
+
+**Frame rule:** In one-time pricing subtitles, use "isang beses lang ang bayad" or "isang beses mo lang babayaran" — not "lifetime", "one-time payment", or "bayad mo isang beses lang" (the last form is Filipino in words but SVO in structure; restructure so the anchor noun phrase leads).
+
+**Taglish anti-patterns:**
+- "₱299 lifetime" — English label only, no Filipino framing
+- "₱299 — one-time payment lang" — English phrase in a Filipino subtitle
+- "bayad mo isang beses lang" — correct words, wrong word order; the anchor is subordinated; restructure to "isang beses lang ang bayad"
+
+---
+
+### Pattern 14-C: Savings verb — matitipid mo over save ka ng (Sprint 17)
+
+When surfacing annual-plan savings, prefer the Filipino verb matitipid (will economize / will save money) over the loanword save.
+
+| Version | Copy | Verdict |
+|---------|------|---------|
+| REJECTED | "save ka ng halos ₱990" | save is a loanword; halos (approximately) hedges the claim and weakens it |
+| SHIPPED (Sprint 17) | "matitipid mo ang ₱990" | Filipino future verb matitipid is aspirational + native; drops halos for a concrete savings claim |
+
+**Why this matters:** Matitipid carries a distinctly Filipino emotional register — it sounds like advice from a trusted ate/kuya, not a pricing table label. Dropping halos ("approximately") makes the savings figure specific and trustworthy. The combination is more motivating for budget-conscious MSMEs than the loanword + hedge construction.
+
+**Pattern rule:** For savings callouts on pricing surfaces, use "matitipid mo ang ₱[amount]". Reserve halos only when the amount is a genuine estimate (not a fixed plan price differential).
+
+**Taglish anti-patterns:**
+- "save ka ng ₱990" — loanword verb, less aspirational
+- "makatitipid ka ng halos ₱990" — overly formal construction + unnecessary hedge
+- "₱990 savings" — English noun phrase only
+
+---
+
+### Summary: Pricing surface copy checklist (Sprint 17)
+
+Before shipping any paywall / pricing card copy, check:
+
+- [ ] One-time IAP uses "Kunin" CTA; recurring (monthly/annual) uses "Mag-subscribe"
+- [ ] One-time pricing subtitle uses "isang beses lang ang bayad" — not "lifetime" or "one-time payment"
+- [ ] Annual savings copy uses "matitipid mo ang ₱[amount]" — not "save ka ng" or with halos
+- [ ] All peso amounts use ₱ + formatted digits (no "PHP", no spelled-out pesos)
+- [ ] No bare English verbs on CTAs (no "Buy", "Get", "Subscribe Now" without Filipino prefix/frame)

@@ -1,6 +1,6 @@
 # AKBai — Supabase Schema Reference
 > Living document. Update this file whenever a table is created, modified, or deprecated.
-> Last updated: 2026-04-10 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
+> Last updated: 2026-05-27 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
 
 ---
 
@@ -29,6 +29,10 @@
 21. [Index Strategy Summary](#21-index-strategy-summary)
 22. [Timezone Handling (Gap A3)](#22-timezone-handling-gap-a3)
 23. [Build 8 (DRAFT)](#23-build-8-draft--awaiting-review)
+24. [Migration Log — Sprint 16 (020 + 021)](#24-migration-log--sprint-16-020--021-native-surface-polish)
+25. [Migration Log — Sprints 9-13 Catch-up (011-019)](#25-migration-log--sprints-9-13-catch-up-011-019)
+26. [Migration Log — Sprint 17 (022_revenuecat_events)](#26-migration-log--sprint-17-022_revenuecat_events)
+27. [Known Schema Drift](#27-known-schema-drift)
 
 > **Migration order matters.** Tables are listed in FK dependency order — receipts before transactions (because transactions.receipt_id references receipts.id). Run migrations sequentially by number.
 
@@ -1449,4 +1453,246 @@ ALTER TABLE public.users
 
 ### Architect reference
 `akbai-delivery/skills/solutions-architect/references/sprint-16-native-plugin-pattern.md` §8 (Migration A + B shapes locked 2026-05-27).
+
+---
+
+## 25. Migration Log — Sprints 9-13 Catch-up (011-019)
+
+> **Doc-debt closure (Sprint 17):** This section back-fills the migrations that landed between Sprints 9 and 13 but never reached this reference. Each entry: file, sprint of origin, table(s) touched, key columns, RLS shape, soft-delete invariant. Entries stay concise — the .sql files are source of truth.
+
+### 011_bir_deadlines.sql (Sprint 9, Build 6)
+Creates `bir_deadlines` (one row per user per BIR form + due_date) and adds `bir_tax_type TEXT NULL` to `business_profiles`. Columns: `form_name`, `due_date`, `description`, `status` (CHECK: `upcoming|filed|overdue|na`), `notified_7d/3d/1d` BOOLEAN flags, plus the audit triple + `deleted_at`. RLS: standard 4-policy pattern (SELECT/INSERT/UPDATE/DELETE all `auth.uid() = user_id`) — note this migration is the lone exception that includes a client DELETE policy; new tables should not follow this precedent (soft-delete only per CLAUDE.md rule 2). Unique index `(user_id, form_name, due_date) WHERE deleted_at IS NULL` blocks dup deadlines. Index `(user_id, due_date)` powers Deadline Watcher reads. Supersedes the §7 `bir_deadlines` table shape (which planned `form_type`/`deadline_date`/`filing_period` columns that never shipped).
+
+### 012_morning_briefing_cache.sql (Sprint 10, Build 5)
+Extends `daily_check_in` (§16) with `briefing_content TEXT NULL` + `briefing_generated_at TIMESTAMPTZ NULL`. No new RLS — inherits existing row-scoped policies on `daily_check_in`. Powers the once-per-day Claude cache for `/api/morning-briefing`; cache key is `(user_id, check_in_date)` (already UNIQUE on `daily_check_in`).
+
+### 013_waitlist.sql (Sprint 11, landing page)
+Creates `waitlist` table — `id`, `email UNIQUE`, `source TEXT DEFAULT 'landing_page'`, `created_at`, `deleted_at`. RLS: public INSERT (`WITH CHECK (true)` so the landing page can write without auth) + service-role-only SELECT. No `user_id` (anonymous capture pre-signup). Soft-delete on per project rule, even though deletion path is unlikely.
+
+### 014_receipt_dedup.sql (Sprint 12, Gap C1)
+Extends `transactions` (§18) with `receipt_hash TEXT NULL` + `merchant_name TEXT NULL` for receipt-scan dedup. Hash = SHA-256 of `amount + date + merchant_name`, computed app-side. Partial index `idx_transactions_receipt_hash (user_id, receipt_hash) WHERE receipt_hash IS NOT NULL AND deleted_at IS NULL` powers the ±30-min duplicate-window lookup at scan time. No new RLS — inherits Sprint 7 `transactions` policies.
+
+### 015_costing_cards.sql (Sprint 13, Build 8)
+Creates `costing_cards` (header) + `costing_card_items` (line items). `costing_cards` columns: `product_name`, `product_category`, `total_cost_centavos`, `overhead_centavos`, `labor_centavos`, `packaging_centavos`, `selling_price_centavos`, `suggested_price_centavos`, `target_margin_pct`, `actual_margin_pct`, `break_even_qty`, `monthly_fixed_costs_centavos`, `yield_quantity`, `yield_unit`, plus audit triple + `deleted_at`. `costing_card_items` columns: `costing_card_id` FK (ON DELETE CASCADE), `item_name`, `item_type` CHECK (`ingredient|labor|overhead|packaging|other`), `quantity NUMERIC(10,3)`, `unit_cost_centavos`, `total_cost_centavos`, `sort_order`. Both tables: standard 3-policy RLS (SELECT/INSERT/UPDATE own; no DELETE — soft-delete only), `idx_*_user_id WHERE deleted_at IS NULL`, audit trigger via shared `handle_updated_at()`. Money is INTEGER centavos throughout (non-negotiable convention).
+
+### 016_invoices.sql (Sprint 13, Build 8)
+Creates `invoices` + `invoice_items` — **supersedes the §6 invoices schema** which was planned but never migrated. Header columns: `invoice_number`, `invoice_date`, `due_date`, `client_name`, `client_email`, `client_phone`, `client_address`, `subtotal_centavos`, `discount_centavos`, `tax_rate_pct`, `tax_amount_centavos`, `total_centavos`, `status` CHECK (`draft|sent|viewed|paid|overdue|cancelled`), `sent_at`, `paid_at`, `cancelled_at`, `payment_transaction_id UUID` (no FK constraint), `pdf_storage_path`, `notes`, `internal_notes`. Line items: `invoice_id` FK CASCADE, `description`, `quantity NUMERIC(10,3)`, `unit`, `unit_price_centavos`, `total_centavos`, optional `costing_card_id` FK (margin visibility on invoices), `sort_order`. RLS: standard 3-policy on both tables. Indexes: `(user_id)`, `(user_id, status)`, `(user_id, invoice_date DESC)`, UNIQUE `(user_id, invoice_number) WHERE deleted_at IS NULL` (Phase 1 scope: per-user numbering), partial `(due_date, status) WHERE status='sent'` for overdue-cron detection.
+
+### 017_payments.sql (Sprint 13, Build 8, Gap D2)
+Creates `payments` — the table that resolves Xendit webhook idempotency. Columns: `payment_type` CHECK (`invoice_payment|subscription_payment`), `xendit_payment_id TEXT`, `xendit_invoice_id TEXT`, `payment_method`, `amount_centavos INTEGER`, `currency DEFAULT 'PHP'`, `status` CHECK (`pending|processing|succeeded|failed|refunded|cancelled`), `invoice_id` FK (nullable), `subscription_id` FK (nullable), `transaction_id UUID` (no FK), `paid_at`, `failure_reason`, `notes`. RLS: **SELECT-only for users** (`auth.uid() = user_id`) — INSERT/UPDATE via service role only (webhook handler bypasses RLS). The load-bearing invariant for Gap D2: `CREATE UNIQUE INDEX idx_payments_xendit_id ON public.payments(xendit_payment_id) WHERE xendit_payment_id IS NOT NULL AND deleted_at IS NULL` — the webhook does `INSERT … ON CONFLICT (xendit_payment_id) DO NOTHING`; zero rows back = duplicate, skip downstream work.
+
+### 018_push_notifications.sql (Sprint 14, Gap B6)
+Creates three tables for Web Push infrastructure. (1) `push_subscriptions`: `user_id`, `endpoint`, `p256dh_key`, `auth_key`, `created_at`, `deleted_at`. Indexes: `(user_id) WHERE deleted_at IS NULL`, UNIQUE `(user_id, endpoint) WHERE deleted_at IS NULL` (later dropped + replaced in migration 020). (2) `notification_preferences`: `notification_type`, `enabled BOOLEAN DEFAULT true`, audit triple + `deleted_at`, UNIQUE `(user_id, notification_type) WHERE deleted_at IS NULL`. (3) `notifications` (in-app log): `notification_type`, `title`, `body`, `url`, `read_at`, `created_at`, `deleted_at` (no `updated_at`). All three tables: standard 3-policy RLS (`auth.uid() = user_id`). The `update_notification_prefs_updated_at()` trigger function is created here (separate from the bootstrap `update_updated_at()` and the Sprint 13 `handle_updated_at()`) — three update-timestamp functions now coexist in the schema; consolidation deferred.
+
+### 019_morning_briefing_tone.sql (Sprint 14, Phase 7 D6)
+Extends `daily_check_in` (§16) with `briefing_tagline TEXT NULL` (≤80 chars enforced at app layer) + `briefing_tone TEXT NULL CHECK (briefing_tone IS NULL OR briefing_tone IN ('energetic','observant','celebratory'))`. No new RLS or trigger — inherits existing daily_check_in policies. NULL values are valid (the route falls back to `pickFallback()` deterministic templates when Claude is unavailable on the no_credits path). Cache key remains `(user_id, check_in_date)`.
+
+---
+
+## 26. Migration Log — Sprint 17 (022_revenuecat_events)
+
+**Migration file:** `022_revenuecat_events.sql`
+**Sprint:** 17 (2026-05-27)
+**Architect reference:** `akbai-delivery/skills/solutions-architect/references/sprint-17-revenuecat-pattern.md` §5 (locked 2026-05-27)
+**Resolves:** Gap G2 (CRITICAL) — RevenueCat IAP webhook idempotency. Replaces the dormant Xendit handler as the authoritative billing pipeline for Phase 0B mobile launch.
+
+### Why this migration is load-bearing
+
+RevenueCat retries every webhook on any non-2xx response — up to 12 attempts over ~72 hours. Without per-event-UUID dedup, a transient network blip during downstream tier writes triggers retry storms that thrash `subscriptions.tier`. The `event_id TEXT PRIMARY KEY` + `ON CONFLICT (event_id) DO NOTHING RETURNING *` pattern (mirrors the Sprint 13 `payments.xendit_payment_id` UNIQUE invariant from migration 017) is the architectural mitigation. The `set_user_tier_v2()` RPC fixes the `started_at` bug in v1 (which unconditionally overwrites the original purchase date on every renewal, breaking tenure-based features later).
+
+### Table: revenuecat_events (NEW)
+
+Service-role-only audit log of every RevenueCat webhook event. Users never read their own events.
+
+```sql
+CREATE TABLE IF NOT EXISTS public.revenuecat_events (
+  event_id     TEXT        PRIMARY KEY,    -- RevenueCat event UUID (G2 idempotency invariant)
+  event_type   TEXT        NOT NULL,       -- 'INITIAL_PURCHASE' | 'RENEWAL' | 'CANCELLATION' | …
+  app_user_id  TEXT        NOT NULL,       -- users.id::text (RevenueCat treats as opaque)
+  event_at     TIMESTAMPTZ NOT NULL,       -- from event.event_timestamp_ms
+  payload      JSONB       NOT NULL,       -- full event envelope
+  processed_at TIMESTAMPTZ NULL,           -- set after downstream tier write
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  deleted_at   TIMESTAMPTZ NULL            -- soft-delete invariant (CLAUDE.md rule 2)
+);
+
+ALTER TABLE public.revenuecat_events ENABLE ROW LEVEL SECURITY;
+-- NO user-side SELECT/INSERT/UPDATE/DELETE policy. Service role bypasses RLS.
+-- Default deny — if a future feature needs user-side reads, add a policy then.
+
+CREATE INDEX IF NOT EXISTS idx_revenuecat_events_user_event_at
+  ON public.revenuecat_events(app_user_id, event_at DESC)
+  WHERE deleted_at IS NULL;
+
+CREATE INDEX IF NOT EXISTS idx_revenuecat_events_unprocessed
+  ON public.revenuecat_events(event_at DESC)
+  WHERE processed_at IS NULL AND deleted_at IS NULL;
+```
+
+**RLS:** service-role-only by design. RLS is ENABLED with **no policies** (default deny for anon + authenticated). Same posture as `webhook_events` (§11), `daily_api_spend` (§12), `audit_log` (§13) — internal audit tables. The webhook handler at `/api/webhooks/revenuecat/route.ts` uses the service role key (server-only, never in client code per CLAUDE.md rule 4).
+
+**Soft-delete:** `deleted_at TIMESTAMPTZ NULL` per CLAUDE.md rule 2. Both partial indexes scope on `WHERE deleted_at IS NULL`. No DELETE policy.
+
+**Primary key choice — `TEXT` not `UUID`:** RevenueCat's `event_id` is delivered as a string per their docs and may contain non-UUID formats during sandbox testing or version migrations. TEXT is the conservative choice; the PK provides idempotency regardless of format.
+
+**Index rationale:**
+- `idx_revenuecat_events_user_event_at` — per-user event audit reads (admin debugging, dispute investigation).
+- `idx_revenuecat_events_unprocessed` — re-processable backlog scan if downstream tier writes fail mid-event (failure mode: row inserted, `processed_at` left NULL, retry later).
+
+### RPC: set_user_tier_v2() (NEW; v1 untouched)
+
+5-arg SECURITY DEFINER function. The RevenueCat webhook handler routes ALL tier writes through this RPC — no direct `UPDATE subscriptions` from the handler. v1 (`set_user_tier`, migration 003 lines 73-88) is **not modified or dropped**; legacy Xendit callsites (`lib/subscriptions/lifecycle.ts`) continue to use v1 unchanged.
+
+```sql
+CREATE OR REPLACE FUNCTION public.set_user_tier_v2(
+  p_user_id                   UUID,
+  p_tier                      TEXT,
+  p_expires_at                TIMESTAMPTZ DEFAULT NULL,
+  p_revenuecat_app_user_id    TEXT        DEFAULT NULL,
+  p_reset_started_at          BOOLEAN     DEFAULT false
+) RETURNS void AS $$
+BEGIN
+  UPDATE public.subscriptions
+  SET tier                   = p_tier,
+      expires_at             = p_expires_at,
+      status                 = CASE WHEN p_tier = 'free' THEN 'cancelled' ELSE 'active' END,
+      started_at             = CASE WHEN p_reset_started_at THEN NOW() ELSE started_at END,
+      xendit_subscription_id = CASE
+                                 WHEN p_revenuecat_app_user_id IS NOT NULL
+                                 THEN COALESCE(xendit_subscription_id, p_revenuecat_app_user_id)
+                                 ELSE xendit_subscription_id
+                               END,
+      updated_at             = NOW()
+  WHERE user_id = p_user_id
+    AND deleted_at IS NULL;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+**`p_reset_started_at` semantics (architect §5 decision #2 — load-bearing):**
+- `true`  → only on `INITIAL_PURCHASE` / `NON_RENEWING_PURCHASE` (first-time tier entry, fresh tenure).
+- `false` → renewals / product changes / billing-issue resolution. `started_at` is preserved via the `CASE … ELSE started_at` branch.
+- v1 unconditionally resets `started_at = NOW()` on every call — that is the bug v2 fixes.
+
+**`xendit_subscription_id` column reuse:** v2 opportunistically stores the RevenueCat `app_user_id` in the existing `xendit_subscription_id` column (only when currently NULL — `COALESCE` preserves existing Xendit IDs). Avoids a column rename / new column for Sprint 17; clean-up deferred (column rename to `external_subscription_id` is a future migration if Anton chooses).
+
+**SECURITY DEFINER:** matches v1. Caller is the webhook route running under service role; SECURITY DEFINER makes the function run as the owner regardless. Safe because (a) the function only touches `public.subscriptions` (one table, well-scoped), (b) `p_user_id` is validated server-side by the webhook handler before invocation, (c) RLS on `subscriptions` is read-only for users anyway.
+
+### Constraint: subscriptions_tier_check (NEW; idempotent)
+
+Forward-compat enum lock for the `subscriptions.tier` column. Idempotent via `DO $$ … pg_constraint probe … END $$` because Postgres <16 has no `ADD CONSTRAINT IF NOT EXISTS` for CHECK.
+
+```sql
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'subscriptions_tier_check'
+      AND conrelid = 'public.subscriptions'::regclass
+  ) THEN
+    ALTER TABLE public.subscriptions
+      ADD CONSTRAINT subscriptions_tier_check
+      CHECK (tier IN ('free', 'starter', 'pro', 'business', 'scale'));
+  END IF;
+END
+$$;
+```
+
+**Enum scope (architect §5):** Sprint 13 tier lock is `'free' | 'starter' | 'pro'`. `'business'` and `'scale'` are retained as forward-compat (Phase 2/3 references in `frontend/src/lib/subscriptions/types.ts`) — RevenueCat never writes them in Sprint 17, but the CHECK accepts them so a future migration that introduces those tiers doesn't have to redo this constraint.
+
+### Rollback notes (record only; do NOT execute as part of migration)
+
+```sql
+-- 1. Soft-delete every event row:
+UPDATE public.revenuecat_events SET deleted_at = now() WHERE deleted_at IS NULL;
+
+-- 2. Drop the v2 RPC (v1 untouched):
+DROP FUNCTION IF EXISTS public.set_user_tier_v2(UUID, TEXT, TIMESTAMPTZ, TEXT, BOOLEAN);
+
+-- 3. Drop the tier CHECK constraint:
+ALTER TABLE public.subscriptions DROP CONSTRAINT IF EXISTS subscriptions_tier_check;
+
+-- 4. Drop the events table (only after step 1 + audit retention):
+DROP TABLE IF EXISTS public.revenuecat_events;
+```
+
+### Verify queries (paste into Supabase Studio after applying)
+
+```sql
+-- 1. Table + RLS posture:
+SELECT tablename, rowsecurity FROM pg_tables
+WHERE schemaname = 'public' AND tablename = 'revenuecat_events';
+-- expect: rowsecurity = true (with no policies — default deny)
+
+-- 2. Both tier RPCs co-exist (v1 untouched, v2 added):
+SELECT proname FROM pg_proc WHERE proname IN ('set_user_tier', 'set_user_tier_v2');
+-- expect: 2 rows
+
+-- 3. CHECK constraint locked in:
+SELECT conname FROM pg_constraint WHERE conname = 'subscriptions_tier_check';
+-- expect: 1 row
+
+-- 4. Indexes present:
+SELECT indexname FROM pg_indexes WHERE tablename = 'revenuecat_events';
+-- expect: revenuecat_events_pkey + idx_revenuecat_events_user_event_at
+--       + idx_revenuecat_events_unprocessed
+```
+
+### Architectural invariants for future migrations touching this surface
+
+1. **All RevenueCat tier writes route through `set_user_tier_v2()`.** Never `UPDATE subscriptions SET tier = …` directly from the webhook handler. Audit surface for review-security per architect §10.
+2. **`event_id` is the dedup key.** Any future webhook source (Stripe, Paddle, etc.) gets its own events table with a similar `event_id PRIMARY KEY` shape; do NOT shoehorn other providers into `revenuecat_events`.
+3. **v1 `set_user_tier()` is preserved.** Do not drop it until the Xendit lifecycle code (`lib/subscriptions/lifecycle.ts`) is fully retired and the schema-drift items in §27 are resolved.
+
+---
+
+## 27. Known Schema Drift
+
+> **Surfaced during Sprint 17 RevenueCat schema audit.** Two items where the application code references columns / functions that are not present in any committed migration. Both need staging-database verification before Phase 0B GA. Documented here so future migrations don't accidentally re-add or rename these objects without an audit trail.
+
+### Drift #1 — `subscriptions` table: 9 columns written by `lib/subscriptions/lifecycle.ts` but not in migration 003
+
+`frontend/src/lib/subscriptions/lifecycle.ts` (Sprint 8 Xendit lifecycle code) writes the following columns via `.upsert()` and `.update()` calls (lines 49-57, 105-112, 158-167):
+
+| Column | Type implied by writes | Where written |
+|---|---|---|
+| `xendit_customer_id` | TEXT | `activateSubscription` upsert |
+| `payment_method` | TEXT | `activateSubscription` upsert |
+| `current_period_start` | TIMESTAMPTZ | activate + renew |
+| `current_period_end` | TIMESTAMPTZ | activate + renew (also read at line 139) |
+| `scan_limit` | INTEGER | activate + cancel + renew |
+| `scans_used_this_period` | INTEGER | activate + renew |
+| `grace_period_end` | TIMESTAMPTZ | activate + cancel + renew |
+| `grace_notifications_sent` | INTEGER | activate + cancel + renew |
+| `cancelled_at` | TIMESTAMPTZ | activate (NULL) + cancel (NOW) |
+
+**Source-of-truth migration (003_subscriptions_table.sql) only declares:** `id, user_id, tier, status, started_at, expires_at, xendit_subscription_id, created_at, updated_at, deleted_at`.
+
+The §9 schema reference (lines 576-628 of this doc) does list these columns — that documentation was the *planned* shape from Tech Stack v1 + ADR-005. **No migration ever shipped them.** The columns were likely added ad-hoc via Supabase Studio during Sprint 8, OR the writes have been silently failing in production (`.upsert` doesn't error on unknown columns when RLS rejects the write; service-role writes would error). Either way, the migration history is inconsistent with the application code.
+
+**Action required (Anton, Sprint 18 pre-launch gate):**
+1. Connect to staging Supabase, run `\d public.subscriptions` and snapshot the actual column list.
+2. If columns exist in staging: write a **reconciliation migration** (`023_subscriptions_columns_reconciliation.sql`) that uses `ADD COLUMN IF NOT EXISTS` for each — idempotent, safe to run on prod that already has them.
+3. If columns DO NOT exist in staging: the Xendit lifecycle has been silently no-oping. Decide before Phase 0B GA whether to (a) ship the reconciliation migration anyway to unblock the lifecycle code, or (b) accept that Xendit is fully deprecated post-Sprint 17 and these writes can be removed when `lib/subscriptions/lifecycle.ts` is retired.
+
+**Why this matters for Sprint 17:** RevenueCat does NOT touch any of these columns. The new `set_user_tier_v2()` RPC writes only `tier, expires_at, status, started_at, xendit_subscription_id, updated_at` — all declared in migration 003. So Sprint 17's RevenueCat path is drift-free. But Sprint 17 also adds `subscriptions_tier_check` CHECK constraint, which assumes the `tier` column is the only enum-locked column on the table; if a later reconciliation migration redefines columns, the constraint name must be preserved.
+
+### Drift #2 — `protect_feature_flags()` trigger referenced in docs but not in any migration
+
+ADR-005 ("Subscription State Hardening", `architecture-decisions.md`) and Sprint 3 deployment notes reference a `protect_feature_flags()` trigger on `public.users` that prevents client-side mutation of `feature_flags` JSONB — only the service role may write that column. The trigger was supposedly deployed in Sprint 3.
+
+**Source-of-truth check:** no `.sql` file in `frontend/supabase/migrations/` defines `protect_feature_flags()`. `Grep -r protect_feature_flags` returns hits only in documentation files (ADRs, sprint plans).
+
+**Possible explanations:**
+1. Deployed via Supabase Studio in Sprint 3 and never back-filled into a migration file.
+2. Was planned but never deployed; `users.feature_flags` is currently writable by any authenticated user via the standard `users_update_own` RLS policy (which is permissive on column scope — RLS is row-level, not column-level).
+
+**Action required (Anton, Sprint 18 pre-launch gate):**
+1. `SELECT tgname FROM pg_trigger WHERE tgname LIKE '%protect_feature_flags%'` on staging — confirm presence/absence.
+2. If absent: write `024_protect_feature_flags_trigger.sql` formalising the ADR-005 invariant. Critical because `feature_flags` gates IAP entry points; a client-side write could self-grant Pro entitlements.
+3. If present: back-fill a no-op migration that documents the trigger shape (`CREATE OR REPLACE … IF NOT EXISTS`-pattern) so the schema history is reproducible from scratch.
+
+**Sprint 17 scope note:** the build-data agent flagged this during the RevenueCat audit but did NOT attempt a fix — the trigger lives outside migration 022's scope, and a speculative trigger-write could conflict with whatever is actually deployed on prod. Anton verifies first; build-data ships the reconciliation migration in a follow-up sprint.
+
+---
 ```
