@@ -65,6 +65,8 @@ interface DashboardResponse {
   streak: number;
   streakStatus: StreakStatus;
   actionTiles: ActionTile[];
+  // ── Subscription (Sprint 18) — trial countdown source. Null when no row. ──
+  subscription: { tier: string; status: string; started_at: string } | null;
 }
 
 // ============================================================
@@ -197,6 +199,15 @@ export async function GET() {
 
   const birRegistered = businessProfile?.bir_registered === true;
   const primaryPain = businessProfile?.primary_pain ?? null;
+
+  // ── Subscription (Sprint 18) — for the trial-countdown banner. Best-effort:
+  //    a missing row (or pre-migration column) degrades to null → no banner. ──
+  const { data: subscriptionRow } = await db
+    .from('subscriptions')
+    .select('tier, status, started_at')
+    .eq('user_id', userId)
+    .is('deleted_at', null)
+    .maybeSingle();
 
   // Check if user has checked in today
   const today = getManilaToday();
@@ -404,6 +415,13 @@ export async function GET() {
     streak: streakResult.streak,
     streakStatus: streakResult.status,
     actionTiles,
+    subscription: subscriptionRow
+      ? {
+          tier: String((subscriptionRow as { tier: string }).tier),
+          status: String((subscriptionRow as { status: string }).status),
+          started_at: String((subscriptionRow as { started_at: string }).started_at),
+        }
+      : null,
   };
 
   return NextResponse.json({ success: true, data: response });

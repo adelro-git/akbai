@@ -113,6 +113,26 @@
       "gastos": "Gastos",
       "tubo": "Tubo",
       "footer": "Buksan ang detalye"
+    },
+    "reconciliation": {
+      "weekly": {
+        "label": "Kumpleto ba ang linggo mo?",
+        "logged": "{logged} sa {total} araw ang na-log mo",
+        "netSoFar": "Tubo sa ngayon: {amount}",
+        "complete": "Kumpleto ang linggo mo! Tuloy-tuloy lang, boss.",
+        "nudge": "May {count, plural, one {# araw} other {# araw}} na hindi mo pa na-log ngayong linggo. Gusto mo bang punan?",
+        "backfill": "Punan natin"
+      },
+      "monthly": {
+        "label": "Buod ngayong buwan",
+        "kita": "Kita",
+        "gastos": "Gastos",
+        "tubo": "Tubo",
+        "daysLogged": "{logged} sa {elapsed} araw ang na-log mo ngayong buwan",
+        "complete": "Kumpleto ang record mo ngayong buwan. Galing!",
+        "nudge": "May {count, plural, one {# araw} other {# araw}} ngayong buwan na walang record. Punan natin para kumpleto ang datos mo.",
+        "backfill": "Punan natin"
+      }
     }
   },
   "auth": {
@@ -285,6 +305,19 @@
         ],
         "cta": "Mag-subscribe sa Pro Annual"
       }
+    }
+  },
+  "trialCountdown": {
+    "active": {
+      "message": "May {count} araw na lang sa free trial mo."
+    },
+    "finalDay": {
+      "title": "Huling araw na ng free trial mo ngayon — bukas, kailangan mo nang mag-subscribe.",
+      "cta": "Mag-subscribe na"
+    },
+    "expired": {
+      "title": "Tapos na ang free trial mo. Mag-subscribe para tuloy ang AKBai.",
+      "cta": "Tingnan ang mga plano"
     }
   }
 }

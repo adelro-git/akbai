@@ -8,6 +8,8 @@ import { createClient } from '@/lib/supabase/client';
 import { BUSINESS_TYPE_LABELS, INCOME_RANGE_LABELS } from '@/lib/constants/business-options';
 import { BIR_TAX_TYPE_LABELS, type BirTaxType } from '@/lib/deadlines/types';
 import { trackSignedOut } from '@/lib/posthog/events';
+import { clearScans } from '@/lib/ocr/offline-queue';
+import { clear as clearChatQueue } from '@/lib/chat/offline-queue';
 import ProfileEditForm from './profile-edit-form';
 import ThemeToggle from './theme-toggle';
 import InstallGuide from '@/components/pwa/install-guide';
@@ -70,6 +72,12 @@ export default function ProfileView({
     try {
       const supabase = createClient();
       trackSignedOut();
+      // F5 (security): captured offline receipt images + queued chat drafts
+      // sit unencrypted in localStorage. Wipe them on sign-out so a session's
+      // PII (resibo photos, message text) never outlives that session on a
+      // shared device. Best-effort — both clears are no-throw SSR-safe no-ops.
+      clearScans();
+      clearChatQueue();
       await supabase.auth.signOut();
       router.push('/login');
     } catch {

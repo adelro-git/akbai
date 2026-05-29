@@ -1,9 +1,97 @@
 // AKBai Build 0 — Circuit breaker: daily spend caps + atomic spend recording
 // Source: ai-guardrails.md §5
+// Sprint 18 (resilience §11): trip/warning now fire Sentry alerts so the
+// circuit breaker is observable (email routing within 2 min is configured in
+// the Sentry dashboard — this code only emits the event).
 
+import * as Sentry from '@sentry/nextjs';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CircuitBreakerResult, KAFeature, UserTier } from './types';
 import { getManilaToday } from '@/lib/timezone';
+
+// ============================================================
+// Sentry Alerting — surface circuit-breaker trips + warnings
+// Server-only. We use a stable fingerprint per (alert, cap) so Sentry
+// groups all events of the same kind into one issue and de-dupes alert
+// emails (a tripped cap can fire on every blocked request within a day —
+// without a fixed fingerprint that would be an email storm).
+// ============================================================
+
+/** Which cap the alert concerns — used as a Sentry tag + fingerprint key. */
+type BreakerCap = 'global' | 'user';
+
+/**
+ * Fire a Sentry alert when the breaker TRIPS (a request is blocked because a
+ * spend cap is exceeded). Captured at `error` level so it routes to the
+ * high-priority alert rule. Extra context lets the on-call (Anton) see which
+ * cap, the current spend, and the limit at a glance.
+ */
+function captureBreakerTrip(params: {
+  cap: BreakerCap;
+  currentSpendUsd: number;
+  limitUsd: number;
+  userId: string;
+}): void {
+  const { cap, currentSpendUsd, limitUsd, userId } = params;
+  Sentry.withScope((scope) => {
+    scope.setLevel('error');
+    scope.setTags({ alert: 'circuit_breaker_trip', cap });
+    // Stable per-cap fingerprint → one Sentry issue per cap, de-dupes alert spam.
+    scope.setFingerprint(['circuit-breaker-trip', cap]);
+    scope.setExtras({
+      cap,
+      current_spend_usd: Number(currentSpendUsd.toFixed(4)),
+      limit_usd: limitUsd,
+      // Per-user trips carry the userId; global trips include it for triage but
+      // the issue is grouped by cap, not by user.
+      user_id: userId,
+    });
+    Sentry.captureMessage(
+      `[CircuitBreaker] TRIP — ${cap} daily spend cap exceeded`,
+    );
+  });
+}
+
+/**
+ * Fire a Sentry alert when the breaker crosses the WARNING threshold (spend is
+ * approaching a cap but the request is still allowed). Distinct fingerprint
+ * from trips so warnings and trips are separate Sentry issues.
+ */
+function captureBreakerWarning(params: {
+  globalSpendUsd: number;
+  globalCapUsd: number;
+  userSpendUsd: number;
+  userCapUsd: number;
+  warningPct: number;
+  userId: string;
+}): void {
+  const { globalSpendUsd, globalCapUsd, userSpendUsd, userCapUsd, warningPct, userId } =
+    params;
+  // Which cap pushed us over the warning line (used for the tag + fingerprint).
+  // Derive from the threshold that ACTUALLY crossed — a warning can be raised by
+  // EITHER ratio, so inferring solely from the global ratio mislabels a user-only
+  // warning as 'global'. Global wins the tie when both have crossed (the global
+  // cap is the broader, higher-severity concern for the on-call).
+  const globalCrossed = globalSpendUsd / globalCapUsd >= warningPct;
+  const cap: BreakerCap = globalCrossed ? 'global' : 'user';
+  Sentry.withScope((scope) => {
+    scope.setLevel('warning');
+    scope.setTags({ alert: 'circuit_breaker_warning', cap });
+    scope.setFingerprint(['circuit-breaker-warning', cap]);
+    scope.setExtras({
+      cap,
+      warning_pct: warningPct,
+      global_spend_usd: Number(globalSpendUsd.toFixed(4)),
+      global_cap_usd: globalCapUsd,
+      user_spend_usd: Number(userSpendUsd.toFixed(4)),
+      user_cap_usd: userCapUsd,
+      user_id: userId,
+    });
+    Sentry.captureMessage(
+      `[CircuitBreaker] WARNING — ${cap} spend at warning threshold`,
+    );
+  });
+}
 
 /**
  * Check if a Claude API call is allowed under the circuit breaker caps.
@@ -38,6 +126,13 @@ export async function checkCircuitBreaker(
   ) ?? 0;
 
   if (globalTotal + estimatedCostUsd > globalCap) {
+    // --- TRIP (global cap): block + alert ---
+    captureBreakerTrip({
+      cap: 'global',
+      currentSpendUsd: globalTotal + estimatedCostUsd,
+      limitUsd: globalCap,
+      userId,
+    });
     return { allowed: false, reason: 'global_cap', remainingUsd: Math.max(0, globalCap - globalTotal) };
   }
 
@@ -54,10 +149,24 @@ export async function checkCircuitBreaker(
 
   // Free tier: enforce 10-query daily limit (only after onboarding — Gap E3)
   if (tier === 'free' && onboardingCompleted !== false && userQueryCount >= 10) {
+    // --- TRIP (user cap — free-tier query limit): block + alert ---
+    captureBreakerTrip({
+      cap: 'user',
+      currentSpendUsd: userTotal,
+      limitUsd: userCap,
+      userId,
+    });
     return { allowed: false, reason: 'user_cap', remainingUsd: 0 };
   }
 
   if (userTotal + estimatedCostUsd > userCap) {
+    // --- TRIP (user cap — daily spend): block + alert ---
+    captureBreakerTrip({
+      cap: 'user',
+      currentSpendUsd: userTotal + estimatedCostUsd,
+      limitUsd: userCap,
+      userId,
+    });
     return { allowed: false, reason: 'user_cap', remainingUsd: Math.max(0, userCap - userTotal) };
   }
 
@@ -69,6 +178,15 @@ export async function checkCircuitBreaker(
     console.warn(
       `[CircuitBreaker] Warning: spend at warning threshold — global: $${globalTotal.toFixed(2)}/$${globalCap}, user: $${userTotal.toFixed(2)}/$${userCap}`
     );
+    // --- WARNING threshold: allowed, but alert so we can act before a trip ---
+    captureBreakerWarning({
+      globalSpendUsd: globalTotal,
+      globalCapUsd: globalCap,
+      userSpendUsd: userTotal,
+      userCapUsd: userCap,
+      warningPct,
+      userId,
+    });
   }
 
   return {

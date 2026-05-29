@@ -113,6 +113,26 @@
       "gastos": "Expenses",
       "tubo": "Profit",
       "footer": "Open full story"
+    },
+    "reconciliation": {
+      "weekly": {
+        "label": "Is your week complete?",
+        "logged": "You logged {logged} of {total} days",
+        "netSoFar": "Net so far: {amount}",
+        "complete": "Your week is complete! Keep it going, boss.",
+        "nudge": "You haven't logged {count, plural, one {# day} other {# days}} this week. Want to fill them in?",
+        "backfill": "Let's fill it in"
+      },
+      "monthly": {
+        "label": "This month's summary",
+        "kita": "Sales",
+        "gastos": "Expenses",
+        "tubo": "Net",
+        "daysLogged": "You logged {logged} of {elapsed} days this month",
+        "complete": "Your records are complete this month. Nice work!",
+        "nudge": "You have {count, plural, one {# day} other {# days}} with no record this month. Let's fill them in so your data is complete.",
+        "backfill": "Let's fill it in"
+      }
     }
   },
   "auth": {
@@ -285,6 +305,19 @@
         ],
         "cta": "Subscribe to Pro Annual"
       }
+    }
+  },
+  "trialCountdown": {
+    "active": {
+      "message": "You have {count} day(s) left in your free trial."
+    },
+    "finalDay": {
+      "title": "Today is the last day of your free trial — subscribe to keep going.",
+      "cta": "Subscribe now"
+    },
+    "expired": {
+      "title": "Your free trial has ended. Subscribe to keep using AKBai.",
+      "cta": "View plans"
     }
   }
 }

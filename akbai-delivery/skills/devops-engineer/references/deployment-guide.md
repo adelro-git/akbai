@@ -1,6 +1,6 @@
 # AKBai — Deployment Guide
 > Reference for: devops-engineer skill
-> Last updated: 2026-05-27 (Sprint 17 doc sweep)
+> Last updated: 2026-05-29 (Sprint 18 doc sweep — added CRON_SECRET + Vercel deadline-notifications cron, demo-mode env vars, `@capacitor/splash-screen`/`@capacitor/filesystem` install note)
 > Source: Tech Stack v1, Roadmap v14, Operations Playbook v7
 
 ## Table of Contents
@@ -268,6 +268,55 @@ REVENUECAT_REST_API_KEY                 — Server-side Bearer token for the Rev
 `NEXT_PUBLIC_*` vars are bundled at build time (not runtime). For the native build, that means values must be present in the env at `CAPACITOR_BUILD=1 npm run build` time before `npx cap sync android` copies the static export into the Android scaffold. Sprint 19 update procedure: rotate dashboard → update Vercel env (web routes) AND rebuild native artifacts with new values → re-submit to App Store / Play.
 
 Gradle layer: no RevenueCat keys go into `frontend/android/gradle.properties` or `frontend/android/app/build.gradle`. The SDK reads keys from JS at runtime via `Purchases.configure({ apiKey })`. The only Android-side build dependency from RevenueCat is the Maven artifact `com.revenuecat.purchases:purchases-hybrid-common:18.7.0`, fetched transitively by `npx cap sync android` (see "Capacitor Build Pipeline" below for the corporate-TLS gotcha Sprint 17 surfaced).
+
+### Cron & Demo-Mode Variables (Sprint 18+)
+
+Sprint 18 wired the push 7/3/1-day BIR deadline scheduler and a reviewer/guest demo mode. Both add server-side env vars.
+
+```
+CRON_SECRET                       — Server-side shared secret. Used by
+                                    /api/cron/deadline-notifications to authenticate the
+                                    Vercel Cron invocation via constant-time Bearer compare
+                                    (Authorization: Bearer <secret>), same pattern as the
+                                    Xendit + RevenueCat webhook handlers. Fail-closed on
+                                    missing env. Vercel Cron automatically sends this header
+                                    when CRON_SECRET is set in project env — no manual wiring.
+
+AKBAI_DEMO_MODE_ENABLED           — Server-side gate for /api/demo-login (reviewer/guest
+                                    account). DEFAULT OFF: route is fail-closed and rejects
+                                    unless this is explicitly "true". NOT NEXT_PUBLIC_*.
+                                    Leave UNSET in production unless building a dedicated
+                                    store-review artifact. Triple-gated (env flag + seeded
+                                    account match + environment guard) — see
+                                    security-architecture.md §10.5.
+```
+
+**Pre-submission hygiene (release-blocking):** before any App Store / Play Console submission, confirm BOTH `AKBAI_DEMO_MODE_ENABLED` and the dev-auth `SKIP_AUTH` / `NEXT_PUBLIC_SKIP_AUTH` flags are off/unset in the production native build. A reachable auth bypass in a shipped artifact is a release blocker. (Sprint 18 action item #6.)
+
+### Vercel Cron — BIR Deadline Notifications (Sprint 18)
+
+The push 7/3/1-day deadline scheduler (trigger logic existed since Build 6 but was never invoked) is now driven by a Vercel Cron entry in `frontend/vercel.json`:
+
+```json
+{
+  "crons": [
+    { "path": "/api/cron/deadline-notifications", "schedule": "0 1 * * *" }
+  ]
+}
+```
+
+- **Schedule** is UTC (Vercel Cron is UTC-only). `0 1 * * *` = 01:00 UTC = **09:00 Asia/Manila** — the intended 9 AM PHT send window. When editing the schedule, always convert from PHT to UTC by subtracting 8 hours; the route itself still computes deadline windows in Manila time via `lib/timezone`.
+- **Auth:** the route validates the `Authorization: Bearer <CRON_SECRET>` header Vercel injects; unauthenticated calls are rejected fail-closed.
+- **Cron crons are a Vercel-server concern only** — the Capacitor native build excludes all `/api/*` routes (`pageExtensions: ['tsx']`), so the cron lives exclusively on the Vercel web deployment. Do not expect it to run inside the native bundle.
+
+### Capacitor plugin installs deferred to Sprint 19
+
+Sprint 18 landed config for two plugins but deferred their `npm install` + `cap sync` to Sprint 19 (so they are config-complete but inert until installed):
+
+- **`@capacitor/splash-screen`** — the `SplashScreen` block in `capacitor.config.ts` is configured but the plugin must be installed before it takes effect on device.
+- **`@capacitor/filesystem`** — required for full offline receipt-image persistence in the offline scan queue (`lib/ocr/offline-queue.ts`); current queue logic is in place but durable native image storage needs this plugin.
+
+Install both via the Sprint 16 corporate-TLS recipe (`$env:NODE_OPTIONS = "--use-system-ca"` then `npm install`), then `npx cap sync android`, then re-run the bundle-size guard (each plugin adds to the `.aab`; budget against the 30 MB Pre-Launch Gate). Update the "Plugin count after `cap sync android`" list below when installed.
 
 ### Build-time-only Variables (post-Sprint 15)
 

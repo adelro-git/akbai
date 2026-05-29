@@ -78,12 +78,12 @@ export function generateInvoiceHtml(
     }
     .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
     .business-name { font-size: 24px; font-weight: 800; color: #855300; }
-    .business-detail { font-size: 12px; color: #534434; margin-top: 2px; }
+    .business-detail { font-size: 12px; color: #534434; margin-top: 2px; overflow-wrap: anywhere; }
     .invoice-title { font-size: 32px; font-weight: 800; color: #1c1c18; text-align: right; }
     .invoice-number { font-size: 14px; color: #534434; text-align: right; margin-top: 4px; }
     .meta-row { display: flex; justify-content: space-between; margin-bottom: 32px; }
     .meta-block h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #867461; margin-bottom: 4px; }
-    .meta-block p { font-size: 14px; color: #1c1c18; }
+    .meta-block p { font-size: 14px; color: #1c1c18; overflow-wrap: anywhere; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
     thead th {
       text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase;
@@ -91,7 +91,7 @@ export function generateInvoiceHtml(
       border-bottom: 2px solid #f59e0b;
     }
     thead th:last-child, thead th:nth-child(3), thead th:nth-child(4) { text-align: right; }
-    tbody td { padding: 10px 12px; font-size: 14px; border-bottom: 1px solid #f7f3ec; }
+    tbody td { padding: 10px 12px; font-size: 14px; border-bottom: 1px solid #f7f3ec; overflow-wrap: anywhere; word-break: break-word; }
     tbody td:last-child, tbody td:nth-child(3), tbody td:nth-child(4) { text-align: right; }
     .totals { display: flex; justify-content: flex-end; margin-bottom: 32px; }
     .totals-table { width: 280px; }
@@ -99,7 +99,7 @@ export function generateInvoiceHtml(
     .totals-row.total { font-weight: 800; font-size: 18px; color: #855300; border-top: 2px solid #f59e0b; padding-top: 10px; margin-top: 4px; }
     .notes { background: #fdf9f2; padding: 16px; border-radius: 8px; margin-bottom: 24px; }
     .notes h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #867461; margin-bottom: 6px; }
-    .notes p { font-size: 13px; color: #534434; }
+    .notes p { font-size: 13px; color: #534434; overflow-wrap: anywhere; }
     .footer { text-align: center; font-size: 11px; color: #867461; margin-top: 40px; padding-top: 16px; border-top: 1px solid #f7f3ec; }
     .bir-disclaimer { font-style: italic; color: #867461; font-size: 11px; margin-top: 8px; }
     @media print {

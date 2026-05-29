@@ -3,7 +3,7 @@
  * Feature: Build 6 — BIR Deadline Watcher (Sprint 9)
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { generateDeadlines } from '../generate';
 import type { BirTaxType } from '../types';
 
@@ -156,6 +156,70 @@ describe('generateDeadlines — edge cases', () => {
     const deadlines = generateDeadlines('sole_prop_graduated_osd', 2026);
     deadlines.forEach((d) => {
       expect(d.due_date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    });
+  });
+});
+
+// ============================================================
+// Tax-year rollover (Sprint 18 §11 — "BIR deadline calendar switches to
+// 2027 after Jan 1")
+//
+// generateDeadlines() defaults the target year to new Date().getFullYear()
+// when no `year` arg is supplied (the production call path on the deadlines
+// page). Freeze the system clock just past the Manila New Year boundary and
+// assert the default-year path rolls the whole calendar to 2027.
+// ============================================================
+
+describe('generateDeadlines — tax-year rollover', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('generates 2027 deadlines when the clock has rolled into 2027 (default year)', () => {
+    vi.useFakeTimers();
+    // 2027-01-01 00:30 Manila (UTC+8) — just past midnight on New Year's Day.
+    vi.setSystemTime(new Date('2027-01-01T00:30:00+08:00'));
+
+    const deadlines = generateDeadlines('sole_prop_graduated_osd');
+
+    expect(deadlines.length).toBeGreaterThan(0);
+    // Every generated deadline must belong to the new tax year.
+    deadlines.forEach((d) => {
+      expect(d.due_date.startsWith('2027-')).toBe(true);
+    });
+    // Spot-check the quarterly income-tax dates rolled to 2027.
+    const q1701 = deadlines.filter((d) => d.form_name === '1701Q');
+    expect(q1701.map((d) => d.due_date)).toEqual([
+      '2027-04-15',
+      '2027-08-15',
+      '2027-11-15',
+    ]);
+  });
+
+  it('still honours an explicit year arg even when the clock has rolled (no implicit override)', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2027-01-01T00:30:00+08:00'));
+
+    // Explicit 2026 must NOT be overridden by the 2027 clock.
+    const deadlines = generateDeadlines('sole_prop_graduated_osd', 2026);
+    deadlines.forEach((d) => {
+      expect(d.due_date.startsWith('2026-')).toBe(true);
+    });
+  });
+
+  it('rolls the default year using the Manila clock even when UTC is still 2026', () => {
+    vi.useFakeTimers();
+    // 2026-12-31 23:00 UTC = 2027-01-01 07:00 Manila. The UTC year is still
+    // 2026, but the deadline calendar must follow Manila (UTC+8) and roll to
+    // 2027. This is the exact boundary the spec calls out and the reason
+    // generate.ts derives its default year from getManilaToday(), not the
+    // runtime clock — so this passes on a UTC CI runner too.
+    vi.setSystemTime(new Date('2026-12-31T23:00:00Z'));
+
+    const deadlines = generateDeadlines('freelancer');
+    expect(deadlines.length).toBeGreaterThan(0);
+    deadlines.forEach((d) => {
+      expect(d.due_date.startsWith('2027-')).toBe(true);
     });
   });
 });

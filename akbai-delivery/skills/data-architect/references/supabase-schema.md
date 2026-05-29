@@ -1,6 +1,6 @@
 # AKBai — Supabase Schema Reference
 > Living document. Update this file whenever a table is created, modified, or deprecated.
-> Last updated: 2026-05-27 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
+> Last updated: 2026-05-29 | Source: Tech Stack v1, Roadmap v14, Operations Roadmap v6
 
 ---
 
@@ -32,7 +32,7 @@
 24. [Migration Log — Sprint 16 (020 + 021)](#24-migration-log--sprint-16-020--021-native-surface-polish)
 25. [Migration Log — Sprints 9-13 Catch-up (011-019)](#25-migration-log--sprints-9-13-catch-up-011-019)
 26. [Migration Log — Sprint 17 (022_revenuecat_events)](#26-migration-log--sprint-17-022_revenuecat_events)
-27. [Known Schema Drift](#27-known-schema-drift)
+27. [Known Schema Drift](#27-known-schema-drift) (Drift #1 RESOLVED — migration 023; Drift #2 open)
 
 > **Migration order matters.** Tables are listed in FK dependency order — receipts before transactions (because transactions.receipt_id references receipts.id). Run migrations sequentially by number.
 
@@ -635,6 +635,7 @@ CREATE UNIQUE INDEX idx_subscriptions_xendit_id
 - No client INSERT or UPDATE policies. Subscription state is managed exclusively by the Xendit webhook handler (Edge Function) using the service role key. This prevents users from self-upgrading.
 - `payment_method: 'concierge_gcash'` is the manual fallback for the first 20-50 users if Xendit KYC is pending.
 - `scans_used_this_period` resets when `current_period_start` advances. The scan count enforcement happens in the Resibo Scanner API route.
+- **Migration 023 (Sprint 18)** ships the 9 lifecycle columns shown above (`current_period_start`, `current_period_end`, `scan_limit`, `scans_used_this_period`, `grace_period_end`, `grace_notifications_sent`, `payment_method`, `xendit_customer_id`, `cancelled_at`) via `ADD COLUMN IF NOT EXISTS`. They were documented here since Tech Stack v1 but never shipped in a migration — `003_subscriptions_table.sql` only declares `id, user_id, tier, status, started_at, expires_at, xendit_subscription_id, created_at, updated_at, deleted_at`. Migration 023 reconciles the live schema with both this doc and `lib/subscriptions/lifecycle.ts` (which writes these columns). See §27 Drift #1 (now resolved). RLS is unchanged (SELECT-only); `grace_notifications_sent` is an INTEGER counter (NOT NULL DEFAULT 0), confirmed from the integer literal `0` written in lifecycle.ts.
 
 ---
 
@@ -1650,7 +1651,9 @@ SELECT indexname FROM pg_indexes WHERE tablename = 'revenuecat_events';
 
 > **Surfaced during Sprint 17 RevenueCat schema audit.** Two items where the application code references columns / functions that are not present in any committed migration. Both need staging-database verification before Phase 0B GA. Documented here so future migrations don't accidentally re-add or rename these objects without an audit trail.
 
-### Drift #1 — `subscriptions` table: 9 columns written by `lib/subscriptions/lifecycle.ts` but not in migration 003
+### Drift #1 — RESOLVED (Sprint 18, migration 023) — `subscriptions` table: 9 columns written by `lib/subscriptions/lifecycle.ts` but not in migration 003
+
+> **Status: RESOLVED 2026-05-29 via `023_subscriptions_lifecycle_columns.sql`.** The reconciliation migration anticipated below was shipped — all 9 columns are added with `ADD COLUMN IF NOT EXISTS` (idempotent; safe whether or not they already exist in staging/prod). RLS unchanged (SELECT-only), `deleted_at` from migration 003 asserted defensively, no policy loosening. Type resolution: `grace_notifications_sent` is `INTEGER NOT NULL DEFAULT 0` (integer counter, confirmed from the literal `0` written in lifecycle.ts lines 56/112/167 — not a boolean); `scans_used_this_period` is `INTEGER NOT NULL DEFAULT 0`; `scan_limit` is `INTEGER NULL`; the four timestamps are `TIMESTAMPTZ NULL`; `payment_method` and `xendit_customer_id` are `TEXT NULL`. The original analysis below is retained for the audit trail.
 
 `frontend/src/lib/subscriptions/lifecycle.ts` (Sprint 8 Xendit lifecycle code) writes the following columns via `.upsert()` and `.update()` calls (lines 49-57, 105-112, 158-167):
 

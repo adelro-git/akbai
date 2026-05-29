@@ -28,7 +28,7 @@ export default function ChatBubble({ message }: { message: ChatMessage }) {
         data-testid={`message-user-${message.id}`}
       >
         <div className="max-w-[78%] bg-secondary-container rounded-2xl rounded-br-sm px-4 py-2.5 shadow-sm">
-          <p className="text-sm text-on-secondary-container leading-relaxed whitespace-pre-wrap">
+          <p className="text-sm text-on-secondary-container leading-relaxed whitespace-pre-wrap break-words">
             {message.content}
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function ChatBubble({ message }: { message: ChatMessage }) {
       </div>
       <div className="flex flex-col max-w-[85%]">
         <div className="bg-surface-container rounded-2xl rounded-bl-sm px-4 py-2.5 shadow-sm">
-          <p className="text-sm text-on-surface leading-relaxed whitespace-pre-wrap">
+          <p className="text-sm text-on-surface leading-relaxed whitespace-pre-wrap break-words">
             {message.content}
           </p>
         </div>

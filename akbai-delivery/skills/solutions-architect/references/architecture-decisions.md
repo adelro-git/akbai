@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-019
-> Last updated: 2026-05-27 (Sprint 16 — ADR-019 surface-polish layer added; Gap G4 IMPLEMENTED via 5 Capacitor plugins; `.aab` = 20.75 MB / 1427 tests. ADR-019 surface stays Accepted Green.)
+> Current highest: ADR-020
+> Last updated: 2026-05-29 (Sprint 18 — ADR-020 added: reviewer demo-access + offline scan-queue patterns; Gap G7 code-side GREEN / 1716 tests. ADR-019 surface stays Accepted Green.)
 
 ---
 
@@ -28,6 +28,7 @@
 | ADR-017 | Frontend Redesign Phase 9 — Deadline → Chat deeplink contract | Accepted | 2026-04-28 |
 | ADR-018 | Native mobile pivot via Capacitor + IAP (deprecate Xendit) | Accepted | 2026-05-24 |
 | ADR-019 | Capacitor wrapping pattern (Sprint 14 spike findings) | Accepted (Green) — Sprint 15 conversion (Gap G1) + Sprint 16 plugins (Gap G4) both landed on main | 2026-05-27 |
+| ADR-020 | Reviewer demo-access + offline scan-queue patterns (Sprint 18 pre-launch) | Accepted | 2026-05-29 |
 
 ---
 
@@ -1228,3 +1229,68 @@ Sprint 15 full conversion targets (estimated; exact list pending spike Step 3 in
 **Sprint 15 close-out (2026-05-27):** Full conversion shipped to `main` via PR #33. Gap G1 RESOLVED. 15 server → client page conversions + 5 infra rewrites + `CAPACITOR_BUILD=1` env-conditional `next.config.js` + per-route `enforceRateLimit()` opt-in. Bundle: `.aab` = 14.62 MB, `.apk` = 15.35 MB (both ~50% under <30 MB ceiling). All 4 architect "Open Questions for Anton" defaults held at PR review. **Canonical implementation pattern for future Capacitor work:** `akbai-delivery/skills/solutions-architect/references/sprint-15-conversion-pattern.md` — read this when adding new `(app)/*` pages, designing new `/api/*` rate-limit tiers, or extending the Capacitor build target.
 
 **Sprint 16 close-out (2026-05-27):** Surface polish layer shipped to `main` via PR #35. **Gap G4 (Apple Guideline 4.2 rejection risk) IMPLEMENTED** — full close-out at Sprint 18 Pre-Launch Gate review. 5 Capacitor plugins integrated on top of the Sprint 15 conversion: `@capacitor/camera@8.2.0` (native `Camera.getPhoto` on `/scan` with `getUserMedia` web fallback), `@capacitor/push-notifications@8.1.1` (FCM/APNs via discriminated-union Zod on `/api/push/subscribe`; deferred prompt on `/deadlines` first-view-within-14-days), `@aparajita/capacitor-biometric-auth@10.0.0` (substituted from architect-spec `@capacitor-community/biometric-auth` which doesn't exist on npm — same API; onboarding step 6.25, `(app)/layout.tsx` app-open guard with 3-strike OTP fallback via `@capacitor/preferences`, `/profile` toggle), `@capacitor/app@8.1.0` (deep link `com.akbai.app://auth/callback`), `@sentry/capacitor@4.0.0` (native crash SDK alongside `@sentry/nextjs`; ProGuard `minifyEnabled true` + `scripts/upload-symbols.{ps1,sh}` configured for Sprint 19 execution). Plus migrations 020 (push_subscriptions platform extension) + 021 (users biometric columns). Bundle: `.aab` = **20.75 MB** (+6.13 MB vs Sprint 15; **31% under 30 MB ceiling, under <22 MB sprint target**); `.apk` = 24.39 MB. **1427/1427 tests passing.** All 5 architect Open Questions held at PR review. Security pass MINOR ISSUES only (no blockers). UX B+ voice grade. **Canonical implementation pattern for future Capacitor plugin work:** `akbai-delivery/skills/solutions-architect/references/sprint-16-native-plugin-pattern.md` — read this when adding new Capacitor plugins, designing native-vs-web fallback branches, or wiring native crash symbolication.
+
+---
+
+## ADR-020: Reviewer Demo-Access + Offline Scan-Queue Patterns (Sprint 18 Pre-Launch)
+
+**Status:** Accepted
+**Date:** 2026-05-29
+**Sprint:** 18
+**Branch:** `feat/18-prelaunch-readiness`
+**Related:** ADR-005 (fail-closed security defaults), ADR-014 (SKIP_AUTH client consistency), ADR-018/019 (Capacitor pivot), Gap G7 (Pre-Launch Feature Readiness Gate)
+
+**Context:**
+
+The Sprint 18 Pre-Launch Feature Readiness Gate (Gap G7, plan §11) required two patterns that touch the trust boundary and needed an explicit, reusable decision so future work doesn't re-derive them ad hoc:
+
+1. **Reviewer/guest access.** App Store + Play Console reviewers must be able to exercise the full app without creating a real account or making a real purchase — but a login-bypass route is an auth-bypass attack surface if it ever ships enabled. AKBai already has a dev-auth `SKIP_AUTH` bypass (ADR-014 scope); the reviewer path must be at least as fail-closed, and clearly distinct from it.
+2. **Offline receipt scanning.** MSMEs pack orders on intermittent LTE (Offline UX is Design Gate #5). A receipt scanned offline must be queued and reconciled later — but a naive queue is a poisoning and replay vector (the Sprint 18 security pass found exactly this: C1/C3 queue poisoning, C4 replay, C5 mis-classified retriable errors, M1 cross-account image leakage on sign-out).
+
+**Decision:**
+
+### Part A — Reviewer demo-access: triple-gated, fail-closed, off-by-default
+
+A dedicated `/api/demo-login` route backed by a single seeded demo account (`seed-demo-account.sql`). It is NOT a variant of `SKIP_AUTH` — `SKIP_AUTH` is a dev-only ergonomic that returns `DEV_USER` without a real session; the demo route issues a real Supabase session for one specific seeded account so reviewers exercise the genuine auth-bound app. Three gates, all required (any one missing → reject, fail-closed):
+
+1. **Env gate** — a server-side flag (`AKBAI_DEMO_MODE_ENABLED`, never `NEXT_PUBLIC_*`) must be explicitly `true`. Unset = disabled. Production builds leave it unset except a deliberate store-review artifact.
+2. **Account gate** — the route only authenticates the seeded demo `user_id`; it never accepts an arbitrary email/identifier. The demo account is RLS-scoped and soft-deletable like any user; its data is disposable and PII-free.
+3. **Environment gate** — refuse in production `NODE_ENV` unless the env gate is deliberately set (mirrors the Sprint 17 RevenueCat SANDBOX-in-prod environment guard).
+
+The login button that calls the route is itself gated behind the same env flag. Release-blocking checklist item: confirm `AKBAI_DEMO_MODE_ENABLED` AND `SKIP_AUTH`/`NEXT_PUBLIC_SKIP_AUTH` are off in the production native artifact before any store submission. Canonical security writeup: `security-architecture.md` §10.5.
+
+### Part B — Offline scan-queue: validate-before-enqueue, attempt-capped, deduped, fail-isolated
+
+`lib/ocr/offline-queue.ts` queues receipt scans captured while offline and flushes them when connectivity returns. Invariants (each maps to a fixed Sprint 18 review finding):
+
+- **Validate before save** — an item is schema-validated (Zod) before it enters the queue; malformed input never persists (closes C1/C3 poisoning). The queue stores only well-formed scan intents.
+- **Per-item attempt cap** — each item carries an attempt counter; a permanently-failing item is dropped after the cap rather than retried forever (prevents an indefinitely-stuck queue).
+- **Dedup** — the same scan enqueued twice (double-tap, retry-on-flaky-network) collapses to one entry via a content/idempotency key (closes C4 replay).
+- **Retriable vs terminal error classification** — transport/5xx/timeout AND non-JSON OCR responses are retriable; schema/validation failures are terminal-drop. (Sprint 18 fixed C5: a non-JSON OCR error was wrongly treated as terminal.)
+- **Clear-on-sign-out** — sign-out wipes the queue and any persisted offline images so no prior user's data survives an account switch on a shared device (closes M1). This is the offline analog of RLS: queue contents are user-scoped at the device layer.
+
+Durable offline image persistence depends on `@capacitor/filesystem` (install deferred to Sprint 19); the policy logic above is in place and tested now. The offline scan queue was forked from the existing chat offline queue and is tracked as convergence debt (Sprint 18 action item #2) — a future ADR may unify them once both stabilize.
+
+**Alternatives Considered:**
+
+- **Reuse `SKIP_AUTH` for reviewers.** Rejected — `SKIP_AUTH` bypasses real auth entirely and returns a synthetic `DEV_USER` with no real session; reviewers need to exercise the genuine RLS-bound app, and conflating the two would make the dev bypass a store-shipped surface. Keeping them distinct keeps each one's blast radius clear.
+- **No env gate, rely on a hard-to-guess route path.** Rejected — security by obscurity; a route that issues sessions must be gated by an explicit secret/flag and fail closed.
+- **Best-effort offline queue (enqueue raw, validate on flush).** Rejected — lets malformed/hostile items persist (poisoning), and defers failures to flush time where they're harder to attribute. Validate-before-enqueue keeps the queue clean and failures local to the capture.
+- **Silent drop on any flush error.** Rejected — loses legitimate scans on transient network failures. The retriable/terminal split preserves real work while bounding retries.
+
+**Consequences:**
+
+**Positive:**
+- Reviewers get a real, full-app demo session with zero risk of a shipped auth bypass (fail-closed, off-by-default, triple-gated).
+- The offline queue encodes each security finding as an invariant, so a refactor can't silently reintroduce poisoning/replay/leakage; the test suite (test-strategy.md §9 Sprint 18 extension) pins them.
+- Both patterns reuse existing AKBai conventions (fail-closed per ADR-005, environment guard per Sprint 17 G2, user-scoping per RLS) rather than inventing new mechanisms.
+
+**Negative / debt:**
+- `AKBAI_DEMO_MODE_ENABLED` adds another release-checklist toggle to verify before submission (alongside `SKIP_AUTH`).
+- The offline scan queue duplicates the chat offline queue (convergence debt, action item #2) and durable image storage is inert until `@capacitor/splash-screen`/`@capacitor/filesystem` are installed in Sprint 19.
+- Constant-time bearer compare for the cron route (`CRON_SECRET`) is now duplicated across Xendit + RevenueCat + cron handlers (action item #1) — a shared helper is the obvious cleanup.
+
+**Review Trigger:**
+- If a second reviewer/guest scenario appears (e.g., a time-boxed public demo), revisit whether the single-seeded-account model needs to generalize — but keep fail-closed + triple-gate as non-negotiable.
+- When the chat offline queue and scan offline queue are converged (action item #2), supersede Part B's "forked queue" note with the unified abstraction.
+- If `@capacitor/filesystem` proves unreliable for image persistence on device (Sprint 19 on-device QA), reconsider the durable-storage layer (IndexedDB blob vs native filesystem).
