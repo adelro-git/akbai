@@ -17,6 +17,8 @@ import { initRevenueCat } from '@/lib/iap/configure';
 import { registerDeepLink } from '@/lib/capacitor/deep-link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { clearScans } from '@/lib/ocr/offline-queue';
+import { clear as clearChatQueue } from '@/lib/chat/offline-queue';
 
 // ============================================================
 // (app) layout — Sprint 15 Capacitor conversion.
@@ -117,6 +119,13 @@ export default function AppGroupLayout({
       await resetFailureCount();
       try {
         const supabase = createClient();
+        // F5 (security): captured offline receipt images + queued chat drafts
+        // sit unencrypted in localStorage. Wipe them on this forced sign-out so
+        // a session's PII (resibo photos, message text) never outlives that
+        // session on a shared device. Best-effort — both clears are no-throw
+        // SSR-safe no-ops. Mirrors profile-view.tsx.
+        clearScans();
+        clearChatQueue();
         await supabase.auth.signOut();
       } catch {
         // signOut should never throw, but if it does the redirect

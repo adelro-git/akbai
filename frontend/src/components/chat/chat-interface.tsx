@@ -23,6 +23,7 @@ import FreeTierBanner from './free-tier-banner'
 import SuggestedChips from './suggested-chips'
 import { PaywallModal } from '@/components/subscription/paywall-modal'
 import * as offlineQueue from '@/lib/chat/offline-queue'
+import { clearScans } from '@/lib/ocr/offline-queue'
 import type { ChatMessage } from '@/lib/chat/types'
 
 // Re-export so existing consumers (e.g. tests, sibling components) that
@@ -355,6 +356,13 @@ export default function ChatInterface({
 
   async function handleSignOut() {
     markSignOutAsUserInitiated()
+    // F5 (security): captured offline receipt images + queued chat drafts sit
+    // unencrypted in localStorage. Wipe them on sign-out so a session's PII
+    // (resibo photos, message text) never outlives that session on a shared
+    // device. Best-effort — both clears are no-throw SSR-safe no-ops. Mirrors
+    // profile-view.tsx.
+    clearScans()
+    offlineQueue.clear()
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()

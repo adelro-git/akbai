@@ -68,11 +68,27 @@ export function formatManilaDate(date?: Date, formatStr = 'yyyy-MM-dd'): string 
 }
 
 /**
+ * Get the Manila CALENDAR date of an instant as a 'YYYY-MM-DD' string.
+ * Uses the en-CA locale (which formats as YYYY-MM-DD) pinned to Asia/Manila.
+ *
+ * Single source of truth for "what Manila calendar date is this instant" —
+ * `getManilaToday()` is the `date = now` specialization, and callers that need
+ * the Manila date of a SPECIFIC instant (e.g. trial-start math) pass `date`.
+ * Consolidating here keeps every Manila-date-key derivation byte-identical.
+ *
+ * @param date - The instant to resolve (defaults to now)
+ * @returns YYYY-MM-DD in Asia/Manila
+ */
+export function getManilaDateKey(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: MANILA_TZ }).format(date);
+}
+
+/**
  * Get today's date in Manila timezone as a YYYY-MM-DD string.
  * Used for daily boundaries (circuit breaker, query limits, daily spend caps).
  */
 export function getManilaToday(): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: MANILA_TZ }).format(new Date());
+  return getManilaDateKey();
 }
 
 /**

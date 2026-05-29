@@ -35,6 +35,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { triggerDeadlineNotifications } from '@/lib/push/deadline-triggers';
+import { verifyBearer } from '@/lib/security/constant-time';
 
 // This route must run on the Node.js runtime (service-role key, web-push) and
 // must never be statically cached — it has a live side effect each invocation.
@@ -61,17 +62,12 @@ function isAuthorized(req: NextRequest): boolean {
     return false;
   }
 
-  const token = auth.slice('Bearer '.length);
-
-  // --- Constant-time comparison ---
-  if (token.length !== expected.length) {
-    return false;
-  }
-  let mismatch = 0;
-  for (let i = 0; i < token.length; i++) {
-    mismatch |= token.charCodeAt(i) ^ expected.charCodeAt(i);
-  }
-  return mismatch === 0;
+  // Constant-time Bearer compare via the shared security primitive. The two
+  // guards above stay here so the cron-specific log lines (missing env →
+  // console.error, malformed header → console.warn) are preserved exactly;
+  // verifyBearer re-checks both fail-closed, then constant-time compares the
+  // token against CRON_SECRET.
+  return verifyBearer(auth, expected);
 }
 
 // ============================================================

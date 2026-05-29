@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   MANILA_TZ,
   getManilaToday,
+  getManilaDateKey,
   formatManilaDate,
   getManilaTimestamp,
   toManilaSQL,
@@ -42,6 +43,27 @@ describe('timezone utilities', () => {
       vi.setSystemTime(new Date('2026-06-15T14:00:00Z'));
       const result = getManilaToday();
       expect(result).toBe('2026-06-15');
+    });
+  });
+
+  describe('getManilaDateKey', () => {
+    it('resolves the Manila calendar date of a specific instant', () => {
+      // 2026-06-15 23:00 UTC = 2026-06-16 07:00 Manila (UTC+8)
+      const instant = new Date('2026-06-15T23:00:00Z');
+      expect(getManilaDateKey(instant)).toBe('2026-06-16');
+    });
+
+    it('resolves a pre-Manila-midnight instant to the same day', () => {
+      // 2026-06-15 14:00 UTC = 2026-06-15 22:00 Manila (still same day)
+      const instant = new Date('2026-06-15T14:00:00Z');
+      expect(getManilaDateKey(instant)).toBe('2026-06-15');
+    });
+
+    it('defaults to now and matches getManilaToday()', () => {
+      vi.setSystemTime(new Date('2026-06-15T23:00:00Z'));
+      expect(getManilaDateKey()).toBe('2026-06-16');
+      // getManilaToday() is the no-arg specialization of getManilaDateKey().
+      expect(getManilaDateKey()).toBe(getManilaToday());
     });
   });
 

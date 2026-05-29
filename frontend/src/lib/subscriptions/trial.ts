@@ -22,7 +22,7 @@
  * testable in the node vitest env and importable from Server Components.
  */
 
-import { MANILA_TZ } from '@/lib/timezone';
+import { getManilaDateKey } from '@/lib/timezone';
 
 // ============================================================
 // Trial length — 7 days of full (capped) access before the paywall.
@@ -59,17 +59,10 @@ export interface TrialState {
 }
 
 // ============================================================
-// manilaDateKey — the Manila CALENDAR date of an instant as 'YYYY-MM-DD'.
-// Uses the en-CA locale (which formats as YYYY-MM-DD) pinned to Asia/Manila,
-// matching the existing getManilaToday() helper in lib/timezone.ts. We take a
-// Date arg here (getManilaToday() hardcodes `new Date()`) so the clock is
-// injectable for tests without touching shared timezone infra.
-// ============================================================
-
-function manilaDateKey(date: Date): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: MANILA_TZ }).format(date);
-}
-
+// Manila CALENDAR date of an instant — see getManilaDateKey() in
+// lib/timezone.ts (the single source of truth). Trial math keys off the
+// Manila calendar date of both the start instant and `now`, with the clock
+// injectable via the Date arg for deterministic tests.
 // ============================================================
 // manilaDateKeyToOrdinal — convert a YYYY-MM-DD Manila date string to a
 // day ordinal (days since the Unix epoch). Pure integer arithmetic on the
@@ -94,8 +87,8 @@ function manilaDateKeyToOrdinal(dateKey: string): number {
 
 export function computeTrialState(startedAtISO: string, now: Date = new Date()): TrialState {
   // Resolve both instants to their Manila CALENDAR date, then diff the days.
-  const startKey = manilaDateKey(new Date(startedAtISO));
-  const nowKey = manilaDateKey(now);
+  const startKey = getManilaDateKey(new Date(startedAtISO));
+  const nowKey = getManilaDateKey(now);
 
   const startOrdinal = manilaDateKeyToOrdinal(startKey);
   const nowOrdinal = manilaDateKeyToOrdinal(nowKey);

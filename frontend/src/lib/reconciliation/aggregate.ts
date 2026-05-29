@@ -23,19 +23,9 @@ import type {
   ReconciliationDay,
   WeeklyReconciliation,
 } from './types';
+import { enumerateWeekDates, FIL_DAY_LABELS } from '@/lib/weekly-story/week-bounds';
 
 const WEEKLY_WINDOW_DAYS = 7;
-
-/** Filipino weekday abbreviations indexed by JS getUTCDay() (0=Sun..6=Sat). */
-const FIL_DAY_BY_DOW: readonly string[] = [
-  'Lin', // Sunday
-  'Lun', // Monday
-  'Mar', // Tuesday
-  'Miy', // Wednesday
-  'Hue', // Thursday
-  'Bie', // Friday
-  'Sab', // Saturday
-] as const;
 
 /** Filipino month names indexed 0..11 (Enero..Disyembre). */
 const FIL_MONTHS: readonly string[] = [
@@ -57,17 +47,28 @@ function pad(n: number): string {
   return String(n).padStart(2, '0');
 }
 
-/** Shift a YYYY-MM-DD string by deltaDays, returning YYYY-MM-DD. */
+/**
+ * Shift a YYYY-MM-DD string by deltaDays, returning YYYY-MM-DD. Local because
+ * week-bounds only exports forward enumeration (enumerateWeekDates), not its
+ * private signed-delta shift, and reconciliation needs a backward shift (for
+ * the trailing-7-day range_start) plus an arbitrary-length monthly walk.
+ */
 function shiftDate(dateStr: string, deltaDays: number): string {
   const d = new Date(`${dateStr}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + deltaDays);
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
 }
 
-/** Filipino weekday abbreviation for a YYYY-MM-DD string. */
+/**
+ * Filipino weekday abbreviation for a YYYY-MM-DD string, sourced from the
+ * SHARED FIL_DAY_LABELS (Mon-first, length 7) so reconciliation's day labels
+ * can never desync from the Kuwento (weekly-story) card. getUTCDay() is
+ * Sun-first (0=Sun..6=Sat); (dow + 6) % 7 maps it onto the Mon-first array
+ * (Sun→6, Mon→0, Tue→1, …, Sat→5).
+ */
 function dayLabel(dateStr: string): string {
   const d = new Date(`${dateStr}T00:00:00Z`);
-  return FIL_DAY_BY_DOW[d.getUTCDay()];
+  return FIL_DAY_LABELS[(d.getUTCDay() + 6) % 7];
 }
 
 /** First day of the month containing dateStr, as YYYY-MM-01. */
@@ -113,9 +114,10 @@ export function computeWeeklyReconciliation(
   let totalSales = 0;
   let totalExpenses = 0;
 
-  // Walk oldest → today so `days` reads chronologically left-to-right.
-  for (let i = WEEKLY_WINDOW_DAYS - 1; i >= 0; i -= 1) {
-    const date = shiftDate(today, -i);
+  // Walk oldest → today so `days` reads chronologically left-to-right. The
+  // trailing-7-day window is exactly the 7 consecutive dates from rangeStart,
+  // which is what the shared enumerateWeekDates() produces.
+  for (const date of enumerateWeekDates(rangeStart)) {
     const row = byDate.get(date);
     const logged = row !== undefined;
 
