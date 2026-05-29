@@ -1,6 +1,6 @@
 # AKBai — Test Strategy
 > Used by: qa-engineer, fullstack-engineer, devops-engineer, ai-engineer
-> Last updated: 2026-03-26 | Source: Tech Stack, Gap Registry, all engineering skill specs
+> Last updated: 2026-05-29 (Sprint 18 — added §11 pre-launch hardening test patterns: tax-year rollover with `vi.setSystemTime`, CSV formula-injection regression, offline-queue attempt-cap/flush) | Source: Tech Stack, Gap Registry, all engineering skill specs
 
 ---
 
@@ -511,6 +511,42 @@ beforeEach(() => {
 - 4 paywall component test files (+47) — paywall-modal, restore-link, paywall-trigger, morning-briefing-paywall integration
 
 **Gotcha — TS `vi.mocked` spread-arg pattern:** the 7 net-new TS errors in `configure.test.ts` come from the same `vi.mocked(...).mockImplementation((...args) => ...)` spread-arg pattern that Sprint 16's profile-test propagation surfaced. Not a Sprint 17 regression; carry-over for housekeeping cleanup (Sprint 17 retro action item).
+
+### Sprint 18 extension — Pre-launch hardening test patterns
+
+> **Active since 2026-05-29 (Sprint 18 / Gap G7 code-side GREEN).** New regression patterns established while driving the Pre-Launch Feature Readiness Gate. Tests grew 1555 → 1716 (+161). These three patterns are reusable beyond their originating features.
+
+**1. Date-dependent logic — pin the clock with `vi.setSystemTime`.** The tax-year 2027 rollover test (and the trial-countdown banner day-math) must not depend on the wall clock. Freeze time at the boundary you're testing, exercise the function, restore in `afterEach`. This also surfaced a real bug: `lib/deadlines/generate.ts` used the runtime timezone instead of Manila — a frozen-clock test in a non-Manila CI env exposed it. **Always pin AND set a non-Manila TZ in date tests so Manila-tz bugs can't hide behind a Manila-tz dev machine.**
+
+```ts
+import { afterEach, beforeEach, vi } from 'vitest';
+
+beforeEach(() => {
+  // Freeze at the year boundary in UTC — if the SUT assumes runtime tz,
+  // a UTC-frozen clock at 2026-12-31T20:00:00Z (= 2027-01-01 04:00 Manila)
+  // will reveal the off-by-one-year bug a Manila-tz machine would mask.
+  vi.setSystemTime(new Date('2026-12-31T20:00:00Z'));
+});
+afterEach(() => vi.useRealTimers());
+```
+
+Coverage target: tax-year rollover, trial day-countdown, deadline generation, any "today/this period" boundary. Pair with the `lib/timezone` helpers — never `new Date()` directly in the SUT.
+
+**2. CSV / spreadsheet export — OWASP formula-injection regression.** Any value that can begin with `=`, `+`, `-`, `@`, tab, or CR (`\t`, `\r`) must be neutralized (prefix with `'`) before it lands in a CSV cell, or a malicious merchant/category name becomes a formula when the user opens the export in Excel/Sheets. The guard lives in `lib/expenses/csv.ts`; the regression suite feeds each dangerous-prefix value and asserts the output cell is escaped, plus asserts ordinary values pass through unquoted. This is a business-critical security test, not commodity-CRUD — keep it.
+
+```ts
+it.each(['=cmd()', '+1+1', '-2+3', '@SUM(A1)', '\t=x', '\r=y'])(
+  'neutralizes formula-injection prefix %j', (evil) => {
+    expect(toCsvCell(evil)).toMatch(/^'/);   // leading apostrophe guard
+  });
+it('leaves a normal merchant name untouched', () => {
+  expect(toCsvCell('SM Supermarket')).toBe('SM Supermarket');
+});
+```
+
+**3. Offline queue — attempt-cap, dedup, and flush behavior.** The offline receipt scan queue (`lib/ocr/offline-queue.ts`) must be tested for: validate-before-save (a malformed item never enters the queue — review finding C1/C3 poisoning), per-item attempt cap (a permanently-failing item is dropped, not retried forever), dedup (the same scan enqueued twice yields one entry), retriable vs non-retriable error classification (non-JSON OCR error is retriable — review finding C5), and clear-on-sign-out (no other user's queued images survive a sign-out — review finding M1). Mock the network/OCR call; drive the queue through enqueue → flush → assert side effects. Do NOT test the storage driver itself — test the queue's policy logic around it.
+
+**Provenance note:** patterns 1-3 each fixed a real review finding (Manila-tz bug; H1 CSV injection; C1/C3/C5/M1 offline-queue). Pre-launch hardening tests earn their keep — they encode the exact hazard a security pass caught, so a future refactor can't silently reintroduce it.
 
 ---
 

@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-05-27 (Sprint 14 — Native Mobile Pivot Foundations + Spike closed GREEN; ADR-019 accepted; committed to Sprints 15-19)
+> Last updated: 2026-05-29 (Sprint 18 — Pre-Launch Feature Readiness closed GREEN on agent-doable items; 1716 tests; migration 023 fixes subscriptions schema drift; Build 5 reconciliation built for real; public-release gate pending Sprint 19)
 
 ---
 
@@ -536,6 +536,10 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | 8 | Build 5 (Morning Briefing + Recon) | 3.5 hrs (Anton) | ~2 (Anton) | 8 | 6 | PARTIAL — Recon deferred to Sprint 10 |
 | 9 | Build 6 (Deadlines) + Build 7 (Reply Drafter) | 4 hrs (Anton) | ~2 (Anton) | 12 | 10 | YES — Live testing in Sprint 10 |
 | 10 | Builds 5-7 Hardening | 2.5 hrs (Anton) | ~2.5 (Anton) | 8 | 7 | YES — Build 5 complete, 6 bugs fixed |
+| 15 | Capacitor Conversion (Gap G1) | 2-3 hrs (Anton) | ~0.5 (Anton) | 7 | 7 | YES — `.aab` 14.62 MB; 1331 tests |
+| 16 | Native Surface Polish (Gap G4) | 2-3 hrs (Anton) | ~0.5 (Anton) | 9 | 9 | YES — 5 plugins; `.aab` 20.75 MB; 1427 tests |
+| 17 | RevenueCat IAP (Gap G2) | 2-3 hrs (Anton) | ~0.5 (Anton) | 9 | 9 | YES (🟡 bundle-only) — `.aab` 23.27 MB; 1555 tests |
+| 18 | Pre-Launch Feature Readiness (Gap G7) | 3-4 hrs (Anton) | ~1 (Anton) | 14 | 14 | YES (🟢 agent-doable) — 1716 tests; public-release gate Sprint 19 |
 
 **Emerging patterns:**
 - L-sized tasks (3–4 hrs) fit well in Saturday blocks
@@ -555,6 +559,8 @@ Done when: Errors from client and server captured in Sentry with source maps.
 - **NEW (Sprint 6+7): Build + test must be mandatory sprint workflow steps — `/build` after plan approval, `/test` before declaring done. Prevents "forgot to test" regressions.**
 - **NEW (Sprint 10): Dev bypass must persist to real DB — mock/in-memory dev bypasses create bugs invisible to automated tests. Use `createServiceClient()` to bypass RLS while writing to real tables. "Skip auth, not skip persistence."**
 - **NEW (Sprint 10): Verify DB migration state before testing — code assumes tables/columns exist but remote DB may lag behind migration SQL. Silent query failures result.**
+- **NEW (Sprint 18): "Claimed done" ≠ "in main." Build 5 weekly/monthly reconciliation was logged DONE in Sprint 10 (this file, line ~622) but the code was never merged to `main` — it didn't exist when Sprint 18 audited it. Pre-launch gate reviews MUST verify load-bearing features by grepping `main`, not by trusting prior sprint-history entries. Sprint 17 code (PR #38) was also still unmerged at Sprint 18 session start (main was at Sprint 16) — merge state of the immediately-prior sprint is not guaranteed; verify before building on top.**
+- **NEW (Sprint 18): Schema-drift bugs hide until insert-time. `lib/subscriptions/lifecycle.ts` wrote 9 columns no migration defined (latent since the Xendit era); inserts would throw at runtime but no test exercised the path. Migration 023 backfilled the columns. Lesson: audit every `.insert(`/`.update(` column set against the migration files during pre-launch hardening.**
 
 ---
 
@@ -582,6 +588,17 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Sprint 10 Retro | 1 | Audit all remaining API routes for dev bypass persistence — use `createServiceClient()` | OPEN — Prevent recurrence of mock-data bugs |
 | Sprint 10 Retro | 2 | Integrate Reply Drafter into Kai Chat — remove standalone page | OPEN — Sprint 11 architecture change |
 | Sprint 10 Retro | 3 | Define query caps for Pro and Business tiers | OPEN — Strategic decision before Xendit integration (Sprint 12) |
+| Sprint 17 entry | 7 | `subscriptions` schema drift — `lib/subscriptions/lifecycle.ts` writes 9 columns not in migration 003 | DONE — Sprint 18 migration 023 adds all 9 lifecycle columns (`current_period_start/_end`, `scan_limit`, `scans_used_this_period`, `grace_period_end`, `grace_notifications_sent`, `payment_method`, `xendit_customer_id`, `cancelled_at`); RLS unchanged (SELECT-only). `Subscription` type gained `started_at`. |
+| Sprint 17 entry | 2a | `<PaywallModal source="scan_limit">` — scanner-flow gate routing | DONE — Sprint 18 wired during receipts/scan-queue work |
+| Sprint 17 entry | 2d | Grace-period banner — surface `BILLING_ISSUE`/grace state to user | PARTIAL — Sprint 18 added trial-countdown banner + day-7 paywall trigger; explicit Pro-lapse grace banner (Gap C2) still pending Sprint 19 enrollment wave |
+| Sprint 9/16 carry | — | Push 7/3/1-day deadline scheduler — trigger logic existed but was never invoked | DONE — Sprint 18 wired `/api/cron/deadline-notifications` + `vercel.json` crons + `CRON_SECRET` |
+| Sprint 18 entry | 1 | Constant-time bearer-token compare duplicated ×3 (Xendit + RevenueCat + cron) — extract shared helper | OPEN — cleanup debt, no security impact (each is individually correct) |
+| Sprint 18 entry | 2 | Offline scan queue forked from the chat offline queue — converge to one shared queue abstraction | OPEN — cleanup debt |
+| Sprint 18 entry | 3 | Reconciliation date helpers duplicate weekly-story/timezone helpers — converge | OPEN — cleanup debt |
+| Sprint 18 entry | 4 | `/api/dashboard` runs ~12 sequential independent reads — convert to `Promise.all` | OPEN — perf cleanup |
+| Sprint 18 entry | 5 | Offline-queue M1 completeness — clear offline images on sign-out shipped; verify full lifecycle (multi-account device, storage-quota eviction) | OPEN — Sprint 19 on-device QA |
+| Sprint 18 entry | 6 | `NEXT_PUBLIC_SKIP_AUTH` / demo-mode env hygiene — confirm triple-gated demo login + `SKIP_AUTH` are fail-closed/off in the production native build before store submission | OPEN — Sprint 19 pre-submission checklist |
+| Sprint 18 entry | 7 | `@capacitor/splash-screen` + `@capacitor/filesystem` installs (SplashScreen config + offline-image persistence depend on them) | OPEN — Sprint 19 (config landed, plugin install deferred) |
 
 ---
 
@@ -1961,4 +1978,126 @@ Essentially flat despite +11 pages and the persona-fetching layout — the `page
    - Sprint 16 stub `unregisterNativePush()` implementation (NPC data-subject-rights closure)
 
 **Next sprint:** Sprint 18 — Pre-Launch Feature Readiness Gate review (per pivot plan §11, 40+ item checklist) + asset readiness (G5 App Store assets, G6 Kai character integration, G7 Pre-Launch Gate). Fifth of six pure-dev sprints. Sprint 19 = enrollment wave (Apple Developer Program, Google Play Console, RevenueCat dashboard) + on-device Pixel 5 smoke + Sentry symbolication execution + store submission.
+
+---
+
+### Sprint 18 — 2026-05-29 (Pre-Launch Feature Readiness — DEV ONLY) — CLOSED 🟢 GREEN (agent-doable items)
+
+**Phase:** 0B — Native Mobile Pivot (sprint 5 of 6)
+**Sprint Goal:** Drive every agent-doable item of the Pre-Launch Feature Readiness Gate (Gap G7, pivot plan §11) to GREEN so Sprint 19 is pure Anton-side enrollment + on-device QA + store submission. Produce the G7 traffic-light gate report. Resolve the two schema-drift items build-data flagged in Sprint 17.
+**Capacity:** ~3-4 hr Anton (sprint kickoff scope + 2 PR reviews + gate-report sign-off + self-merge); ~12-15 hr agent wall-clock budget.
+
+**Strategic context:** Fifth sprint of the 6-sprint Native Mobile Pivot. PM-orchestrated agent team (build-data, build-engineer ×, marketing-content, review-security, + general-purpose) across 2 batches + a review-fix pass. **Two pre-flight findings reshaped the sprint:** (1) **Sprint 17 code (PR #38) was still unmerged at session start — `main` was at Sprint 16.** Merged Sprint 17 first (PR #38 code + PR #39 retro docs) before building. (2) An audit of the Pre-Launch Gate found **Build 5 weekly/monthly reconciliation was logged DONE in Sprint 10 but had never been merged to `main`** — the code did not exist. Built for real this sprint.
+
+**Tasks:**
+
+| # | Stream | Task | Size | Anton Time | Status | Notes |
+|---|--------|------|------|------------|--------|-------|
+| 1 | data | Migration 023 — 9 subscriptions lifecycle columns (fixes Sprint 17 schema-drift item #7) | S | XS | DONE | `current_period_start/_end`, `scan_limit`, `scans_used_this_period`, `grace_period_end`, `grace_notifications_sent`, `payment_method`, `xendit_customer_id`, `cancelled_at`; RLS unchanged (SELECT-only); `Subscription` type gained `started_at` |
+| 2 | engineer | Build 5 RECONCILIATION (built for real — never in main) | M | — | DONE | `lib/reconciliation/` (aggregate + types), `/api/reconciliation/{weekly,monthly}`, weekly + monthly dashboard cards with missing-day nudges, `home.reconciliation.*` i18n (FIL+EN) |
+| 3 | engineer | Trial-countdown banner | M | — | DONE | `lib/subscriptions/trial.ts` + `trial-countdown-banner.tsx` + `trialCountdown.*` i18n; 7-day countdown, day-7 paywall trigger; renders on trialing + expired |
+| 4 | engineer | Resilience/scheduling | M | — | DONE | Circuit-breaker → Sentry alert on trip/warning (`captureMessage`, dedup fingerprint, correct global/user cap label); push 7/3/1-day scheduler wired via `/api/cron/deadline-notifications` + `vercel.json` crons + `CRON_SECRET`; Capacitor `SplashScreen` config (needs `@capacitor/splash-screen` install — Sprint 19) |
+| 5 | engineer | Receipts/exports | M | — | DONE | Offline receipt scan queue (`lib/ocr/offline-queue.ts` + scanner-flow wiring) with validate-before-save, attempt cap, dedup, retriable-error handling; CSV export (`lib/expenses/csv.ts` + button) with OWASP formula-injection guard; tax-year 2027 rollover unit test (+ fixed a real UTC bug in `lib/deadlines/generate.ts` that used runtime tz instead of Manila) |
+| 6 | engineer | Reviewer/guest mode (P0) | S | — | DONE | Seeded demo account (`seed-demo-account.sql`) + triple-gated fail-closed `/api/demo-login` + gated login button; off by default in prod |
+| 7 | marketing-content | Legal DRAFTS + store copy + Kai usage | M | XS (review) | DONE | `/privacy` + `/terms` in-app pages (prominent DRAFT banners, pending PH lawyer); `npc-data-classification.md` matrix; `store-listing-copy.md` DRAFT; `kai-character-usage.md` (Kai in 13 surfaces, ≥5 gate PASS + fallback policy) |
+| 8 | engineer | Enye/special-char rendering audit | S | — | DONE | 7 safe break-words/overflow-wrap fixes |
+| 9 | review-security | Security audit (all surfaces) | S | XS (review) | DONE | **NO BLOCKERS.** Found CSV formula injection (H1) + offline-queue poisoning (C1/C3) + trial-banner expired-branch reachability (C2) + replay dedup (C4) + non-JSON OCR error retriable (C5) + breaker cap mislabel (C6) + clear-offline-images-on-sign-out (M1) — all fixed in review-fix pass |
+| 10 | engineer | Review-fix pass | S | — | DONE | Applied all review findings (H1, C1-C6, M1) |
+| 11 | qa | Full vitest + web build + Capacitor static export + cap sync | M | XS (review) | DONE | **1716/1716 pass** (+161 vs Sprint 17 baseline 1555) |
+| 12 | PM | G7 traffic-light gate report | S | XS (sign-off) | DONE | `akbai-delivery/shared/sprint-18-prelaunch-gate.md` — code-side GREEN; public-release items Anton-gated Sprint 19 |
+| 13 | PM | Sprint 19 launch package | S | — | DONE | `akbai-delivery/shared/sprint-19-launch-package.md` (Anton wave) |
+| 14 | PM | Sprint 18 retro + post-sprint doc sweep | S | XS (0.25hr) | DONE | This entry + gap-registry (G5/G6/G7) + project-context + 4 skill-file updates on `feat/18-prelaunch-readiness` |
+
+**Sprint outcome:** ✅ CLOSED 🟢 GREEN on all agent-doable §11 gate items — Gap G7 code-side GREEN, gate report produced. Public-release items (Apple/Google enrollment, real RevenueCat creds, iOS icons + screenshots + hosting, on-device smoke, real Kai art swap) are Anton-gated and move to Sprint 19. G2/G4/G7 remain IMPLEMENTED (not RESOLVED) — they close at Sprint 19.
+
+**What shipped (`feat/18-prelaunch-readiness` → 3+ commits → 2 batches + review-fix pass):**
+
+*Schema (migration 023)*
+- `023_subscriptions_lifecycle_columns.sql` — 9 lifecycle columns fixing the latent schema-drift bug where `lib/subscriptions/lifecycle.ts` wrote columns no migration defined (inserts would have thrown). RLS unchanged.
+
+*Build 5 reconciliation (built for real)*
+- `lib/reconciliation/` (aggregate + types), `/api/reconciliation/weekly`, `/api/reconciliation/monthly`, weekly + monthly dashboard cards (missing-day nudges), `home.reconciliation.*` i18n FIL+EN.
+
+*Trial + resilience + scheduling*
+- `lib/subscriptions/trial.ts` + `trial-countdown-banner.tsx` + `trialCountdown.*` i18n.
+- Circuit-breaker Sentry alert (`captureMessage`, dedup fingerprint, correct global/user cap label).
+- `/api/cron/deadline-notifications` + `vercel.json` crons + `CRON_SECRET` (push 7/3/1-day scheduler — trigger logic existed but was never invoked).
+- Capacitor `SplashScreen` config (plugin install deferred to Sprint 19).
+
+*Receipts/exports*
+- `lib/ocr/offline-queue.ts` + scanner-flow wiring (validate-before-save, attempt cap, dedup, retriable-error handling).
+- `lib/expenses/csv.ts` + export button (OWASP formula-injection guard).
+- Tax-year 2027 rollover unit test + UTC bug fix in `lib/deadlines/generate.ts` (runtime tz → Manila).
+
+*Reviewer/guest mode (P0)*
+- `seed-demo-account.sql` + triple-gated fail-closed `/api/demo-login` + gated login button. Off by default in prod.
+
+*Legal + listing + Kai docs (DRAFTS)*
+- `/privacy` + `/terms` in-app pages (prominent DRAFT banners, pending PH lawyer).
+- `npc-data-classification.md` matrix; `store-listing-copy.md` DRAFT; `kai-character-usage.md` (13 surfaces, ≥5 gate PASS + fallback policy).
+- Enye/special-char audit (7 break-words/overflow-wrap fixes).
+
+*Review fixes*
+- CSV formula injection (H1), offline-queue poisoning (C1/C3), trial banner expired-branch reachability (C2), replay dedup (C4), non-JSON OCR error retriable (C5), breaker cap mislabel (C6), clear offline images on sign-out (M1).
+
+**Decision-gate metrics:**
+
+| Check | Result |
+|---|---|
+| Vitest | **1716/1716 pass** (+161 vs Sprint 17 baseline 1555) |
+| Security audit (review-security) | **NO BLOCKERS** — 8 findings (1 H, 6 C, 1 M) all fixed in review-fix pass |
+| Web build + Capacitor static export + `cap sync` | PASS |
+| G7 Pre-Launch Gate (code-side agent-doable items) | 🟢 GREEN — report at `sprint-18-prelaunch-gate.md` |
+
+**Two pre-flight findings (the headline of this sprint):**
+1. **"Claimed done" ≠ "in main."** Build 5 reconciliation was logged DONE in Sprint 10 but never merged — it did not exist in `main`. Built for real in Sprint 18. Gate reviews must verify load-bearing features by grepping `main`, not trusting sprint-history.
+2. **Prior-sprint merge state is not guaranteed.** Sprint 17 (PR #38) was unmerged at session start (main at Sprint 16); merged this session (PR #38 code + #39 retro) before building on top.
+
+**Cleanup debt deferred to action items:**
+- Constant-time bearer-token compare duplicated ×3 (Xendit + RevenueCat + cron) — extract a shared helper.
+- Offline scan queue forked from the chat offline queue — converge.
+- Reconciliation date helpers duplicate weekly-story/timezone helpers — converge.
+- `/api/dashboard` runs ~12 sequential independent reads — `Promise.all`.
+
+**Branch hygiene:**
+- `feat/18-prelaunch-readiness` (3+ commits) → PR to `main` after retro commit (PM owns).
+- `feat/capacitor-spike` worktree at `C:\Users\Anton del Rosario\akbai-spike` PRESERVED per Sprint 14 directive — keep until Sprint 19 close.
+
+**Next sprint:** Sprint 19 — Launch wave (Anton-gated). Apple Developer Program + Google Play Console enrollment, real RevenueCat dashboard + sandbox SKUs + curl smoke against staging webhook, iOS icons + screenshots + privacy/terms hosting (akbai.com), real Kai art swap (G6), on-device Pixel 5 smoke, Sentry symbolication execution, store submission. Full Anton checklist: `akbai-delivery/shared/sprint-19-launch-package.md`. Closes G2, G4, G5, G6, G7. Sixth and final pivot sprint.
+
+---
+
+### Sprint 18 Retro — 2026-05-29
+
+**What Went Well:**
+- **Pre-flight audit caught a phantom feature before it became a launch-day incident.** Build 5 reconciliation was "done in Sprint 10" on paper but absent from `main`. Grepping `main` instead of trusting docs surfaced it while there was still time to build it properly. This single check is the highest-leverage thing the gate review did.
+- **Largest test jump of the pivot block** (+161, 1555 → 1716) without a YELLOW — every new surface (reconciliation, trial banner, offline queue, CSV export, cron scheduler, tax-year rollover) landed with tests.
+- **Security review found real, exploitable issues and zero blockers.** CSV formula injection (H1) and offline-queue poisoning (C1/C3) were genuine pre-launch hazards; all 8 findings fixed in one review-fix pass within the sprint (Sprint 4 lesson — resolve internal review items in-session — held).
+- **Schema-drift item closed at the source.** Migration 023 retired a latent insert-time crash that had been carried silently since the Xendit era; the Sprint 17 build-data flag became a one-migration fix.
+
+**What Didn't Go Well:**
+- **Doc trust debt.** Two prior sprints' "DONE" claims (Build 5 reconciliation; Sprint 17 merge state) were both wrong against `main`. The sprint absorbed unplanned build work (reconciliation) and an unplanned merge (PR #38/#39) before the planned scope could start.
+- **Cleanup debt accreted rather than resolved.** Four duplication/perf items (×3 bearer compare, forked offline queue, duplicated recon date helpers, sequential `/api/dashboard` reads) were knowingly deferred to ship the gate items — acceptable under a launch deadline but now tracked debt.
+- **Two plugin installs (`@capacitor/splash-screen`, `@capacitor/filesystem`) deferred** — SplashScreen config and full offline-image persistence are config-complete but inert until Sprint 19 installs the plugins.
+
+**What We Learned:**
+- **A pre-launch gate's first job is verification, not building.** Before checking off any §11 item, confirm its dependencies actually exist in `main`. "Sprint-history says done" is a hypothesis, not evidence — `git grep` on `main` is the evidence.
+- **Merge state of the immediately-prior sprint is not a given.** Pure-dev sprints have been self-merged by Anton on his schedule; a new sprint must verify the prior PR is in `main` before branching, or it builds on sand.
+- **Drafts unblock the gate without overcommitting.** Legal pages, store copy, and the Kai usage doc shipped as clearly-labelled DRAFTs — enough to turn the gate items GREEN on the agent-doable axis while honoring the "engage a PH lawyer, do not self-draft" rule (Gap A2) by not presenting them as final.
+
+**Action Items:** (tracked in Unresolved Action Items table above)
+
+| # | Action | Owner | Due By | Status |
+|---|--------|-------|--------|--------|
+| 1 | Extract shared constant-time bearer-compare helper (dedupe ×3) | Claude (engineer) | Sprint 19+ | OPEN |
+| 2 | Converge offline scan queue with chat offline queue | Claude (engineer) | Sprint 19+ | OPEN |
+| 3 | Converge reconciliation date helpers with weekly-story/timezone | Claude (engineer) | Sprint 19+ | OPEN |
+| 4 | `/api/dashboard` → `Promise.all` the ~12 independent reads | Claude (engineer) | Sprint 19+ | OPEN |
+| 5 | Offline-queue M1 completeness (multi-account, storage-quota eviction) | Claude (engineer) + Anton | Sprint 19 on-device QA | OPEN |
+| 6 | Confirm demo-mode + `NEXT_PUBLIC_SKIP_AUTH` fail-closed/off in prod native build | Anton | Sprint 19 pre-submission | OPEN |
+| 7 | Install `@capacitor/splash-screen` + `@capacitor/filesystem` | Claude (engineer) | Sprint 19 | OPEN |
+
+**Energy Check:**
+- **Sustainability:** Good — Anton time ~1 hr (slightly above the 0.5 hr of Sprints 15-17 because of the gate-report sign-off + the unplanned PR #38/#39 merge decision), still well under the 3-4 hr budget.
+- **Recommendation:** Sprint 19 is the Anton-heavy wave (enrollments, on-device, store submission). Front-load the paid-account enrollments (Apple verification can take 1-2 days) at the start of the sprint so they don't block submission at the end.
 

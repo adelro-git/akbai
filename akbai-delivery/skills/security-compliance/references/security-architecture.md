@@ -1,6 +1,6 @@
 # Security Architecture — AKBai
 > Used by: security-compliance, devops-engineer, solutions-architect, fullstack-engineer
-> Last updated: March 2026 | Source: Roadmap v14, Tech Stack Reference, Gap Registry, OWASP Top 10 (2021)
+> Last updated: 2026-05-29 (Sprint 18 — added reusable conventions: reviewer/guest demo-mode fail-closed pattern + CSV/spreadsheet formula-injection guard, both from the Pre-Launch Gate security pass) | Source: Roadmap v14, Tech Stack Reference, Gap Registry, OWASP Top 10 (2021)
 > This document is the canonical security reference for AKBai's infrastructure.
 
 ---
@@ -443,6 +443,34 @@ export async function validateUpload(file: File): ValidationResult {
 ```
 
 **Storage:** Upload to Supabase Storage under user-scoped path: `receipts/{user_id}/{timestamp}_{filename}`. RLS on storage bucket ensures user can only access own files.
+
+---
+
+## 10.5 Reusable Conventions (Sprint 18 Pre-Launch Gate security pass)
+
+Two conventions surfaced in the Sprint 18 review-security pass (NO BLOCKERS overall, but both were genuine pre-launch hazards before being fixed). Apply them whenever the relevant surface recurs.
+
+### Reviewer / guest demo-mode — triple-gated, fail-closed, off-by-default
+
+App Store + Play Console reviewers need a working demo account, but a demo-login bypass is an auth-bypass attack surface if it ever ships enabled in production. Pattern (`/api/demo-login` + `seed-demo-account.sql`, Sprint 18):
+
+- **Fail-closed default:** the route returns 404/403 unless an explicit allow-flag is set. Absence of config = disabled, never enabled-by-omission. This mirrors the circuit-breaker fail-closed rule (ADR-005).
+- **Triple-gate before any session is issued.** All three must pass; any one missing → reject:
+  1. **Env gate** — a dedicated server-side flag (NOT `NEXT_PUBLIC_*`) must be explicitly `true`. Production builds leave it unset.
+  2. **Account gate** — only the single seeded demo `user_id` may be logged in; the route hard-codes/validates against the seeded account, never an arbitrary email.
+  3. **Environment gate** — refuse in production `NODE_ENV` unless the env gate above is deliberately set for a review build (mirrors the RevenueCat SANDBOX-in-prod environment guard from Sprint 17 G2).
+- **Demo data is isolated and disposable** — seeded via SQL, scoped by RLS like any user, soft-deletable. No real user PII.
+- **Pre-submission checklist item:** before any store submission, confirm the demo env gate AND `SKIP_AUTH` / `NEXT_PUBLIC_SKIP_AUTH` are off in the production native build. (Tracked: Sprint 18 action item #6.)
+
+This is the same family as the dev-auth `SKIP_AUTH` bypass — both must be impossible to reach in a shipped production artifact. Treat "is the bypass reachable in prod?" as a release-blocking question.
+
+### CSV / spreadsheet export — formula-injection guard (OWASP CSV Injection)
+
+Any user-controlled string written into a CSV/XLSX cell is an injection vector: if a value begins with `=`, `+`, `-`, `@`, tab (`\t`), or carriage return (`\r`), spreadsheet apps (Excel, Google Sheets, LibreOffice) interpret it as a formula on open — enabling data exfiltration (`=HYPERLINK`, `=WEBSERVICE`) or local command execution via DDE. A malicious merchant name, expense category, or note becomes an attack when the user exports and opens the file.
+
+**Guard** (`lib/expenses/csv.ts`, Sprint 18 finding H1): before emitting any cell, if the value starts with a dangerous prefix, neutralize it by prefixing a single apostrophe (`'`) so the spreadsheet treats it as literal text. Apply to **every** user-derived field, not just obvious ones. Combine with standard CSV quoting (escape `"`, wrap fields containing `,`/`"`/newlines). Regression-test each dangerous prefix (see test-strategy.md §9 Sprint 18 extension pattern 2) — this is business-critical security coverage, not commodity CRUD.
+
+Applies to: expense CSV export, any future invoice/transaction/report export, and any feature that writes user text into a downloadable spreadsheet.
 
 ---
 
