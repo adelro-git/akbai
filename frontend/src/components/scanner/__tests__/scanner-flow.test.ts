@@ -303,3 +303,160 @@ describe('ScannerFlow — OCR response parsing', () => {
     expect(errorResponse.error.message_tl).toContain('subukan ulit');
   });
 });
+
+// ============================================================
+// Offline replay decisions (Sprint 18 — F1/F2/F3 review fixes)
+// Mirrors the pure decision logic in scanner-flow.tsx's flush replay so we can
+// unit-test the branches without rendering the client component. The mirrored
+// helpers below are byte-for-byte the logic shipped in scanner-flow.tsx.
+// ============================================================
+
+// --- Mirror: RetriableOcrError + isNetworkError (F2) ---
+class RetriableOcrError extends Error {
+  constructor(message = 'OCR temporarily unavailable') {
+    super(message);
+    this.name = 'RetriableOcrError';
+  }
+}
+function isNetworkError(err: unknown): boolean {
+  return err instanceof TypeError || err instanceof RetriableOcrError;
+}
+
+// --- Mirror: extractValidExpense (F1) ---
+const YYYY_MM_DD = /^\d{4}-\d{2}-\d{2}$/;
+function extractValidExpense(
+  fields: ReceiptParseResult['fields']
+): { amount: number; transaction_date: string; merchant_name?: string } | null {
+  const amount = typeof fields.total?.value === 'number' ? fields.total.value : NaN;
+  const date = typeof fields.date?.value === 'string' ? fields.date.value : '';
+  if (!Number.isInteger(amount) || amount <= 0) return null;
+  if (!YYYY_MM_DD.test(date)) return null;
+  return {
+    amount,
+    transaction_date: date,
+    merchant_name:
+      typeof fields.merchant?.value === 'string' && fields.merchant.value
+        ? fields.merchant.value
+        : undefined,
+  };
+}
+
+function field(value: string | number | null): ReceiptField {
+  return { field: 'x', value, confidence: 'high', raw: String(value ?? '') };
+}
+
+describe('ScannerFlow — F2 network-error classification', () => {
+  it('classifies a fetch TypeError as a network (retriable) error', () => {
+    expect(isNetworkError(new TypeError('Failed to fetch'))).toBe(true);
+  });
+
+  it('classifies a RetriableOcrError (non-OK status / non-JSON body) as retriable', () => {
+    // This is the bug F2 fixes: a 502 with an HTML body throws SyntaxError on
+    // res.json(); wrapping it in RetriableOcrError keeps it queue-worthy.
+    expect(isNetworkError(new RetriableOcrError('status 502'))).toBe(true);
+  });
+
+  it('does NOT classify a generic Error (genuine scan failure) as retriable', () => {
+    // A 200 success:false (unreadable image) → hard drop, not a queue-loop.
+    expect(isNetworkError(new Error('image too blurry'))).toBe(false);
+  });
+
+  it('does NOT classify a SyntaxError as retriable on its own (must be wrapped)', () => {
+    // Proves the old `err instanceof TypeError` check would have MISSED a raw
+    // SyntaxError — the fix is to wrap non-JSON bodies in RetriableOcrError.
+    expect(isNetworkError(new SyntaxError('Unexpected token <'))).toBe(false);
+  });
+});
+
+describe('ScannerFlow — F1 replay validation (before POST)', () => {
+  it('accepts a positive-integer centavo amount + YYYY-MM-DD date', () => {
+    const result = extractValidExpense({
+      merchant: field('Jollibee'),
+      date: field('2026-04-12'),
+      total: field(25000),
+    });
+    expect(result).toEqual({
+      amount: 25000,
+      transaction_date: '2026-04-12',
+      merchant_name: 'Jollibee',
+    });
+  });
+
+  it('rejects a zero/unreadable amount (would 400 on /api/expenses → drop)', () => {
+    expect(
+      extractValidExpense({
+        merchant: field('Jollibee'),
+        date: field('2026-04-12'),
+        total: field(0),
+      })
+    ).toBeNull();
+  });
+
+  it('rejects a non-numeric (null) amount', () => {
+    expect(
+      extractValidExpense({
+        merchant: field('Jollibee'),
+        date: field('2026-04-12'),
+        total: field(null),
+      })
+    ).toBeNull();
+  });
+
+  it('rejects a non-integer (fractional) amount', () => {
+    expect(
+      extractValidExpense({
+        merchant: field('Jollibee'),
+        date: field('2026-04-12'),
+        total: field(250.5),
+      })
+    ).toBeNull();
+  });
+
+  it('rejects a date that is not strict YYYY-MM-DD', () => {
+    expect(
+      extractValidExpense({
+        merchant: field('Jollibee'),
+        date: field('April 12, 2026'),
+        total: field(25000),
+      })
+    ).toBeNull();
+  });
+
+  it('rejects a missing/empty date', () => {
+    expect(
+      extractValidExpense({
+        merchant: field('Jollibee'),
+        date: field(''),
+        total: field(25000),
+      })
+    ).toBeNull();
+  });
+
+  it('treats an empty merchant as undefined (still valid)', () => {
+    const result = extractValidExpense({
+      merchant: field(''),
+      date: field('2026-04-12'),
+      total: field(25000),
+    });
+    expect(result?.merchant_name).toBeUndefined();
+    expect(result?.amount).toBe(25000);
+  });
+});
+
+describe('ScannerFlow — F3 replay dedup skip', () => {
+  // The replay path drops (silently skips) a queued scan flagged duplicate by
+  // /api/ocr, rather than inserting a second copy. Mirror that decision.
+  function replayDedupOutcome(dedup: DedupInfo): 'drop' | 'save' {
+    return dedup.is_duplicate ? 'drop' : 'save';
+  }
+
+  it('drops a duplicate-flagged queued scan instead of re-inserting it', () => {
+    const response = makeMockOcrResponse({ isDuplicate: true });
+    expect(replayDedupOutcome(response.dedup)).toBe('drop');
+  });
+
+  it('saves a non-duplicate queued scan', () => {
+    const response = makeMockOcrResponse({ isDuplicate: false });
+    expect(replayDedupOutcome(response.dedup)).toBe('save');
+  });
+});

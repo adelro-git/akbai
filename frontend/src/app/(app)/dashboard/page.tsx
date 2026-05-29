@@ -168,8 +168,11 @@ export default function DashboardPage() {
           initiallyCompleted={data.welcomeTourCompleted}
         />
 
-        {/* Trial countdown (Sprint 18 §11) — only while trialing; self-hides for paid tiers */}
-        {data.subscription?.status === 'trialing' && (
+        {/* Trial countdown (Sprint 18 §11) — render while trialing OR expired so the
+            day-7 paywall branch stays reachable if a lifecycle flips status to
+            'expired'; the banner self-hides for paid tiers. */}
+        {(data.subscription?.status === 'trialing' ||
+          data.subscription?.status === 'expired') && (
           <TrialCountdownBanner
             trialState={computeTrialState(data.subscription.started_at)}
             tier={data.subscription.tier}

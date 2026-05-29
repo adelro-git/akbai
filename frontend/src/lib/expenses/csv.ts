@@ -73,6 +73,25 @@ function escapeCsvField(value: string): string {
   return value;
 }
 
+/**
+ * Formula-injection guard (OWASP) for USER-CONTROLLED text fields. A field whose
+ * first character is `= + - @` (or a leading tab/CR some apps treat as a formula
+ * lead) is prefixed with a single quote so Excel / Google Sheets / LibreOffice
+ * render it as literal text instead of executing it as a formula.
+ *
+ * Applied to free-text columns ONLY (description, category) — never to the
+ * numeric amount column, whose legitimate leading `-` (negative peso) must be
+ * preserved as a real number.
+ */
+function neutralizeFormula(value: string): string {
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+}
+
+/** RFC-4180 escape for a user-controlled TEXT field, with formula-injection guard. */
+function escapeCsvText(value: string): string {
+  return escapeCsvField(neutralizeFormula(value));
+}
+
 /** Integer centavos → fixed 2-decimal peso string (no glyph, no grouping). */
 function centavosToPesoDecimal(centavos: number): string {
   // Avoid float drift: work in integer space, then place the decimal point.
@@ -135,15 +154,16 @@ export function transactionsToCsv(transactions: ExportableTransaction[]): string
   // Rows
   for (const tx of transactions) {
     const row = [
-      tx.transaction_date,
-      humanManilaDate(tx.transaction_date),
-      typeLabel(tx.type),
-      getCategoryLabel(tx.category),
-      tx.description ?? '',
-      centavosToPesoDecimal(tx.amount),
-      sourceLabel(tx.source),
+      escapeCsvField(tx.transaction_date),
+      escapeCsvField(humanManilaDate(tx.transaction_date)),
+      escapeCsvField(typeLabel(tx.type)),
+      // Category + description are user/OCR-controlled → formula-injection guard.
+      escapeCsvText(getCategoryLabel(tx.category)),
+      escapeCsvText(tx.description ?? ''),
+      escapeCsvField(centavosToPesoDecimal(tx.amount)),
+      escapeCsvField(sourceLabel(tx.source)),
     ];
-    lines.push(row.map((field) => escapeCsvField(String(field))).join(','));
+    lines.push(row.join(','));
   }
 
   return lines.join('\r\n');

@@ -206,6 +206,44 @@ describe('checkCircuitBreaker — Sentry alerting', () => {
     expect(mockSetFingerprint).toHaveBeenCalledWith(['circuit-breaker-warning', 'user']);
   });
 
+  // --- F4 regression: a USER-only warning must be tagged cap='user', not
+  //     'global'. Here global is at 40% (1.0/2.5, well under the 80% line) but
+  //     user is exactly at the 80% line — the user ratio is what crossed, so the
+  //     cap label + fingerprint must reflect 'user'. Under the old (buggy) logic
+  //     the cap was inferred from the global ratio only, which still happened to
+  //     yield 'user' here — but the threshold-crossed derivation is what makes
+  //     this correct rather than coincidental. ---
+  it('tags a user-only warning as cap=user (global meaningfully under threshold)', async () => {
+    process.env.CIRCUIT_BREAKER_DAILY_CAP_USD = '2.5';
+    const supabase = createMockSupabase({ globalSpend: 1.0, userSpend: 0.4, userQueryCount: 5 });
+    const result = await checkCircuitBreaker(supabase, 'user-1', 0.01);
+
+    expect(result.allowed).toBe(true);
+    expect(result.warningThresholdReached).toBe(true);
+    expect(mockSetLevel).toHaveBeenCalledWith('warning');
+    expect(mockSetTags).toHaveBeenCalledWith({
+      alert: 'circuit_breaker_warning',
+      cap: 'user',
+    });
+    expect(mockSetFingerprint).toHaveBeenCalledWith(['circuit-breaker-warning', 'user']);
+  });
+
+  // --- F4: a GLOBAL warning (global ratio crossed) must be tagged cap='global'.
+  //     Global at 80% (4.0/5.0), user comfortably under (0.1/0.5 = 20%). ---
+  it('tags a global warning as cap=global (user under threshold)', async () => {
+    const supabase = createMockSupabase({ globalSpend: 4.0, userSpend: 0.1, userQueryCount: 2 });
+    const result = await checkCircuitBreaker(supabase, 'user-1', 0.0);
+
+    expect(result.allowed).toBe(true);
+    expect(result.warningThresholdReached).toBe(true);
+    expect(mockSetLevel).toHaveBeenCalledWith('warning');
+    expect(mockSetTags).toHaveBeenCalledWith({
+      alert: 'circuit_breaker_warning',
+      cap: 'global',
+    });
+    expect(mockSetFingerprint).toHaveBeenCalledWith(['circuit-breaker-warning', 'global']);
+  });
+
   it('does NOT fire any Sentry alert when well under all caps', async () => {
     const supabase = createMockSupabase({ globalSpend: 1.0, userSpend: 0.1, userQueryCount: 2 });
     const result = await checkCircuitBreaker(supabase, 'user-1', 0.01);

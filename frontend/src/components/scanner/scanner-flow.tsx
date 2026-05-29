@@ -25,6 +25,7 @@ import {
   flushScanQueue,
   scanQueueSize,
   type QueuedScan,
+  type FlushOutcome,
 } from '@/lib/ocr/offline-queue';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import { DedupWarning } from '@/components/ocr/dedup-warning';
@@ -78,12 +79,60 @@ async function queuedScanToFile(scan: QueuedScan): Promise<File> {
 }
 
 /**
- * Treat fetch's TypeError ("Failed to fetch" / "Load failed") as a network
- * error so we know to enqueue rather than surface a hard error. A non-network
- * throw (rare) falls through to the normal error state.
+ * Sentinel for a retriable server/transport condition that should cause the
+ * scan to be QUEUED (offline-style), not dropped to a hard error.
+ *
+ * F2: a 502/503 with an HTML body makes `res.json()` throw a SyntaxError (not a
+ * TypeError), so a raw `err instanceof TypeError` check would misclassify a
+ * server hiccup as a fatal error and DROP the captured resibo. `submitToOcr`
+ * now wraps both "fetch threw" and "non-OK status / unparseable body" into this
+ * one type so every retriable condition is queued — Maria never loses a resibo
+ * on a server blip.
+ */
+class RetriableOcrError extends Error {
+  constructor(message = 'OCR temporarily unavailable') {
+    super(message);
+    this.name = 'RetriableOcrError';
+  }
+}
+
+/**
+ * Treat a queue-worthy transport condition as a network error so we enqueue
+ * rather than surface a hard error:
+ *   - fetch's TypeError ("Failed to fetch" / "Load failed") — truly offline.
+ *   - RetriableOcrError — server hiccup (non-OK status or non-JSON body).
+ * A non-network throw (rare) falls through to the normal error state.
  */
 function isNetworkError(err: unknown): boolean {
-  return err instanceof TypeError;
+  return err instanceof TypeError || err instanceof RetriableOcrError;
+}
+
+/**
+ * F1: validate a replayed OCR result before we attempt a save. The /api/expenses
+ * Zod schema requires a POSITIVE INTEGER centavo amount and a strict YYYY-MM-DD
+ * date; a result that fails either would be rejected with a 400 and — under the
+ * old flush — kept and re-OCR'd on every reconnect. We pre-check here so an
+ * unreadable capture is dropped + reported instead of looping.
+ */
+const YYYY_MM_DD = /^\d{4}-\d{2}-\d{2}$/;
+
+function extractValidExpense(
+  fields: ReceiptParseResult['fields']
+): { amount: number; transaction_date: string; merchant_name?: string } | null {
+  const amount = typeof fields.total?.value === 'number' ? fields.total.value : NaN;
+  const date = typeof fields.date?.value === 'string' ? fields.date.value : '';
+
+  if (!Number.isInteger(amount) || amount <= 0) return null;
+  if (!YYYY_MM_DD.test(date)) return null;
+
+  return {
+    amount,
+    transaction_date: date,
+    merchant_name:
+      typeof fields.merchant?.value === 'string' && fields.merchant.value
+        ? fields.merchant.value
+        : undefined,
+  };
 }
 
 // ============================================================
@@ -98,6 +147,9 @@ export function ScannerFlow() {
   const [pendingSaveData, setPendingSaveData] = useState<EditedScanData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [queuedCount, setQueuedCount] = useState<number>(0);
+  // F1: surfaced when the background flush drops one or more unreadable/stuck
+  // queued resibo so the user knows to re-scan them (conversational Filipino).
+  const [flushNotice, setFlushNotice] = useState<string>('');
 
   // ============================================================
   // OCR submit — POST a File to /api/ocr and return the parsed payload.
@@ -112,9 +164,26 @@ export function ScannerFlow() {
       formData.append('image', file);
 
       const res = await fetch('/api/ocr', { method: 'POST', body: formData });
-      const json: OcrApiResponse = await res.json();
+
+      // F2: a non-OK status (e.g. 502/503 from a server hiccup, often with an
+      // HTML body) is a retriable transport condition, NOT a fatal scan error —
+      // queue it so the resibo survives. Rate-limit (429) is also transient.
+      if (!res.ok) {
+        throw new RetriableOcrError(`OCR request failed with status ${res.status}`);
+      }
+
+      // F2: parsing the body can throw a SyntaxError on a non-JSON (HTML) error
+      // page. Treat that as retriable too rather than a hard drop.
+      let json: OcrApiResponse;
+      try {
+        json = (await res.json()) as OcrApiResponse;
+      } catch {
+        throw new RetriableOcrError('OCR response was not valid JSON');
+      }
 
       if (!json.success || !json.data) {
+        // A 200 with success:false is a genuine scan failure (e.g. unreadable
+        // image) — surface it as a hard error, do NOT queue/loop.
         throw new Error(
           json.error?.message_tl ??
             'Hindi ko ma-scan ang resibo, boss. Baka malabo — i-try mo ulit o i-type mo manually?'
@@ -201,36 +270,101 @@ export function ScannerFlow() {
 
   const flushOfflineQueue = useCallback(async () => {
     if (scanQueueSize() === 0) return;
-    await flushScanQueue(async (scan) => {
+
+    // Count only the drops Maria needs to act on (unreadable / stuck). Duplicate
+    // skips and clean saves are silent, so we can't reuse FlushResult.dropped
+    // (which lumps all drops together) for the notice. Cap-exceeded drops happen
+    // INSIDE flushScanQueue (after MAX_FLUSH_ATTEMPTS retries) and are derived
+    // below as: dropped − unreadable − duplicate.
+    let unreadableDrops = 0;
+    let duplicateDrops = 0;
+
+    const result = await flushScanQueue(async (scan): Promise<FlushOutcome> => {
       const file = await queuedScanToFile(scan);
-      // Replay through OCR + auto-save as an expense. A failed submit throws,
-      // which keeps the scan queued for the next flush.
-      const data = await submitToOcr(file);
-      const { fields } = data;
-      const amount =
-        typeof fields.total?.value === 'number' ? fields.total.value : 0;
-      const res = await fetch('/api/expenses', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'expense',
-          amount,
-          category: 'other_expense',
-          merchant_name:
-            typeof fields.merchant?.value === 'string'
-              ? fields.merchant.value
-              : undefined,
-          transaction_date:
-            typeof fields.date?.value === 'string'
-              ? fields.date.value
-              : undefined,
-          source: 'ocr',
-        }),
-      });
-      const json = await res.json();
-      if (!json.success) throw new Error('expense save failed');
+
+      // --- Re-OCR. submitToOcr throws RetriableOcrError on a server hiccup and
+      //     TypeError when offline; both classify as network → keep queued. A
+      //     genuine success:false (unreadable) throws a plain Error → drop so it
+      //     doesn't loop + re-spend OCR budget. ---
+      let data: ReceiptParseResult & { dedup: DedupInfo };
+      try {
+        data = await submitToOcr(file);
+      } catch (err) {
+        if (isNetworkError(err)) return 'retry';
+        // Hard OCR failure (unreadable image): unrecoverable — stop looping.
+        unreadableDrops++;
+        return 'drop';
+      }
+
+      // --- F1: validate BEFORE POSTing. An amount that isn't a positive integer
+      //     centavo value, or a date that isn't strict YYYY-MM-DD, would be
+      //     rejected by /api/expenses (400) and left stuck. Drop + notify. ---
+      const valid = extractValidExpense(data.fields);
+      if (!valid) {
+        unreadableDrops++;
+        return 'drop';
+      }
+
+      // --- F3: apply the same dedup the live path uses. /api/ocr already ran
+      //     the hash+window check and flagged duplicates; on background sync we
+      //     silently skip a duplicate rather than inserting a second copy. ---
+      if (data.dedup.is_duplicate) {
+        duplicateDrops++;
+        return 'drop';
+      }
+
+      // --- Save the validated expense. Reuse the OCR-computed receipt_hash so
+      //     the saved row matches the live-capture path's dedup fingerprint. ---
+      let saveRes: Response;
+      try {
+        saveRes = await fetch('/api/expenses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'expense',
+            amount: valid.amount,
+            category: 'other_expense',
+            merchant_name: valid.merchant_name,
+            transaction_date: valid.transaction_date,
+            receipt_hash: data.dedup.receipt_hash ?? undefined,
+            source: 'ocr',
+          }),
+        });
+      } catch {
+        // Network drop mid-save → keep queued for the next reconnect.
+        return 'retry';
+      }
+
+      if (!saveRes.ok) {
+        // 5xx → transient (retry). Any other non-OK (e.g. a 400 we somehow
+        // still hit) is unrecoverable for this payload → drop so it can't loop.
+        return saveRes.status >= 500 ? 'retry' : 'drop';
+      }
+
+      let saveJson: { success?: boolean };
+      try {
+        saveJson = (await saveRes.json()) as { success?: boolean };
+      } catch {
+        return 'retry';
+      }
+      return saveJson.success ? 'saved' : 'drop';
     });
+
     setQueuedCount(scanQueueSize());
+
+    // F1: tell the user about resibo we had to drop (unreadable, or stuck past
+    // the attempt cap) so they can re-scan. Duplicate skips + clean saves stay
+    // silent. Cap-exceeded drops = total dropped minus the ones we classified.
+    const capExceededDrops = Math.max(
+      0,
+      result.dropped - unreadableDrops - duplicateDrops
+    );
+    const notifyCount = unreadableDrops + capExceededDrops;
+    if (notifyCount > 0) {
+      setFlushNotice(
+        `Hindi ko mabasa nang maayos ang ${notifyCount} na naka-queue na resibo — paki-scan ulit.`
+      );
+    }
   }, [submitToOcr]);
 
   useEffect(() => {
@@ -341,6 +475,7 @@ export function ScannerFlow() {
     setPendingSaveData(null);
     setShowDedup(false);
     setErrorMessage('');
+    setFlushNotice('');
     setQueuedCount(scanQueueSize());
     setFlowState('idle');
   }, []);
@@ -380,6 +515,28 @@ export function ScannerFlow() {
 
       {/* --- Main Content Area --- */}
       <div className="px-4">
+        {/* --- F1: background-sync notice — some queued resibo were unreadable
+                or stuck and got dropped; prompt a re-scan. Dismissible. --- */}
+        {flushNotice && (
+          <div
+            className="mb-4 flex items-start gap-2 rounded-xl bg-surface-container-high px-4 py-3"
+            role="status"
+            data-testid="flush-notice"
+          >
+            <WifiOff className="w-5 h-5 text-on-surface-variant shrink-0 mt-0.5" />
+            <p className="flex-1 text-sm text-on-surface">{flushNotice}</p>
+            <button
+              type="button"
+              onClick={() => setFlushNotice('')}
+              className="min-w-[44px] min-h-[44px] -my-2 -mr-2 flex items-center justify-center text-on-surface-variant text-sm font-semibold"
+              aria-label="Isara ang abiso"
+              data-testid="flush-notice-dismiss"
+            >
+              Sige
+            </button>
+          </div>
+        )}
+
         {/* --- Idle: Show CameraCapture --- */}
         {flowState === 'idle' && (
           <div className="space-y-6">

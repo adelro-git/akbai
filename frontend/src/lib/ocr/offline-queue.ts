@@ -58,20 +58,45 @@ export interface QueuedScan {
   meta: QueuedScanMeta;
   /** ISO 8601 UTC — when the scan was captured/queued while offline. */
   queued_at: string;
+  /**
+   * F1: how many flush attempts this scan has survived. Incremented on every
+   * `'retry'` outcome (transient network failure). When it reaches
+   * MAX_FLUSH_ATTEMPTS the scan is dropped so a permanently-stuck capture can't
+   * loop forever re-spending Claude OCR budget on every reconnect/mount.
+   * Legacy entries (queued before this field existed) read back as 0.
+   */
+  attempts: number;
 }
 
 /**
- * Replay function the caller supplies to `flushScanQueue`. Receives one queued
- * scan and must resolve on a successful OCR submit, or reject on failure (the
- * scan is kept in the queue for the next flush attempt).
+ * Outcome the caller returns from `flushScanQueue`'s replay fn. Distinguishes a
+ * permanent removal (saved, or an unrecoverable parse/dup that must NOT loop)
+ * from a transient failure that should stay queued for the next reconnect.
+ *
+ *   'saved'  — submitted + persisted server-side; remove from queue.
+ *   'drop'   — unrecoverable (OCR unreadable / duplicate); remove WITHOUT a save.
+ *   'retry'  — transient (no signal / server hiccup); keep + bump attempts.
+ *
+ * A thrown error from the replay fn is treated as 'retry' (fail-safe — never
+ * silently lose a capture on an unexpected throw).
  */
-export type SubmitScanFn = (scan: QueuedScan) => Promise<void>;
+export type FlushOutcome = 'saved' | 'drop' | 'retry';
+
+/**
+ * Replay function the caller supplies to `flushScanQueue`. Receives one queued
+ * scan and resolves with a FlushOutcome. Resolving 'saved'/'drop' removes the
+ * scan; 'retry' (or a thrown error) keeps it for the next flush, up to the
+ * attempt cap.
+ */
+export type SubmitScanFn = (scan: QueuedScan) => Promise<FlushOutcome>;
 
 export interface FlushResult {
   /** Scans that submitted successfully and were removed from the queue. */
   succeeded: number;
-  /** Scans that failed to submit and remain queued for a later retry. */
+  /** Scans that stayed queued for a later retry (transient failure, under cap). */
   failed: number;
+  /** Scans removed WITHOUT a save: unrecoverable parse/dup, or cap exceeded. */
+  dropped: number;
 }
 
 // ============================================================
@@ -80,6 +105,16 @@ export interface FlushResult {
 
 const STORAGE_KEY = 'akbai_ocr_offline_queue_v1';
 const MAX_QUEUE_SIZE = 20;
+
+/**
+ * F1: max transient retries before a scan is dropped from the queue. A scan
+ * that keeps failing to submit (e.g. server consistently 5xx-ing, or an image
+ * the OCR can never read) must not re-OCR on every reconnect forever — that
+ * both wedges the queue and re-spends Claude OCR budget. After this many
+ * 'retry' outcomes the scan is dropped and the caller is told (via FlushResult)
+ * so it can surface a "paki-scan ulit" notice.
+ */
+const MAX_FLUSH_ATTEMPTS = 3;
 
 // ============================================================
 // Internal helpers — storage + ID gen
@@ -132,19 +167,29 @@ function readQueue(): QueuedScan[] {
     }
     // Light validation — drop entries missing required fields rather than
     // failing the whole read.
-    return parsed.filter(
-      (s): s is QueuedScan =>
-        typeof s === 'object' &&
-        s !== null &&
-        typeof (s as QueuedScan).id === 'string' &&
-        typeof (s as QueuedScan).image_data_url === 'string' &&
-        typeof (s as QueuedScan).content_key === 'string' &&
-        typeof (s as QueuedScan).queued_at === 'string' &&
-        typeof (s as QueuedScan).meta === 'object' &&
-        (s as QueuedScan).meta !== null &&
-        typeof (s as QueuedScan).meta.filename === 'string' &&
-        typeof (s as QueuedScan).meta.mime_type === 'string'
-    );
+    return parsed
+      .filter(
+        (s): s is QueuedScan =>
+          typeof s === 'object' &&
+          s !== null &&
+          typeof (s as QueuedScan).id === 'string' &&
+          typeof (s as QueuedScan).image_data_url === 'string' &&
+          typeof (s as QueuedScan).content_key === 'string' &&
+          typeof (s as QueuedScan).queued_at === 'string' &&
+          typeof (s as QueuedScan).meta === 'object' &&
+          (s as QueuedScan).meta !== null &&
+          typeof (s as QueuedScan).meta.filename === 'string' &&
+          typeof (s as QueuedScan).meta.mime_type === 'string'
+      )
+      // F1: backfill `attempts` for legacy entries queued before the field
+      // existed (and coerce any corrupted non-number to 0). Never NaN.
+      .map((s) => ({
+        ...s,
+        attempts:
+          typeof s.attempts === 'number' && Number.isFinite(s.attempts)
+            ? s.attempts
+            : 0,
+      }));
   } catch {
     // eslint-disable-next-line no-console
     console.warn('[ocr-offline-queue] Corrupted queue payload — clearing.');
@@ -203,6 +248,7 @@ export function enqueueScan(input: EnqueueScanInput): QueuedScan {
     content_key: contentKey,
     meta: input.meta,
     queued_at: new Date().toISOString(),
+    attempts: 0,
   };
 
   if (!isBrowser()) return scan;
@@ -263,38 +309,83 @@ export function clearScans(): void {
 }
 
 /**
- * Replay every queued scan through `submitFn` in FIFO order. Each scan that
- * submits successfully is removed from the queue immediately; scans whose
- * submit rejects are kept for the next flush (partial-failure safe).
+ * Persist a new `attempts` count for a single scan. No-op if the scan is gone
+ * or on SSR. Used by flush to record a transient failure so the attempt cap
+ * survives a reload.
+ */
+function setScanAttempts(id: string, attempts: number): void {
+  if (!isBrowser()) return;
+  const queue = readQueue();
+  let changed = false;
+  const next = queue.map((s) => {
+    if (s.id === id && s.attempts !== attempts) {
+      changed = true;
+      return { ...s, attempts };
+    }
+    return s;
+  });
+  if (changed) writeQueue(next);
+}
+
+/**
+ * Replay every queued scan through `submitFn` in FIFO order. Outcome-driven:
  *
- * Returns counts of succeeded vs failed. Returns a zeroed result on SSR or an
- * empty queue without invoking submitFn.
+ *   'saved' / 'drop' → removed from the queue immediately (succeeded / dropped).
+ *   'retry' (or a thrown error) → attempts++ and kept for the next flush, UNLESS
+ *     the bump reaches MAX_FLUSH_ATTEMPTS, in which case the scan is dropped so a
+ *     permanently-failing capture can't loop forever re-spending OCR budget.
+ *
+ * Returns counts of succeeded vs failed (still-queued) vs dropped. Returns a
+ * zeroed result on SSR or an empty queue without invoking submitFn.
  *
  * Why per-scan removal rather than drain-then-replay: a flush can be cut short
  * by losing signal again mid-sync. Removing on each success guarantees we never
  * re-submit an already-saved resibo even if the page reloads mid-flush.
  */
 export async function flushScanQueue(submitFn: SubmitScanFn): Promise<FlushResult> {
-  if (!isBrowser()) return { succeeded: 0, failed: 0 };
+  if (!isBrowser()) return { succeeded: 0, failed: 0, dropped: 0 };
 
   const queue = readQueue();
-  if (queue.length === 0) return { succeeded: 0, failed: 0 };
+  if (queue.length === 0) return { succeeded: 0, failed: 0, dropped: 0 };
 
   let succeeded = 0;
   let failed = 0;
+  let dropped = 0;
 
   for (const scan of queue) {
+    let outcome: FlushOutcome;
     try {
-      await submitFn(scan);
+      outcome = await submitFn(scan);
+    } catch {
+      // An unexpected throw is fail-safe-treated as a transient retry — never
+      // silently lose a capture on an unhandled error.
+      outcome = 'retry';
+    }
+
+    if (outcome === 'saved') {
       removeScan(scan.id);
       succeeded++;
-    } catch {
-      // Keep this scan queued for the next flush attempt.
+      continue;
+    }
+
+    if (outcome === 'drop') {
+      removeScan(scan.id);
+      dropped++;
+      continue;
+    }
+
+    // outcome === 'retry' — bump attempts; drop if we've hit the cap.
+    const nextAttempts = scan.attempts + 1;
+    if (nextAttempts >= MAX_FLUSH_ATTEMPTS) {
+      removeScan(scan.id);
+      dropped++;
+    } else {
+      setScanAttempts(scan.id, nextAttempts);
       failed++;
     }
   }
 
-  return { succeeded, failed };
+  return { succeeded, failed, dropped };
 }
 
 // ============================================================
@@ -308,3 +399,6 @@ export const _STORAGE_KEY = STORAGE_KEY;
 
 /** @internal — exposes the cap for test assertions. */
 export const _MAX_QUEUE_SIZE = MAX_QUEUE_SIZE;
+
+/** @internal — exposes the per-scan flush-attempt cap for test assertions. */
+export const _MAX_FLUSH_ATTEMPTS = MAX_FLUSH_ATTEMPTS;

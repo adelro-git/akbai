@@ -229,50 +229,102 @@ describe('lib/ocr/offline-queue', () => {
       queue.enqueueScan(input('c'));
 
       const seen: string[] = [];
-      const submit = vi.fn(async (s: QueuedScan) => {
+      const submit = vi.fn(async (s: QueuedScan): Promise<queue.FlushOutcome> => {
         seen.push(s.meta.filename);
+        return 'saved';
       });
 
       const result = await queue.flushScanQueue(submit);
 
       expect(seen).toEqual(['resibo-a.jpg', 'resibo-b.jpg', 'resibo-c.jpg']);
-      expect(result).toEqual({ succeeded: 3, failed: 0 });
+      expect(result).toEqual({ succeeded: 3, failed: 0, dropped: 0 });
       expect(queue.scanQueueSize()).toBe(0);
     });
 
-    it('keeps failed scans queued (partial failure) and removes only successes', async () => {
+    it('keeps transiently-failed scans queued (partial failure) and removes only successes', async () => {
       queue.enqueueScan(input('a'));
-      queue.enqueueScan(input('b')); // this one will fail
+      queue.enqueueScan(input('b')); // this one will fail transiently
       queue.enqueueScan(input('c'));
 
-      const submit = vi.fn(async (s: QueuedScan) => {
+      const submit = vi.fn(async (s: QueuedScan): Promise<queue.FlushOutcome> => {
         if (s.meta.filename === 'resibo-b.jpg') {
-          throw new Error('network error');
+          return 'retry';
         }
+        return 'saved';
       });
 
       const result = await queue.flushScanQueue(submit);
 
-      expect(result).toEqual({ succeeded: 2, failed: 1 });
+      expect(result).toEqual({ succeeded: 2, failed: 1, dropped: 0 });
       // Only the failed scan remains, still queued for a later retry.
       const remaining = queue.listScans();
       expect(remaining.map((s) => s.meta.filename)).toEqual(['resibo-b.jpg']);
+      // Its attempt counter advanced so it can't loop forever.
+      expect(remaining[0]?.attempts).toBe(1);
+    });
+
+    it('treats a thrown error as a transient retry (fail-safe — keeps the scan)', async () => {
+      queue.enqueueScan(input('a'));
+
+      const submit = vi.fn(async (): Promise<queue.FlushOutcome> => {
+        throw new Error('unexpected boom');
+      });
+
+      const result = await queue.flushScanQueue(submit);
+
+      expect(result).toEqual({ succeeded: 0, failed: 1, dropped: 0 });
+      expect(queue.scanQueueSize()).toBe(1);
+      expect(queue.listScans()[0]?.attempts).toBe(1);
+    });
+
+    it("drops a scan the caller marks 'drop' (unreadable/duplicate) without a save", async () => {
+      queue.enqueueScan(input('a'));
+      queue.enqueueScan(input('b')); // unrecoverable
+      queue.enqueueScan(input('c'));
+
+      const submit = vi.fn(async (s: QueuedScan): Promise<queue.FlushOutcome> => {
+        if (s.meta.filename === 'resibo-b.jpg') return 'drop';
+        return 'saved';
+      });
+
+      const result = await queue.flushScanQueue(submit);
+
+      expect(result).toEqual({ succeeded: 2, failed: 0, dropped: 1 });
+      // The dropped scan is gone, not stuck looping.
+      expect(queue.scanQueueSize()).toBe(0);
+    });
+
+    it('drops a scan after MAX_FLUSH_ATTEMPTS transient retries', async () => {
+      queue.enqueueScan(input('a'));
+
+      const submit = vi.fn(async (): Promise<queue.FlushOutcome> => 'retry');
+
+      // Each flush bumps attempts by 1. After (cap - 1) retries it remains
+      // queued; the flush that would push it to the cap drops it.
+      let lastResult;
+      for (let i = 0; i < queue._MAX_FLUSH_ATTEMPTS; i++) {
+        lastResult = await queue.flushScanQueue(submit);
+      }
+
+      // Final flush dropped it.
+      expect(lastResult).toEqual({ succeeded: 0, failed: 0, dropped: 1 });
+      expect(queue.scanQueueSize()).toBe(0);
     });
 
     it('returns a zeroed result and does not call submit on an empty queue', async () => {
-      const submit = vi.fn(async () => {});
+      const submit = vi.fn(async (): Promise<queue.FlushOutcome> => 'saved');
       const result = await queue.flushScanQueue(submit);
       expect(submit).not.toHaveBeenCalled();
-      expect(result).toEqual({ succeeded: 0, failed: 0 });
+      expect(result).toEqual({ succeeded: 0, failed: 0, dropped: 0 });
     });
 
     it('returns a zeroed result on SSR without calling submit', async () => {
       queue.enqueueScan(input('a'));
       delete (globalThis as { window?: unknown }).window;
-      const submit = vi.fn(async () => {});
+      const submit = vi.fn(async (): Promise<queue.FlushOutcome> => 'saved');
       const result = await queue.flushScanQueue(submit);
       expect(submit).not.toHaveBeenCalled();
-      expect(result).toEqual({ succeeded: 0, failed: 0 });
+      expect(result).toEqual({ succeeded: 0, failed: 0, dropped: 0 });
     });
   });
 
@@ -347,6 +399,35 @@ describe('lib/ocr/offline-queue', () => {
 
       const snap = queue.listScans();
       expect(snap.map((s) => s.id)).toEqual(['a', 'c']);
+    });
+
+    // --- F1: legacy entries queued before `attempts` existed must read back
+    //     with attempts = 0, never undefined/NaN (so the cap math is safe). ---
+    it('backfills attempts=0 for legacy entries missing the field', () => {
+      ls().setItem(
+        queue._STORAGE_KEY,
+        JSON.stringify([
+          {
+            id: 'legacy',
+            image_data_url: 'data:image/jpeg;base64,xxx',
+            content_key: 'k-legacy',
+            meta: { filename: 'legacy.jpg', mime_type: 'image/jpeg' },
+            queued_at: new Date().toISOString(),
+            // no `attempts` field
+          },
+          {
+            id: 'corrupt-attempts',
+            image_data_url: 'data:image/jpeg;base64,yyy',
+            content_key: 'k-corrupt',
+            meta: { filename: 'corrupt.jpg', mime_type: 'image/jpeg' },
+            queued_at: new Date().toISOString(),
+            attempts: 'not-a-number',
+          },
+        ])
+      );
+
+      const snap = queue.listScans();
+      expect(snap.map((s) => s.attempts)).toEqual([0, 0]);
     });
   });
 });

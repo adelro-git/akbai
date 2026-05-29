@@ -34,6 +34,36 @@ function tx(overrides: Partial<ExportableTransaction> = {}): ExportableTransacti
 
 describe('lib/expenses/csv — transactionsToCsv', () => {
   // ----------------------------------------------------------
+  // Formula injection (OWASP) — user-controlled text only
+  // ----------------------------------------------------------
+  describe('formula-injection guard', () => {
+    it('prefixes user text starting with a formula char (= + - @) with a single quote', () => {
+      for (const lead of ['=', '+', '-', '@']) {
+        const csv = transactionsToCsv([tx({ description: `${lead}SUM(A1)` })]);
+        const dataRow = csv.split('\r\n')[1];
+        expect(dataRow).toContain(`'${lead}SUM(A1)`);
+      }
+    });
+
+    it('guards a category label starting with a formula char', () => {
+      const csv = transactionsToCsv([tx({ category: '=HYPERLINK("evil")' })]);
+      expect(csv.split('\r\n')[1]).toContain(`'=HYPERLINK`);
+    });
+
+    it('does NOT mangle a legitimate negative amount (leading minus preserved)', () => {
+      const csv = transactionsToCsv([tx({ amount: -3450 })]);
+      const dataRow = csv.split('\r\n')[1];
+      expect(dataRow).toContain('-34.50');
+      expect(dataRow).not.toContain(`'-34.50`);
+    });
+
+    it('leaves a benign description untouched', () => {
+      const csv = transactionsToCsv([tx({ description: 'Sangkap sa palengke' })]);
+      expect(csv.split('\r\n')[1]).toContain('Sangkap sa palengke');
+    });
+  });
+
+  // ----------------------------------------------------------
   // Header
   // ----------------------------------------------------------
   describe('header', () => {

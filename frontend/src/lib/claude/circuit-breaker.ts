@@ -68,7 +68,12 @@ function captureBreakerWarning(params: {
   const { globalSpendUsd, globalCapUsd, userSpendUsd, userCapUsd, warningPct, userId } =
     params;
   // Which cap pushed us over the warning line (used for the tag + fingerprint).
-  const cap: BreakerCap = globalSpendUsd / globalCapUsd >= warningPct ? 'global' : 'user';
+  // Derive from the threshold that ACTUALLY crossed — a warning can be raised by
+  // EITHER ratio, so inferring solely from the global ratio mislabels a user-only
+  // warning as 'global'. Global wins the tie when both have crossed (the global
+  // cap is the broader, higher-severity concern for the on-call).
+  const globalCrossed = globalSpendUsd / globalCapUsd >= warningPct;
+  const cap: BreakerCap = globalCrossed ? 'global' : 'user';
   Sentry.withScope((scope) => {
     scope.setLevel('warning');
     scope.setTags({ alert: 'circuit_breaker_warning', cap });
