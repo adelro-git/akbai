@@ -36,7 +36,7 @@ function getBannerState(queriesUsed: number, tier: string): BannerState {
     return {
       visible: true,
       variant: 'warning',
-      message: `${remaining} na lang ang tanong mo for today. Bukas ulit, or upgrade to Pro!`,
+      message: `${remaining} na lang ang tanong mo ngayon. Bukas ulit, o mag-upgrade sa Pro!`,
     };
   }
 
@@ -56,7 +56,7 @@ describe('FreeTierBanner — visibility thresholds', () => {
     expect(state.visible).toBe(true);
     expect(state.variant).toBe('warning');
     expect(state.message).toContain('2 na lang ang tanong mo');
-    expect(state.message).toContain('upgrade to Pro');
+    expect(state.message).toContain('mag-upgrade sa Pro');
   });
 
   it('warning banner shown at queriesUsed = 9 with 1 remaining', () => {
@@ -106,8 +106,10 @@ describe('FreeTierBanner — conversational Filipino copy', () => {
     const state = getBannerState(8, 'free');
     // Contains Filipino: "na lang ang tanong mo"
     expect(state.message).toContain('na lang ang tanong mo');
-    // Contains English: "upgrade to Pro"
-    expect(state.message).toContain('upgrade to Pro');
+    // Filipinized verb (mag-upgrade) — no English SVO leak.
+    expect(state.message).toContain('mag-upgrade sa Pro');
+    expect(state.message).not.toContain('for today');
+    expect(state.message).not.toContain(' or ');
   });
 
   it('block message uses conversational Filipino', () => {

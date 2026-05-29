@@ -203,5 +203,88 @@
         "description": "Auto reminders para sa deadlines."
       }
     }
+  },
+  "profile": {
+    "section": {
+      "subscription": "Plano Mo"
+    }
+  },
+  "iap": {
+    "error": {
+      "network": "Walang koneksyon. Subukan mo ulit kapag may signal ka na.",
+      "pending": "Sandali, kinukumpleto pa ng store ang bayad mo. Babalik kami sa'yo mamaya.",
+      "invalid": "Hindi natanggap ng store ang bayad. Tingnan mo ang payment method mo.",
+      "store_unavailable": "Hindi available ang store ngayon. Subukan mo ulit mamaya.",
+      "product_not_found": "Wala pa kaming makitang plano para sa account mo. Subukan mo ulit mamaya.",
+      "nothing_to_restore": "Wala kaming nakitang dating purchase. Bumili ka muna ng plano.",
+      "web_only": "Para mag-bayad, i-download mo muna ang AKBai app sa App Store o Play Store.",
+      "unknown": "May pumalpak. Subukan mo ulit, o mag-message sa amin sa support."
+    },
+    "success": {
+      "purchase": "Yes! Welcome sa Pro. I-explore mo na lahat ng features.",
+      "restore": "Naka-restore na ang purchases mo. I-enjoy ulit ang mga features mo."
+    }
+  },
+  "paywall": {
+    "title": {
+      "chat": "Naka-max ka na sa free trial. Mag-upgrade para tuloy ang chat kay Kai.",
+      "morning_briefing": "Para sa daily briefing mo, i-Pro mo ang account.",
+      "weekly_story": "Para sa Kuwento ng Linggo, i-Pro mo ang account.",
+      "reply_drafter": "Para i-draft ni Kai ang reply mo, i-Pro mo ang account.",
+      "scan_limit": "Naubos na ang scans mo. I-Starter mo for ₱299 lifetime o i-Pro mo para sa unlimited.",
+      "manual": "Pumili ka ng plano para sa AKBai."
+    },
+    "body": {
+      "starter_only": "Chat sa Pro lang — madali lang mag-upgrade kung kailangan mo."
+    },
+    "cta": {
+      "restore": "May dating purchase ka na? I-restore mo dito.",
+      "close": "Isara ang paywall",
+      "upgrade": "Mag-upgrade"
+    },
+    "web_fallback": {
+      "title": "Para mag-bayad, gamitin mo ang app.",
+      "body": "I-download mo ang AKBai mula sa App Store o Play Store para i-upgrade ang account mo."
+    },
+    "badge": {
+      "most_worth_it": "Pinaka-sulit"
+    },
+    "cards": {
+      "starter": {
+        "title": "Starter",
+        "subtitle": "₱299 — isang beses lang ang bayad",
+        "bullets": [
+          "100 receipt scans kada buwan",
+          "BIR deadline reminders",
+          "Basic reports + CSV export"
+        ],
+        "note": "I-unlock mo ang Kai chat — upgrade lang.",
+        "cta": "Kunin ang Starter"
+      },
+      "pro_monthly": {
+        "title": "Pro Monthly",
+        "subtitle": "₱499 kada buwan",
+        "bullets": [
+          "Lahat sa Starter +",
+          "Unlimited Kai chat",
+          "Morning briefing araw-araw",
+          "Kuwento ng linggo",
+          "Reply drafter para sa customers"
+        ],
+        "cta": "Mag-subscribe sa Pro"
+      },
+      "pro_annual": {
+        "title": "Pro Annual",
+        "subtitle": "₱4,999 kada taon — matitipid mo ang ₱990",
+        "bullets": [
+          "Lahat sa Starter +",
+          "Unlimited Kai chat",
+          "Morning briefing araw-araw",
+          "Kuwento ng linggo",
+          "Reply drafter para sa customers"
+        ],
+        "cta": "Mag-subscribe sa Pro Annual"
+      }
+    }
   }
 }

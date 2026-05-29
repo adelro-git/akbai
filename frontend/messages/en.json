@@ -203,5 +203,88 @@
         "description": "Auto reminders for deadlines."
       }
     }
+  },
+  "profile": {
+    "section": {
+      "subscription": "Your Plan"
+    }
+  },
+  "iap": {
+    "error": {
+      "network": "No connection. Try again when you have signal.",
+      "pending": "Hold on, the store is still completing your payment. We'll follow up with you shortly.",
+      "invalid": "The store didn't accept the payment. Check your payment method.",
+      "store_unavailable": "The store isn't available right now. Try again later.",
+      "product_not_found": "We couldn't find a plan for your account. Try again later.",
+      "nothing_to_restore": "We didn't find any previous purchase. Buy a plan first.",
+      "web_only": "To pay, download the AKBai app from the App Store or Play Store.",
+      "unknown": "Something went wrong. Try again, or message us at support."
+    },
+    "success": {
+      "purchase": "Yes! Welcome to Pro. Go explore all the features.",
+      "restore": "Your purchases have been restored. Enjoy your features again."
+    }
+  },
+  "paywall": {
+    "title": {
+      "chat": "You've hit the free trial limit. Upgrade to keep chatting with Kai.",
+      "morning_briefing": "Upgrade to Pro to unlock your daily briefing.",
+      "weekly_story": "Upgrade to Pro to unlock the Weekly Story.",
+      "reply_drafter": "Upgrade to Pro so Kai can draft replies for you.",
+      "scan_limit": "You've used all your scans. Get Starter for ₱299 lifetime, or go Pro for unlimited.",
+      "manual": "Pick a plan for AKBai."
+    },
+    "body": {
+      "starter_only": "Kai chat is Pro-only — upgrading is easy if you need it."
+    },
+    "cta": {
+      "restore": "Already purchased? Restore your purchase here.",
+      "close": "Close paywall",
+      "upgrade": "Upgrade"
+    },
+    "web_fallback": {
+      "title": "To pay, use the app.",
+      "body": "Download AKBai from the App Store or Play Store to upgrade your account."
+    },
+    "badge": {
+      "most_worth_it": "Best value"
+    },
+    "cards": {
+      "starter": {
+        "title": "Starter",
+        "subtitle": "₱299 — one-time payment, yours forever",
+        "bullets": [
+          "100 receipt scans per month",
+          "BIR deadline reminders",
+          "Basic reports + CSV export"
+        ],
+        "note": "Unlock Kai chat — just upgrade.",
+        "cta": "Get Starter"
+      },
+      "pro_monthly": {
+        "title": "Pro Monthly",
+        "subtitle": "₱499 per month",
+        "bullets": [
+          "Everything in Starter +",
+          "Unlimited Kai chat",
+          "Daily morning briefing",
+          "Weekly story",
+          "Customer reply drafter"
+        ],
+        "cta": "Subscribe to Pro"
+      },
+      "pro_annual": {
+        "title": "Pro Annual",
+        "subtitle": "₱4,999 per year — save ₱990",
+        "bullets": [
+          "Everything in Starter +",
+          "Unlimited Kai chat",
+          "Daily morning briefing",
+          "Weekly story",
+          "Customer reply drafter"
+        ],
+        "cta": "Subscribe to Pro Annual"
+      }
+    }
   }
 }

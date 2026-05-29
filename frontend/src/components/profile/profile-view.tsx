@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Building2, Settings, LogOut, ChevronLeft } from 'lucide-react';
+import { User, Building2, Settings, LogOut, ChevronLeft, CreditCard } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { BUSINESS_TYPE_LABELS, INCOME_RANGE_LABELS } from '@/lib/constants/business-options';
 import { BIR_TAX_TYPE_LABELS, type BirTaxType } from '@/lib/deadlines/types';
@@ -12,6 +13,8 @@ import ThemeToggle from './theme-toggle';
 import InstallGuide from '@/components/pwa/install-guide';
 import NotificationSettings from './notification-settings';
 import BiometricToggle from './biometric-toggle';
+import { PaywallModal } from '@/components/subscription/paywall-modal';
+import { RestorePurchasesLink } from '@/components/subscription/restore-purchases-link';
 
 interface ProfileViewProps {
   displayName: string | null;
@@ -42,6 +45,14 @@ export default function ProfileView({
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  // Sprint 17 (architect §8 line 1062): /profile manual paywall trigger.
+  // Apple Guideline 3.1.1: restore link MUST be visible here too.
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  // UX review fix: section heading + restore prompt copy were hardcoded —
+  // route through i18n. The restore prompt reuses paywall.cta.restore
+  // which already says "May dating purchase ka na? I-restore mo dito."
+  const tProfile = useTranslations('profile.section');
+  const tPaywallCta = useTranslations('paywall.cta');
 
   // Local state for optimistic updates after save
   const [localData, setLocalData] = useState({
@@ -218,6 +229,37 @@ export default function ProfileView({
         {/* ─── Notification Settings Section ─── */}
         <NotificationSettings />
 
+        {/* ─── Subscription Section (Sprint 17, architect §4 + §8 line 1062) ─── */}
+        {/* Mag-upgrade button → PaywallModal source='manual'.            */}
+        {/* RestorePurchasesLink visible per Apple Guideline 3.1.1.        */}
+        <section
+          className="bg-surface-container rounded-2xl p-4"
+          aria-label={tProfile('subscription')}
+          data-testid="section-subscription"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <CreditCard className="w-5 h-5 text-primary-container" />
+            <h2 className="text-base font-semibold text-on-surface">{tProfile('subscription')}</h2>
+          </div>
+          <div className="space-y-3">
+            <p className="text-sm text-on-surface-variant">
+              {tPaywallCta('restore')}
+            </p>
+            <RestorePurchasesLink
+              testId="profile-restore-link"
+              className="min-h-[44px] inline-flex items-center text-sm text-primary-container underline underline-offset-2 transition-opacity hover:opacity-80 disabled:opacity-50"
+            />
+            <button
+              type="button"
+              onClick={() => setPaywallOpen(true)}
+              className="block w-full min-h-[44px] rounded-xl bg-primary-container text-on-primary-container font-semibold text-sm py-3 transition-opacity hover:opacity-90 active:opacity-80"
+              data-testid="profile-manual-upgrade-cta"
+            >
+              Mag-upgrade
+            </button>
+          </div>
+        </section>
+
         {/* ─── Biometric Section (Sprint 16, architect §4) ─── */}
         <BiometricToggle
           initialEnabled={biometricEnabled}
@@ -266,6 +308,13 @@ export default function ProfileView({
           </div>
         </section>
       </div>
+
+      {/* Sprint 17 — manual paywall (source='manual') wired to Subscription CTA. */}
+      <PaywallModal
+        open={paywallOpen}
+        source="manual"
+        onClose={() => setPaywallOpen(false)}
+      />
     </div>
   );
 }

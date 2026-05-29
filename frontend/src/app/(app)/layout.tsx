@@ -13,6 +13,7 @@ import {
   MAX_BIOMETRIC_FAILURES,
 } from '@/lib/capacitor/biometric';
 import { initSentryCapacitor } from '@/lib/sentry/capacitor-init';
+import { initRevenueCat } from '@/lib/iap/configure';
 import { registerDeepLink } from '@/lib/capacitor/deep-link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -225,6 +226,39 @@ export default function AppGroupLayout({
   // ----------------------------------------------------------
   useEffect(() => {
     void initSentryCapacitor();
+  }, []);
+
+  // ----------------------------------------------------------
+  // Sprint 17 — RevenueCat configure on app open (architect §2).
+  // Native-only; web no-op. The init call needs user.id for
+  // Purchases.configure({ appUserID }); we fetch it via
+  // supabase.auth.getUser() here because the persona load
+  // useEffect above calls /api/profile but doesn't surface the
+  // raw auth id. The idempotent guard inside initRevenueCat()
+  // makes accidental re-fires safe.
+  // ----------------------------------------------------------
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    let cancelled = false;
+    async function configure() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (cancelled) return;
+        await initRevenueCat(user?.id ?? null);
+      } catch (err) {
+        // Non-fatal — PaywallModal (Sprint 17 batch 3) will defer-init
+        // on first display if this layout-level init failed.
+        // eslint-disable-next-line no-console
+        console.error('[iap] layout configure failed', err);
+      }
+    }
+    void configure();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // ----------------------------------------------------------

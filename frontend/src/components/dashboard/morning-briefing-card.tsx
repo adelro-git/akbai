@@ -14,8 +14,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Sun, Sparkles, Lock, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
+import { PaywallModal } from '@/components/subscription/paywall-modal';
 import type { MorningBriefingResponse } from '@/lib/morning-briefing/types';
 
 // ============================================================
@@ -33,6 +33,9 @@ export default function MorningBriefingCard() {
   const [briefing, setBriefing] = useState<string | null>(null);
   const [reason, setReason] = useState<MorningBriefingResponse['reason']>(undefined);
   const [messageTl, setMessageTl] = useState<string | null>(null);
+  // Sprint 17 (architect §4 line 684): when API returns reason='tier_required'
+  // the card mounts a PaywallModal trigger. Tap → setPaywallOpen(true).
+  const [paywallOpen, setPaywallOpen] = useState(false);
   const fetchedRef = useRef(false);
 
   // --- Shared fetch logic (used by mount + retry) ---
@@ -143,35 +146,46 @@ export default function MorningBriefingCard() {
     );
   }
 
-  // --- Unavailable: Tier Required (upgrade CTA) ---
+  // --- Unavailable: Tier Required (upgrade CTA → PaywallModal) ---
+  // Sprint 17 (architect §4 line 684): replaced the dead `/upgrade`
+  // <Link> with a button that opens <PaywallModal source="morning_briefing" />.
   if (state === 'unavailable' && reason === 'tier_required') {
     return (
-      <div
-        className="mx-4 mb-4 rounded-xl bg-surface-container p-4"
-        data-testid="morning-briefing-upgrade"
-        style={{ minHeight: '88px' }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center flex-shrink-0">
-            <Lock className="w-5 h-5 text-on-surface-variant" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-on-surface text-sm font-bold">
-              Ang Umaga Mo
-            </h3>
-            <p className="text-on-surface-variant text-xs mt-0.5">
-              {messageTl ?? 'Mag-upgrade sa Pro para makita ang Morning Briefing mo!'}
-            </p>
-          </div>
-        </div>
-        <Link
-          href="/upgrade"
-          className="mt-3 block w-full text-center py-2.5 rounded-lg bg-primary-container text-on-primary text-sm font-semibold transition-colors active:opacity-90"
-          style={{ minHeight: '44px', lineHeight: '28px' }}
+      <>
+        <div
+          className="mx-4 mb-4 rounded-xl bg-surface-container p-4"
+          data-testid="morning-briefing-upgrade"
+          style={{ minHeight: '88px' }}
         >
-          Mag-upgrade na
-        </Link>
-      </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center flex-shrink-0">
+              <Lock className="w-5 h-5 text-on-surface-variant" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-on-surface text-sm font-bold">
+                Ang Umaga Mo
+              </h3>
+              <p className="text-on-surface-variant text-xs mt-0.5">
+                {messageTl ?? 'Mag-upgrade sa Pro para makita ang Morning Briefing mo!'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setPaywallOpen(true)}
+            className="mt-3 block w-full text-center py-2.5 rounded-lg bg-primary-container text-on-primary text-sm font-semibold transition-colors active:opacity-90"
+            style={{ minHeight: '44px', lineHeight: '28px' }}
+            data-testid="morning-briefing-upgrade-cta"
+          >
+            Mag-upgrade na
+          </button>
+        </div>
+        <PaywallModal
+          open={paywallOpen}
+          source="morning_briefing"
+          onClose={() => setPaywallOpen(false)}
+        />
+      </>
     );
   }
 

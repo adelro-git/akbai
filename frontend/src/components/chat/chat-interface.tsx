@@ -21,6 +21,7 @@ import ChatInput from './chat-input'
 import DisclaimerBanner from './disclaimer-banner'
 import FreeTierBanner from './free-tier-banner'
 import SuggestedChips from './suggested-chips'
+import { PaywallModal } from '@/components/subscription/paywall-modal'
 import * as offlineQueue from '@/lib/chat/offline-queue'
 import type { ChatMessage } from '@/lib/chat/types'
 
@@ -64,6 +65,11 @@ export default function ChatInterface({
   const [queriesUsed, setQueriesUsed] = useState(0)
   const [composerFocused, setComposerFocused] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  // Sprint 17 (architect §4 line 679 / §8 batch 3 line 1061): a 429
+  // response from /api/chat with error `free_tier_limit` opens the
+  // unified <PaywallModal source="chat" />. The chat session resumes
+  // after the user closes the paywall (state is preserved).
+  const [paywallOpen, setPaywallOpen] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const seededRef = useRef(false)
 
@@ -191,7 +197,15 @@ export default function ChatInterface({
 
       const data = await res.json()
 
-      if (data.success) {
+      // ----------------------------------------------------------
+      // Sprint 17 (architect §4 line 679): catch 429 / free_tier_limit
+      // before the generic error branch. The chat session stays open
+      // — the user can resume after upgrading.
+      // ----------------------------------------------------------
+      if (res.status === 429 && data?.error?.code === 'free_tier_limit') {
+        setPaywallOpen(true)
+        // Do NOT push an error bubble — the paywall IS the response.
+      } else if (data.success) {
         const kaiMsg: ChatMessage = {
           id: `kai-${Date.now()}`,
           role: 'assistant',
@@ -412,7 +426,11 @@ export default function ChatInterface({
 
       <MessageList messages={messages} loading={loading} bottomRef={bottomRef} />
 
-      <FreeTierBanner queriesUsed={queriesUsed} tier="free" />
+      <FreeTierBanner
+        queriesUsed={queriesUsed}
+        tier="free"
+        onUpgrade={() => setPaywallOpen(true)}
+      />
 
       <SuggestedChips
         onSelect={handleSend}
@@ -430,6 +448,13 @@ export default function ChatInterface({
           />
         </div>
       </div>
+
+      {/* Sprint 17 paywall — opens on 429 free_tier_limit or banner tap. */}
+      <PaywallModal
+        open={paywallOpen}
+        source="chat"
+        onClose={() => setPaywallOpen(false)}
+      />
     </div>
   )
 }
