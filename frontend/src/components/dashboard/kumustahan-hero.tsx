@@ -124,7 +124,7 @@ export default function KumustahanHero({
 
           {/* Name line — Fraunces 30px / 500 */}
           <h1
-            className="mt-2 font-serif text-[30px] font-medium leading-tight text-on-surface"
+            className="mt-2 font-serif text-[30px] font-medium leading-tight text-on-surface break-words"
             data-testid="kumustahan-name"
           >
             {userName},

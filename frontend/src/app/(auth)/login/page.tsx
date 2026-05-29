@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import LoginForm from '@/components/auth/login-form';
 import LoginBanner from '@/components/auth/login-banner';
+import DemoLoginButton from '@/components/auth/demo-login-button';
 import { PageBackground } from '@/components/ui/page-background';
 import { KaiSitting } from '@/components/illustrations/kai';
 import { CapizPattern } from '@/components/illustrations/svg/decorative/CapizPattern';
@@ -65,6 +66,14 @@ export default async function LoginPage() {
             </span>
             <div className="flex-grow border-t border-outline-soft/40" />
           </div>
+
+          {/*
+            Sprint 18 (Gap §11 P0) — Reviewer demo entry. Renders ONLY when
+            NEXT_PUBLIC_DEMO_MODE === 'true' (review builds); returns null
+            otherwise, so normal users never see it. Server enforcement lives
+            in /api/demo-login (DEMO_MODE_ENABLED).
+          */}
+          <DemoLoginButton />
 
           <footer className="text-center space-y-3">
             <p className="text-on-surface-variant text-sm">
