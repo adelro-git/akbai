@@ -7,7 +7,8 @@
  * All monetary values arrive as integer centavos — display conversion here.
  */
 
-import { centavosToPeso } from '@/lib/utils/money';
+import type { ReactNode } from 'react';
+import Money from '@/components/ui/money';
 import MarginDisplay from './margin-display';
 
 interface CostingSummaryProps {
@@ -47,23 +48,32 @@ export default function CostingSummary({
       <div className="grid grid-cols-2 gap-3">
         <SummaryItem
           label="Total na gastos"
-          value={centavosToPeso(totalCostCentavos)}
+          valueNode={<Money centavos={totalCostCentavos} size="md" />}
           testId="summary-total-cost"
         />
         <SummaryItem
           label={`Gastos per ${yieldUnit}`}
-          value={centavosToPeso(costPerUnit)}
+          valueNode={<Money centavos={costPerUnit} size="md" />}
           testId="summary-cost-per-unit"
         />
         <SummaryItem
           label="Suggested price"
-          value={suggestedPriceCentavos !== null ? centavosToPeso(suggestedPriceCentavos) : '—'}
+          valueNode={
+            suggestedPriceCentavos !== null ? (
+              <Money centavos={suggestedPriceCentavos} size="md" />
+            ) : undefined
+          }
+          value="—"
           testId="summary-suggested-price"
-          highlight
         />
         <SummaryItem
           label="Presyo mo"
-          value={sellingPriceCentavos !== null ? centavosToPeso(sellingPriceCentavos) : 'Hindi pa set'}
+          valueNode={
+            sellingPriceCentavos !== null ? (
+              <Money centavos={sellingPriceCentavos} size="md" />
+            ) : undefined
+          }
+          value="Hindi pa set"
           testId="summary-selling-price"
         />
       </div>
@@ -96,20 +106,24 @@ export default function CostingSummary({
 function SummaryItem({
   label,
   value,
+  valueNode,
   testId,
-  highlight,
 }: {
   label: string;
-  value: string;
+  /** Fallback string (placeholders like "—" / "Hindi pa set"). */
+  value?: string;
+  /** Preferred render: a <Money> node for real amounts (teal, tabular). */
+  valueNode?: ReactNode;
   testId: string;
-  highlight?: boolean;
 }) {
   return (
     <div className="text-center" data-testid={testId}>
       <p className="text-on-surface-variant text-xs font-semibold mb-0.5">{label}</p>
-      <p className={`text-lg font-extrabold ${highlight ? 'text-tertiary' : 'text-on-surface'}`}>
-        {value}
-      </p>
+      {valueNode ? (
+        <p>{valueNode}</p>
+      ) : (
+        <p className="text-lg font-extrabold text-on-surface">{value}</p>
+      )}
     </div>
   );
 }

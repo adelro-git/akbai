@@ -328,7 +328,7 @@ export default function LandingPage() {
           <button
             type="button"
             onClick={scrollToWaitlist}
-            className="min-h-[44px] min-w-[44px] rounded-full bg-gradient-to-r from-primary-container to-secondary-container px-5 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-ambient-lg active:scale-[0.98]"
+            className="min-h-[44px] min-w-[44px] rounded-full bg-gradient-to-r from-primary-container to-honey-deep px-5 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-ambient-lg active:scale-[0.98]"
           >
             Sumali sa Waitlist
           </button>
@@ -589,7 +589,7 @@ export default function LandingPage() {
             <div className="landing-reveal-stagger grid gap-10 sm:grid-cols-3 sm:gap-6 md:gap-8">
               {steps.map((s) => (
                 <div key={s.step} className="landing-reveal text-center">
-                  <div className="relative z-10 mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-container to-secondary-container shadow-ambient">
+                  <div className="relative z-10 mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-container to-honey-deep shadow-ambient">
                     <span
                       className="text-lg font-extrabold text-white"
                       style={{ letterSpacing: '-0.02em' }}
@@ -790,7 +790,7 @@ export default function LandingPage() {
                 }`}
               >
                 {tier.highlighted && (
-                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary-container to-secondary-container px-4 py-1.5 text-xs font-semibold text-white shadow-ambient">
+                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary-container to-honey-deep px-4 py-1.5 text-xs font-semibold text-white shadow-ambient">
                     Pinakasikat
                   </span>
                 )}

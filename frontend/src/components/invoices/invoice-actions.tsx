@@ -125,7 +125,7 @@ export default function InvoiceActions({
           <button
             onClick={() => handleStatusChange('paid')}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 bg-tertiary-container text-on-primary text-sm font-semibold rounded-xl px-4 py-2.5 min-h-[44px] transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 bg-tertiary text-on-tertiary text-sm font-semibold rounded-xl px-4 py-2.5 min-h-[44px] transition-colors disabled:opacity-50"
             type="button"
             data-testid="action-mark-paid"
           >

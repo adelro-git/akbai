@@ -11,7 +11,7 @@ interface EmptyStateCardProps {
 export default function EmptyStateCard({ message, hint }: EmptyStateCardProps) {
   return (
     <div
-      className="bg-surface-container rounded-xl p-6 text-center"
+      className="card-level-1 p-6 text-center"
       data-testid="empty-state-card"
     >
       <div className="flex justify-center mb-3">
@@ -23,7 +23,7 @@ export default function EmptyStateCard({ message, hint }: EmptyStateCardProps) {
           height={135}
         />
       </div>
-      <p className="text-on-surface-variant text-sm">{message}</p>
+      <p className="wp-body text-on-surface-variant">{message}</p>
       {hint && (
         <p className="text-outline text-xs mt-2 italic">{hint}</p>
       )}

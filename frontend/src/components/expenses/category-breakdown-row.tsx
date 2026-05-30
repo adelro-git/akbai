@@ -8,6 +8,13 @@
 
 import { EXPENSE_CATEGORIES } from '@/lib/expenses/categories'
 import * as LucideIcons from 'lucide-react'
+import Money from '@/components/ui/money'
+
+// Banig (woven-mat) diagonal stripe overlay — the Warm Precision chart texture.
+// Composited over the category fill via a layered background; the stripe is a
+// translucent sampaguita-white so it reads on every category color.
+const BANIG_STRIPE =
+  'repeating-linear-gradient(45deg, hsl(var(--sampaguita) / 0.25) 0 2px, transparent 2px 4px)'
 
 interface CategoryBreakdownRowProps {
   categoryKey: string
@@ -31,12 +38,11 @@ export function CategoryBreakdownRow({ categoryKey, totalCentavos, percent }: Ca
   const label = def?.label ?? categoryKey
   const colorClass = def?.color ?? 'bg-honey-deep'
   const Icon = lucideForKey(def?.icon ?? 'tag')
-  const peso = Math.round(totalCentavos / 100)
   const clampedPercent = Math.min(100, Math.max(0, percent))
 
   return (
     <div
-      className="min-h-[56px] py-2.5"
+      className="min-h-[56px] py-2.5 border-t border-outline-variant/[0.18] first:border-t-0"
       data-testid={`expenses-category-row-${categoryKey}`}
     >
       <div className="flex items-center justify-between gap-3 mb-1.5">
@@ -52,16 +58,15 @@ export function CategoryBreakdownRow({ categoryKey, totalCentavos, percent }: Ca
           </span>
         </div>
         <div className="flex items-baseline gap-2 flex-shrink-0">
-          <span className="text-[14px] font-semibold text-on-surface">
-            ₱{peso.toLocaleString('en-PH')}
-          </span>
-          <span className="text-[11px] text-ink-soft">{clampedPercent.toFixed(0)}%</span>
+          <Money centavos={totalCentavos} size="sm" countUp={false} />
+          <span className="text-[11px] text-ink-soft tabular-nums">{clampedPercent.toFixed(0)}%</span>
         </div>
       </div>
+      {/* Banig-textured progress bar in the category color (Warm Precision §4). */}
       <div className="h-1.5 rounded-full bg-surface-container-low overflow-hidden">
         <div
           className={`h-full ${colorClass} rounded-full transition-[width] duration-500 motion-reduce:transition-none`}
-          style={{ width: `${clampedPercent}%` }}
+          style={{ width: `${clampedPercent}%`, backgroundImage: BANIG_STRIPE }}
         />
       </div>
     </div>

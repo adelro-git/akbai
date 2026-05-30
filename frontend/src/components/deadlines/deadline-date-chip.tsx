@@ -1,10 +1,12 @@
 'use client'
 
 // ============================================================
-// DeadlineDateChip — 56×56 cream-honey date chip
-// Phase 9b spec §2.3. Urgent (≤ 7 days) variant uses honey-deep fill
-// with cream text. English month abbreviation (per Q6 — keep EN
-// abbreviations for BIR formality, body copy stays Filipino).
+// DeadlineDateChip — Warm Precision date chip (§8 + prototype .datechip)
+// White (surface-container-lowest) chip with el-2 shadow; a colored month
+// band over a large tabular day numeral. Urgent (≤ 7 days / overdue) flips the
+// month band to error-fill (the prototype's .datechip.urgent .dc-mon). English
+// month abbreviation (per Q6 — keep EN abbreviations for BIR formality, body
+// copy stays Filipino).
 // ============================================================
 
 const MONTH_ABBR_EN = [
@@ -24,24 +26,22 @@ export function DeadlineDateChip({ dueDate, urgent = false }: DeadlineDateChipPr
   const month = MONTH_ABBR_EN[date.getMonth()] ?? '???'
   const day = date.getDate()
 
-  const fill = urgent
-    ? 'bg-honey-deep text-honey-cream'
-    : 'bg-honey-cream text-honey-deep'
+  // Month band: honey fill normally, error-fill when urgent (prototype .urgent).
+  const monthBand = urgent
+    ? 'bg-error-fill text-white'
+    : 'bg-honey text-white'
 
   return (
     <div
-      className={`w-14 h-14 rounded-xl ${fill} flex flex-col items-center justify-center flex-shrink-0`}
+      className="w-[52px] rounded-xl bg-surface-container-lowest shadow-el-2 overflow-hidden text-center flex-shrink-0"
       aria-hidden
     >
-      <span className={`text-[10px] font-extrabold tracking-wider leading-none ${urgent ? 'text-honey-cream/80' : 'text-honey-deep/70'}`}>
+      <div className={`text-[10px] font-extrabold tracking-[0.08em] uppercase leading-none py-1 ${monthBand}`}>
         {month}
-      </span>
-      <span
-        className={`font-serif text-[22px] leading-none mt-1 ${urgent ? 'text-honey-cream' : 'text-on-surface'}`}
-        style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 600 }}
-      >
+      </div>
+      <div className="text-[22px] font-extrabold leading-none tabular-nums text-on-surface py-1.5">
         {day}
-      </span>
+      </div>
     </div>
   )
 }

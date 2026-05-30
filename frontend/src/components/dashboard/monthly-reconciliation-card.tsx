@@ -22,7 +22,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { IconPera } from '@/components/illustrations/icons';
 import { PaperNote } from '@/components/ui/paper-note';
-import { centavosToPeso } from '@/lib/utils/money';
+import KpiTile from './kpi-tile';
 import type { MonthlyReconciliation } from '@/lib/reconciliation';
 
 type CardState =
@@ -125,14 +125,14 @@ export default function MonthlyReconciliationCard() {
       className="px-4 pb-4"
       data-testid="monthly-reconciliation-card"
     >
-      <div className="rounded-2xl bg-surface-container p-5 shadow-ambient">
+      <div className="card-level-1 p-5">
         {/* Header row — month label, e.g. "Mayo 2026". */}
         <div className="flex items-center gap-2">
           <IconPera size={20} />
           <p className="font-serif text-sm text-on-surface-variant">{t('label')}</p>
         </div>
         <h2
-          className="mt-1 font-serif text-[22px] leading-tight font-medium text-on-surface"
+          className="mt-1 wp-h2 text-on-surface"
           data-testid="monthly-reconciliation-month"
         >
           {data.month_label}
@@ -142,19 +142,19 @@ export default function MonthlyReconciliationCard() {
         <div className="mt-4 grid grid-cols-3 gap-2">
           <KpiTile
             label={t('kita')}
-            value={centavosToPeso(data.total_sales_centavos)}
+            centavos={data.total_sales_centavos}
             testId="monthly-kpi-kita"
           />
           <KpiTile
             label={t('gastos')}
-            value={centavosToPeso(data.total_expenses_centavos)}
+            centavos={data.total_expenses_centavos}
             testId="monthly-kpi-gastos"
           />
           <KpiTile
             label={t('tubo')}
-            value={centavosToPeso(data.net_centavos)}
+            centavos={data.net_centavos}
             testId="monthly-kpi-tubo"
-            negative={data.net_centavos < 0}
+            profit
           />
         </div>
 
@@ -204,32 +204,5 @@ export default function MonthlyReconciliationCard() {
         )}
       </div>
     </section>
-  );
-}
-
-function KpiTile({
-  label,
-  value,
-  testId,
-  negative,
-}: {
-  label: string;
-  value: string;
-  testId: string;
-  negative?: boolean;
-}) {
-  return (
-    <div className="rounded-xl bg-surface-container-low px-3 py-2" data-testid={testId}>
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-on-surface-variant">
-        {label}
-      </p>
-      <p
-        className={`mt-1 font-serif text-[20px] font-medium leading-none ${
-          negative ? 'text-destructive' : 'text-on-surface'
-        }`}
-      >
-        {value}
-      </p>
-    </div>
   );
 }

@@ -98,33 +98,43 @@ export default function KumustahanHero({
       data-testid="kumustahan-hero"
       className={`relative overflow-hidden px-5 pt-6 pb-4 ${className ?? ''}`}
     >
+      {/* CapizPattern — the one personality element behind the hero, ≤8% per WP §2. */}
       {showCapiz && (
         <div
           className="absolute inset-0 motion-reduce:hidden pointer-events-none"
           aria-hidden
         >
-          <CapizPattern opacity={0.18} />
+          <CapizPattern opacity={0.08} />
         </div>
       )}
 
       <div className="relative z-10 flex flex-col items-center gap-4 tablet:flex-row tablet:items-center tablet:gap-6 tablet:text-left">
-        {/* Kai mark — 168px, breathing animation (B6) — paired with the greeting block. */}
-        <div className="flex-shrink-0">
-          <KaiSitting size={168} animated />
+        {/* Kai mark — Warm Precision hero 120px (happy), breathing (B6).
+            A primary@10% radial glow sits behind the hero only (WP §5). */}
+        <div className="relative flex-shrink-0">
+          <span
+            aria-hidden
+            className="absolute inset-0 -m-4 motion-reduce:hidden pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(circle at 50% 45%, hsl(var(--primary) / 0.10) 0%, transparent 62%)',
+            }}
+          />
+          <KaiSitting size={120} animated />
         </div>
 
         <div className="flex flex-col items-center text-center tablet:items-start tablet:text-left">
-          {/* Time-of-day pill */}
+          {/* Time-of-day pill (.pill-tod treatment: translucent, uppercase honey). */}
           <span
-            className="inline-flex items-center rounded-full bg-honey-pale px-3 py-1 text-xs font-semibold text-honey-deep"
+            className="inline-flex items-center rounded-full bg-surface-container-lowest/55 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-honey-deep backdrop-blur-sm"
             data-testid="kumustahan-greeting-pill"
           >
             {t(`greeting.${timeOfDay}`)}
           </span>
 
-          {/* Name line — Fraunces 30px / 500 */}
+          {/* Name line — Fraunces wp-h1 (30/600) */}
           <h1
-            className="mt-2 font-serif text-[30px] font-medium leading-tight text-on-surface break-words"
+            className="mt-2 wp-h1 break-words"
             data-testid="kumustahan-name"
           >
             {userName},
@@ -132,7 +142,7 @@ export default function KumustahanHero({
 
           {/* "kumusta ka?" — Fraunces italic 26px / 500 + Squiggle underline (single accent) */}
           <p
-            className="mt-1 font-serif italic text-[26px] font-medium leading-tight text-on-surface"
+            className="mt-1 font-serif italic text-[26px] font-medium leading-tight text-honey-deep"
             data-testid="kumustahan-question"
           >
             {t('kumustaKa')}

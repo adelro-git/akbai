@@ -3,8 +3,8 @@
 // ============================================================
 // DeadlineRow — Phase 9b redesigned deadline list row
 // Tap → /chat?topic={form_code}&context=deadline-{N}d (ADR-017).
-// First (next-due) row gets a 2px honey-deep ring; others rely on
-// tonal surface layering (No-Line Rule).
+// First (next-due) row gets a SUBTLE honey left-edge bar (replacing the
+// old heavy 2px ring); others rely on tonal surface layering (No-Line Rule).
 // ============================================================
 
 import { useRouter } from 'next/navigation'
@@ -12,11 +12,12 @@ import { ChevronRight } from 'lucide-react'
 import type { DeadlineWithUrgency } from '@/lib/deadlines/types'
 import { isKnownFormCode, FORM_CODE_DESCRIPTIONS } from '@/lib/bir/forms'
 import { trackDeadlineChatOpened } from '@/lib/posthog/events'
+import { Pill, type PillProps } from '@/components/ui/pill'
 import DeadlineDateChip from './deadline-date-chip'
 
 interface DeadlineRowProps {
   deadline: DeadlineWithUrgency
-  /** Add 2px honey-deep ring (next-due row). */
+  /** Add the subtle honey left-edge bar (next-due row). */
   highlightNextDue?: boolean
 }
 
@@ -33,6 +34,26 @@ function normalizeFormCode(formName: string): string {
   // Database stores e.g. "1601-EQ"; ADR-017 allowlist handles both with/without hyphen.
   // Keep the hyphenated form for display & deeplink.
   return formName.toUpperCase()
+}
+
+// Map the days-left tone onto a Warm Precision Pill status variant (§5).
+const TONE_TO_PILL: Record<'urgent' | 'overdue' | 'filed' | 'normal', PillProps['variant']> = {
+  overdue: 'overdue',
+  urgent: 'pending',
+  filed: 'info',
+  normal: 'info',
+}
+
+/**
+ * Map a raw days-until value onto the urgency Pill variant — the same
+ * overdue→pending→info ladder the row tag uses, exported so the
+ * DeadlinePreCallout tag stays in lockstep instead of hardcoding 'overdue'.
+ * `days_until < 0` → overdue; `0..7` → pending; else info.
+ */
+export function daysUntilToPillVariant(daysUntil: number): PillProps['variant'] {
+  if (daysUntil < 0) return TONE_TO_PILL.overdue
+  if (daysUntil <= 7) return TONE_TO_PILL.urgent
+  return TONE_TO_PILL.normal
 }
 
 export default function DeadlineRow({ deadline, highlightNextDue = false }: DeadlineRowProps) {
@@ -59,7 +80,6 @@ export default function DeadlineRow({ deadline, highlightNextDue = false }: Dead
   // to the code itself so unknown future BIR forms still render safely.
   const formNameDisplay = deadline.description ?? FORM_CODE_DESCRIPTIONS[formCode] ?? formCode
 
-  const ringClass = highlightNextDue ? 'ring-2 ring-honey-deep' : ''
   const opacityClass = isFiled ? 'opacity-60' : ''
   const testid = highlightNextDue
     ? `deadlines-row-urgent-${deadline.id}`
@@ -70,35 +90,27 @@ export default function DeadlineRow({ deadline, highlightNextDue = false }: Dead
       type="button"
       onClick={handleTap}
       disabled={isFiled}
-      className={`w-full text-left rounded-2xl bg-surface-container-lowest p-3 shadow-ambient flex items-center gap-3 min-h-[72px] transition-colors ${ringClass} ${opacityClass} ${isFiled ? 'cursor-default' : 'hover:bg-honey-cream/30 active:bg-honey-cream/40'}`}
+      // Upcoming list row — Level-1 static tonal card, tonal layering (No-Line).
+      // next-due gets a subtle honey left-edge bar (not the old heavy ring).
+      className={`relative overflow-hidden w-full text-left card-level-1 p-3 flex items-center gap-3.5 min-h-[72px] transition-colors ${opacityClass} ${isFiled ? 'cursor-default' : 'hover:bg-honey-cream/30 active:bg-honey-cream/40'}`}
       data-testid={testid}
       data-form-code={formCode}
       aria-label={`I-open kay Kai: ${formCode}, ${daysLeft}`}
     >
+      {highlightNextDue && !isFiled && (
+        <span aria-hidden className="absolute left-0 top-0 h-full w-1 bg-honey-deep" />
+      )}
       <DeadlineDateChip dueDate={deadline.due_date} urgent={isUrgent} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap mb-0.5">
-          <span className="text-[12px] font-extrabold tracking-wide rounded-full bg-honey-pale text-honey-deep px-2 py-0.5">
+          <Pill variant="form-code" size="tag">
             {formCode}
-          </span>
-          <span
-            className={
-              tone === 'overdue'
-                ? 'text-[12px] font-semibold text-[#F87171]'
-                : tone === 'urgent'
-                  ? 'text-[12px] font-semibold text-honey-deep'
-                  : tone === 'filed'
-                    ? 'text-[12px] font-semibold text-ink-faint'
-                    : 'text-[12px] font-semibold text-ink-soft'
-            }
-          >
+          </Pill>
+          <Pill variant={TONE_TO_PILL[tone]} size="tag">
             {daysLeft}
-          </span>
+          </Pill>
         </div>
-        <div
-          className="font-serif text-[16px] leading-tight text-on-surface truncate"
-          style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 500 }}
-        >
+        <div className="wp-h3 text-on-surface truncate">
           {formNameDisplay}
         </div>
       </div>

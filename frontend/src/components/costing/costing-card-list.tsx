@@ -8,7 +8,7 @@
  */
 
 import Link from 'next/link';
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -90,16 +90,12 @@ export default function CostingCardList({ cards }: CostingCardListProps) {
             <div className="flex items-baseline gap-3 mb-2">
               <div>
                 <p className="text-on-surface-variant text-[10px] uppercase tracking-wider">Gastos</p>
-                <p className="text-on-surface text-sm font-extrabold">
-                  {centavosToPeso(card.total_cost_centavos)}
-                </p>
+                <Money centavos={card.total_cost_centavos} size="sm" countUp={false} />
               </div>
               {card.selling_price_centavos && (
                 <div>
                   <p className="text-on-surface-variant text-[10px] uppercase tracking-wider">Presyo</p>
-                  <p className="text-on-surface text-sm font-extrabold">
-                    {centavosToPeso(card.selling_price_centavos)}
-                  </p>
+                  <Money centavos={card.selling_price_centavos} size="sm" countUp={false} />
                 </div>
               )}
             </div>

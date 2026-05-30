@@ -20,6 +20,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Check } from 'lucide-react';
+import { Pill } from '@/components/ui/pill';
 
 // ============================================================
 // Types
@@ -83,21 +84,23 @@ export function PaywallTierCard({
 
   return (
     <div
-      className={`relative rounded-2xl bg-surface-container-lowest p-5 shadow-ambient ${
-        isHighlighted ? 'ring-2 ring-primary-container' : ''
+      className={`relative card-level-3 p-5 ${
+        isHighlighted ? 'ring-2 ring-honey' : ''
       }`}
       data-testid={testId ?? `paywall-tier-card-${tier}`}
       data-tier={tier}
       data-highlighted={isHighlighted ? 'true' : 'false'}
     >
-      {/* ── "Pinaka-sulit" badge (annual default) ── */}
+      {/* ── "Pinaka-sulit" status tag (Pro highlight, annual default) ── */}
       {isHighlighted && (
-        <span
-          className="absolute -top-2 right-4 rounded-full bg-primary-container px-3 py-1 text-[11px] font-bold text-on-primary-container shadow-ambient"
+        <Pill
+          variant="pending"
+          size="tag"
+          className="absolute -top-2 right-4 shadow-el-2"
           data-testid={`paywall-tier-card-${tier}-badge`}
         >
           {tBadge('most_worth_it')}
-        </span>
+        </Pill>
       )}
 
       {/* ── Headline ── */}
@@ -108,9 +111,12 @@ export function PaywallTierCard({
         {t(`${tier}.title`)}
       </h3>
 
-      {/* ── Sub-headline (price) ── */}
+      {/* ── Sub-headline (price) — tabular treatment so the peso figure reads
+              data-confident. Copy is locked (the price lives inside the
+              Filipino subtitle string), so we style the whole line tabular
+              rather than wrapping a synthetic <Money>. --- */}
       <p
-        className="mt-1 text-sm text-on-surface-variant"
+        className="mt-1 text-sm text-on-surface-variant [font-variant-numeric:tabular-nums]"
         data-testid={`paywall-tier-card-${tier}-subtitle`}
       >
         {t(`${tier}.subtitle`)}

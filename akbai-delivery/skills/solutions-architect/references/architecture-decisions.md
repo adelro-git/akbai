@@ -1,7 +1,7 @@
 # AKBai — Architecture Decision Record Log
 > Append new ADRs to this file. Never delete or renumber existing ADRs.
-> Current highest: ADR-020
-> Last updated: 2026-05-29 (Sprint 18 — ADR-020 added: reviewer demo-access + offline scan-queue patterns; Gap G7 code-side GREEN / 1716 tests. ADR-019 surface stays Accepted Green.)
+> Current highest: ADR-021
+> Last updated: 2026-05-30 (Warm Precision visual redesign gate — ADR-021 added: adopt the high-fidelity "Warm Precision" handoff, light-mode-only, 4-tab+Scan-FAB nav, `<Money>` number primitive. ADR-020 (Sprint 18 reviewer demo-access) stays Accepted. NOTE: the build brief referenced this as "ADR-020"; ADR-020 was already taken in Sprint 18, so this redesign is numbered ADR-021.)
 
 ---
 
@@ -29,6 +29,7 @@
 | ADR-018 | Native mobile pivot via Capacitor + IAP (deprecate Xendit) | Accepted | 2026-05-24 |
 | ADR-019 | Capacitor wrapping pattern (Sprint 14 spike findings) | Accepted (Green) — Sprint 15 conversion (Gap G1) + Sprint 16 plugins (Gap G4) both landed on main | 2026-05-27 |
 | ADR-020 | Reviewer demo-access + offline scan-queue patterns (Sprint 18 pre-launch) | Accepted | 2026-05-29 |
+| ADR-021 | Warm Precision visual redesign adoption (light-only, nav-FAB, `<Money>` primitive) | Accepted | 2026-05-30 |
 
 ---
 
@@ -1294,3 +1295,56 @@ Durable offline image persistence depends on `@capacitor/filesystem` (install de
 - If a second reviewer/guest scenario appears (e.g., a time-boxed public demo), revisit whether the single-seeded-account model needs to generalize — but keep fail-closed + triple-gate as non-negotiable.
 - When the chat offline queue and scan offline queue are converged (action item #2), supersede Part B's "forked queue" note with the unified abstraction.
 - If `@capacitor/filesystem` proves unreliable for image persistence on device (Sprint 19 on-device QA), reconsider the durable-storage layer (IndexedDB blob vs native filesystem).
+
+---
+
+## ADR-021: Warm Precision Visual Redesign Adoption
+
+**Status:** Accepted
+**Date:** 2026-05-30
+**Reaffirms:** ADR-013 reuse rule (re-skin in place, no parallel components). The Phase 3/7 "Sun-Drenched Atelier" token *values* are retuned (not removed); MD3 token *names* are preserved.
+
+**Numbering note:** the build brief called this "ADR-020". ADR-020 was already consumed by the Sprint 18 reviewer demo-access record, so this redesign is **ADR-021** (append-only / never-renumber rule).
+
+**Context:**
+Claude Design delivered a high-fidelity prototype — `design_handoff_akbai_redesign/design_handoff_akbai_warm_precision/` — now the **visual source of truth** for AKBai's look. It evolves the existing "Art of Warmth / Sun-Drenched Atelier" direction into **"Warm Precision"**: a calmer cooler-neutral paper surface; data-confident numbers (tabular, weight-700, teal, peso-first); the Fraunces display/greeting serif dialed from weight-800 to 600; a warm two-layer (never-grey) elevation system; restrained glass; cleaner cards with a 4-state status-tag system; restyled chat bubbles; and a 4-tab + center Scan-FAB app shell.
+
+The prototype was authored without repo access, so `warm-precision-plan.md` §1 carries 8 corrections that OVERRIDE `design.md`, and §0.5 records Anton's locked decisions. This ADR ratifies those decisions and sets the contract the engineer follows. The full engineer-facing contract lives in `warm-precision-implementation-spec.md` (same references directory).
+
+Only 5 of ~12 surfaces are pixel-specified (Home, Chat, Scan, Expenses, Deadlines). The rest (onboarding, login, profile, paywall, costing, invoices, check-in, kuwento) are **extrapolated from the token + component system**, not pixel-matched.
+
+**Decision:**
+Adopt Warm Precision as the app's visual system, governed by these locked calls:
+
+1. **Light-mode only this sweep.** The dark "warm near-black" reroot is a separate, higher-blast-radius workstream — deferred. The `.dark{}` block in `globals.css` is **not touched** here. Token retunes apply to the `:root` light block + the `cream`/`honey`/`dawn` palette variants only.
+2. **Tokens stay HSL CSS variables** in `globals.css` (`:root`), referenced via `hsl(var(--token))` in `tailwind.config.js`. Every prototype `app.css` hex is converted to an HSL triplet. **MD3 token names are preserved** — Tailwind aliases are added only for genuinely-new tokens. No hardcoded hex in components (tokens only).
+3. **Warm Precision values become the default (`cream`) palette.** `cream` carries the full retune; `honey` and `dawn` remain functional variants that override only top-level surface tokens (as today). Any per-variant reconciliation of the new card/ink/elevation tokens is tracked as a follow-up, not a blocker for the default-palette sweep.
+4. **Nav: 4 tabs + center Scan FAB** (Umaga · Kai · Pera · Iba pa, with a floating honey-gradient Scan FAB). This **supersedes plan §1 item 5** (which had defaulted to keeping the 5-tab Scan-as-tab). Scan leaves the tab row and becomes a FAB-launched full-screen overlay; `MoreDrawer` ("Iba pa") is reshaped accordingly.
+5. **Error TEXT stays `#ba1a1a`** (existing `--destructive`, already AA ~6.4:1, already wired). The prototype's `#c0392b` is **rejected** for text. The prototype's `error-fill` (`#F87171`) and `error-pale` (`#fde0dc`) are mapped as **fill/tag tokens only** (`--error-fill`, `--error-pale`), never as text color.
+6. **Kai uses current assets.** The 6 vector SVG expressions (`components/illustrations/svg/ka-expressions/`, 48×48 viewBox — scale for free) fill the prototype's placeholder slots; `KaiSitting` raster is scaled to hero sizes for now. **No new asset dependency** is introduced by this gate; the ≥3× `KaiSitting` re-export stays folded into the separate Sprint 18 G6 Kai-integration track.
+7. **Count-up retained, subtle:** 600ms cubic ease-out, once on first paint, honoring `prefers-reduced-motion` plus a global disable escape hatch.
+8. **Voice locked:** zero copy changes. All strings come from repo i18n; prototype strings are illustrative only.
+9. **Number rendering is centralized** through a single `<Money>` primitive wrapping `centavosToPeso` — to stop the tabular/teal/weight-700/count-up treatment drifting across ~20 render sites.
+
+**Alternatives Considered:**
+- **Full light+dark reroot in one sweep.** Rejected — the dark warm-black move is the highest-blast-radius *visible* change and warrants its own gated, on-device-validated workstream. Bundling it doubles review risk for no incremental brand win this sprint.
+- **Adopt the prototype's `#c0392b` error text + treat `secondary-container`/`tertiary-container` as new tokens.** Rejected — `#ba1a1a` is already AA and wired everywhere; and `secondary-container`/`tertiary-container` already exist with live consumers, so these are RETUNE + role-change, not additive. Flipping them blind would regress invoice/expense surfaces.
+- **Gate the redesign on the Gemini-evolved Kai set.** Rejected — current vector expressions scale for free; gating the whole visual sweep on an asset pipeline that isn't ready would stall brand-defining wins. Hero raster fidelity is a parallel G6 concern.
+- **Let each money render site keep its own inline `centavosToPeso` + ad-hoc styling.** Rejected — sites already drift (some `font-extrabold`, some plain). A single primitive is the only durable way to guarantee tabular-nums + teal + count-up + the financial `aria-label`.
+- **Build a parallel set of Warm-Precision components.** Rejected per ADR-013 / Sprint 5 reuse rule (the "17 violations slipped past" precedent). Re-skin existing components in place.
+
+**Consequences:**
+- **Visual-parity snapshots re-baseline.** All `frontend/e2e/synthesis/*.spec.ts` baselines (home, chat, expenses, deadlines + the `compare.spec.ts` capture harness) fail by design once tokens reroot — token changes can't survive tight pixel-diff thresholds. Re-baselining is **expected churn + an Anton eyeball on the new baselines**, not a regression. QA owns this in the build.
+- **Token blast radius is one file, reversible.** Because everything reads `hsl(var(--token))`, the retune lands in `globals.css` and flows app-wide. The two pre-existing RETUNE+role-change tokens (`secondary-container`, `tertiary-container`) require a consumer audit before flipping.
+- **Palette-variant handling:** `cream` becomes canonical Warm Precision; `honey`/`dawn` keep working (they only override surface bg). Reconciling the new card/ink tokens per-variant is a documented follow-up.
+- **Nav routing change:** moving Scan to a FAB changes the tab set 5→4 and reshapes `MoreDrawer`. The `body[data-scanning]` nav-suppression and the hide-on-`/chat` behavior must be preserved. Route/deep-link tests that assert the Scan tab need updating.
+- **New tokens added:** `on-faint`, `tertiary-container` (retune), `error-fill`, `error-pale`, `outline-input`, `ink-scrim`, `sampaguita`, plus the `secondary-container` RETUNE — each with a Tailwind alias where consumed by utilities.
+- **Three W10 correctness bugs fold in** (adoption-independent): `text-error` no-op → `text-destructive`; hardcoded `#F87171` in `deadline-row.tsx` → `text-error-fill`; `BanigBarChart` hardcoded `#fdf9f2` stripe → token (breaks dark mode today).
+- **Docs to reconcile (W12):** `design-system.md` + `brand-context.md` carry stale dark values independent of this redesign; correct factual drift now, overlay Warm Precision direction once merged. This ADR is that overlay's anchor.
+- **No schema, no prompts, no auth/PII touched** — so no `build-data` / `build-ai` / `review-security` involvement required for this gate.
+
+**Review Trigger:**
+- When the dark "warm near-black" reroot is greenlit, open a follow-up ADR — do not extend ADR-021 to cover it.
+- If the `honey`/`dawn` palette variants visibly clash with the retuned card/ink tokens on device, promote the per-variant reconciliation follow-up into a tracked workstream.
+- If `<Money>` count-up causes layout shift on any KPI under real data widths, revisit the width-stabilization approach (the prototype reserves width via the wrapper).
+

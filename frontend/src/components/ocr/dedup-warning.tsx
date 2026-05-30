@@ -24,7 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 
 // ============================================================
 // Types
@@ -76,7 +76,6 @@ export function DedupWarning({
   // --- Format existing transaction details for display ---
   const merchantDisplay =
     existingTransaction.merchant_name || 'Hindi kilala ang tindahan';
-  const amountDisplay = centavosToPeso(existingTransaction.amount);
   const dateDisplay = existingTransaction.transaction_date;
 
   return (
@@ -102,9 +101,7 @@ export function DedupWarning({
                   <span className="font-semibold text-on-surface">
                     {merchantDisplay}
                   </span>
-                  <span className="font-extrabold text-on-surface">
-                    {amountDisplay}
-                  </span>
+                  <Money centavos={existingTransaction.amount} size="sm" countUp={false} />
                 </div>
                 <div className="flex justify-between items-center text-xs text-on-surface-variant">
                   <span>{existingTransaction.category}</span>

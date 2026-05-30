@@ -6,7 +6,7 @@
  * No external chart library — pure CSS. Zero bundle cost.
  */
 
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import { getCategoryDef } from '@/lib/expenses/categories';
 
 interface CategoryData {
@@ -19,18 +19,24 @@ interface CategoryChartProps {
   data: CategoryData[];
 }
 
-// Segment colors — design system tokens
+// Segment colors — design system tokens.
+// Warm Precision W1 role-change turned tertiary-container (#cdeee2) and
+// secondary-container (#fef3d9) into near-white pale fills, which rendered
+// invisible as chart segments. Replaced with saturated chart-contrast tokens.
+// Every entry resolves to a DISTINCT hex (verified vs globals.css :root) so no
+// two categories ever render an indistinguishable segment — the previous set
+// aliased honey↔primary-container (#f59e0b) and sage-deep↔tertiary (#006b54).
 const SEGMENT_COLORS = [
-  'bg-primary-container',
-  'bg-tertiary-container',
-  'bg-secondary-container',
-  'bg-primary',
-  'bg-tertiary',
-  'bg-secondary',
-  'bg-outline',
-  'bg-primary-fixed-dim',
-  'bg-tertiary/60',
-  'bg-outline-variant',
+  'bg-honey',              // #f59e0b — saturated honey
+  'bg-tertiary',           // #006b54 — deep teal
+  'bg-primary',            // #855300 — dark brown
+  'bg-sage',               // #5fb89a — mid sage
+  'bg-secondary',          // #904d00 — burnt amber
+  'bg-primary-fixed-dim',  // #ffb95f — light honey
+  'bg-outline',            // #867461 — warm taupe
+  'bg-warning',            // #FBBF24 — amber
+  'bg-error-fill',         // #F87171 — soft red
+  'bg-honey-bright',       // #f5b347 — bright honey
 ];
 
 export default function CategoryChart({ data }: CategoryChartProps) {
@@ -92,8 +98,8 @@ export default function CategoryChart({ data }: CategoryChartProps) {
                 {seg.percentage}%
               </span>
             </div>
-            <span className="text-on-surface text-xs font-extrabold whitespace-nowrap ml-2">
-              {centavosToPeso(seg.total)}
+            <span className="ml-2">
+              <Money centavos={seg.total} size="sm" countUp={false} />
             </span>
           </div>
         ))}

@@ -17,7 +17,6 @@ import { SKIP_AUTH } from '@/lib/supabase/dev-auth';
 import OnboardingWizard from '@/components/onboarding/onboarding-wizard';
 import { PageBackground } from '@/components/ui/page-background';
 import { CapizPattern } from '@/components/illustrations/svg/decorative/CapizPattern';
-import { FloatingPetals } from '@/components/illustrations/svg/decorative/FloatingPetals';
 import type { OnboardingState } from '@/lib/kilala-kita';
 
 export default function OnboardingPage() {
@@ -102,11 +101,11 @@ export default function OnboardingPage() {
   return (
     <PageBackground variant="onboarding">
       <main className="relative min-h-dvh flex items-start justify-center pt-safe overflow-hidden">
+        {/* W7 motif dial-down: one ambient layer per screen. CapizPattern is
+            the onboarding ambient; the prior FloatingPetals second layer was
+            removed (petals OR capiz, not both — design-system §6). */}
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
           <CapizPattern opacity={0.12} />
-        </div>
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-          <FloatingPetals count={6} />
         </div>
         <div className="relative w-full max-w-lg tablet:max-w-2xl px-5 py-8">
           <header className="mb-6 text-center">

@@ -28,6 +28,7 @@ import {
   type FlushOutcome,
 } from '@/lib/ocr/offline-queue';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
+import { Kai } from '@/components/illustrations/kai/kai';
 import { DedupWarning } from '@/components/ocr/dedup-warning';
 import { CameraCapture } from './camera-capture';
 import { ScanResults } from './scan-results';
@@ -554,15 +555,19 @@ export function ScannerFlow() {
           </div>
         )}
 
-        {/* --- Uploading: Progress indicator --- */}
+        {/* --- Uploading / parsing: working Kai over an ink-scrim glow ---
+            Warm Precision parse phase: the working Kai (~96px) bobs over a soft
+            ink-scrim ambient disc while OCR reads the resibo. --- */}
         {flowState === 'uploading' && (
-          <div className="py-10 text-center space-y-4" data-testid="uploading-state">
-            <div className="flex justify-center">
-              <IllustrationWrapper
-                src="features/scan-in-progress.webp"
-                alt="Binabasa ang resibo"
-                category="status"
+          <div className="py-12 text-center space-y-5" data-testid="uploading-state">
+            <div className="relative flex justify-center">
+              <span
+                aria-hidden
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-ink-scrim/[0.06] blur-xl"
               />
+              <span className="relative animate-kai-bob">
+                <Kai expression="working" size={96} />
+              </span>
             </div>
             <div className="space-y-2">
               <p className="text-on-surface font-semibold text-base">

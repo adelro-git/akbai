@@ -68,7 +68,7 @@ export default function DeadlineList({ onImminentDeadlineSignal }: DeadlineListP
     ) ?? null
   }, [sorted])
 
-  // Next-due id (the first non-filed row gets the 2px honey-deep ring).
+  // Next-due id (the first non-filed row gets the subtle honey left-edge bar).
   const nextDueId = useMemo(() => {
     return sorted.find((d) => d.status !== 'filed')?.id ?? null
   }, [sorted])

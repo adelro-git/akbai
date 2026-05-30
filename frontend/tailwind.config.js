@@ -82,6 +82,18 @@ module.exports = {
         teal: 'hsl(var(--tertiary))',
         'user-bubble': 'hsl(var(--secondary-container))',
 
+        /* --- Warm Precision new tokens (W1) — reference globals.css :root vars --- */
+        'on-faint': 'hsl(var(--on-faint))',
+        warning: 'hsl(var(--warning))',
+        'error-fill': 'hsl(var(--error-fill))',
+        'error-pale': 'hsl(var(--error-pale))',
+        'outline-input': 'hsl(var(--outline-input))',
+        'ink-scrim': 'hsl(var(--ink-scrim))',
+        sampaguita: 'hsl(var(--sampaguita))',
+        'grad-from': 'hsl(var(--grad-from))',
+        'grad-to': 'hsl(var(--grad-to))',
+        'scan-ink': 'hsl(var(--scan-ink))',
+
         /* --- Shadcn/UI compatibility tokens --- */
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -131,6 +143,10 @@ module.exports = {
         'ambient': '0 20px 40px -5px hsl(var(--primary) / 0.08)',
         'ambient-lg': '0 30px 60px -5px hsl(var(--primary) / 0.08)',
         'ambient-nav': '0 -10px 40px -5px hsl(var(--primary) / 0.06)',
+        /* Warm Precision two-layer elevation (W4) — never grey. Mirrors
+           --el-2-shadow / --el-3-shadow in globals.css :root. */
+        'el-2': '0 1px 2px hsl(38 85% 25% / 0.10)',
+        'el-3': '0 1px 3px hsl(38 85% 25% / 0.14), 0 12px 32px -8px hsl(32 83% 38% / 0.18)',
       },
       keyframes: {
         'slide-up': {
@@ -195,6 +211,12 @@ module.exports = {
           '50%': { transform: 'scale(1.05)', opacity: '1' },
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
+        /* Warm Precision scan viewfinder — honey sweep line travels the
+           receipt frame (prototype/app.css @keyframes scan-sweep). */
+        'scan-sweep': {
+          '0%, 100%': { top: '18%' },
+          '50%': { top: '78%' },
+        },
       },
       animation: {
         /* legacy drawer/sheet — keep */
@@ -213,6 +235,7 @@ module.exports = {
         'flame-flicker': 'flame-flicker 1.6s ease-in-out infinite',
         'check-pop': 'check-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
         'bounce-in': 'bounce-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        'scan-sweep': 'scan-sweep 2.4s cubic-bezier(0.2, 0, 0, 1) infinite',
       },
     },
   },

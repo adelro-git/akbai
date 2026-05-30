@@ -372,33 +372,29 @@ export default function ChatInterface({
     <div className="flex flex-col h-dvh" data-testid="chat-interface">
       <h1 className="sr-only">Chat with Kai</h1>
 
-      {/* Top bar — Phase 8c new design (ADOPT HANDOFF) */}
+      {/* Top bar — Warm Precision (.chat-topbar): translucent surface fade,
+          pale-honey avatar disc, Fraunces "Kai" (wp-h3), teal status dot. */}
       <header
-        className="flex-shrink-0 flex items-center justify-between px-4 py-3 bg-surface-container/80 backdrop-blur-sm pt-safe"
+        className="flex-shrink-0 flex items-center justify-between px-4 py-3 bg-surface/90 backdrop-blur-sm pt-safe"
         data-testid="chat-topbar"
       >
         <div className="flex items-center gap-3">
           <div
-            className="relative w-8 h-8 rounded-full overflow-hidden bg-honey-cream flex items-center justify-center shadow-ambient"
+            className="relative w-9 h-9 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center flex-shrink-0"
             data-testid="chat-topbar-avatar"
           >
-            <Kai expression={loading ? 'thinking' : 'happy'} size={28} />
+            <Kai expression={loading ? 'thinking' : 'happy'} size={30} />
           </div>
           <div className="flex flex-col leading-tight">
             <div className="flex items-center gap-1.5">
+              <span className="wp-h3 font-serif text-[17px]">Kai</span>
               <span
-                className="font-serif text-[18px] font-semibold text-on-surface"
-                style={{ fontFamily: 'var(--font-fraunces), Georgia, serif' }}
-              >
-                Kai
-              </span>
-              <span
-                className="w-2 h-2 rounded-full bg-sage motion-reduce:animate-none animate-pulse"
+                className="w-[7px] h-[7px] rounded-full bg-sage-deep motion-reduce:animate-none animate-pulse"
                 data-testid="chat-topbar-status"
                 aria-label="Online"
               />
             </div>
-            <span className="text-[12px] text-ink-soft">
+            <span className="text-[12px] font-semibold text-sage-deep">
               Nandito ako para sa&apos;yo
             </span>
           </div>
@@ -446,15 +442,15 @@ export default function ChatInterface({
         composerFocused={composerFocused}
       />
 
-      {/* Composer wrapped in light paper-note CTA styling per spec §2 */}
-      <div className="flex-shrink-0 px-3 pb-safe">
-        <div className="rounded-[18px] bg-surface-container-lowest shadow-ambient">
-          <ChatInput
-            onSend={handleSend}
-            loading={loading}
-            onFocusChange={setComposerFocused}
-          />
-        </div>
+      {/* Composer — Warm Precision (.chat-composer): translucent surface bar
+          with a top tonal hairline; the recessed field + gradient send button
+          live inside ChatInput. */}
+      <div className="flex-shrink-0 px-3 pt-2 pb-safe bg-surface/90 backdrop-blur-md ring-1 ring-inset ring-outline-variant/[0.18]">
+        <ChatInput
+          onSend={handleSend}
+          loading={loading}
+          onFocusChange={setComposerFocused}
+        />
       </div>
 
       {/* Sprint 17 paywall — opens on 429 free_tier_limit or banner tap. */}
