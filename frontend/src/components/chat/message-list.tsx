@@ -62,6 +62,10 @@ export default function MessageList({ messages, loading, bottomRef, feature = 'g
 
   const estimate = getEstimatedWait(feature, tier)
 
+  // Warm Precision (spec §6): the first assistant message in the thread is the
+  // greeting — render it with the warm (pale-honey) bubble variant.
+  const firstAssistantId = messages.find((m) => m.role === 'assistant')?.id
+
   return (
     <div className="relative flex-1 overflow-hidden">
       <div
@@ -70,7 +74,11 @@ export default function MessageList({ messages, loading, bottomRef, feature = 'g
         data-testid="message-list"
       >
         {messages.map((msg) => (
-          <ChatBubble key={msg.id} message={msg} />
+          <ChatBubble
+            key={msg.id}
+            message={msg}
+            warm={msg.role === 'assistant' && msg.id === firstAssistantId}
+          />
         ))}
 
         {loading && (
@@ -82,11 +90,12 @@ export default function MessageList({ messages, loading, bottomRef, feature = 'g
                 className="w-5 h-5 object-contain"
               />
             </div>
-            <div className="bg-surface-container rounded-2xl rounded-bl-sm px-4 py-3">
+            {/* Warm Precision (spec §6): Kai white bubble + 3 honey typing dots. */}
+            <div className="bg-surface-container-lowest ring-1 ring-inset ring-outline-variant/[0.24] rounded-[20px] rounded-bl-[6px] px-4 py-3">
               <div className="flex gap-1 items-center h-4">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary-container animate-bounce [animation-delay:-0.3s]" />
-                <div className="w-1.5 h-1.5 rounded-full bg-primary-container animate-bounce [animation-delay:-0.15s]" />
-                <div className="w-1.5 h-1.5 rounded-full bg-primary-container animate-bounce" />
+                <div className="w-1.5 h-1.5 rounded-full bg-honey animate-bounce [animation-delay:-0.3s]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-honey animate-bounce [animation-delay:-0.15s]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-honey animate-bounce" />
               </div>
               <p className="text-xs text-on-surface-variant mt-1.5" data-testid="loading-message">
                 {showLongWait ? estimate.longWaitMessageTl : estimate.messageTl}

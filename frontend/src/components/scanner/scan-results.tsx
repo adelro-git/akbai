@@ -18,7 +18,8 @@ import { useRef, useState, useCallback } from 'react';
 import { Save, X, ChevronDown } from 'lucide-react';
 import type { ReceiptParseResult } from '@/lib/ocr/types';
 import { EXPENSE_CATEGORIES } from '@/lib/expenses/categories';
-import { centavosToPeso, pesoToCentavos } from '@/lib/utils/money';
+import { pesoToCentavos } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import { ConfidenceBadge } from './confidence-badge';
 
 // ============================================================
@@ -164,8 +165,9 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
         </p>
       </div>
 
-      {/* --- Editable Fields Card --- */}
-      <div className="bg-surface-container-low rounded-2xl p-4 space-y-4">
+      {/* --- Editable Expense Card — Warm Precision Level-3 surface
+              (surface-container-lowest white, el-3, generous radius). --- */}
+      <div className="bg-surface-container-lowest rounded-3xl shadow-el-3 p-4 space-y-4">
         {/* Merchant Name */}
         <div>
           <div className="flex items-center justify-between mb-1">
@@ -180,7 +182,7 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
             defaultValue={merchant}
             onBlur={syncMerchant}
             placeholder="Pangalan ng tindahan"
-            className="w-full bg-surface-container-lowest rounded-lg px-3 py-2.5 text-on-surface text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-container min-h-[44px]"
+            className="w-full bg-surface-container-low rounded-lg px-3 py-2.5 text-on-surface text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-container min-h-[44px]"
             data-testid="merchant-input"
           />
         </div>
@@ -198,7 +200,7 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
             type="date"
             defaultValue={date}
             onBlur={syncDate}
-            className="w-full bg-surface-container-lowest rounded-lg px-3 py-2.5 text-on-surface text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-container min-h-[44px]"
+            className="w-full bg-surface-container-low rounded-lg px-3 py-2.5 text-on-surface text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-container min-h-[44px]"
             data-testid="date-input"
           />
         </div>
@@ -212,7 +214,9 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
             <ConfidenceBadge level={fields.total.confidence} />
           </div>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-extrabold text-sm">
+            {/* Editable amount — data-confident tabular teal (the one figure
+                the user verifies before save). */}
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-tertiary font-bold text-base num">
               &#8369;
             </span>
             <input
@@ -223,7 +227,7 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
               defaultValue={amountPeso}
               onBlur={syncAmount}
               placeholder="0.00"
-              className="w-full bg-surface-container-lowest rounded-lg pl-8 pr-3 py-2.5 text-on-surface text-sm font-extrabold focus:outline-none focus:ring-2 focus:ring-primary-container min-h-[44px]"
+              className="num num-md w-full bg-surface-container-low rounded-lg pl-8 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-honey min-h-[48px]"
               data-testid="amount-input"
             />
           </div>
@@ -237,17 +241,17 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
           <button
             type="button"
             onClick={() => setShowCategories(!showCategories)}
-            className="flex items-center justify-between w-full bg-surface-container-lowest rounded-lg px-3 py-2.5 text-on-surface text-sm font-medium min-h-[44px]"
+            className="flex items-center justify-between w-full bg-surface-container-low rounded-lg px-3 py-2.5 text-on-surface text-sm font-medium min-h-[44px]"
             data-testid="category-selector"
           >
             <span>{selectedCategory?.label ?? 'Pumili ng category'}</span>
             <ChevronDown className={`w-4 h-4 text-on-surface-variant transition-transform ${showCategories ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Category Dropdown */}
+          {/* Category Dropdown — active option fills honey (active=honey). */}
           {showCategories && (
             <div
-              className="mt-1 bg-surface-container-lowest rounded-lg shadow-[0_4px_40px_rgba(133,83,0,0.08)] max-h-48 overflow-y-auto"
+              className="mt-1 bg-surface-container-lowest rounded-lg shadow-el-3 max-h-48 overflow-y-auto"
               data-testid="category-dropdown"
             >
               {EXPENSE_CATEGORIES.map((cat) => (
@@ -257,7 +261,7 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
                   onClick={() => handleCategorySelect(cat.key)}
                   className={`w-full text-left px-3 py-2.5 text-sm min-h-[44px] transition-colors ${
                     cat.key === category
-                      ? 'bg-primary-container/10 text-primary font-semibold'
+                      ? 'bg-honey text-on-primary font-semibold'
                       : 'text-on-surface hover:bg-surface-container-low'
                   }`}
                   data-testid={`category-option-${cat.key}`}
@@ -280,15 +284,15 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
             onBlur={syncDescription}
             placeholder="Dagdag na detalye tungkol sa resibo"
             rows={2}
-            className="w-full bg-surface-container-lowest rounded-lg px-3 py-2.5 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary-container resize-none"
+            className="w-full bg-surface-container-low rounded-lg px-3 py-2.5 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary-container resize-none"
             data-testid="description-input"
           />
         </div>
       </div>
 
-      {/* --- Line Items (read-only display) --- */}
+      {/* --- Line Items (read-only display) — Level-1 static card --- */}
       {hasItems && (
-        <div className="bg-surface-container-low rounded-2xl p-4">
+        <div className="card-level-1 p-4">
           <p className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-2">
             Mga Items
           </p>
@@ -303,13 +307,13 @@ export function ScanResults({ data, receiptHash, onSave, onCancel }: ScanResults
                     {item.name}
                   </span>
                   {item.quantity > 1 && (
-                    <span className="text-on-surface-variant text-xs">
-                      {item.quantity}x @ {centavosToPeso(item.unitPrice)}
+                    <span className="inline-flex items-baseline gap-1 text-on-surface-variant text-xs">
+                      {item.quantity}x @ <Money centavos={item.unitPrice} size="sm" countUp={false} />
                     </span>
                   )}
                 </div>
-                <span className="text-on-surface font-extrabold ml-2">
-                  {centavosToPeso(item.total)}
+                <span className="ml-2">
+                  <Money centavos={item.total} size="sm" countUp={false} />
                 </span>
               </div>
             ))}

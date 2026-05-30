@@ -11,6 +11,7 @@
 import { useEffect, useId, useMemo, useState } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { EXPENSE_CATEGORIES } from '@/lib/expenses/categories'
+import Money from '@/components/ui/money'
 
 interface ExpensesDonutProps {
   /** Map of category-key → centavos. */
@@ -60,8 +61,6 @@ export function ExpensesDonut({ categoryTotals, totalCentavos }: ExpensesDonutPr
       .filter((d) => d.value > 0)
   }, [categoryTotals])
 
-  const totalPesos = Math.round(totalCentavos / 100)
-
   if (data.length === 0) {
     return (
       <div
@@ -97,14 +96,11 @@ export function ExpensesDonut({ categoryTotals, totalCentavos }: ExpensesDonutPr
         </ResponsiveContainer>
       </div>
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span className="text-[10px] font-extrabold tracking-wider text-honey-deep">
+        <span className="wp-label text-honey-deep">
           TOTAL
         </span>
-        <span
-          className="font-serif text-[22px] leading-none text-on-surface mt-0.5"
-          style={{ fontFamily: 'var(--font-fraunces), Georgia, serif' }}
-        >
-          ₱{totalPesos.toLocaleString('en-PH')}
+        <span className="mt-0.5">
+          <Money centavos={totalCentavos} size="md" />
         </span>
       </div>
     </div>

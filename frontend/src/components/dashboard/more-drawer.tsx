@@ -103,12 +103,12 @@ export default function MoreDrawer({ trigger, showLanguageToggle = false }: More
           className="fixed inset-x-0 bottom-0 z-50 flex max-h-[88vh] flex-col rounded-t-2xl bg-surface shadow-ambient-lg outline-none"
           data-testid="more-drawer-content"
         >
-          <div className="mx-auto mt-3 mb-2 h-1.5 w-12 rounded-full bg-outline-soft/60" />
+          <div className="mx-auto mt-3 mb-2 h-1 w-8 rounded-full bg-outline-variant/60" />
           <header className="px-5 pt-1 pb-3">
-            <DrawerPrimitive.Title className="font-serif text-2xl font-medium leading-tight text-on-surface">
+            <DrawerPrimitive.Title className="wp-h1 leading-tight text-on-surface">
               {t('title')}
             </DrawerPrimitive.Title>
-            <DrawerPrimitive.Description className="mt-1 text-sm text-on-surface-variant">
+            <DrawerPrimitive.Description className="mt-1 wp-body text-on-surface-variant">
               {t('subtitle')}
             </DrawerPrimitive.Description>
           </header>
@@ -121,19 +121,22 @@ export default function MoreDrawer({ trigger, showLanguageToggle = false }: More
               const title = t(`items.${item.i18nKey}.title`);
               const subtitle = t(`items.${item.i18nKey}.subtitle`);
               const disabled = item.comingSoon || !item.href;
+              // Warm Precision (spec §7): Level-3 solid sheet items — tonal
+              // surface-container-low fill, No-Line Rule (no hairline border),
+              // tone step to surface-container-high on press.
               const sharedClass = cn(
-                'flex w-full items-center gap-3 rounded-2xl border border-outline-soft/30 bg-surface-container-lowest p-4 text-left transition-colors',
+                'flex w-full items-center gap-3 rounded-2xl bg-surface-container-low p-4 text-left transition-colors',
                 disabled
                   ? 'opacity-60 cursor-not-allowed'
-                  : 'hover:border-honey/40 hover:bg-honey-pale/40 active:bg-honey-pale/60',
+                  : 'hover:bg-surface-container active:bg-surface-container-high',
               );
               const inner = (
                 <>
-                  <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-honey-pale/60">
+                  <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-secondary-container">
                     {item.icon}
                   </span>
                   <span className="flex-1 min-w-0">
-                    <span className="block text-base font-semibold text-on-surface">{title}</span>
+                    <span className="block wp-body-strong text-on-surface">{title}</span>
                     <span className="block text-xs text-on-surface-variant truncate">
                       {disabled ? t('comingSoon') : subtitle}
                     </span>
@@ -174,7 +177,7 @@ export default function MoreDrawer({ trigger, showLanguageToggle = false }: More
               <DrawerPrimitive.Close asChild>
                 <button
                   type="button"
-                  className="w-full rounded-full border border-outline-soft/40 px-4 py-3 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-high/40"
+                  className="w-full rounded-full bg-surface-container-high px-4 py-3 text-sm font-semibold text-on-surface-variant transition-colors hover:bg-surface-container-highest"
                   data-testid="more-drawer-close"
                 >
                   {tCommon('close')}

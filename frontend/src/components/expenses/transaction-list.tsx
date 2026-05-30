@@ -6,7 +6,7 @@
  */
 
 import { Trash2 } from 'lucide-react';
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import { getCategoryLabel } from '@/lib/expenses/categories';
 
 interface Transaction {
@@ -96,13 +96,12 @@ export default function TransactionList({ transactions, onDelete }: TransactionL
                     )}
                   </div>
 
-                  <p
-                    className={`text-sm font-extrabold whitespace-nowrap ${
-                      isIncome ? 'text-tertiary' : 'text-on-surface'
-                    }`}
-                  >
-                    {isIncome ? '+' : '-'}{centavosToPeso(tx.amount)}
-                  </p>
+                  <Money
+                    centavos={isIncome ? tx.amount : -tx.amount}
+                    size="sm"
+                    signed
+                    countUp={false}
+                  />
 
                   {onDelete && tx.source === 'manual' && (
                     <button

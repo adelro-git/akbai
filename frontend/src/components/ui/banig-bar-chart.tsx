@@ -50,6 +50,25 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
+/**
+ * Resolve a design-token CSS var (`--token`, stored as an HSL triplet) to a
+ * usable `hsl(...)` color string for SVG fills/strokes, which cannot take
+ * Tailwind utility classes. Mirrors `expenses-donut.tsx` `resolveBgColor`.
+ * SSR-safe: returns the fallback hex on the server and re-resolves on mount,
+ * so the stripe follows the active theme instead of a hardcoded light literal.
+ */
+function useResolvedVar(token: string, fallback: string): string {
+  const [color, setColor] = useState(fallback);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(`--${token}`)
+      .trim();
+    if (value) setColor(`hsl(${value})`);
+  }, [token]);
+  return color;
+}
+
 // Custom Bar shape — pulls a striped <pattern> over the bar so each bar
 // reads as a banig (woven mat) stripe. The peak bar gets the IconSampaguita
 // floated above it via a foreignObject.
@@ -64,6 +83,8 @@ type RechartsBarShapeProps = {
 };
 
 function BanigBar(props: RechartsBarShapeProps) {
+  // `fill` is always supplied by the parent (resolved from --honey-deep / the
+  // barColor override); the literal default is an unreachable last-resort.
   const { x = 0, y = 0, width = 0, height = 0, fill = '#855300', patternId, payload } = props;
   if (width <= 0 || height <= 0) return null;
   return (
@@ -95,8 +116,13 @@ export function BanigBarChart({ days, peakDayIndex, barColor }: BanigBarChartPro
   }));
 
   // Resolve fill color — Tailwind tokens need to be inlined for SVG fills,
-  // so we read the CSS var. Default to honey-deep #855300 when no override.
-  const fill = barColor ?? '#855300';
+  // so we read the CSS var. Default to honey-deep when no override.
+  const honeyDeep = useResolvedVar('honey-deep', '#855300');
+  const fill = barColor ?? honeyDeep;
+  // Stripe follows the active surface (was a hardcoded #fdf9f2 light literal
+  // that broke dark mode); tick follows the faint-ink token.
+  const stripeColor = useResolvedVar('surface', '#fdfaf4');
+  const tickColor = useResolvedVar('ink-faint', '#8a7558');
 
   return (
     <div className="w-full" style={{ height: 140 }} data-testid="banig-bar-chart">
@@ -111,15 +137,15 @@ export function BanigBarChart({ days, peakDayIndex, barColor }: BanigBarChartPro
               patternUnits="userSpaceOnUse"
               patternTransform="rotate(0)"
             >
-              <line x1={0} y1={2} x2={6} y2={2} stroke="#fdf9f2" strokeWidth={0.6} opacity={0.7} />
-              <line x1={0} y1={4} x2={6} y2={4} stroke="#fdf9f2" strokeWidth={0.6} opacity={0.5} />
+              <line x1={0} y1={2} x2={6} y2={2} stroke={stripeColor} strokeWidth={0.6} opacity={0.7} />
+              <line x1={0} y1={4} x2={6} y2={4} stroke={stripeColor} strokeWidth={0.6} opacity={0.5} />
             </pattern>
           </defs>
           <XAxis
             dataKey="day_label"
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 11, fill: '#867461' }}
+            tick={{ fontSize: 11, fill: tickColor }}
             interval={0}
           />
           <Bar

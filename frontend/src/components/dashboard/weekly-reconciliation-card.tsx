@@ -126,14 +126,14 @@ export default function WeeklyReconciliationCard() {
       className="px-4 pb-4"
       data-testid="weekly-reconciliation-card"
     >
-      <div className="rounded-2xl bg-surface-container p-5 shadow-ambient">
+      <div className="card-level-1 p-5">
         {/* Header row */}
         <div className="flex items-center gap-2">
           <IconCheckin size={20} />
           <p className="font-serif text-sm text-on-surface-variant">{t('label')}</p>
         </div>
 
-        <h2 className="mt-1 font-serif text-[22px] leading-tight font-medium text-on-surface">
+        <h2 className="mt-1 wp-h2 text-on-surface">
           {t('logged', { logged: data.logged_count, total: data.total_days })}
         </h2>
 
@@ -160,7 +160,12 @@ export default function WeeklyReconciliationCard() {
           ))}
         </div>
 
-        {/* Net-so-far line (kita − gastos across logged days). */}
+        {/* Net-so-far line (kita − gastos across logged days).
+            i18n-interpolated amount: the key is "Tubo sa ngayon: {amount}" and copy
+            is LOCKED, so <Money> (a React node) cannot slot into the t() value
+            placeholder without reshaping the key. Per the WP spec §2 caveat we keep
+            the plain centavosToPeso string here (the only site where the teal-tabular
+            treatment can't apply without a copy/key change). */}
         <p
           className="mt-4 text-sm text-on-surface-variant"
           data-testid="weekly-reconciliation-net"

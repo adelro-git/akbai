@@ -76,11 +76,7 @@ export default function DeadlinesPage() {
               BIR DEADLINES
             </span>
           </div>
-          <h1
-            className="font-serif text-[28px] leading-tight text-on-surface mb-1"
-            style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 500 }}
-            data-testid="deadlines-h1"
-          >
+          <h1 className="wp-h1 mb-1" data-testid="deadlines-h1">
             Hindi ka mahuhuli kay Kai.
           </h1>
           <p className="text-[13px] text-ink-soft">

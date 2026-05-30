@@ -7,8 +7,8 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
-import { centavosToPeso } from '@/lib/utils/money';
+import { useEffect, useState, type ReactNode } from 'react';
+import Money from '@/components/ui/money';
 
 // ============================================================
 // Types
@@ -25,13 +25,26 @@ interface StatsData {
 // StatCard — Individual metric card
 // ============================================================
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({
+  label,
+  value,
+  valueNode,
+}: {
+  label: string;
+  value?: string;
+  /** When present, renders in place of the string `value` (e.g. a <Money> node). */
+  valueNode?: ReactNode;
+}) {
   return (
     <div className="rounded-xl bg-surface-container p-4 shadow-sm">
       <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
         {label}
       </p>
-      <p className="text-2xl font-bold text-on-surface mt-1">{value}</p>
+      {valueNode ? (
+        <p className="mt-1">{valueNode}</p>
+      ) : (
+        <p className="text-2xl font-bold text-on-surface mt-1">{value}</p>
+      )}
     </div>
   );
 }
@@ -105,7 +118,7 @@ export default function AdminStats() {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       <StatCard label="Total Users" value={String(stats.totalUsers)} />
       <StatCard label="Paying Users" value={String(stats.payingUsers)} />
-      <StatCard label="MRR" value={centavosToPeso(stats.mrrCentavos)} />
+      <StatCard label="MRR" valueNode={<Money centavos={stats.mrrCentavos} size="md" />} />
       <StatCard label="Active Today" value={String(stats.activeToday)} />
     </div>
   );

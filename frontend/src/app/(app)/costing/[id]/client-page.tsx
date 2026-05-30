@@ -15,7 +15,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Pencil, Trash2, Loader2 } from 'lucide-react';
 import type { CostingCardWithItems } from '@/lib/costing/types';
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import CostingSummary from '@/components/costing/costing-summary';
 import CostingCardForm from '@/components/costing/costing-card-form';
 import { createClient } from '@/lib/supabase/client';
@@ -210,9 +210,9 @@ export default function CostingCardDetailClientPage() {
                       </span>
                     </p>
                   </div>
-                  <p className="text-on-surface text-sm font-extrabold ml-3">
-                    {centavosToPeso(item.total_cost_centavos)}
-                  </p>
+                  <span className="ml-3">
+                    <Money centavos={item.total_cost_centavos} size="sm" countUp={false} />
+                  </span>
                 </div>
               ))}
             </div>

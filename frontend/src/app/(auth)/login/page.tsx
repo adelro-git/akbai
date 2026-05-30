@@ -6,7 +6,6 @@ import DemoLoginButton from '@/components/auth/demo-login-button';
 import { PageBackground } from '@/components/ui/page-background';
 import { KaiSitting } from '@/components/illustrations/kai';
 import { CapizPattern } from '@/components/illustrations/svg/decorative/CapizPattern';
-import { FloatingPetals } from '@/components/illustrations/svg/decorative/FloatingPetals';
 
 export const metadata: Metadata = {
   title: 'Login — AKBai',
@@ -14,9 +13,12 @@ export const metadata: Metadata = {
 
 // ============================================================
 // Phase 6 — Login redesign.
-// KaiSitting hero (168px) + Fraunces serif title + ambient
-// FloatingPetals (4 petals — perf-light, day-1 visible) + a
-// single CapizPattern background. Form internals untouched.
+// KaiSitting hero (168px) + Fraunces serif title + a single
+// CapizPattern ambient background. Form internals untouched.
+//
+// Warm Precision W7 motif dial-down: one ambient layer per screen.
+// The prior FloatingPetals layer (a second ambient) was removed so
+// only CapizPattern remains (petals OR capiz, not both — design-system §6).
 // ============================================================
 
 export default async function LoginPage() {
@@ -29,9 +31,6 @@ export default async function LoginPage() {
       >
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
           <CapizPattern opacity={0.1} />
-        </div>
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-          <FloatingPetals count={4} />
         </div>
 
         <section className="relative w-full max-w-md tablet:max-w-lg flex flex-col gap-10">

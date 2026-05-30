@@ -23,6 +23,7 @@ import { useTranslations } from 'next-intl';
 import { IconPera } from '@/components/illustrations/icons';
 import { PaperNote } from '@/components/ui/paper-note';
 import { BanigBarChart } from '@/components/ui/banig-bar-chart';
+import Money from '@/components/ui/money';
 import type { WeeklyStoryResponse, WeeklyStory } from '@/lib/weekly-story/types';
 
 type CardState =
@@ -30,17 +31,6 @@ type CardState =
   | { kind: 'available'; story: WeeklyStory }
   | { kind: 'unavailable'; message_tl: string }
   | { kind: 'error'; message_tl: string };
-
-const phpFormatter = new Intl.NumberFormat('en-PH', {
-  style: 'currency',
-  currency: 'PHP',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-});
-
-function fmtPeso(centavos: number): string {
-  return phpFormatter.format(centavos / 100);
-}
 
 export default function KuwentoCard() {
   const t = useTranslations('home.kuwento');
@@ -136,28 +126,30 @@ export default function KuwentoCard() {
       className="px-4 pb-4"
       data-testid="kuwento-card"
     >
-      <div className="rounded-2xl bg-surface-container p-5 shadow-ambient">
+      {/* Warm Precision Level-1 static card — tone separation, no shadow. */}
+      <div className="card-level-1 p-5">
         {/* Header row */}
         <div className="flex items-center gap-2">
           <IconPera size={20} />
           <p className="font-serif text-sm text-on-surface-variant">{t('label')}</p>
         </div>
         <h2
-          className="mt-1 font-serif text-[24px] leading-tight font-medium text-on-surface"
+          className="mt-1 wp-h2 text-on-surface"
           data-testid="kuwento-takeaway-headline"
         >
           {story.takeaway}
         </h2>
 
-        {/* 3-col KPI grid */}
+        {/* 3-col KPI grid — Warm Precision: Number-md tabular teal, count-up;
+            profit tile uses the pale secondary-container fill per the prototype. */}
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <KpiTile label={t('kita')} value={fmtPeso(story.kita_centavos)} testId="kpi-kita" />
-          <KpiTile label={t('gastos')} value={fmtPeso(story.gastos_centavos)} testId="kpi-gastos" />
+          <KpiTile label={t('kita')} centavos={story.kita_centavos} testId="kpi-kita" />
+          <KpiTile label={t('gastos')} centavos={story.gastos_centavos} testId="kpi-gastos" />
           <KpiTile
             label={t('tubo')}
-            value={fmtPeso(story.tubo_centavos)}
+            centavos={story.tubo_centavos}
             testId="kpi-tubo"
-            negative={story.tubo_centavos < 0}
+            profit
           />
         </div>
 
@@ -188,30 +180,29 @@ export default function KuwentoCard() {
 
 function KpiTile({
   label,
-  value,
+  centavos,
   testId,
-  negative,
+  profit,
 }: {
   label: string;
-  value: string;
+  centavos: number;
   testId: string;
-  negative?: boolean;
+  /** Tubo tile: pale honey secondary-container fill (Warm Precision). */
+  profit?: boolean;
 }) {
   return (
     <div
-      className="rounded-xl bg-surface-container-low px-3 py-2"
+      className={`rounded-xl px-3 py-2 text-center ${
+        profit ? 'bg-secondary-container' : 'bg-surface-container-low'
+      }`}
       data-testid={testId}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-on-surface-variant">
+      <p className="text-[10px] font-bold uppercase tracking-[0.07em] text-on-surface-variant">
         {label}
       </p>
-      <p
-        className={`mt-1 font-serif text-[22px] font-medium leading-none ${
-          negative ? 'text-destructive' : 'text-on-surface'
-        }`}
-      >
-        {value}
-      </p>
+      <div className="mt-1">
+        <Money centavos={centavos} size="md" signed={profit} />
+      </div>
     </div>
   );
 }

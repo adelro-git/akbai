@@ -3,27 +3,31 @@
 @tailwind utilities;
 
 @layer base {
-  /* ===== LIGHT THEME (Default) — "Sun-Drenched Atelier" ===== */
+  /* ===== LIGHT THEME (Default) — "Warm Precision" (cream canonical) ===== */
+  /* Warm Precision token reroot (W1). Source of truth:
+     design_handoff_akbai_warm_precision/prototype/app.css. HSL triplets below are
+     EXACT hex→HSL conversions of the prototype hex (verified two ways), not the
+     spec's ±1% estimates. The .dark{} block is intentionally untouched this sweep. */
   :root {
-    /* Surface hierarchy (cream paper tones) */
-    --background: 39 47% 97%;        /* #fdf9f2 */
-    --foreground: 48 8% 10%;         /* #1c1c18 */
-    --surface: 39 47% 97%;           /* #fdf9f2 */
-    --surface-dim: 39 6% 85%;        /* #dddad3 */
-    --surface-bright: 39 47% 97%;    /* #fdf9f2 */
-    --surface-container-lowest: 0 0% 100%;   /* #ffffff */
-    --surface-container-low: 33 19% 94%;     /* #f7f3ec */
-    --surface-container: 33 13% 91%;         /* #f1ede7 */
-    --surface-container-high: 33 11% 87%;    /* #ebe8e1 (was #e8e1d6) */
-    --surface-container-highest: 33 8% 84%;  /* #e6e2db (was #ddd6cb) */
+    /* Surface hierarchy (cooler-neutral warm paper) */
+    --background: 40 69% 97%;        /* #fdfaf4 (was #fdf9f2) */
+    --foreground: 48 8% 10%;         /* #1c1c18 — SAME (rounding-equal) */
+    --surface: 40 69% 97%;           /* #fdfaf4 */
+    --surface-dim: 39 6% 85%;        /* #dddad3 — no WP consumer; left as-is */
+    --surface-bright: 40 69% 97%;    /* #fdfaf4 */
+    --surface-container-lowest: 0 0% 100%;   /* #ffffff — SAME */
+    --surface-container-low: 40 46% 95%;     /* #f8f4ec (was #f7f3ec) */
+    --surface-container: 39 35% 92%;         /* #f2ede4 (was #f1ede7) — card bg / Level 1 */
+    --surface-container-high: 40 28% 90%;    /* #ece7dd (was #ebe8e1) */
+    --surface-container-highest: 39 26% 87%; /* #e7e1d6 (was #e6e2db) — pressed state */
 
     /* On-surface text */
-    --on-surface: 48 8% 10%;         /* #1c1c18 */
-    --on-surface-variant: 27 20% 27%; /* #534434 */
+    --on-surface: 48 8% 10%;         /* #1c1c18 — SAME */
+    --on-surface-variant: 31 24% 29%; /* #5b4a38 (was #534434) — warmer, lighter */
 
     /* Outlines */
     --outline: 30 11% 45%;           /* #867461 */
-    --outline-variant: 30 22% 76%;   /* #d8c3ad */
+    --outline-variant: 31 24% 29%;   /* #5b4a38 base ink — consumed at /20 via Tailwind */
 
     /* Primary (Warm Honey) */
     --primary: 32 100% 26%;          /* #855300 */
@@ -38,22 +42,24 @@
     /* Secondary (Warm Brown) */
     --secondary: 28 100% 28%;        /* #904d00 */
     --secondary-foreground: 0 0% 100%; /* #ffffff */
-    --secondary-container: 27 99% 59%; /* #fe932c */
+    --secondary-container: 42 95% 92%; /* #fef3d9 (was #fe932c) — ROLE-CHANGE: pale honey soft-fill */
     --on-secondary: 0 0% 100%;      /* #ffffff */
-    --on-secondary-container: 28 100% 20%; /* #663500 */
+    --on-secondary-container: 28 100% 20%; /* #663500 — darker ink, AA on pale fill ✓ */
 
     /* Tertiary (Teal / Trust) */
-    --tertiary: 160 100% 21%;        /* #006b54 */
+    --tertiary: 160 100% 21%;        /* #006b54 — SAME (teal = ALL peso amounts) */
     --tertiary-foreground: 0 0% 100%; /* #ffffff */
-    --tertiary-container: 161 76% 45%; /* #1ec89f */
+    --tertiary-container: 158 49% 87%; /* #cdeee2 (was #1ec89f) — ROLE-CHANGE: pale success fill */
     --on-tertiary: 0 0% 100%;       /* #ffffff */
-    --on-tertiary-container: 161 100% 15%; /* #004e3c */
+    --on-tertiary-container: 161 100% 15%; /* #004e3c — darker ink, AA on pale fill ✓ */
 
     /* Error */
-    --destructive: 0 63% 41%;        /* #ba1a1a */
+    --destructive: 0 63% 41%;        /* #ba1a1a — SAME (do NOT adopt #c0392b) */
     --destructive-foreground: 0 0% 100%;
     --error-container: 6 100% 92%;   /* #ffdad6 */
     --on-error-container: 0 100% 29%; /* #93000a */
+    --error-fill: 0 91% 71%;         /* #F87171 — error icons/fills only (NEW) */
+    --error-pale: 7 89% 93%;         /* #fde0dc — overdue tag fill only (NEW) */
 
     /* Shadcn compatibility tokens */
     --card: 33 13% 91%;              /* surface-container */
@@ -78,24 +84,40 @@
 
     /* ─── Phase 3 redesign tokens (honey / sage / ink) ─── */
     /* Ink scale (text on light surfaces) — verified ≥ 4.5:1 on cream + honey-cream */
-    --ink: 48 8% 10%;                /* #1c1c18 — body text */
-    --ink-soft: 27 20% 27%;          /* #534434 — secondary text */
-    --ink-faint: 30 11% 45%;         /* #867461 — captions / eyebrows */
+    --ink: 48 8% 10%;                /* #1c1c18 — body text — SAME */
+    --ink-soft: 31 24% 29%;          /* #5b4a38 (was #534434) — secondary text, warmer */
+    --ink-faint: 35 22% 44%;         /* #8a7558 (was #867461) — captions / eyebrows */
+    --on-faint: 35 22% 44%;          /* #8a7558 — muted/tertiary ink alias (NEW; mirrors ink-faint) */
 
-    /* Outline scale */
-    --outline-soft: 30 22% 76%;      /* #d8c3ad — hairline borders */
+    /* Outline scale (WP: warm-ink base, consumed at /20–/40 opacity for hairlines) */
+    --outline-soft: 31 24% 29%;      /* #5b4a38 base — hairlines at opacity (was #d8c3ad) */
+    --outline-input: 31 24% 29%;     /* #5b4a38 base — permitted input bottom hairline, consume at /32 (NEW) */
 
     /* Honey scale (warm primary family) — handoff-aligned */
-    --honey: 37 90% 51%;             /* #f59e0b — handoff "honey" */
-    --honey-bright: 36 100% 69%;     /* #ffb95f — light accents */
+    --honey: 37 90% 51%;             /* #f59e0b — handoff "honey" — SAME */
+    --honey-bright: 37 90% 62%;      /* #f5b347 (was #ffb95f) — slightly deeper bright honey */
     --honey-pale: 33 100% 87%;       /* #ffddb8 — soft chips */
-    --honey-deep: 32 100% 26%;       /* #855300 — CTA + serif highlight (4.92:1 on #fdf9f2 ✓) */
+    --honey-deep: 32 100% 26%;       /* #855300 — CTA + serif highlight (4.92:1 on #fdfaf4 ✓) — SAME */
     --honey-cream: 39 89% 93%;       /* #fef4dd — handoff palette base */
+    --grad-from: 37 90% 62%;         /* #f5b347 — honey gradient top stop (NEW) */
+    --grad-to: 32 95% 44%;           /* #d97706 — honey gradient bottom stop; white labels AA-safe here (NEW) */
 
     /* Sage scale (cool counter to honey — used sparingly) */
     --sage: 158 38% 52%;             /* #5fb89a */
     --sage-deep: 160 100% 21%;       /* #006b54 — same hue as --tertiary */
     --sage-pale: 160 50% 91%;        /* #d8eee5 */
+
+    /* ─── Warm Precision semantic + motif tokens (NEW) ─── */
+    --warning: 43 96% 56%;           /* #FBBF24 — deadline urgency amber bar (NOT red) */
+    --ink-scrim: 40 27% 9%;          /* #1c1810 base — sheet/scan scrim, consume at /45 */
+    --sampaguita: 0 0% 100%;         /* #ffffff — banig-chart peak marker / motif accent */
+    --scan-ink: 96 26% 5%;           /* #0a0f08 — scan viewfinder warm near-black (full-bleed camera bg) */
+
+    /* ─── Warm Precision elevation (W4) — warm two-layer shadows, never grey ───
+       Mirrored as Tailwind boxShadow tokens (shadow-el-2 / shadow-el-3); these
+       CSS-var forms back the .card-level-* utilities and any direct CSS use. */
+    --el-2-shadow: 0 1px 2px hsl(38 85% 25% / 0.10);
+    --el-3-shadow: 0 1px 3px hsl(38 85% 25% / 0.14), 0 12px 32px -8px hsl(32 83% 38% / 0.18);
   }
 
   /* ─── Phase 3 palette context (cream / honey / dawn) ─── */
@@ -116,7 +138,13 @@
     --surface-bright: 33 100% 96%;
   }
 
-  /* ===== DARK THEME — Ink & Amber ===== */
+  /* ===== DARK THEME — Ink & Amber =====
+     Intentionally NOT touched in the Warm Precision light-mode sweep (W1).
+     The dark reroot is a separate gate. New WP tokens (--on-faint, --warning,
+     --error-fill, --error-pale, --outline-input, --ink-scrim, --sampaguita,
+     --grad-from/to, --el-*-shadow) have no dark override yet — they inherit the
+     :root light values under .dark. None are consumed by the dark surfaces this
+     sweep ships, so this is safe; revisit at the dark reroot. */
   .dark {
     /* Surface hierarchy (deep ink tones — raised for better contrast) */
     --background: 220 45% 9%;        /* #0b1525 (ink, slightly lifted) */
@@ -393,6 +421,102 @@
     transform: rotate(1.2deg);
     border-radius: 12px 4px 12px 4px;
   }
+
+  /* ═══════════════ Warm Precision typography (W3) ═══════════════
+     Type scale from prototype/app.css §4. Components reference these
+     class names (.display, .h1, .num-lg, .body-strong, …). Fraunces +
+     Plus Jakarta Sans are already wired in tailwind.config (font-serif /
+     font-sans). Display & H1 drop from weight-800 → 600 per WP. */
+  .wp-display {
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-size: 40px;
+    line-height: 44px;
+    color: hsl(var(--on-surface));
+  }
+  .wp-h1 {
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-size: 30px;
+    line-height: 36px;
+    color: hsl(var(--on-surface));
+  }
+  .wp-h2 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-size: 22px;
+    line-height: 28px;
+  }
+  .wp-h3 {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 24px;
+  }
+  .wp-body {
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 400;
+    color: hsl(var(--on-surface));
+  }
+  /* Body-strong (NEW) — emphasized body copy */
+  .wp-body-strong {
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+  .wp-label {
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: hsl(var(--on-surface-variant));
+  }
+
+  /* ─── Data-confident numbers: tabular, teal, precise (W3) ───
+     .num* power the <Money> primitive (components/ui/money.tsx). Teal is the
+     default for all financial figures; .num-ink / .num-white are tone overrides. */
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: hsl(var(--tertiary));
+    white-space: nowrap;
+  }
+  .num-lg { font-size: 30px; line-height: 32px; }
+  .num-md { font-size: 20px; line-height: 24px; }
+  .num-sm { font-size: 15px; line-height: 18px; }
+  .num-ink  { color: hsl(var(--on-surface)); }
+  .num-white { color: hsl(var(--on-primary)); }
+
+  /* ═══════════════ Warm Precision elevation (W4) ═══════════════
+     Two-layer warm shadows (never grey) via tailwind boxShadow tokens
+     shadow-el-2 / shadow-el-3. These card-level utilities encode the
+     Level 1/2/3 rules from the spec; glass stays restricted to nav + scan. */
+  /* Level 1 — static card: tone separation only, no shadow */
+  .card-level-1 {
+    background: hsl(var(--surface-container));
+    border-radius: 16px;
+  }
+  /* Level 2 — raised / press-from */
+  .card-level-2 {
+    background: hsl(var(--surface-container-high));
+    border-radius: 16px;
+    box-shadow: var(--el-2-shadow);
+    transition: transform 120ms cubic-bezier(0.2, 0, 0, 1), background 120ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .card-level-2:active {
+    transform: scale(0.98);
+    background: hsl(var(--surface-container-highest));
+  }
+  /* Level 3 — floating: bottom sheet / FAB / toast / data card */
+  .card-level-3 {
+    background: hsl(var(--surface-container-lowest));
+    border-radius: 24px;
+    box-shadow: var(--el-3-shadow);
+  }
 }
 
 /* ─── Phase 3 reduced-motion gating (F2 verdict) ───
@@ -412,6 +536,7 @@
   .animate-flame-flicker,
   .animate-check-pop,
   .animate-bounce-in,
+  .animate-scan-sweep,
   .landing-fade-in,
   .landing-float,
   .landing-float-delayed,

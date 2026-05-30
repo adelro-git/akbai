@@ -6,7 +6,7 @@
  * No external chart library — pure CSS. Zero bundle cost.
  */
 
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import { getCategoryDef } from '@/lib/expenses/categories';
 
 interface CategoryData {
@@ -92,8 +92,8 @@ export default function CategoryChart({ data }: CategoryChartProps) {
                 {seg.percentage}%
               </span>
             </div>
-            <span className="text-on-surface text-xs font-extrabold whitespace-nowrap ml-2">
-              {centavosToPeso(seg.total)}
+            <span className="ml-2">
+              <Money centavos={seg.total} size="sm" countUp={false} />
             </span>
           </div>
         ))}

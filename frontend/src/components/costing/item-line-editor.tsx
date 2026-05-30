@@ -11,7 +11,8 @@
 import { useRef, useCallback } from 'react';
 import { Trash2, Plus } from 'lucide-react';
 import type { CostingCardItemType } from '@/lib/costing/types';
-import { pesoToCentavos, centavosToPeso } from '@/lib/utils/money';
+import { pesoToCentavos } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import { calculateItemTotalCost } from '@/lib/costing/calculations';
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -80,8 +81,8 @@ export default function ItemLineEditor({ items, onChange }: ItemLineEditorProps)
         <p className="text-on-surface text-xs font-bold uppercase tracking-wider">
           Mga Gastos
         </p>
-        <p className="text-on-surface-variant text-xs font-semibold">
-          Total: <span className="text-on-surface font-extrabold">{centavosToPeso(totalCost)}</span>
+        <p className="inline-flex items-baseline gap-1.5 text-on-surface-variant text-xs font-semibold">
+          Total: <Money centavos={totalCost} size="sm" countUp={false} />
         </p>
       </div>
 
@@ -242,9 +243,9 @@ function ItemRow({
       </div>
 
       {/* Row 3: Line total */}
-      <div className="text-right">
-        <span className="text-on-surface-variant text-xs">
-          = <span className="text-on-surface font-bold">{centavosToPeso(itemTotal)}</span>
+      <div className="flex justify-end">
+        <span className="inline-flex items-baseline gap-1 text-on-surface-variant text-xs">
+          = <Money centavos={itemTotal} size="sm" countUp={false} />
         </span>
       </div>
     </div>

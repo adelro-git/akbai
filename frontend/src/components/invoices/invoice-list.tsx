@@ -13,7 +13,7 @@
 
 import Link from 'next/link';
 import StatusBadge from './status-badge';
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import type { Invoice } from '@/lib/invoices/types';
 
 // ============================================================
@@ -62,9 +62,7 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
 
             {/* Right: total + status */}
             <div className="text-right shrink-0">
-              <p className="text-on-surface text-sm font-extrabold">
-                {centavosToPeso(invoice.total_centavos)}
-              </p>
+              <Money centavos={invoice.total_centavos} size="sm" countUp={false} />
               <div className="mt-1">
                 <StatusBadge status={invoice.status} />
               </div>

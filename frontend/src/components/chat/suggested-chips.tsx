@@ -72,7 +72,7 @@ export default function SuggestedChips({ onSelect, loading, composerFocused }: S
               trackChatSuggestionTapped(chip.id, chip.intent)
               onSelect(chip.text_tl)
             }}
-            className="flex-shrink-0 snap-start min-h-[44px] px-3.5 py-2 rounded-full bg-honey-pale text-honey-deep text-[13px] font-semibold border border-honey-deep/20 hover:bg-honey-cream hover:border-honey-deep/40 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex-shrink-0 snap-start min-h-[44px] px-3.5 py-2 rounded-full bg-surface-container-lowest text-on-surface text-[13px] font-semibold ring-1 ring-inset ring-outline-variant/[0.24] hover:bg-surface-container-low transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             data-testid={`chat-chip-${chip.id}`}
             data-intent={chip.intent}
           >

@@ -176,7 +176,7 @@ export default function AddTransactionModal({
             onClick={() => { setTxType('income'); setSelectedCategory(null); }}
             className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
               txType === 'income'
-                ? 'bg-tertiary-container text-on-tertiary'
+                ? 'bg-tertiary text-on-tertiary'
                 : 'bg-surface-container text-on-surface-variant'
             }`}
             type="button"

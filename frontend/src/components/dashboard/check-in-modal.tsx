@@ -12,7 +12,8 @@
 
 import { useRef, useState, useCallback } from 'react';
 import { X, ChevronRight } from 'lucide-react';
-import { pesoToCentavos, centavosToPeso } from '@/lib/utils/money';
+import { pesoToCentavos } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import { trackDailyCheckInCompleted } from '@/lib/posthog/events';
 import { EXPENSE_CATEGORIES } from '@/lib/expenses/categories';
 import { KaCelebrating, KaHappy, KaThinking, KaConcerned, KaWorking } from '@/components/illustrations/svg';
@@ -303,8 +304,8 @@ export default function CheckInModal({ isOpen, onClose, onSuccess, hasExistingCh
             <h2 className="text-on-surface text-lg font-bold mb-1">
               Saan napunta ang gastos?
             </h2>
-            <p className="text-on-surface-variant text-xs mb-4">
-              {centavosToPeso(expensesCentavos)} — pumili ng category
+            <p className="inline-flex items-baseline gap-1 text-on-surface-variant text-xs mb-4">
+              <Money centavos={expensesCentavos} size="sm" countUp={false} /> — pumili ng category
             </p>
 
             {/* Category chips */}

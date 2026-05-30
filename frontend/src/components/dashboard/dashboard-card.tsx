@@ -54,15 +54,15 @@ const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: 
   'message-square': ReplyDrafter,
 };
 
-// TILE_TINT — per-icon tonal background, re-derived for cream home bg per Q3.
-// Falls back to surface-container for any unknown icon key (preserves legacy
-// callers that pass other keys).
+// TILE_TINT — Warm Precision action-tile fill. The prototype's action grid uses
+// the pale honey secondary-container for every tile (the pricing tile renders
+// plain surface-container). Single illustrated icon, NO corner motifs.
 const TILE_TINT: Record<string, string> = {
-  resibo: 'bg-honey-pale',
-  usap: 'bg-sage-pale',
-  kalendaryo: 'bg-honey-cream',
-  precio: 'bg-honey-pale',
-  invoice: 'bg-sage-pale',
+  resibo: 'bg-secondary-container',
+  usap: 'bg-secondary-container',
+  kalendaryo: 'bg-secondary-container',
+  precio: 'bg-surface-container', // plain tile (prototype "tile-plain")
+  invoice: 'bg-secondary-container',
   // legacy keys keep the existing chrome
   camera: 'bg-surface-container',
   wallet: 'bg-surface-container',
@@ -100,19 +100,20 @@ export default function DashboardCard({
       data-testid={`dashboard-card-${icon}`}
       style={{ minHeight: '100px' }} // enforces 44x44 minimum touch target floor
     >
-      <div className="flex items-start gap-3">
-        {/* Icon — soft inset chip, color-shift over hairline (No-Line Rule). */}
-        <div className="w-12 h-12 rounded-xl bg-on-surface/5 flex items-center justify-center flex-shrink-0">
+      {/* Warm Precision action tile — single 40px illustrated icon (no inset
+          chip / corner motif), title + sub stacked below per the prototype. */}
+      <div className="flex flex-col gap-2.5">
+        <div className="w-10 h-10 flex items-center justify-center">
           {IconComponent ? (
-            <IconComponent size={32} />
+            <IconComponent size={40} />
           ) : (
             <span className="text-honey-deep text-sm">?</span>
           )}
         </div>
 
-        {/* Content */}
-        <div className="min-w-0 flex-1">
-          <h3 className="text-on-surface text-base font-bold truncate">{title}</h3>
+        <div className="min-w-0">
+          {/* Warm Precision: card title uses the wp-h3 type token (Jakarta 600/18). */}
+          <h3 className="wp-h3 text-on-surface truncate">{title}</h3>
           {hasData ? (
             <>
               <p className="text-on-surface-variant text-xs mt-0.5 line-clamp-2">

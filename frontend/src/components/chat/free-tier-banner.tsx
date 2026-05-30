@@ -31,17 +31,17 @@ export default function FreeTierBanner({ queriesUsed, tier, onUpgrade }: FreeTie
   if (queriesUsed >= 10) {
     return (
       <div
-        className="mx-4 mb-2 rounded-xl px-4 py-3 bg-error/10 shadow-ambient"
+        className="mx-4 mb-2 rounded-xl px-4 py-3 bg-destructive/10 shadow-ambient"
         data-testid="free-tier-block-banner"
         role="alert"
       >
-        <p className="text-sm text-error font-medium">
+        <p className="text-sm text-destructive font-medium">
           Naka-max ka na for today — bukas ulit tayo! Pro users get unlimited queries.
         </p>
         <button
           type="button"
           onClick={onUpgrade}
-          className="text-xs text-error underline underline-offset-2 mt-1 inline-block min-h-[44px]"
+          className="text-xs text-destructive underline underline-offset-2 mt-1 inline-block min-h-[44px]"
           data-testid="free-tier-block-upgrade-cta"
         >
           Alamin ang Pro

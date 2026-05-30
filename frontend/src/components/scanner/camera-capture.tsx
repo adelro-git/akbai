@@ -395,40 +395,75 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
         </div>
       )}
 
-      {/* --- Camera Active: Live video feed --- */}
+      {/* --- Camera Active: full-bleed Warm Precision viewfinder ---
+          warm near-black (scan-ink) full-bleed, honey corner brackets, an
+          animated scan-sweep line, a glass control bar, and a 70px shutter.
+          body[data-scanning="true"] (set by the effect above) hides the
+          bottom nav so the viewfinder owns the thumb zone. --- */}
       {state === 'camera-active' && (
-        <div className="w-full space-y-4">
-          <div className="relative bg-on-surface rounded-2xl overflow-hidden aspect-[3/4]">
+        <div
+          className="fixed inset-0 z-40 bg-scan-ink flex flex-col"
+          data-testid="camera-active"
+        >
+          {/* Viewfinder frame */}
+          <div className="relative flex-1 overflow-hidden">
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
-              className="w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover"
               data-testid="camera-video"
             />
+
+            {/* Honey corner brackets (aim guide) */}
+            <span aria-hidden className="absolute top-[14%] left-[12%] w-9 h-9 border-[3px] border-r-0 border-b-0 border-honey-bright rounded-tl-md" />
+            <span aria-hidden className="absolute top-[14%] right-[12%] w-9 h-9 border-[3px] border-l-0 border-b-0 border-honey-bright rounded-tr-md" />
+            <span aria-hidden className="absolute bottom-[14%] left-[12%] w-9 h-9 border-[3px] border-r-0 border-t-0 border-honey-bright rounded-bl-md" />
+            <span aria-hidden className="absolute bottom-[14%] right-[12%] w-9 h-9 border-[3px] border-l-0 border-t-0 border-honey-bright rounded-br-md" />
+
+            {/* Animated honey scan-sweep line (reduced-motion gated) */}
+            <span
+              aria-hidden
+              className="absolute left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-transparent via-honey-bright to-transparent animate-scan-sweep"
+              style={{ top: '18%', boxShadow: '0 0 12px hsl(var(--honey-bright))' }}
+            />
+
+            {/* Aim hint */}
+            <p className="absolute bottom-4 inset-x-0 text-center text-[13px] font-semibold text-on-primary/85 px-4">
+              I-frame ang resibo sa loob ng linya
+            </p>
           </div>
 
-          <div className="flex gap-3">
+          {/* Glass control bar — the second of the two permitted glass surfaces
+              (the other is the bottom nav). Cancel · 70px shutter · spacer. */}
+          <div className="relative flex items-center justify-center gap-10 px-6 pt-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+            <span aria-hidden className="absolute inset-0 bg-scan-ink/40 backdrop-blur-md ring-1 ring-inset ring-on-primary/10" />
+
             {/* Cancel camera */}
             <button
               type="button"
               onClick={() => { stopCamera(); setState('idle'); }}
-              className="flex-1 min-h-[44px] bg-surface-container-high text-on-surface font-semibold rounded-xl py-3"
+              className="relative z-10 w-12 h-12 min-h-[44px] rounded-full flex items-center justify-center text-on-primary/90 hover:bg-on-primary/10 transition-colors"
               data-testid="camera-cancel-btn"
+              aria-label="Isara ang camera"
             >
-              <X className="w-5 h-5 mx-auto" />
+              <X className="w-6 h-6" />
             </button>
 
-            {/* Capture button — large, prominent */}
+            {/* Shutter — 70px ring + white core (.shutter) */}
             <button
               type="button"
               onClick={captureFrame}
-              className="flex-[2] min-h-[56px] bg-primary-container text-on-primary font-bold rounded-xl py-3 text-lg transition-transform active:scale-95"
+              className="relative z-10 w-[70px] h-[70px] rounded-full border-4 border-on-primary/90 p-1 transition-transform active:scale-[0.92]"
               data-testid="capture-btn"
+              aria-label="Kunan"
             >
-              Kunan
+              <span className="block w-full h-full rounded-full bg-on-primary" />
             </button>
+
+            {/* Symmetry spacer so the shutter stays centered */}
+            <span aria-hidden className="relative z-10 w-12 h-12" />
           </div>
         </div>
       )}

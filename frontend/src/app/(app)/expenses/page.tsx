@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { IllustrationWrapper } from '@/components/illustrations/IllustrationWrapper';
 import { PageBackground } from '@/components/ui/page-background';
-import { PaperNote } from '@/components/ui/paper-note';
+import Money from '@/components/ui/money';
 import { Kai } from '@/components/illustrations/kai/kai';
 import { IconPera } from '@/components/illustrations/icons';
 import { BanigBarChart } from '@/components/ui/banig-bar-chart';
@@ -214,7 +214,6 @@ export default function ExpensesPage() {
   const totalExpenses = data?.summary.total_expenses ?? 0;
   const totalIncome = data?.summary.total_income ?? 0;
   const net = data?.summary.net ?? 0;
-  const totalPesos = Math.round(totalExpenses / 100);
 
   const sevenDay = useMemo(() => {
     if (!data) return [];
@@ -260,12 +259,7 @@ export default function ExpensesPage() {
               SAAN NAPUNTA ANG PERA?
             </span>
           </div>
-          <h1
-            className="font-serif text-[28px] leading-tight text-on-surface"
-            style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 500 }}
-          >
-            Heto kung saan napunta ang pera mo.
-          </h1>
+          <h1 className="wp-h1">Heto kung saan napunta ang pera mo.</h1>
         </header>
 
         {/* ── Time-range pills ── */}
@@ -354,9 +348,9 @@ export default function ExpensesPage() {
         {/* ── Data flow ── */}
         {data && !loading && !error && hasData && (
           <>
-            {/* Total card */}
+            {/* Total card — Warm Precision Level-3 floating data card */}
             <section
-              className="rounded-2xl bg-surface-container-lowest p-4 mb-5 shadow-ambient"
+              className="card-level-3 p-4 mb-5"
               data-testid="expenses-total-card"
             >
               <div className="flex items-center gap-4">
@@ -379,31 +373,21 @@ export default function ExpensesPage() {
                           : 'NGAYONG BUWAN'
                     }`}
                   </div>
-                  <div
-                    className="font-serif text-[28px] leading-none text-on-surface"
-                    data-testid="expenses-total"
-                    style={{ fontFamily: 'var(--font-fraunces), Georgia, serif' }}
-                  >
-                    ₱{totalPesos.toLocaleString('en-PH')}
+                  <div data-testid="expenses-total">
+                    <Money centavos={totalExpenses} size="lg" tone="ink" />
                   </div>
                   <div
-                    className="mt-2 text-[12px] text-ink-soft"
+                    className="mt-2 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-[12px] text-ink-soft"
                     data-testid="expenses-delta"
                   >
                     {totalIncome > 0 ? (
                       <>
-                        <span className="text-sage-deep font-semibold">
-                          Kita: ₱{Math.round(totalIncome / 100).toLocaleString('en-PH')}
+                        <span className="inline-flex items-baseline gap-1 text-ink-soft font-semibold">
+                          Kita: <Money centavos={totalIncome} size="sm" countUp={false} />
                         </span>
-                        <span className="mx-1.5 text-ink-faint">·</span>
-                        <span
-                          className={
-                            net >= 0
-                              ? 'text-sage-deep font-semibold'
-                              : 'text-destructive font-semibold'
-                          }
-                        >
-                          Tubo: ₱{Math.round(net / 100).toLocaleString('en-PH')}
+                        <span className="text-ink-faint">·</span>
+                        <span className="inline-flex items-baseline gap-1 text-ink-soft font-semibold">
+                          Tubo: <Money centavos={net} size="sm" signed countUp={false} />
                         </span>
                       </>
                     ) : (
@@ -427,7 +411,7 @@ export default function ExpensesPage() {
                 </span>
                 <span className="text-[11px] text-ink-soft">{monthLabel}</span>
               </div>
-              <div className="rounded-2xl bg-surface-container-lowest p-3 shadow-ambient">
+              <div className="card-level-3 p-3">
                 {expenseCategories.slice(0, 5).map((c) => {
                   const percent = totalExpenses > 0 ? (c.total / totalExpenses) * 100 : 0;
                   return (
@@ -442,26 +426,21 @@ export default function ExpensesPage() {
               </div>
             </section>
 
-            {/* Kai paper-note callout */}
-            <PaperNote
-              tilt="left"
-              tone="default"
-              padding="md"
-              className="mb-5"
+            {/* Kai insight callout — Warm Precision secondary-container fill, Kai 36px */}
+            <div
+              className="mb-5 flex items-start gap-3 rounded-2xl bg-secondary-container p-4"
               data-testid="expenses-kai-callout"
             >
-              <div className="flex items-start gap-3">
-                <span className="flex-shrink-0">
-                  <Kai expression={insight.expression} size={32} />
-                </span>
-                <p
-                  className="font-serif italic text-[14px] leading-relaxed text-on-surface"
-                  style={{ fontFamily: 'var(--font-fraunces), Georgia, serif' }}
-                >
-                  {insight.copy}
-                </p>
-              </div>
-            </PaperNote>
+              <span className="flex-shrink-0">
+                <Kai expression={insight.expression} size={36} />
+              </span>
+              <p
+                className="font-serif italic text-[14px] leading-relaxed text-on-surface"
+                style={{ fontFamily: 'var(--font-fraunces), Georgia, serif' }}
+              >
+                {insight.copy}
+              </p>
+            </div>
 
             {/* 7-day banig chart */}
             <section className="mb-6">
@@ -471,7 +450,7 @@ export default function ExpensesPage() {
                 </span>
                 <span className="text-[11px] text-ink-soft">7 araw</span>
               </div>
-              <div className="rounded-2xl bg-surface-container-lowest p-3 shadow-ambient">
+              <div className="card-level-3 p-3">
                 <div data-testid="expenses-banig-bar">
                   <BanigBarChart days={sevenDay} peakDayIndex={peakKitaIndex} />
                 </div>

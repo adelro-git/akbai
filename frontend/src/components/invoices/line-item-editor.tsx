@@ -13,7 +13,8 @@
 
 import { useRef, useCallback } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { centavosToPeso, pesoToCentavos } from '@/lib/utils/money';
+import { pesoToCentavos } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 
 // ============================================================
 // Types
@@ -130,9 +131,7 @@ function LineItemRow({ item, index, onUpdate, onRemove, canRemove }: LineItemRow
 
       {/* Line total + remove */}
       <div className="flex items-center justify-between pt-1">
-        <span className="text-sm font-extrabold text-on-surface">
-          {centavosToPeso(lineTotal)}
-        </span>
+        <Money centavos={lineTotal} size="sm" countUp={false} />
         {canRemove && (
           <button
             onClick={() => onRemove(index)}
@@ -183,8 +182,8 @@ export default function LineItemEditor({ items, onItemsChange }: LineItemEditorP
         <h3 className="text-on-surface text-xs font-bold uppercase tracking-wider">
           Mga Item
         </h3>
-        <span className="text-on-surface-variant text-xs">
-          Subtotal: <span className="font-extrabold text-on-surface">{centavosToPeso(subtotal)}</span>
+        <span className="inline-flex items-baseline gap-1.5 text-on-surface-variant text-xs">
+          Subtotal: <Money centavos={subtotal} size="sm" countUp={false} />
         </span>
       </div>
 

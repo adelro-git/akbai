@@ -52,39 +52,45 @@ export default function ChatInput({ onSend, loading, onFocusChange }: ChatInputP
 
   return (
     <div
-      className="flex items-end gap-2 px-3 py-2.5"
+      className="flex items-end gap-2.5 py-2"
       data-testid="chat-composer"
     >
-      <button
-        type="button"
-        className="w-11 h-11 rounded-full flex items-center justify-center text-ink-soft hover:bg-honey-cream/40 transition-colors flex-shrink-0"
-        aria-label="I-attach ang larawan"
-        data-testid="chat-attach-btn"
-        disabled={loading}
-      >
-        <Paperclip size={18} />
-      </button>
-      <textarea
-        ref={textareaRef}
-        onKeyDown={handleKeyDown}
-        onInput={handleInput}
-        onFocus={() => onFocusChange?.(true)}
-        onBlur={() => onFocusChange?.(false)}
-        placeholder="Magtanong kay Kai..."
-        rows={1}
-        disabled={loading}
-        className="flex-1 bg-transparent text-on-surface placeholder-ink-soft text-sm resize-none min-h-[44px] max-h-[120px] py-2.5 px-1 focus:outline-none disabled:opacity-50"
-        data-testid="chat-text-input"
-      />
+      {/* Recessed input field (.composer-input): surface-container-low, r22,
+          holds the attach affordance + the auto-growing textarea. */}
+      <div className="flex-1 flex items-end gap-1 bg-surface-container-low rounded-[22px] pl-2 pr-3 py-1">
+        <button
+          type="button"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-on-faint hover:bg-surface-container-high/60 transition-colors flex-shrink-0"
+          aria-label="I-attach ang larawan"
+          data-testid="chat-attach-btn"
+          disabled={loading}
+        >
+          <Paperclip size={18} />
+        </button>
+        <textarea
+          ref={textareaRef}
+          onKeyDown={handleKeyDown}
+          onInput={handleInput}
+          onFocus={() => onFocusChange?.(true)}
+          onBlur={() => onFocusChange?.(false)}
+          placeholder="Magtanong kay Kai..."
+          rows={1}
+          disabled={loading}
+          className="flex-1 bg-transparent text-on-surface placeholder-on-faint text-[15px] leading-[22px] resize-none min-h-[44px] max-h-[120px] py-2.5 focus:outline-none disabled:opacity-50"
+          data-testid="chat-text-input"
+        />
+      </div>
+      {/* Send button (.send-btn): honey-gradient 44px circle, el-2 shadow,
+          press-scale; recedes to surface-container-highest when disabled. */}
       <button
         type="button"
         onClick={handleSend}
         disabled={loading}
-        className="w-11 h-11 rounded-full bg-honey-deep hover:bg-honey-deep/90 flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-ambient"
+        className="w-11 h-11 rounded-full bg-gradient-to-br from-grad-from to-grad-to flex items-center justify-center flex-shrink-0 shadow-el-2 transition-transform active:scale-90 disabled:bg-none disabled:bg-surface-container-highest disabled:shadow-none disabled:cursor-not-allowed"
         data-testid="chat-send-btn"
         aria-label="I-send ang message"
       >
-        <Send size={18} className="text-white" />
+        <Send size={18} className="text-on-primary" />
       </button>
     </div>
   )

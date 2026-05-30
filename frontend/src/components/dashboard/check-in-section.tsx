@@ -18,7 +18,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Check, RefreshCw } from 'lucide-react';
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 import { toManila } from '@/lib/timezone';
 import { PaperNote } from '@/components/ui/paper-note';
 import type { StreakStatus } from '@/lib/streak/compute-streak';
@@ -161,13 +161,13 @@ export default function CheckInSection({
                 </span>
               )}
               {todayCheckIn.sales_amount != null && (
-                <span data-testid="check-in-summary-sales">
-                  {t('checkin.summary.kita')}: {centavosToPeso(todayCheckIn.sales_amount)}
+                <span className="inline-flex items-baseline gap-1" data-testid="check-in-summary-sales">
+                  {t('checkin.summary.kita')}: <Money centavos={todayCheckIn.sales_amount} size="sm" />
                 </span>
               )}
               {todayCheckIn.expenses_amount != null && (
-                <span data-testid="check-in-summary-expenses">
-                  {t('checkin.summary.gastos')}: {centavosToPeso(todayCheckIn.expenses_amount)}
+                <span className="inline-flex items-baseline gap-1" data-testid="check-in-summary-expenses">
+                  {t('checkin.summary.gastos')}: <Money centavos={todayCheckIn.expenses_amount} size="sm" />
                 </span>
               )}
             </div>

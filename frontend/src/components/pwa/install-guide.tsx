@@ -43,10 +43,10 @@ export default function InstallGuide({
   if (isInstalled) {
     return (
       <div
-        className="bg-tertiary-container/20 rounded-2xl p-4 flex items-center gap-3"
+        className="bg-tertiary-container rounded-2xl p-4 flex items-center gap-3"
         data-testid="install-guide-installed"
       >
-        <div className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-tertiary-container/30">
+        <div className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-surface-container-lowest">
           <Check className="w-5 h-5 text-tertiary" />
         </div>
         <div>

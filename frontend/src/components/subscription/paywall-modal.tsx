@@ -190,7 +190,7 @@ export function PaywallModal({
       {/* the body <p>, so screen readers announce title + context together. */}
       {/* aria-describedby only set when the body sub-line actually renders. */}
       <div
-        className="relative w-full max-w-md bg-surface-container-lowest rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-ambient-lg"
+        className="relative w-full max-w-md card-level-3 p-6 max-h-[90vh] overflow-y-auto"
         role="dialog"
         aria-modal="true"
         aria-labelledby="paywall-modal-title"

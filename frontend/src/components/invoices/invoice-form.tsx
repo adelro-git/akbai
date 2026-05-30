@@ -15,7 +15,8 @@ import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save } from 'lucide-react';
 import LineItemEditor, { type LineItemData } from './line-item-editor';
-import { centavosToPeso, pesoToCentavos } from '@/lib/utils/money';
+import { pesoToCentavos } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 
 // ============================================================
 // Types
@@ -327,13 +328,13 @@ export default function InvoiceForm({ invoiceNumber, initialData, invoiceId }: I
       {/* --- Totals Summary --- */}
       <section className="bg-surface-container-low rounded-2xl p-4">
         <div className="space-y-1">
-          <div className="flex justify-between text-sm text-on-surface-variant">
+          <div className="flex justify-between items-baseline text-sm text-on-surface-variant">
             <span>Subtotal</span>
-            <span>{centavosToPeso(subtotalCentavos)}</span>
+            <Money centavos={subtotalCentavos} size="sm" countUp={false} />
           </div>
-          <div className="flex justify-between text-lg font-extrabold text-on-surface pt-2">
-            <span>Total</span>
-            <span>{centavosToPeso(subtotalCentavos)}</span>
+          <div className="flex justify-between items-baseline pt-2">
+            <span className="text-lg font-extrabold text-on-surface">Total</span>
+            <Money centavos={subtotalCentavos} size="md" countUp={false} />
           </div>
           <p className="text-on-surface-variant text-xs pt-1">
             Ang final total ay kasama na ang discount at tax pagka-save.

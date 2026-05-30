@@ -8,7 +8,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { centavosToPeso } from '@/lib/utils/money';
+import Money from '@/components/ui/money';
 
 // ============================================================
 // Types
@@ -72,8 +72,8 @@ export default function MrrCard() {
         Monthly Recurring Revenue
       </h2>
 
-      <p className="text-3xl font-extrabold text-primary mb-4">
-        {centavosToPeso(data.total_mrr_centavos)}
+      <p className="mb-4">
+        <Money centavos={data.total_mrr_centavos} size="lg" />
       </p>
 
       {/* --- Tier Breakdown Table --- */}
@@ -91,7 +91,7 @@ export default function MrrCard() {
               <td className="py-1 capitalize">{row.tier}</td>
               <td className="py-1 text-right">{row.count}</td>
               <td className="py-1 text-right">
-                {centavosToPeso(row.mrr_centavos)}
+                <Money centavos={row.mrr_centavos} size="sm" countUp={false} />
               </td>
             </tr>
           ))}
