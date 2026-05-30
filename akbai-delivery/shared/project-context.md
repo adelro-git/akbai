@@ -1,6 +1,6 @@
 # AKBai — Project Context
 > Shared reference for all akbai-delivery skills. Read this first. ~200 lines.
-> Last updated: 2026-05-29 (Sprint 18 — Pre-Launch Feature Readiness closed GREEN on agent-doable items; 1716 tests; public-release gate pending Sprint 19 Anton wave) | Prior sources: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
+> Last updated: 2026-05-30 (Warm Precision redesign light-mode merged — PR #42, commit 8499463; cream-default token reroot, `<Money>` primitive, 4-tab+Scan-FAB nav, 1766 tests | dark reroot deferred) | Prior: 2026-05-29 (Sprint 18 — Pre-Launch Feature Readiness closed GREEN on agent-doable items; 1716 tests; public-release gate pending Sprint 19 Anton wave) | Prior sources: Roadmap v14, Financial Model v5, Market Research v1.1, Ops Playbook v7, Ops Roadmap v6, Competitive Brief v2, Brand Guide v1.0, Post-Implementation Vision v1
 
 ---
 
@@ -378,6 +378,16 @@ Go/No-Go for Phase 2 based on 8 signals — see product-owner skill.
   - **1716/1716 tests passing** (+161 vs Sprint 17 baseline 1555).
   - **Gate report** at `akbai-delivery/shared/sprint-18-prelaunch-gate.md` (G7 traffic-light) + **Sprint 19 launch package** at `akbai-delivery/shared/sprint-19-launch-package.md` (Anton wave). G2/G4/G5/G6/G7 close at Sprint 19.
   - **Cleanup debt tracked:** ×3 constant-time bearer-compare dup, offline scan queue forked from chat queue, reconciliation date helpers duplicate weekly-story/timezone, `/api/dashboard` ~12 sequential reads → `Promise.all`.
+
+- **Warm Precision Redesign (light-mode)** — merged 2026-05-30, PR #42, commit 8499463:
+  - **Token reroot (W1):** `globals.css` `:root` retuned to a cooler-neutral cream default (surface `#fdfaf4`, was `#fdf9f2`); all values are HSL CSS variables (`hsl(var(--token))`), MD3 token names preserved. The `.dark{}` block is intentionally untouched this sweep (dark reroot deferred — separate higher-blast-radius workstream).
+  - **`<Money>` primitive** (`components/ui/money.tsx`) — single tabular-teal number component wrapping `centavosToPeso` (weight-700 tabular-nums, teal default, 600ms count-up once on first paint, localized "…piso" `aria-label`); migrated ~20 render sites to stop money styling drifting.
+  - **`wp-*` typography (W3):** Fraunces display/H1 at weight-600 (dialed down from 800) + new Number-lg/md/sm tabular-teal classes and Body-strong, wired in `globals.css`.
+  - **Daylight elevation (W4):** warm two-layer (never-grey) `el-2`/`el-3` shadows + `card-level-1/2/3` utilities (Level 1 = tone-only, no shadow); glass restricted to bottom-nav + scan overlay.
+  - **4-state status tags consolidated on `pill.tsx`** (positive/pending/overdue/neutral) + restyled chat bubbles (Kai white-hairline / warm `secondary-container`; user honey-gradient) — no parallel tag component (ADR-013 reuse rule).
+  - **Nav restructure (W7):** 5 tabs → **4 tabs + center Scan FAB** (Umaga · Kai · Pera · Iba pa); Scan leaves the tab row as a FAB-launched full-screen overlay; `MoreDrawer` reshaped.
+  - **Applied** to Home (Kumustahan) / Chat / Scan / Expenses / Deadlines + paywall, with **flat "daylight on paper" backgrounds** (legacy photographic `PageBackground` washes removed) and motif dial-down to one personality element per screen; folded in the 3 W10 correctness bug fixes (`text-error` no-op → `text-destructive`, hardcoded `#F87171` → `text-error-fill`, `BanigBarChart` `#fdf9f2` stripe → token).
+  - **Light-mode only** (dark reroot deferred). ADR-021 + `skills/solutions-architect/references/warm-precision-implementation-spec.md` are the authoritative detail. **1766 tests passing.**
 
 ---
 
