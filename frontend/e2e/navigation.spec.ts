@@ -27,11 +27,16 @@ test.describe('Navigation', () => {
     const nav = page.locator('[data-testid="bottom-nav"]');
     await expect(nav).toBeVisible();
 
-    // All nav items present
+    // Warm Precision nav: 4 tabs (home/chat/money/more) flanking the center Scan FAB.
     await expect(page.locator('[data-testid="nav-home"]')).toBeVisible();
     await expect(page.locator('[data-testid="nav-chat"]')).toBeVisible();
-    await expect(page.locator('[data-testid="nav-scan"]')).toBeVisible();
-    await expect(page.locator('[data-testid="nav-profile"]')).toBeVisible();
+    await expect(page.locator('[data-testid="nav-money"]')).toBeVisible();
+    await expect(page.locator('[data-testid="nav-more"]')).toBeVisible();
+
+    // Center Scan FAB (floating honey-gradient) — replaces the old nav-scan tab.
+    const scanFab = page.locator('[data-testid="nav-scan-fab"]');
+    await expect(scanFab).toBeVisible();
+    await expect(scanFab).toHaveAttribute('href', '/scan');
   });
 
   test('bottom nav is hidden on chat page (mobile)', async ({ page, isMobile }) => {
@@ -63,7 +68,7 @@ test.describe('Navigation', () => {
     await expect(page.locator('[data-testid="chat-interface"]')).toBeVisible();
   });
 
-  test('navigate: dashboard → profile via nav', async ({ page, isMobile }) => {
+  test('navigate: dashboard → money (expenses) via nav', async ({ page, isMobile }) => {
     if (!isMobile) {
       test.skip();
       return;
@@ -73,9 +78,25 @@ test.describe('Navigation', () => {
     await expect(page.locator('[data-testid="dashboard-page"]')).toBeVisible();
 
 
-    await page.click('[data-testid="nav-profile"]');
-    await page.waitForURL(/\/profile/);
-    await expect(page.locator('[data-testid="profile-page"]')).toBeVisible();
+    // The Warm Precision "Pera" tab points at /expenses (profile left the bottom nav).
+    await page.click('[data-testid="nav-money"]');
+    await page.waitForURL(/\/expenses/);
+    await expect(page.locator('[data-testid="expenses-page"]')).toBeVisible();
+  });
+
+  test('navigate: dashboard → scan via center Scan FAB', async ({ page, isMobile }) => {
+    if (!isMobile) {
+      test.skip();
+      return;
+    }
+
+    await page.goto('/dashboard');
+    await expect(page.locator('[data-testid="dashboard-page"]')).toBeVisible();
+
+
+    // Center floating FAB replaces the old nav-scan tab; it routes to /scan.
+    await page.click('[data-testid="nav-scan-fab"]');
+    await page.waitForURL(/\/scan/);
   });
 
   test('navigate: dashboard → expenses via Saan Napunta card', async ({ page }) => {
