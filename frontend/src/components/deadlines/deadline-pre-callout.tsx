@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import type { DeadlineWithUrgency } from '@/lib/deadlines/types'
 import { Kai } from '@/components/illustrations/kai/kai'
 import { Pill } from '@/components/ui/pill'
+import { daysUntilToPillVariant } from './deadline-row'
 import { isKnownFormCode, FORM_CODE_DESCRIPTIONS } from '@/lib/bir/forms'
 import { trackDeadlineChatOpened } from '@/lib/posthog/events'
 
@@ -104,7 +105,7 @@ export default function DeadlinePreCallout({ deadline }: DeadlinePreCalloutProps
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-2">
             <span className="wp-h2 text-on-surface">{formCode}</span>
-            <Pill variant="overdue" size="tag">
+            <Pill variant={daysUntilToPillVariant(deadline.days_until)} size="tag">
               {daysLeftTag(deadline.days_until)}
             </Pill>
           </div>

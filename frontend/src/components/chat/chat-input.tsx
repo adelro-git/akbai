@@ -90,7 +90,10 @@ export default function ChatInput({ onSend, loading, onFocusChange }: ChatInputP
         data-testid="chat-send-btn"
         aria-label="I-send ang message"
       >
-        <Send size={18} className="text-on-primary" />
+        {/* On the honey gradient the glyph is white; when disabled the fill
+            recedes to the pale surface-container-highest, so switch to on-faint
+            ink (~3.1:1 on that fill) to keep the disabled glyph visible. */}
+        <Send size={18} className={loading ? 'text-on-faint' : 'text-on-primary'} />
       </button>
     </div>
   )

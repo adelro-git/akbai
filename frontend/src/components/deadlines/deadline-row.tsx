@@ -3,8 +3,8 @@
 // ============================================================
 // DeadlineRow — Phase 9b redesigned deadline list row
 // Tap → /chat?topic={form_code}&context=deadline-{N}d (ADR-017).
-// First (next-due) row gets a 2px honey-deep ring; others rely on
-// tonal surface layering (No-Line Rule).
+// First (next-due) row gets a SUBTLE honey left-edge bar (replacing the
+// old heavy 2px ring); others rely on tonal surface layering (No-Line Rule).
 // ============================================================
 
 import { useRouter } from 'next/navigation'
@@ -17,7 +17,7 @@ import DeadlineDateChip from './deadline-date-chip'
 
 interface DeadlineRowProps {
   deadline: DeadlineWithUrgency
-  /** Add 2px honey-deep ring (next-due row). */
+  /** Add the subtle honey left-edge bar (next-due row). */
   highlightNextDue?: boolean
 }
 
@@ -42,6 +42,18 @@ const TONE_TO_PILL: Record<'urgent' | 'overdue' | 'filed' | 'normal', PillProps[
   urgent: 'pending',
   filed: 'info',
   normal: 'info',
+}
+
+/**
+ * Map a raw days-until value onto the urgency Pill variant — the same
+ * overdue→pending→info ladder the row tag uses, exported so the
+ * DeadlinePreCallout tag stays in lockstep instead of hardcoding 'overdue'.
+ * `days_until < 0` → overdue; `0..7` → pending; else info.
+ */
+export function daysUntilToPillVariant(daysUntil: number): PillProps['variant'] {
+  if (daysUntil < 0) return TONE_TO_PILL.overdue
+  if (daysUntil <= 7) return TONE_TO_PILL.urgent
+  return TONE_TO_PILL.normal
 }
 
 export default function DeadlineRow({ deadline, highlightNextDue = false }: DeadlineRowProps) {
@@ -79,11 +91,15 @@ export default function DeadlineRow({ deadline, highlightNextDue = false }: Dead
       onClick={handleTap}
       disabled={isFiled}
       // Upcoming list row — Level-1 static tonal card, tonal layering (No-Line).
-      className={`w-full text-left card-level-1 p-3 flex items-center gap-3.5 min-h-[72px] transition-colors ${opacityClass} ${isFiled ? 'cursor-default' : 'hover:bg-honey-cream/30 active:bg-honey-cream/40'}`}
+      // next-due gets a subtle honey left-edge bar (not the old heavy ring).
+      className={`relative overflow-hidden w-full text-left card-level-1 p-3 flex items-center gap-3.5 min-h-[72px] transition-colors ${opacityClass} ${isFiled ? 'cursor-default' : 'hover:bg-honey-cream/30 active:bg-honey-cream/40'}`}
       data-testid={testid}
       data-form-code={formCode}
       aria-label={`I-open kay Kai: ${formCode}, ${daysLeft}`}
     >
+      {highlightNextDue && !isFiled && (
+        <span aria-hidden className="absolute left-0 top-0 h-full w-1 bg-honey-deep" />
+      )}
       <DeadlineDateChip dueDate={deadline.due_date} urgent={isUrgent} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap mb-0.5">

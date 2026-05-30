@@ -422,10 +422,12 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
             <span aria-hidden className="absolute bottom-[14%] left-[12%] w-9 h-9 border-[3px] border-r-0 border-t-0 border-honey-bright rounded-bl-md" />
             <span aria-hidden className="absolute bottom-[14%] right-[12%] w-9 h-9 border-[3px] border-l-0 border-t-0 border-honey-bright rounded-br-md" />
 
-            {/* Animated honey scan-sweep line (reduced-motion gated) */}
+            {/* Animated honey scan-sweep line. Under prefers-reduced-motion the
+                animation is killed AND the line is hidden (motion-reduce:hidden)
+                so it doesn't sit as a static honey bar — matching the brackets. */}
             <span
               aria-hidden
-              className="absolute left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-transparent via-honey-bright to-transparent animate-scan-sweep"
+              className="absolute left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-transparent via-honey-bright to-transparent animate-scan-sweep motion-reduce:hidden"
               style={{ top: '18%', boxShadow: '0 0 12px hsl(var(--honey-bright))' }}
             />
 

@@ -162,12 +162,12 @@ export default function CheckInSection({
               )}
               {todayCheckIn.sales_amount != null && (
                 <span className="inline-flex items-baseline gap-1" data-testid="check-in-summary-sales">
-                  {t('checkin.summary.kita')}: <Money centavos={todayCheckIn.sales_amount} size="sm" />
+                  {t('checkin.summary.kita')}: <Money centavos={todayCheckIn.sales_amount} size="sm" countUp={false} />
                 </span>
               )}
               {todayCheckIn.expenses_amount != null && (
                 <span className="inline-flex items-baseline gap-1" data-testid="check-in-summary-expenses">
-                  {t('checkin.summary.gastos')}: <Money centavos={todayCheckIn.expenses_amount} size="sm" />
+                  {t('checkin.summary.gastos')}: <Money centavos={todayCheckIn.expenses_amount} size="sm" countUp={false} />
                 </span>
               )}
             </div>

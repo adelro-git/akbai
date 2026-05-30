@@ -22,19 +22,21 @@ interface CategoryChartProps {
 // Segment colors — design system tokens.
 // Warm Precision W1 role-change turned tertiary-container (#cdeee2) and
 // secondary-container (#fef3d9) into near-white pale fills, which rendered
-// invisible as chart segments. Replaced with saturated chart-contrast tokens
-// (honey / sage / teal / brown family) so stacked segments stay distinct.
+// invisible as chart segments. Replaced with saturated chart-contrast tokens.
+// Every entry resolves to a DISTINCT hex (verified vs globals.css :root) so no
+// two categories ever render an indistinguishable segment — the previous set
+// aliased honey↔primary-container (#f59e0b) and sage-deep↔tertiary (#006b54).
 const SEGMENT_COLORS = [
   'bg-honey',              // #f59e0b — saturated honey
-  'bg-sage-deep',          // #006b54 — deep teal
-  'bg-primary-container',  // #f59e0b honey container (solid)
-  'bg-sage',               // #5fb89a — mid sage
+  'bg-tertiary',           // #006b54 — deep teal
   'bg-primary',            // #855300 — dark brown
-  'bg-tertiary',           // #006b54 — teal
+  'bg-sage',               // #5fb89a — mid sage
   'bg-secondary',          // #904d00 — burnt amber
   'bg-primary-fixed-dim',  // #ffb95f — light honey
   'bg-outline',            // #867461 — warm taupe
-  'bg-outline-variant',    // deep ink @ tonal
+  'bg-warning',            // #FBBF24 — amber
+  'bg-error-fill',         // #F87171 — soft red
+  'bg-honey-bright',       // #f5b347 — bright honey
 ];
 
 export default function CategoryChart({ data }: CategoryChartProps) {

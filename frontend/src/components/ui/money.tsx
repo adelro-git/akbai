@@ -61,13 +61,13 @@ export interface MoneyProps {
 
 /**
  * Format a centavo amount for display, applying the optional explicit sign.
- * `centavosToPeso` already prints a leading "-" for negatives, so when
- * `signed` is set we format the magnitude and prepend the sign ourselves to
- * avoid a double "--" and to surface an explicit "+" for non-negative values.
+ * `centavosToPeso` prints the minus INSIDE the glyph for negatives ("₱-34.50"),
+ * so we always format the magnitude and prepend the sign ourselves to keep the
+ * minus outside the ₱ ("-₱34.50"). When `signed` is set, non-negatives get an
+ * explicit "+"; otherwise only negatives are signed.
  */
 function format(centavos: number, signed: boolean): string {
-  if (!signed) return centavosToPeso(centavos);
-  const sign = centavos < 0 ? '-' : '+';
+  const sign = centavos < 0 ? '-' : signed ? '+' : '';
   return `${sign}${centavosToPeso(Math.abs(centavos))}`;
 }
 

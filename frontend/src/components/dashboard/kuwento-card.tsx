@@ -23,7 +23,7 @@ import { useTranslations } from 'next-intl';
 import { IconPera } from '@/components/illustrations/icons';
 import { PaperNote } from '@/components/ui/paper-note';
 import { BanigBarChart } from '@/components/ui/banig-bar-chart';
-import Money from '@/components/ui/money';
+import KpiTile from './kpi-tile';
 import type { WeeklyStoryResponse, WeeklyStory } from '@/lib/weekly-story/types';
 
 type CardState =
@@ -175,34 +175,5 @@ export default function KuwentoCard() {
         </Link>
       </div>
     </section>
-  );
-}
-
-function KpiTile({
-  label,
-  centavos,
-  testId,
-  profit,
-}: {
-  label: string;
-  centavos: number;
-  testId: string;
-  /** Tubo tile: pale honey secondary-container fill (Warm Precision). */
-  profit?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-xl px-3 py-2 text-center ${
-        profit ? 'bg-secondary-container' : 'bg-surface-container-low'
-      }`}
-      data-testid={testId}
-    >
-      <p className="text-[10px] font-bold uppercase tracking-[0.07em] text-on-surface-variant">
-        {label}
-      </p>
-      <div className="mt-1">
-        <Money centavos={centavos} size="md" signed={profit} />
-      </div>
-    </div>
   );
 }

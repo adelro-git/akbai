@@ -26,6 +26,12 @@ describe('<Money> — formatting', () => {
     const html = renderToStaticMarkup(<Money centavos={0} />);
     expect(html).toContain('₱0.00');
   });
+
+  it('keeps the minus OUTSIDE the ₱ for an unsigned negative (no ₱-34.50)', () => {
+    const html = renderToStaticMarkup(<Money centavos={-3450} />);
+    expect(html).toContain('-₱34.50');
+    expect(html).not.toContain('₱-34.50');
+  });
 });
 
 describe('<Money> — signed', () => {
