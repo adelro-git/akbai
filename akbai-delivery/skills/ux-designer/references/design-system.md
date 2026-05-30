@@ -1,6 +1,6 @@
 # AKBai — Design System Specification: The Art of Warmth
 > Used by: ux-designer, fullstack-engineer, marketing-lead
-> Last updated: March 2026 | Source: DESIGN.md v1.0
+> Last updated: 2026-05-30 (Warm Precision Evolution note added — light-mode merged PR #42; §3 numbers/Display weight rules superseded, §2 stale dark hex flagged. Authoritative detail: `warm-precision-implementation-spec.md` + ADR-021) | Prior: March 2026 | Source: DESIGN.md v1.0
 > This is the authoritative visual design specification. When in conflict with other files, this file wins.
 
 ---
@@ -23,6 +23,26 @@ Warmth in AKBai is not decoration; it does measurable UX work across three layer
 - **Reflective (long-term):** Localized warmth lets the user form a conscious, positive attachment. The user doesn't *tolerate* AKBai because they have to; they *like* it. This is the layer that drives 30-day retention.
 
 **Design implication:** Every warmth choice (palette, illustration vocabulary, micro-animations, paper-note treatments) is a retention investment. Don't let a future cost-cut sprint strip them out as "nice-to-have."
+
+---
+
+## ⚡ Warm Precision Evolution (2026-05-30) — read before this doc's older sections
+
+The "Art of Warmth / Sun-Drenched Atelier" direction below was **evolved into "Warm Precision"** and merged light-mode to `main` (PR #42, commit 8499463). The philosophy is unchanged (warmth is load-bearing), but several concrete rules in §2–§5 are now superseded. **The authoritative detail lives in `skills/solutions-architect/references/warm-precision-implementation-spec.md` (full token map, `<Money>`, typography, elevation, nav-FAB, component specs) and ADR-021.** This note summarizes the deltas; the full token table below is NOT rewritten — defer to the impl spec.
+
+**Scope:** light-mode only. The dark reroot is a separate, deferred workstream — the dark hex column in §2 is pre-Warm-Precision and partly stale (see correction below).
+
+**Deltas (all verified against `frontend/src/app/globals.css` `:root`):**
+
+- **Light-first cream retune.** Surface is now `#fdfaf4` (cooler-neutral paper; was `#fdf9f2`). The whole surface ladder retuned: `surface-container-low #f8f4ec`, `surface-container #f2ede4` (Level-1 card bg), `surface-container-high #ece7dd`, `surface-container-highest #e7e1d6`. Ink warmed: `on-surface-variant`/`ink-soft #5b4a38`, `ink-faint #8a7558`.
+- **`secondary-container` role change → pale honey `#fef3d9`** (was the saturated orange `#fe932c`). New role: soft tile / warm Kai bubble / profit-KPI fill. `tertiary-container` likewise retuned to pale success `#cdeee2`.
+- **New tokens:** `on-faint #8a7558` (muted/tertiary ink alias), `tertiary-container #cdeee2`, `error-fill #F87171` (icons/fills only — error TEXT stays `--destructive #ba1a1a`), `error-pale #fde0dc` (overdue tag fill), `outline-input` (`#5b4a38` base, consumed at /32), `ink-scrim` (`#1c1810` base at /45), `sampaguita #ffffff` (motif/chart peak), `scan-ink #0a0f08` (viewfinder), `warning #FBBF24` (deadline amber bar — not red), `grad-from #f5b347` / `grad-to #d97706` (honey gradient stops).
+- **Fraunces serif added for Display + greeting/H1** (Plus Jakarta Sans is no longer "exclusive"). Display/H1 drop **weight-800 → 600**. See the §3 correction below.
+- **Data-confident numbers (SUPERSEDES the §3 "weight-800" rule):** all financial figures are **tabular-nums, weight-700, teal (`tertiary #006b54`)**, peso-first — centralized in the `<Money>` primitive (`components/ui/money.tsx`). Numbers are no longer weight-800 and no longer "Art."
+- **Daylight Elevation (W4):** warm two-layer (never-grey) `el-2`/`el-3` shadows + `card-level-1/2/3` (Level 1 = tone-only, no shadow; Level 2 raised; Level 3 floating white sheet/FAB/toast). **Glass is now restricted to TWO places: the bottom-nav and the scan overlay** — cards/modals/drawers become solid Level-3 sheets (the §2 "Glass & Gradient" rule no longer applies to modals).
+- **Nav = 4 tabs + center Scan FAB** (Umaga · Kai · Pera · Iba pa); Scan leaves the tab row as a FAB-launched full-screen overlay.
+- **Status tags consolidated on `pill.tsx`** — one 4-state set (positive / pending / overdue / neutral), no parallel tag component.
+- **Calm-background principle:** flat "daylight on good paper" surfaces — the legacy photographic `PageBackground` washes are **removed**. One personality element (motif) per screen, max.
 
 ---
 
@@ -65,17 +85,19 @@ For key CTAs and hero elements, use the **Warm Honey Gradient** (`primary-contai
 | destructive | #ba1a1a | #ba1a1a | Error states |
 | error-container | #ffdad6 | #93000a | Error backgrounds |
 
+> ⚠️ **This table is pre-Warm-Precision.** The **Light column is stale** — the live light tokens are the Warm Precision retune (surface `#fdfaf4`, `secondary-container #fef3d9`, `tertiary-container #cdeee2`, etc. — see the Warm Precision Evolution note above + `warm-precision-implementation-spec.md` for the full map). The **Dark column is also stale and was NOT changed by Warm Precision** (the dark reroot is a separate deferred workstream): the live dark surface is `#0b1525`, not `#07101e`. Do not cite this column's values as current.
+
 ---
 
 ## 3. Typography: Editorial Authority
 
 We use **Plus Jakarta Sans** exclusively. Its geometric yet friendly curves perfectly mirror our "Rounded Twelve" geometry.
 
-* **Display (lg/md):** Use `weight-800` with tight letter-spacing (-0.02em). These are your "billboard" moments.
+* **Display (lg/md):** Use `weight-800` with tight letter-spacing (-0.02em). These are your "billboard" moments. **⚠️ SUPERSEDED by Warm Precision:** Display + H1 are now **Fraunces serif at weight-600** (not Jakarta weight-800) — see the Warm Precision Evolution note + `warm-precision-implementation-spec.md` §3.
 * **Headlines:** Use `on-surface` (#1c1c18 light) at `weight-700`. These should feel like ink on cream paper.
 * **Body:** Use `body-lg` for primary reading. Ensure a line-height of at least 1.6 to maintain the "airy" feel.
-* **Labels:** Use `label-md` in `on-surface-variant` (#534434 light). Small caps can be used sparingly for a more "designed" editorial look.
-* **Numbers and data points:** Always `weight-800` to make them feel like "Art."
+* **Labels:** Use `label-md` in `on-surface-variant` (#534434 light → now `#5b4a38` under Warm Precision). Small caps can be used sparingly for a more "designed" editorial look.
+* **Numbers and data points:** ~~Always `weight-800` to make them feel like "Art."~~ **⚠️ SUPERSEDED by Warm Precision:** financial figures are now **tabular-nums, weight-700, teal (`tertiary #006b54`)**, peso-first — rendered through the `<Money>` primitive (`components/ui/money.tsx`). Numbers are "data-confident," not weight-800 "Art."
 
 ---
 

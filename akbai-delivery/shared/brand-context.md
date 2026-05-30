@@ -1,6 +1,6 @@
 # AKBai — Brand Context
 > Used by: marketing-lead, ux-designer, product-owner, ops-lead, ai-engineer
-> Last updated: April 5, 2026 | Source: AKBai Brand Guide v1.0, Brand Kit, "Art of Warmth" design system
+> Last updated: 2026-05-30 (Warm Precision light-mode notes added to Color System + Typography — cream-default retune, Fraunces serif, tabular-teal numbers; dark hex flagged pre-Warm-Precision. Voice/brand sections unchanged — voice locked. Detail: `design-system.md` + `warm-precision-implementation-spec.md` + ADR-021) | Prior: April 5, 2026 | Source: AKBai Brand Guide v1.0, Brand Kit, "Art of Warmth" design system
 > Full brand kit location: /AKBai/AKBai Brand Kit/
 
 ---
@@ -48,6 +48,8 @@ AKBai uses a **light-first** design system ("Sun-Drenched Atelier") with dark mo
 
 **Rules:** Surface #fdf9f2 is the default (light-first). Dark mode (#07101e background) is available via user preference toggle. Logo mark = Warm Honey gradient or all-white (reversed). Kai's integrated face (eyes & smile) always renders in primary-container, maintaining visual clarity on all backgrounds. Primary CTA = Honey gradient fill. Financial data = Tertiary (teal) only. Never pure black backgrounds. Never cold greys. Never 1px solid borders — use background color shifts instead.
 
+> **⚡ Warm Precision (2026-05-30, light-mode merged PR #42):** the **Light** column above is retuned to a cooler-neutral cream default — surface `#fdf9f2 → #fdfaf4`, plus the full ladder retune (`surface-container #f2ede4`, `-low #f8f4ec`, `-high #ece7dd`, `-highest #e7e1d6`; `on-surface-variant #5b4a38`). Two role-changes: `secondary-container` → pale honey `#fef3d9` (soft tile / warm Kai bubble), `tertiary-container` → pale success `#cdeee2`. New tokens: `on-faint #8a7558`, `error-fill #F87171` (icons/fills only — error TEXT stays `destructive #ba1a1a`), `error-pale #fde0dc` (overdue tag), `outline-input`, `ink-scrim`, `sampaguita #ffffff`, `scan-ink #0a0f08`, `grad-from #f5b347` / `grad-to #d97706` (honey gradient). The **Dark** column is **pre-Warm-Precision and was NOT changed** (dark reroot deferred) — the live dark surface is `#0b1525`, not `#07101e`. Authoritative map: `skills/solutions-architect/references/warm-precision-implementation-spec.md` + ADR-021.
+
 > See `skills/ux-designer/references/design-system.md` for the full design system specification.
 
 ---
@@ -68,6 +70,8 @@ AKBai uses a **light-first** design system ("Sun-Drenched Atelier") with dark mo
 **Family:** Plus Jakarta Sans (Google Fonts, free)
 **Character:** Geometric sans-serif with warmth. Rounded terminals, open apertures.
 **Editorial authority:** Weight-800 is reserved for display headlines and key numbers/data — this conveys "Art" (confidence, editorial authority). Numbers rendered at 800 weight feel intentional, not incidental.
+
+> **⚡ Warm Precision (2026-05-30, light-mode merged PR #42):** **Fraunces serif** is now added for Display + greeting/H1 (Jakarta is no longer the exclusive family), and Display/H1 drop **weight-800 → 600**. Financial numbers are now **data-confident: tabular-nums, weight-700, teal (`tertiary #006b54`)**, peso-first — **no longer weight-800 "Art"** — and are centralized in the `<Money>` primitive (`components/ui/money.tsx`). The 800-weight rows below now apply to the wordmark only. Detail: `skills/ux-designer/references/design-system.md` + `warm-precision-implementation-spec.md`.
 
 | Weight | Usage |
 |--------|-------|
