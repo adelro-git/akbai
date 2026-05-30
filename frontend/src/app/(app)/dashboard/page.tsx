@@ -30,11 +30,9 @@ import KumustahanHero from '@/components/dashboard/kumustahan-hero';
 import KuwentoCard from '@/components/dashboard/kuwento-card';
 import WeeklyReconciliationCard from '@/components/dashboard/weekly-reconciliation-card';
 import MonthlyReconciliationCard from '@/components/dashboard/monthly-reconciliation-card';
-import FloatingPetalsLayer from '@/components/dashboard/floating-petals-layer';
 import { TrialCountdownBanner } from '@/components/subscription/trial-countdown-banner';
 import { computeTrialState } from '@/lib/subscriptions/trial';
 import { PageBackground } from '@/components/ui/page-background';
-import { WovenDivider } from '@/components/illustrations/svg/decorative/WovenDivider';
 import type { StreakStatus } from '@/lib/streak/compute-streak';
 import type { MorningTone } from '@/lib/morning-briefing/types';
 import type { TimeOfDay } from '@/lib/timezone/time-of-day';
@@ -216,11 +214,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Banig divider between the action grid and the Kuwento card */}
-        <div aria-hidden>
-          <WovenDivider width={400} />
-        </div>
-
         {/* Kuwento ng Linggo summary card */}
         <KuwentoCard />
 
@@ -232,10 +225,6 @@ export default function DashboardPage() {
         <footer className="text-center">
           <span className="font-serif italic text-[13px] text-on-surface-variant">— Kai</span>
         </footer>
-
-        {/* Ambient layer (Q2 deferral) — outside the scrolling content so the
-            absolute positioning anchors against the dashboard root. */}
-        <FloatingPetalsLayer />
       </div>
     </PageBackground>
   );

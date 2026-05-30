@@ -1,75 +1,37 @@
 /**
- * PageBackground — Decorative background wrapper for pages
+ * PageBackground — calm page wrapper (Warm Precision).
  *
- * Renders a full-bleed WebP background image at low opacity behind page content.
- * All decorative elements are aria-hidden and pointer-events-none.
- * Opacity is kept subtle (10-15% light, 5-8% dark) so backgrounds don't distract.
+ * The old per-variant photographic WebP background washes were REMOVED:
+ * the Warm Precision direction calls for flat "daylight on good paper"
+ * surfaces (design.md §1, Principle 7 — quiet so the numbers and Kai lead).
+ * Decoration is reserved for a single per-screen personality moment (the
+ * hero), not a full-bleed image behind every screen.
+ *
+ * Kept as a thin wrapper (the `variant` prop is retained for API/back-compat
+ * so the 11 call sites are untouched) — it now just anchors the page on the
+ * flat `--surface` body background.
  */
 
-import Image from 'next/image';
-
-type PageVariant = 'login' | 'dashboard' | 'onboarding' | 'chat' | 'expenses' | 'deadlines' | 'profile' | 'offline' | 'scan' | 'costing' | 'invoices';
+type PageVariant =
+  | 'login'
+  | 'dashboard'
+  | 'onboarding'
+  | 'chat'
+  | 'expenses'
+  | 'deadlines'
+  | 'profile'
+  | 'offline'
+  | 'scan'
+  | 'costing'
+  | 'invoices';
 
 interface PageBackgroundProps {
+  /** Retained for API back-compat; no longer drives a background image. */
   variant: PageVariant;
   children: React.ReactNode;
 }
 
-// Map each variant to its background image config
-const BACKGROUND_MAP: Record<PageVariant, { src: string; lightOpacity: number; darkOpacity: number } | null> = {
-  login: { src: 'backgrounds/login-storefront.webp', lightOpacity: 0.15, darkOpacity: 0.08 },
-  dashboard: { src: 'backgrounds/dashboard-workspace.webp', lightOpacity: 0.12, darkOpacity: 0.06 },
-  onboarding: { src: 'backgrounds/onboarding-welcome-bg.webp', lightOpacity: 0.14, darkOpacity: 0.07 },
-  chat: { src: 'backgrounds/chat-atmosphere.webp', lightOpacity: 0.10, darkOpacity: 0.05 },
-  expenses: { src: 'backgrounds/expenses-financial.webp', lightOpacity: 0.12, darkOpacity: 0.06 },
-  deadlines: { src: 'backgrounds/deadlines-bir.webp', lightOpacity: 0.12, darkOpacity: 0.06 },
-  profile: { src: 'backgrounds/profile-banner.webp', lightOpacity: 0.14, darkOpacity: 0.07 },
-  scan: { src: 'features/scan-in-progress.webp', lightOpacity: 0.10, darkOpacity: 0.05 },
-  costing: { src: 'backgrounds/expenses-financial.webp', lightOpacity: 0.10, darkOpacity: 0.05 },
-  invoices: { src: 'backgrounds/expenses-financial.webp', lightOpacity: 0.10, darkOpacity: 0.05 },
-  offline: null,
-};
-
-export function PageBackground({ variant, children }: PageBackgroundProps) {
-  const bg = BACKGROUND_MAP[variant];
-
-  return (
-    <div className="relative min-h-dvh">
-      {bg && (
-        <>
-          {/* Light mode background */}
-          <div
-            className="fixed inset-0 z-0 pointer-events-none dark:hidden"
-            style={{ opacity: bg.lightOpacity }}
-            aria-hidden="true"
-          >
-            <Image
-              src={`/illustrations/${bg.src}`}
-              alt=""
-              fill
-              className="object-cover"
-              priority={false}
-              sizes="100vw"
-            />
-          </div>
-          {/* Dark mode background */}
-          <div
-            className="fixed inset-0 z-0 pointer-events-none hidden dark:block"
-            style={{ opacity: bg.darkOpacity }}
-            aria-hidden="true"
-          >
-            <Image
-              src={`/illustrations/${bg.src}`}
-              alt=""
-              fill
-              className="object-cover brightness-[0.85] saturate-[0.9]"
-              priority={false}
-              sizes="100vw"
-            />
-          </div>
-        </>
-      )}
-      <div className="relative z-10">{children}</div>
-    </div>
-  );
+export function PageBackground({ variant: _variant, children }: PageBackgroundProps) {
+  void _variant;
+  return <div className="relative min-h-dvh">{children}</div>;
 }
