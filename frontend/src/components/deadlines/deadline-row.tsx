@@ -78,8 +78,8 @@ export default function DeadlineRow({ deadline, highlightNextDue = false }: Dead
       type="button"
       onClick={handleTap}
       disabled={isFiled}
-      // Upcoming list row — Level-3 floating white card, tonal layering (No-Line).
-      className={`w-full text-left card-level-3 p-3 flex items-center gap-3.5 min-h-[72px] transition-colors ${opacityClass} ${isFiled ? 'cursor-default' : 'hover:bg-honey-cream/30 active:bg-honey-cream/40'}`}
+      // Upcoming list row — Level-1 static tonal card, tonal layering (No-Line).
+      className={`w-full text-left card-level-1 p-3 flex items-center gap-3.5 min-h-[72px] transition-colors ${opacityClass} ${isFiled ? 'cursor-default' : 'hover:bg-honey-cream/30 active:bg-honey-cream/40'}`}
       data-testid={testid}
       data-form-code={formCode}
       aria-label={`I-open kay Kai: ${formCode}, ${daysLeft}`}
@@ -87,9 +87,9 @@ export default function DeadlineRow({ deadline, highlightNextDue = false }: Dead
       <DeadlineDateChip dueDate={deadline.due_date} urgent={isUrgent} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap mb-0.5">
-          <span className="text-[12px] font-extrabold tracking-wide rounded-full bg-honey-pale text-honey-deep px-2 py-0.5">
+          <Pill variant="form-code" size="tag">
             {formCode}
-          </span>
+          </Pill>
           <Pill variant={TONE_TO_PILL[tone]} size="tag">
             {daysLeft}
           </Pill>

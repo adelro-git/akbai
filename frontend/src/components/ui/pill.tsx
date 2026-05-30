@@ -21,6 +21,9 @@ const pillVariants = cva(
         pending: 'bg-secondary-container text-primary',
         overdue: 'bg-error-pale text-destructive',
         info: 'bg-surface-container-high text-on-surface-variant',
+        // Brand BIR form-code identifier chip (honey). Distinct from the status
+        // tags above — replaces the bespoke inline span on deadline rows.
+        'form-code': 'bg-honey-pale text-honey-deep',
       },
       size: {
         sm: 'h-6 px-2.5 text-[11px] tracking-wide',

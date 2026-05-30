@@ -55,11 +55,11 @@ export default function FreeTierBanner({ queriesUsed, tier, onUpgrade }: FreeTie
     const remaining = 10 - queriesUsed
     return (
       <div
-        className="mx-4 mb-2 rounded-xl px-4 py-3 bg-amber-500/10 shadow-ambient"
+        className="mx-4 mb-2 rounded-xl px-4 py-3 bg-warning/10 shadow-ambient"
         data-testid="free-tier-warning-banner"
         role="alert"
       >
-        <p className="text-sm text-amber-700 dark:text-amber-400 font-medium">
+        <p className="text-sm text-on-surface-variant font-medium">
           {remaining} na lang ang tanong mo ngayon. Bukas ulit, o mag-upgrade sa Pro!
         </p>
       </div>

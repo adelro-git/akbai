@@ -73,7 +73,7 @@ export default function ChatBubble({ message, warm = false }: ChatBubbleProps) {
       className="flex items-start gap-2"
       data-testid={`message-kai-${message.id}`}
     >
-      <div className="w-7 h-7 rounded-full bg-primary-container/10 ring-1 ring-primary-container/30 flex-shrink-0 flex items-center justify-center mt-0.5">
+      <div className="w-7 h-7 rounded-full overflow-hidden bg-primary-container/10 ring-1 ring-primary-container/30 flex-shrink-0 flex items-center justify-center mt-0.5">
         <img
           src="/icons/mark-honey.png"
           alt="Kai"

@@ -59,7 +59,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 glass-nav shadow-ambient-nav border-t border-outline-soft/30 z-50 tablet:hidden"
+      className="fixed bottom-0 left-0 right-0 glass-nav shadow-ambient-nav z-50 tablet:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       data-testid="bottom-nav"
       aria-label="Main navigation"
