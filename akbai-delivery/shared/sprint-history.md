@@ -2,7 +2,7 @@
 
 > Living document. Updated automatically by `/sprint` and `/retro` commands.
 > New sessions: read this file first for project velocity context.
-> Last updated: 2026-05-29 (Sprint 18 — Pre-Launch Feature Readiness closed GREEN on agent-doable items; 1716 tests; migration 023 fixes subscriptions schema drift; Build 5 reconciliation built for real; public-release gate pending Sprint 19)
+> Last updated: 2026-05-31 (Code-review fix pass — 28 confirmed findings fixed across payments/AI/deadlines/security/UI; PR #44 merged to `main`; 1893 tests. Xendit fixes flagged as legacy/removal candidate per Anton — payments ship via RevenueCat IAP, no Xendit. Prior: Sprint 18 closed GREEN, 1716 tests, public-release gate pending Sprint 19)
 
 ---
 
@@ -599,6 +599,11 @@ Done when: Errors from client and server captured in Sentry with source maps.
 | Sprint 18 entry | 5 | Offline-queue M1 completeness — clear offline images on sign-out shipped; verify full lifecycle (multi-account device, storage-quota eviction) | OPEN — Sprint 19 on-device QA |
 | Sprint 18 entry | 6 | `NEXT_PUBLIC_SKIP_AUTH` / demo-mode env hygiene — confirm triple-gated demo login + `SKIP_AUTH` are fail-closed/off in the production native build before store submission | OPEN — Sprint 19 pre-submission checklist |
 | Sprint 18 entry | 7 | `@capacitor/splash-screen` + `@capacitor/filesystem` installs (SplashScreen config + offline-image persistence depend on them) | OPEN — Sprint 19 (config landed, plugin install deferred) |
+| Code-review fix pass (2026-05-31) | 1 | **Remove the dormant Xendit invoice webhook + `lib/payments` Xendit recording paths** (also the `lib/health` Xendit check and the `iap_platform: 'xendit_legacy'` enum value) — payments ship via RevenueCat IAP, no Xendit. Supersedes the P2/P3/P4/P6 hardening fixes from this pass, incl. the P3 `external_id == invoices.id` assumption (moot under removal). | OPEN — recommended cleanup; Anton to confirm scope/timing |
+| Code-review fix pass (2026-05-31) | 2 | Update any external/synthetic monitor that asserted the RevenueCat webhook "always returns 200" — it now returns **5xx on transient downstream failures** (P5) so RevenueCat retries with backoff | OPEN — Sprint 19 / monitoring setup |
+| Code-review fix pass (2026-05-31) | 3 | Add a DB partial unique index on `(user_id, invoice_number) WHERE deleted_at IS NULL` as a backstop to the numeric invoice-number generator (E4) — guards against concurrent inserts racing the in-app max | OPEN — data-layer |
+| Code-review fix pass (2026-05-31) | 4 | Drop `classify_expense`/`classify_intent` from the `ChatRequestSchema` feature enum so rejection happens at Zod validation (route + assemble guards already block them) (C4) | OPEN — optional cleanup |
+| Code-review fix pass (2026-05-31) | 5 | **BIR deadline weekend/holiday shift (B6)** — deadlines landing on a weekend/holiday are shown verbatim (no shift to next business day). Needs a product decision + a year-specific PH holiday data source. | OPEN — product decision (deliberately deferred from the fix pass) |
 
 ---
 
@@ -2100,4 +2105,43 @@ Essentially flat despite +11 pages and the persona-fetching layout — the `page
 **Energy Check:**
 - **Sustainability:** Good — Anton time ~1 hr (slightly above the 0.5 hr of Sprints 15-17 because of the gate-report sign-off + the unplanned PR #38/#39 merge decision), still well under the 3-4 hr budget.
 - **Recommendation:** Sprint 19 is the Anton-heavy wave (enrollments, on-device, store submission). Front-load the paid-account enrollments (Apple verification can take 1-2 days) at the start of the sprint so they don't block submission at the end.
+
+---
+
+### Code-Review Fix Pass — 2026-05-31 (between Sprint 18 and Sprint 19) — MERGED 🟢 GREEN
+
+**Phase:** 0B — Native Mobile Pivot (post-Sprint-18, pre-Sprint-19 Anton wave)
+**Trigger:** Anton ran `/code-review` at extra-high effort. `main` had no pending diff, so scope became the **whole codebase** (Anton's explicit choice). This is **not a sprint** — a standalone review + fix pass logged here for traceability.
+**Branch/PR:** `claude/code-review-fixes` → PR #44 → merged to `main` (`ea550fc`). Doc log on `claude/log-code-review-fix-pass`.
+
+**Method (multi-agent):** 7 finder agents (5 correctness + 3 cleanup + 1 altitude angle) across 7 high-risk domains → per-candidate 1-vote verification (CONFIRMED / PLAUSIBLE / REFUTED, ~30 confirmed) → 8 `build-engineer` fix agents over **disjoint file sets** (no two agents touched the same file) → central `tsc --noEmit` + full Vitest suite verification by the orchestrator.
+
+**Outcome:** ✅ **28 confirmed findings fixed**; 2 REFUTED (E5, A3) left untouched; 1 deferred (B6). 63 files changed (+4213/−252). **Vitest 1893/1893 pass** (+177 vs Sprint 18 baseline 1716). Production `tsc` clean — the 55 `tsc` errors are pre-existing test-harness `Request`/`NextRequest` noise (present in files this pass never touched; vitest runs via esbuild, `next build` excludes tests).
+
+**⚠️ Xendit caveat (Anton, 2026-05-31):** Four of the highest-ranked fixes — **P2/P3/P4/P6** — hardened the **dormant/legacy Xendit invoice webhook + `lib/payments` recording paths** (this very log called it "ADR-018's dormant Xendit webhook", and migration 023 carries `iap_platform: 'xendit_legacy'`). Anton confirms **Xendit is done away with** — payments ship via App Store / Google Play IAP (RevenueCat), with **no alternative payment partner**. So that effort hardened code that should be **removed**, not maintained (→ new action item #1). The fixes are harmless (tests green, no regressions) and remain until the Xendit path is deleted. The genuinely live-relevant payment fixes are **P5 (RevenueCat — the real IAP webhook)** and **P1 (tier scan limits)**. See [[project_payments_revenuecat_only]].
+
+**Fixes by domain (28 confirmed):**
+
+| Domain | IDs | Live? | Summary |
+|--------|-----|-------|---------|
+| RevenueCat (LIVE IAP webhook) | P5 | ✅ | Idempotent recovery — stamp `processed_at` only on success, reprocess unprocessed re-deliveries, **5xx on transient failure so RC retries** (was always-200 → silent paid-upgrade loss). |
+| Tiers (LIVE) | P1 | ✅ | `SCAN_LIMITS.pro` 50 → `UNLIMITED_SCANS` (was below Starter's 100) + `unlimited` flag/`walang-limit` label so the sentinel never surfaces. |
+| Xendit (LEGACY — remove) | P2/P3/P4/P6 | ⚠️ | Renewal UUID resolution via `xendit_subscription_id`; invoice-paid marking; dead-branch removal; amount reconciliation. **Slated for deletion — see action item #1.** |
+| Dashboard / invoices | E1/E2/E3/E4 | ✅ | Check-in soft-delete no longer behind a falsy guard (double-count); integer-centavo rounding on lines; reject discount > subtotal; numeric (not lexical) invoice-number sequencing. |
+| BIR deadlines | B1 | ✅ | Due-**today** deadline no longer says "Bukas na" (penalty-risk mislabel). |
+| Push | G1/G2/G4/G5/G7 | ✅ | Notified flag gated on `sent>0`; fail-safe preference check; `verifyBearer` on `/api/push/send`; VAPID `try/catch`. |
+| Claude / OCR | C1–C7 | ✅ | Circuit breaker no longer fails **open** on DB errors; OCR retries only on real parse failures + bills both fallback calls; `classify_*` gated before reaching the model; empty-content guards; env-cap parse hardening. |
+| Costing | B2/B3/B4 | ✅ | Exact-sum-then-round-once; break-even handles 0 fixed cost (no null-wipe on PATCH). |
+| Security | A1/A2+G6/A5+G3/G8 | ✅ | **`SKIP_AUTH` pinned to non-prod**; admin email normalized; admin flag update soft-delete + 404; `listUsers` paginated. |
+| UI | U1–U6 | ✅ | Line-item editor stable keys (remove-corruption); onboarding "Iba pa" → `useRef`; donut SSR-stable; money `aria-label` matches display; dead render-mutation removed. |
+
+**Notable behavior change:** the RevenueCat webhook now returns **5xx on transient downstream failures** (was always-200). → action item #2 (update synthetic monitors).
+
+**Deferred (B6):** BIR deadlines have no weekend/holiday shift — a due date landing on a weekend/holiday is shown verbatim. Needs a product decision + year-specific PH holiday data. → action item #5.
+
+**Cross-references to Sprint 18 action items:**
+- **A2/G6** (SKIP_AUTH non-prod pin) **advances Sprint-18 AI#6** — the code-level guard now exists (`NODE_ENV`/`VERCEL_ENV` gate); Anton still verifies the prod native build env pre-submission.
+- **G4** (`/api/push/send` → `verifyBearer`) converges one more bearer-compare site onto the shared `lib/security/constant-time` helper — **relates to Sprint-18 AI#1** (full ×N dedup still open).
+
+**Follow-ups** added to the Unresolved Action Items table (entries 1–5 under "Code-review fix pass (2026-05-31)").
 
