@@ -25,7 +25,8 @@ vi.mock('@/lib/supabase/service', () => ({
           data: [{ total_cost_usd: 0 }],
           error: null,
           eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
+            // Circuit breaker reads per-user spend via .maybeSingle() (C6).
+            maybeSingle: vi.fn().mockResolvedValue({
               data: { total_cost_usd: 0, query_count: 0 },
               error: null,
             }),
@@ -235,5 +236,68 @@ describe('POST /api/chat', () => {
     expect(json).toHaveProperty('success', true);
     expect(json).toHaveProperty('data');
     expect(json.data).toHaveProperty('message');
+  });
+
+  // --- C4: internal-only classification features are NOT client-selectable ---
+  it('returns 400 for classify_expense (internal-only feature)', async () => {
+    const req = createRequest({ message: 'test', feature: 'classify_expense' });
+    const res = await POST(req as any);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe('INVALID_INPUT');
+    // The model must never have been called with an unsubstituted prompt.
+    expect(mockAnthropicCreate).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 for classify_intent (internal-only feature)', async () => {
+    const req = createRequest({ message: 'test', feature: 'classify_intent' });
+    const res = await POST(req as any);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.error.code).toBe('INVALID_INPUT');
+    expect(mockAnthropicCreate).not.toHaveBeenCalled();
+  });
+
+  // --- C7: empty Claude content array must not throw — falls back to error msg ---
+  it('handles an empty Claude content array without throwing (C7)', async () => {
+    mockAnthropicCreate.mockResolvedValueOnce({
+      content: [],
+      usage: { input_tokens: 1500, output_tokens: 0 },
+    });
+
+    const req = createRequest({ message: 'Hello' });
+    const res = await POST(req as any);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(typeof json.data.message).toBe('string');
+    expect(json.data.message.length).toBeGreaterThan(0);
+  });
+
+  // --- C5: a tax-containing reply-draft must NOT stack two BIR disclaimers ---
+  it('does not stack disclaimers on a tax-containing reply draft (C5)', async () => {
+    // Reply mentions VAT (a BIR trigger) but contains no advice/commitment
+    // patterns, so it passes reply-output validation and gets a BIR disclaimer.
+    mockAnthropicCreate.mockResolvedValueOnce({
+      content: [{ type: 'text', text: 'Option 1:\nAng presyo po ay may kasamang VAT. Salamat!' }],
+      usage: { input_tokens: 1500, output_tokens: 60 },
+    });
+
+    const req = createRequest({ message: 'tulungan mo ako sagutin ang customer', feature: 'reply_drafter' });
+    const res = await POST(req as any);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    const msg: string = json.data.message;
+    // Exactly ONE BIR disclaimer (no stacking).
+    expect((msg.match(/hindi tax advice/g) ?? []).length).toBe(1);
+    // The reply-draft notice is present...
+    expect(msg).toContain('draft lang');
+    // ...and the BIR disclaimer comes BEFORE the reply notice (correct order).
+    expect(msg.indexOf('hindi tax advice')).toBeLessThan(msg.indexOf('draft lang'));
   });
 });

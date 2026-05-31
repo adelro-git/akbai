@@ -123,6 +123,7 @@ describe('getUpcomingNotifications — 1d notifications', () => {
 
     expect(notifications).toHaveLength(1);
     expect(notifications[0].notification_type).toBe('1d');
+    expect(notifications[0].days_until).toBe(0);
   });
 
   it('does NOT return 1d if already notified', () => {
@@ -130,6 +131,39 @@ describe('getUpcomingNotifications — 1d notifications', () => {
     const notifications = getUpcomingNotifications(deadlines, '2026-04-14');
 
     expect(notifications).toHaveLength(0);
+  });
+
+  // --- B1 regression: due-today must NOT say "bukas" (due tomorrow) ---
+  it('due-today (daysLeft===0) message says it is due TODAY, not bukas', () => {
+    const deadlines = [mockDeadline({ form_name: '2551Q', due_date: '2026-04-15' })];
+    const [n] = getUpcomingNotifications(deadlines, '2026-04-15');
+
+    expect(n.notification_type).toBe('1d');
+    expect(n.message).toContain('Ngayong araw');
+    expect(n.message).toContain('2551Q');
+    expect(n.message).not.toContain('Bukas');
+  });
+
+  it('due-tomorrow (daysLeft===1) message still says "Bukas na"', () => {
+    const deadlines = [mockDeadline({ form_name: '2551Q', due_date: '2026-04-15' })];
+    const [n] = getUpcomingNotifications(deadlines, '2026-04-14');
+
+    expect(n.notification_type).toBe('1d');
+    expect(n.message).toContain('Bukas na');
+  });
+
+  // --- B1: due-today reminder must still fire even if notified_1d was already
+  // set by the day-before send (single-flag suppression bug). ---
+  it('still fires the due-today reminder even when notified_1d is already true', () => {
+    const deadlines = [
+      mockDeadline({ form_name: '2551Q', due_date: '2026-04-15', notified_1d: true }),
+    ];
+    const notifications = getUpcomingNotifications(deadlines, '2026-04-15');
+
+    expect(notifications).toHaveLength(1);
+    expect(notifications[0].notification_type).toBe('1d');
+    expect(notifications[0].days_until).toBe(0);
+    expect(notifications[0].message).toContain('Ngayong araw');
   });
 });
 

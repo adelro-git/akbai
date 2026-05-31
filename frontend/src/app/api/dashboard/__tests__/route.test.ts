@@ -419,7 +419,7 @@ describe('POST /api/dashboard — check-in creates transactions', () => {
     expect(txChain.insert).toHaveBeenCalled(); // insert new
   });
 
-  it('does NOT create transactions when no financial data', async () => {
+  it('does NOT insert transactions when no financial data', async () => {
     const usersChain = mockChain();
     usersChain.single.mockResolvedValue({ data: { display_name: 'Maria' }, error: null });
     mockFromChains['users'] = usersChain;
@@ -435,9 +435,54 @@ describe('POST /api/dashboard — check-in creates transactions', () => {
     });
     mockFromChains['daily_check_in'] = checkInChain;
 
+    const txChain = mockChain();
+    mockFromChains['transactions'] = txChain;
+
     const res = await POST(makeRequest({ mood: 'okay' }));
     expect(res.status).toBe(200);
-    expect(mockFromChains['transactions']).toBeUndefined();
+    // E1 fix: the soft-delete now ALWAYS runs (so stale rows can't survive a
+    // zero re-submit), but no new rows are inserted without amounts.
+    expect(txChain.update).toHaveBeenCalled();
+    expect(txChain.insert).not.toHaveBeenCalled();
+  });
+
+  // ── E1 regression: re-submitting a check-in with sales_amount=0 must leave
+  //    NO active check_in transaction (the prior 50000 row must be soft-deleted
+  //    even though the new amount is falsy). Previously the soft-delete was
+  //    skipped on a zero re-submit, double-counting the stale row everywhere. ──
+  it('soft-deletes the prior check_in transaction on a zero re-submit (E1)', async () => {
+    const usersChain = mockChain();
+    usersChain.single.mockResolvedValue({ data: { display_name: 'Maria' }, error: null });
+    mockFromChains['users'] = usersChain;
+
+    // The check-in row exists (same id across both submits); the re-submit
+    // upsert returns sales_amount=0 / expenses_amount=null.
+    const checkInChain = mockChain();
+    checkInChain.single.mockResolvedValue({
+      data: {
+        id: 'checkin-resubmit', user_id: mockUser.id, check_in_date: '2026-03-24',
+        mood: 'okay', kai_greeting: 'Magandang umaga!',
+        sales_amount: 0, expenses_amount: null,
+      },
+      error: null,
+    });
+    mockFromChains['daily_check_in'] = checkInChain;
+
+    const txChain = mockChain();
+    mockFromChains['transactions'] = txChain;
+
+    // Re-submit with sales_amount=0 (the falsy case that used to skip cleanup).
+    const res = await POST(makeRequest({ mood: 'okay', sales_amount: 0 }));
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    // Soft-delete of the stale prior check_in transaction MUST have run...
+    expect(txChain.update).toHaveBeenCalledWith({ deleted_at: expect.any(String) });
+    expect(txChain.eq).toHaveBeenCalledWith('source', 'check_in');
+    expect(txChain.eq).toHaveBeenCalledWith('source_ref_id', 'checkin-resubmit');
+    // ...and NO new income/expense row is inserted for the zero amount.
+    expect(txChain.insert).not.toHaveBeenCalled();
   });
 });
 

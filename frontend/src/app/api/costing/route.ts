@@ -132,13 +132,16 @@ export async function POST(req: NextRequest) {
     : null;
 
   const costPerUnit = calculateCostPerUnit(totalCost, yieldQty);
-  const breakEvenQty = data.selling_price_centavos && data.monthly_fixed_costs_centavos
-    ? calculateBreakEven(
-        data.monthly_fixed_costs_centavos,
-        data.selling_price_centavos,
-        costPerUnit
-      )
-    : null;
+  // Fixed costs persist as 0 when omitted (see insert payload below), and 0 is
+  // a VALID nonnegative value — calculateBreakEven(0, price, cost) legitimately
+  // returns 0. Use explicit null/undefined checks (NOT a falsy `&&` guard) so a
+  // product with ₱0 fixed costs and a real selling price still gets a break-even
+  // of 0 instead of being short-circuited to null. (B3)
+  const monthlyFixed = data.monthly_fixed_costs_centavos ?? 0;
+  const breakEvenQty =
+    data.selling_price_centavos != null
+      ? calculateBreakEven(monthlyFixed, data.selling_price_centavos, costPerUnit)
+      : null;
 
   // ── Categorize item costs for header summary ──
   let overheadCentavos = 0;

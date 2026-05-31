@@ -20,6 +20,25 @@ import { getManilaToday } from '@/lib/timezone';
 /** Which cap the alert concerns — used as a Sentry tag + fingerprint key. */
 type BreakerCap = 'global' | 'user';
 
+// ============================================================
+// Env cap parsing (C1 safety) — defensive numeric env reader.
+// `Number(process.env.X ?? default)` is unsafe: an env var SET to an empty
+// string ('') is NOT nullish, so `?? default` is skipped and Number('') === 0,
+// which silently DISABLES the cap (cap of 0 → every request trips, or a 0
+// divisor for the warning ratio → NaN). Treat '' / whitespace / NaN as "unset"
+// and fall back to the default.
+// ============================================================
+
+/**
+ * Read a numeric env var, falling back to `fallback` when the var is unset,
+ * empty/whitespace, or not a finite number.
+ */
+function numericEnv(value: string | undefined, fallback: number): number {
+  if (value === undefined || value.trim() === '') return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 /**
  * Fire a Sentry alert when the breaker TRIPS (a request is blocked because a
  * spend cap is exceeded). Captured at `error` level so it routes to the
@@ -110,15 +129,26 @@ export async function checkCircuitBreaker(
   onboardingCompleted?: boolean
 ): Promise<CircuitBreakerResult> {
   const today = getManilaToday();
-  const globalCap = Number(process.env.CIRCUIT_BREAKER_DAILY_CAP_USD ?? 5.0);
-  const userCap = Number(process.env.CIRCUIT_BREAKER_USER_CAP_USD ?? 0.5);
-  const warningPct = Number(process.env.CIRCUIT_BREAKER_WARNING_PCT ?? 0.8);
+  const globalCap = numericEnv(process.env.CIRCUIT_BREAKER_DAILY_CAP_USD, 5.0);
+  const userCap = numericEnv(process.env.CIRCUIT_BREAKER_USER_CAP_USD, 0.5);
+  const warningPct = numericEnv(process.env.CIRCUIT_BREAKER_WARNING_PCT, 0.8);
 
-  // Check global daily spend
-  const { data: globalSpend } = await supabase
+  // Check global daily spend.
+  // C6 (fail-open guard): a discarded read error used to be treated as "zero
+  // spend" → the call was ALLOWED, defeating the fail-closed contract the chat
+  // and OCR routes depend on. Capture the error and FAIL CLOSED (throw) on any
+  // real DB error so the caller's existing try/catch blocks the request. An
+  // empty result set legitimately means "no spend yet today" (0).
+  const { data: globalSpend, error: globalErr } = await supabase
     .from('daily_api_spend')
     .select('total_cost_usd')
     .eq('date', today);
+
+  if (globalErr) {
+    throw new Error(
+      `[CircuitBreaker] global spend read failed — failing closed: ${globalErr.message}`
+    );
+  }
 
   const globalTotal = globalSpend?.reduce(
     (sum: number, row: { total_cost_usd: number }) => sum + Number(row.total_cost_usd),
@@ -136,13 +166,25 @@ export async function checkCircuitBreaker(
     return { allowed: false, reason: 'global_cap', remainingUsd: Math.max(0, globalCap - globalTotal) };
   }
 
-  // Check per-user daily spend
-  const { data: userSpend } = await supabase
+  // Check per-user daily spend.
+  // C6 (fail-open guard): `.maybeSingle()` returns `data: null, error: null`
+  // when the user has no row for today (legitimately 0 spend), instead of
+  // `.single()`'s PGRST116 "no rows" error. Any OTHER error is a real DB
+  // failure → FAIL CLOSED (throw) so the caller blocks. The old code used
+  // `.single()` and discarded the error, so a failed read became "0 spend"
+  // and the request was allowed — a fail-open hole inside a fail-closed guard.
+  const { data: userSpend, error: userErr } = await supabase
     .from('daily_api_spend')
     .select('total_cost_usd, query_count')
     .eq('user_id', userId)
     .eq('date', today)
-    .single();
+    .maybeSingle();
+
+  if (userErr) {
+    throw new Error(
+      `[CircuitBreaker] user spend read failed — failing closed: ${userErr.message}`
+    );
+  }
 
   const userTotal = Number(userSpend?.total_cost_usd ?? 0);
   const userQueryCount = Number(userSpend?.query_count ?? 0);

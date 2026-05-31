@@ -74,18 +74,19 @@ export default function StepBusinessType({
     : '';
 
   const [selected, setSelected] = useState<BusinessType | null>(parsedInitial ?? null);
+  // Uncontrolled input (React 19 controlled-input bug — repo convention is
+  // useRef + read-on-submit, never onChange-populated state). The value lives
+  // in the DOM via `defaultValue`; we read it from the ref in handleContinue.
   const otherInputRef = useRef<HTMLInputElement>(null);
-  const [otherText, setOtherText] = useState(parsedOtherText);
   const [otherError, setOtherError] = useState<string | null>(null);
 
   const isOtherSelected = selected === 'other';
-  const otherTextValid = otherText.trim().length >= 2 && otherText.trim().length <= 100;
 
   const handleContinue = () => {
     if (!selected) return;
 
     if (isOtherSelected) {
-      const trimmed = otherText.trim();
+      const trimmed = otherInputRef.current?.value.trim() ?? '';
       if (trimmed.length < 2) {
         setOtherError('Kailangan ng at least 2 characters.');
         return;
@@ -101,7 +102,10 @@ export default function StepBusinessType({
     }
   };
 
-  const canContinue = selected !== null && (!isOtherSelected || otherTextValid);
+  // The CTA stays enabled whenever a type is picked. For "Iba pa" we can't
+  // gate on live text (uncontrolled input — no onChange state), so validation
+  // runs on submit via handleContinue and surfaces an inline error instead.
+  const canContinue = selected !== null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -141,10 +145,12 @@ export default function StepBusinessType({
             id="other-business-type"
             ref={otherInputRef}
             type="text"
-            value={otherText}
-            onChange={(e) => {
-              setOtherText(e.target.value);
-              setOtherError(null);
+            defaultValue={parsedOtherText}
+            onInput={() => {
+              // Clear a stale validation error as the user types again. We do
+              // NOT mirror the value into state — the ref is the source of
+              // truth (read on submit).
+              if (otherError) setOtherError(null);
             }}
             placeholder="e.g. Pet grooming, Laundry shop"
             maxLength={100}

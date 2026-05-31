@@ -534,14 +534,21 @@ export async function POST(req: NextRequest) {
 
   // ── Check-in → Expenses integration (Sprint 7, Task 13) ──
   // Create transactions from check-in financial data so they appear in Saan Napunta.
-  // Soft-delete existing check-in transactions for this check-in to avoid duplicates on re-submit.
-  if (checkIn && (parsed.data.sales_amount || parsed.data.expenses_amount)) {
+  //
+  // E1 fix: ALWAYS soft-delete the prior `check_in`-sourced transactions for this
+  // check-in *first*, regardless of the newly-submitted amounts. The previous code
+  // nested this soft-delete inside `if (sales_amount || expenses_amount)`, so a
+  // re-submit with sales_amount=0 (or omitted) skipped it entirely and the stale
+  // transaction stayed active — double-counting in every aggregate. The re-insert
+  // of fresh income/expense rows stays conditional on the amounts being present.
+  if (checkIn) {
     await db
       .from('transactions')
       .update({ deleted_at: new Date().toISOString() })
       .eq('user_id', userId)
       .eq('source', 'check_in')
-      .eq('source_ref_id', checkIn.id);
+      .eq('source_ref_id', checkIn.id)
+      .is('deleted_at', null);
 
     const txRows: Array<Record<string, unknown>> = [];
 

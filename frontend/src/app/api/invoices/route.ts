@@ -172,13 +172,33 @@ export async function POST(req: NextRequest) {
   const db = SKIP_AUTH ? createServiceClient() : supabase;
 
   // --- Compute totals from line items ---
+  // E2 fix: quantity may be fractional (e.g. hours), so each line subtotal is
+  // Math.round()-ed to keep stored centavos integer. The invoice subtotal sums
+  // the already-rounded line totals so it stays integer too.
   const subtotalCentavos = data.items.reduce(
-    (sum, item) => sum + item.unit_price_centavos * (item.quantity ?? 1),
+    (sum, item) => sum + Math.round(item.unit_price_centavos * (item.quantity ?? 1)),
     0
   );
   const discountCentavos = data.discount_centavos ?? 0;
   const taxRatePct = data.tax_rate_pct ?? 0;
-  const taxableAmount = subtotalCentavos - discountCentavos;
+
+  // E3 fix: a discount larger than the subtotal would produce a negative total.
+  // Reject it with a clear conversational Filipino error before persisting.
+  if (discountCentavos > subtotalCentavos) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'INVALID_INPUT',
+          message_tl: 'Hindi puwedeng mas malaki ang discount kaysa sa subtotal ng invoice.',
+        },
+      },
+      { status: 400 }
+    );
+  }
+
+  // Defense-in-depth: clamp the taxable base to 0 so tax/total never go negative.
+  const taxableAmount = Math.max(0, subtotalCentavos - discountCentavos);
   const taxAmountCentavos = Math.round(taxableAmount * (taxRatePct / 100));
   const totalCentavos = taxableAmount + taxAmountCentavos;
 
@@ -225,7 +245,9 @@ export async function POST(req: NextRequest) {
     quantity: item.quantity ?? 1,
     unit: item.unit ?? 'piece',
     unit_price_centavos: item.unit_price_centavos,
-    total_centavos: item.unit_price_centavos * (item.quantity ?? 1),
+    // E2 fix: round the per-line total so a fractional quantity can't store
+    // fractional centavos (matches the subtotal computation above).
+    total_centavos: Math.round(item.unit_price_centavos * (item.quantity ?? 1)),
     costing_card_id: item.costing_card_id ?? null,
     sort_order: index,
   }));

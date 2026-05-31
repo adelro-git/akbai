@@ -26,6 +26,10 @@ const mockInsert = vi.fn();
 const mockUpdate = vi.fn();
 const mockUpdateEq = vi.fn();
 const mockRpc = vi.fn();
+// P5 — the duplicate-recovery branch reads the existing event row via
+// .select('processed_at').eq('event_id', id).single(). mockSelectSingle
+// is the terminal resolver for that chain.
+const mockSelectSingle = vi.fn();
 
 const mockServiceClient = {
   from: vi.fn((_table: string) => ({
@@ -34,6 +38,11 @@ const mockServiceClient = {
       mockUpdate(...args);
       return { eq: (...eqArgs: unknown[]) => mockUpdateEq(...eqArgs) };
     },
+    select: (..._selArgs: unknown[]) => ({
+      eq: (..._eqArgs: unknown[]) => ({
+        single: (...singleArgs: unknown[]) => mockSelectSingle(...singleArgs),
+      }),
+    }),
   })),
   rpc: (...args: unknown[]) => mockRpc(...args),
 };
@@ -113,6 +122,12 @@ beforeEach(() => {
   mockUpdateEq.mockResolvedValue({ error: null });
   mockRpc.mockResolvedValue({ error: null });
   mockFetchEntitlements.mockResolvedValue({ tier: 'pro', expires_at: FUTURE_DATE });
+  // Default duplicate-lookup resolver: an already-processed row. Tests that
+  // exercise the recovery path override this to return processed_at=null.
+  mockSelectSingle.mockResolvedValue({
+    data: { processed_at: '2026-05-27T00:00:00.000Z' },
+    error: null,
+  });
 });
 
 afterEach(() => {
@@ -236,9 +251,14 @@ describe('RevenueCat Webhook — Idempotency', () => {
     expect(mockRpc).toHaveBeenCalledTimes(1);
   });
 
-  it('returns deduped=true on duplicate event (PG 23505) and skips tier write', async () => {
+  it('returns deduped=true on duplicate of an ALREADY-PROCESSED event and skips tier write', async () => {
     mockInsert.mockResolvedValue({
       error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+    });
+    // Existing row was already fully processed.
+    mockSelectSingle.mockResolvedValue({
+      data: { processed_at: '2026-05-27T00:00:00.000Z' },
+      error: null,
     });
 
     const { POST } = await import('@/app/api/webhooks/revenuecat/route');
@@ -249,11 +269,82 @@ describe('RevenueCat Webhook — Idempotency', () => {
 
     const json = await res.json();
     expect(json.data.deduped).toBe(true);
+    expect(json.data.reprocessed).toBeUndefined();
+    // No re-run of the tier write for an already-processed event.
     expect(mockRpc).not.toHaveBeenCalled();
     expect(mockFetchEntitlements).not.toHaveBeenCalled();
   });
 
-  it('returns 200 + skips tier write on other insert DB error', async () => {
+  it('REPROCESSES a re-delivered UNPROCESSED event (processed_at IS NULL) — P5 no-data-loss recovery', async () => {
+    // Duplicate insert (row already exists from a prior delivery that
+    // crashed before its tier write landed) — processed_at is still NULL.
+    mockInsert.mockResolvedValue({
+      error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+    });
+    mockSelectSingle.mockResolvedValue({
+      data: { processed_at: null },
+      error: null,
+    });
+
+    const { POST } = await import('@/app/api/webhooks/revenuecat/route');
+    const req = makeRequest(makeEvent(), `Bearer ${WEBHOOK_AUTH}`);
+
+    const res = await POST(req as never);
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    expect(json.data.reprocessed).toBe(true);
+    expect(json.data.deduped).toBeUndefined();
+    // Recovery actually ran the tier write this time.
+    expect(mockFetchEntitlements).toHaveBeenCalledTimes(1);
+    expect(mockRpc).toHaveBeenCalledTimes(1);
+    // And stamped processed_at after success.
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    const updateArgs = mockUpdate.mock.calls[0]?.[0] as { processed_at?: string };
+    expect(updateArgs?.processed_at).toBeDefined();
+  });
+
+  it('returns 5xx when the reprocess tier write fails transiently (RevenueCat will retry)', async () => {
+    mockInsert.mockResolvedValue({
+      error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+    });
+    mockSelectSingle.mockResolvedValue({
+      data: { processed_at: null },
+      error: null,
+    });
+    // The recovery's RPC fails transiently.
+    mockRpc.mockResolvedValue({ error: { message: 'RPC database unavailable' } });
+
+    const { POST } = await import('@/app/api/webhooks/revenuecat/route');
+    const req = makeRequest(makeEvent(), `Bearer ${WEBHOOK_AUTH}`);
+
+    const res = await POST(req as never);
+    expect(res.status).toBe(500);
+    // processed_at NOT stamped — a future re-delivery recovers again.
+    expect(mockUpdate).not.toHaveBeenCalled();
+    expect(mockSentryCapture).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns 5xx when the duplicate-row lookup itself fails (transient — retry, do not drop)', async () => {
+    mockInsert.mockResolvedValue({
+      error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+    });
+    mockSelectSingle.mockResolvedValue({
+      data: null,
+      error: { message: 'lookup connection lost' },
+    });
+
+    const { POST } = await import('@/app/api/webhooks/revenuecat/route');
+    const req = makeRequest(makeEvent(), `Bearer ${WEBHOOK_AUTH}`);
+
+    const res = await POST(req as never);
+    expect(res.status).toBe(500);
+    expect(mockRpc).not.toHaveBeenCalled();
+  });
+
+  it('returns 5xx + skips tier write on a non-duplicate insert DB error (transient — RevenueCat retries)', async () => {
+    // P5 change: a non-23505 insert error means the event was NOT recorded,
+    // so re-delivery is the only recovery — return 5xx, not 200.
     mockInsert.mockResolvedValue({
       error: { code: 'XX000', message: 'connection lost' },
     });
@@ -262,8 +353,9 @@ describe('RevenueCat Webhook — Idempotency', () => {
     const req = makeRequest(makeEvent(), `Bearer ${WEBHOOK_AUTH}`);
 
     const res = await POST(req as never);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(500);
     expect(mockRpc).not.toHaveBeenCalled();
+    expect(mockSentryCapture).toHaveBeenCalledTimes(1);
   });
 
   it('marks event processed after successful tier write', async () => {
@@ -445,11 +537,18 @@ describe('RevenueCat Webhook — Entitlement payload', () => {
 });
 
 // ============================================================
-// Error handling — always 200
+// Error handling — transient downstream failures → 5xx (retry),
+// permanent conditions → 200 (no retry storm). (P5)
 // ============================================================
 
 describe('RevenueCat Webhook — Error handling', () => {
-  it('returns 200 when set_user_tier_v2 throws (Sentry capture invoked)', async () => {
+  it('returns 5xx when set_user_tier_v2 throws (transient — RevenueCat must retry)', async () => {
+    // P5 change (was: returns 200). Rationale: a transient set_user_tier_v2
+    // failure on a first delivery would otherwise lose a paid-tier upgrade —
+    // the event row exists with processed_at=NULL, RevenueCat never retries a
+    // 200, and there is no replay job. Returning 5xx lets RevenueCat redeliver
+    // with backoff; the re-delivery hits the unprocessed-duplicate recovery
+    // branch and completes the tier write. processed_at must NOT be stamped.
     mockRpc.mockResolvedValue({
       error: { message: 'RPC database unavailable' },
     });
@@ -457,7 +556,9 @@ describe('RevenueCat Webhook — Error handling', () => {
     const req = makeRequest(makeEvent(), `Bearer ${WEBHOOK_AUTH}`);
 
     const res = await POST(req as never);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(500);
+    // The event row was inserted but NOT marked processed (recovery on retry).
+    expect(mockUpdate).not.toHaveBeenCalled();
     expect(mockSentryCapture).toHaveBeenCalledTimes(1);
     const captureArgs = mockSentryCapture.mock.calls[0]?.[1] as {
       tags?: { source?: string; event_type?: string };
@@ -466,13 +567,26 @@ describe('RevenueCat Webhook — Error handling', () => {
     expect(captureArgs?.tags?.event_type).toBe('INITIAL_PURCHASE');
   });
 
-  it('returns 200 when REST entitlement lookup throws', async () => {
+  it('returns a structured error envelope on transient failure', async () => {
+    mockRpc.mockResolvedValue({ error: { message: 'RPC database unavailable' } });
+    const { POST } = await import('@/app/api/webhooks/revenuecat/route');
+    const req = makeRequest(makeEvent(), `Bearer ${WEBHOOK_AUTH}`);
+
+    const res = await POST(req as never);
+    const json = await res.json();
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe('WEBHOOK_PROCESSING_FAILED');
+    expect(typeof json.error.message_tl).toBe('string');
+  });
+
+  it('returns 5xx when REST entitlement lookup throws (transient — RevenueCat must retry)', async () => {
     mockFetchEntitlements.mockRejectedValue(new Error('REST timeout'));
     const { POST } = await import('@/app/api/webhooks/revenuecat/route');
     const req = makeRequest(makeEvent(), `Bearer ${WEBHOOK_AUTH}`);
 
     const res = await POST(req as never);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(500);
+    expect(mockUpdate).not.toHaveBeenCalled();
     expect(mockSentryCapture).toHaveBeenCalledTimes(1);
   });
 });

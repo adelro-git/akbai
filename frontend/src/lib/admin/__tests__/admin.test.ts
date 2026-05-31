@@ -46,6 +46,32 @@ describe('isAdminEmail', () => {
     const { isAdminEmail } = await import('../auth');
     expect(isAdminEmail(undefined)).toBe(false);
   });
+
+  // --- G8: normalization (case + whitespace insensitive) ---
+
+  it('matches regardless of case differences (G8)', async () => {
+    vi.stubEnv('ADMIN_EMAIL', 'anton@akbai.ph');
+    const { isAdminEmail } = await import('../auth');
+    expect(isAdminEmail('Anton@AKBai.PH')).toBe(true);
+  });
+
+  it('matches when the ADMIN_EMAIL env has surrounding whitespace/case (G8)', async () => {
+    vi.stubEnv('ADMIN_EMAIL', '  Anton@Akbai.ph  ');
+    const { isAdminEmail } = await import('../auth');
+    expect(isAdminEmail('anton@akbai.ph')).toBe(true);
+  });
+
+  it('matches when the candidate email has surrounding whitespace (G8)', async () => {
+    vi.stubEnv('ADMIN_EMAIL', 'anton@akbai.ph');
+    const { isAdminEmail } = await import('../auth');
+    expect(isAdminEmail('  anton@akbai.ph ')).toBe(true);
+  });
+
+  it('returns false when ADMIN_EMAIL is whitespace-only (G8)', async () => {
+    vi.stubEnv('ADMIN_EMAIL', '   ');
+    const { isAdminEmail } = await import('../auth');
+    expect(isAdminEmail('anton@akbai.ph')).toBe(false);
+  });
 });
 
 // ============================================================
@@ -228,6 +254,68 @@ describe('isAdmin', () => {
 
     const { isAdmin } = await import('../auth');
     const result = await isAdmin('user-123');
+    expect(result).toBe(false);
+  });
+
+  // --- G8: normalization + email confirmation ---
+
+  it('matches when the user email differs only by case/whitespace (G8)', async () => {
+    vi.stubEnv('ADMIN_EMAIL', '  Anton@Akbai.ph ');
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-key');
+
+    mockGetUserById.mockResolvedValue({
+      data: { user: { email: 'ANTON@akbai.PH', email_confirmed_at: '2026-01-01T00:00:00Z' } },
+      error: null,
+    });
+
+    const { isAdmin } = await import('../auth');
+    const result = await isAdmin('user-123');
+    expect(result).toBe(true);
+  });
+
+  it('returns false when the matching email is NOT confirmed (G8)', async () => {
+    vi.stubEnv('ADMIN_EMAIL', 'anton@akbai.ph');
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-key');
+
+    mockGetUserById.mockResolvedValue({
+      data: { user: { email: 'anton@akbai.ph', email_confirmed_at: null } },
+      error: null,
+    });
+
+    const { isAdmin } = await import('../auth');
+    const result = await isAdmin('user-123');
+    expect(result).toBe(false);
+  });
+
+  it('matches when email_confirmed_at field is absent (legacy payload, no regression)', async () => {
+    vi.stubEnv('ADMIN_EMAIL', 'anton@akbai.ph');
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-key');
+
+    mockGetUserById.mockResolvedValue({
+      data: { user: { email: 'anton@akbai.ph' } },
+      error: null,
+    });
+
+    const { isAdmin } = await import('../auth');
+    const result = await isAdmin('user-123');
+    expect(result).toBe(true);
+  });
+
+  it('returns false when the confirmed user email does not match (G8)', async () => {
+    vi.stubEnv('ADMIN_EMAIL', 'anton@akbai.ph');
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-key');
+
+    mockGetUserById.mockResolvedValue({
+      data: { user: { email: 'attacker@evil.com', email_confirmed_at: '2026-01-01T00:00:00Z' } },
+      error: null,
+    });
+
+    const { isAdmin } = await import('../auth');
+    const result = await isAdmin('user-456');
     expect(result).toBe(false);
   });
 });

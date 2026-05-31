@@ -208,14 +208,27 @@ export async function POST(req: NextRequest) {
     const result = await parseReceipt(imageBuffer, imageFile.type);
 
     // --- Record Spend (skip in dev bypass) ---
-    if (!SKIP_AUTH && result.success && result.tokenUsage.input > 0) {
+    // C3: parseReceipt may make TWO Claude calls (Haiku then a Sonnet
+    // fallback). Bill EVERY call in the breakdown at its own model's rate so
+    // the circuit breaker isn't under-counted. Fall back to the cumulative
+    // tokenUsage on the returned model if no breakdown is present (legacy
+    // shape / single call).
+    if (!SKIP_AUTH && result.tokenUsage.input > 0) {
       try {
         const serviceSupabase = createServiceClient();
-        const actualCost = calculateOcrCost(result.model, result.tokenUsage);
+        const calls =
+          result.tokenUsageBreakdown && result.tokenUsageBreakdown.length > 0
+            ? result.tokenUsageBreakdown
+            : [{ model: result.model, ...result.tokenUsage }];
+        const totalCost = calls.reduce(
+          (sum, call) =>
+            sum + calculateOcrCost(call.model, { input: call.input, output: call.output }),
+          0
+        );
         await recordSpend(
           serviceSupabase,
           user.id,
-          actualCost,
+          totalCost,
           'resibo_scanner'
         );
       } catch (spendError) {

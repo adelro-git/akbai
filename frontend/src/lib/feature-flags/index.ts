@@ -3,7 +3,9 @@
  * Feature: Feature Flags (Sprint 5)
  * Role: Read-only access to per-user feature flags. Uses fail-closed
  *       pattern — returns false if flag is missing or query errors.
- *       In SKIP_AUTH dev mode, all flags return true.
+ *       In SKIP_AUTH dev mode, all flags return true. SKIP_AUTH is itself
+ *       hard-pinned to false in production (see dev-auth.ts, A2 + G6), so a
+ *       leaked NEXT_PUBLIC_SKIP_AUTH can never force-enable flags in prod.
  */
 
 import { createClient } from '@/lib/supabase/server';
@@ -18,6 +20,8 @@ export async function getFeatureFlag(
   flagName: string
 ): Promise<boolean> {
   // --- Dev bypass: all flags enabled in SKIP_AUTH mode ---
+  // SKIP_AUTH is hard-false in production (dev-auth.ts), so this branch can
+  // never run in a prod build even if NEXT_PUBLIC_SKIP_AUTH leaks as 'true'.
   if (SKIP_AUTH) {
     return true;
   }

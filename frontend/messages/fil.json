@@ -269,6 +269,9 @@
     "badge": {
       "most_worth_it": "Pinaka-sulit"
     },
+    "usage": {
+      "walang_limit": "Walang-limit na scans"
+    },
     "cards": {
       "starter": {
         "title": "Starter",

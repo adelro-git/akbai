@@ -116,14 +116,27 @@ export async function PATCH(req: NextRequest) {
 
   const service = createServiceClient();
 
+  // The service client bypasses RLS, so we MUST scope the soft-delete filter
+  // ourselves (A5/G3) — without `.is('deleted_at', null)` this update could
+  // resurrect an already soft-deleted flag by flipping resolved back on.
   const { data: updated, error: updateError } = await service
     .from('content_flags')
     .update({ resolved: true, resolved_at: new Date().toISOString() })
     .eq('id', parsed.data.id)
+    .is('deleted_at', null)
     .select('id, resolved, resolved_at')
     .single();
 
   if (updateError) {
+    // PGRST116 = "no rows returned" from .single(): the id doesn't exist or is
+    // soft-deleted. That's a missing resource, not a server fault — return 404
+    // instead of a misleading generic 500.
+    if (updateError.code === 'PGRST116') {
+      return NextResponse.json(
+        { success: false, error: { code: 'NOT_FOUND', message: 'Wala kaming nahanap na flag na iyon.' } },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
       { success: false, error: { code: 'DB_ERROR', message: 'Failed to resolve flag.' } },
       { status: 500 }

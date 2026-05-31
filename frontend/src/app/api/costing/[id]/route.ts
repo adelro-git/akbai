@@ -197,9 +197,16 @@ export async function PATCH(
     : null;
 
   const costPerUnit = calculateCostPerUnit(newTotalCost, yieldQty);
-  const breakEvenQty = sellingPrice && monthlyFixed
-    ? calculateBreakEven(monthlyFixed, sellingPrice, costPerUnit)
-    : null;
+  // break_even_qty is ALWAYS written in the update payload below, so the guard
+  // must not collapse a valid value to null. monthlyFixed === 0 is a VALID
+  // nonnegative value (calculateBreakEven(0, price, cost) returns 0), and a
+  // PATCH that doesn't touch pricing keeps the existing selling price / fixed
+  // costs — so it must recompute the SAME break-even, not wipe it. Use explicit
+  // null checks (NOT a falsy `&&` guard). (B4)
+  const breakEvenQty =
+    sellingPrice != null && monthlyFixed != null
+      ? calculateBreakEven(monthlyFixed, sellingPrice, costPerUnit)
+      : null;
 
   // ── Build update payload ──
   const updatePayload: Record<string, unknown> = {

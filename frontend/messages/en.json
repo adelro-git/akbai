@@ -269,6 +269,9 @@
     "badge": {
       "most_worth_it": "Best value"
     },
+    "usage": {
+      "walang_limit": "Unlimited scans"
+    },
     "cards": {
       "starter": {
         "title": "Starter",

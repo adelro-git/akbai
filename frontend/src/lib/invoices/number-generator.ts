@@ -34,27 +34,32 @@ export async function generateInvoiceNumber(
   const yearMonth = date.slice(0, 7).replace('-', ''); // "202604"
   const prefix = `INV-${yearMonth}-`;
 
-  // --- Query max existing invoice number for this user+month ---
+  // --- Fetch all candidate invoice numbers for this user+month ---
+  // E4 fix: previously this relied on `.order('invoice_number', desc).limit(1)`,
+  // a LEXICAL DB sort. Once a month passes 999 invoices the strings compare
+  // wrong (e.g. "...-999" sorts after "...-1000"), so the wrong "max" came back
+  // and the next number duplicated an existing one. We now fetch the candidates
+  // and compute the true max NUMERICALLY in JS by parsing each trailing suffix.
   const { data } = await db
     .from('invoices')
     .select('invoice_number')
     .eq('user_id', userId)
     .like('invoice_number', `${prefix}%`)
-    .is('deleted_at', null)
-    .order('invoice_number', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .is('deleted_at', null);
 
-  let nextSeq = 1;
+  let maxSeq = 0;
 
-  if (data?.invoice_number) {
-    // Extract the numeric suffix: "INV-202604-003" -> "003" -> 3
-    const suffix = data.invoice_number.slice(prefix.length);
+  for (const row of (data ?? []) as Array<{ invoice_number: string | null }>) {
+    if (!row.invoice_number) continue;
+    // Extract the numeric suffix: "INV-202604-1000" -> "1000" -> 1000
+    const suffix = row.invoice_number.slice(prefix.length);
     const parsed = parseInt(suffix, 10);
-    if (!isNaN(parsed)) {
-      nextSeq = parsed + 1;
+    if (!Number.isNaN(parsed) && parsed > maxSeq) {
+      maxSeq = parsed;
     }
   }
+
+  const nextSeq = maxSeq + 1;
 
   return `${prefix}${String(nextSeq).padStart(3, '0')}`;
 }

@@ -4,6 +4,7 @@ import { parseInvoiceNumber } from '@/lib/invoices/number-generator';
 import { generateInvoiceHtml } from '@/lib/invoices/pdf-generator';
 import { CreateInvoiceSchema, UpdateInvoiceSchema, UpdateInvoiceStatusSchema, InvoiceStatusEnum } from '@/lib/invoices/schemas';
 import type { InvoiceWithItems, InvoiceStatus } from '@/lib/invoices/types';
+import { ensureIds, type LineItemData } from '@/components/invoices/line-item-editor';
 
 /**
  * Invoice feature tests — Build 8
@@ -439,5 +440,110 @@ describe('InvoiceStatusEnum', () => {
   it('rejects unknown status', () => {
     expect(InvoiceStatusEnum.safeParse('pending').success).toBe(false);
     expect(InvoiceStatusEnum.safeParse('').success).toBe(false);
+  });
+});
+
+// ============================================================
+// Line Item stable-id reconciliation (U1 — data-corruption fix)
+// ============================================================
+
+describe('LineItemEditor — ensureIds', () => {
+  const mkItem = (description: string, unit_price_centavos: number): LineItemData => ({
+    description,
+    quantity: 1,
+    unit: 'piece',
+    unit_price_centavos,
+  });
+
+  it('backfills a stable id for items that arrive without one', () => {
+    const withIds = ensureIds([mkItem('Cake', 15000), mkItem('Drink', 5000)]);
+    expect(withIds).toHaveLength(2);
+    for (const item of withIds) {
+      expect(typeof item.id).toBe('string');
+      expect(item.id!.length).toBeGreaterThan(0);
+    }
+    // Ids are unique per item.
+    expect(withIds[0].id).not.toBe(withIds[1].id);
+  });
+
+  it('preserves existing ids and other fields untouched', () => {
+    const input: LineItemData[] = [{ id: 'fixed-1', description: 'Cake', quantity: 2, unit: 'box', unit_price_centavos: 15000 }];
+    const out = ensureIds(input);
+    expect(out[0].id).toBe('fixed-1');
+    expect(out[0].quantity).toBe(2);
+    expect(out[0].unit).toBe('box');
+    expect(out[0].unit_price_centavos).toBe(15000);
+  });
+
+  it('returns the SAME array reference when every item already has an id (no-op)', () => {
+    const input: LineItemData[] = [
+      { id: 'a', description: 'A', quantity: 1, unit: 'piece', unit_price_centavos: 100 },
+      { id: 'b', description: 'B', quantity: 1, unit: 'piece', unit_price_centavos: 200 },
+    ];
+    // Reference equality lets the editor skip a redundant onItemsChange.
+    expect(ensureIds(input)).toBe(input);
+  });
+
+  it('only allocates ids for the items missing them (mixed input)', () => {
+    const input: LineItemData[] = [
+      { id: 'keep', description: 'A', quantity: 1, unit: 'piece', unit_price_centavos: 100 },
+      mkItem('B', 200),
+    ];
+    const out = ensureIds(input);
+    expect(out[0].id).toBe('keep');
+    expect(typeof out[1].id).toBe('string');
+    expect(out[1].id).not.toBe('keep');
+  });
+});
+
+describe('LineItemEditor — remove-middle-row preserves correct totals', () => {
+  // Simulates the editor's handleRemove (filter by index) and the subtotal
+  // reducer, asserting that removing a MIDDLE row keeps each surviving row's
+  // own values — the exact scenario that index-as-key + uncontrolled inputs
+  // used to corrupt (a reused input would overwrite the row shifting up).
+  const subtotal = (items: LineItemData[]) =>
+    items.reduce((sum, i) => sum + i.unit_price_centavos * i.quantity, 0);
+
+  const removeAt = (items: LineItemData[], index: number) =>
+    items.filter((_, i) => i !== index);
+
+  it('drops only the targeted middle row and keeps the others intact', () => {
+    const items = ensureIds([
+      { description: 'Row A', quantity: 1, unit: 'piece', unit_price_centavos: 10000 },
+      { description: 'Row B', quantity: 2, unit: 'piece', unit_price_centavos: 20000 },
+      { description: 'Row C', quantity: 3, unit: 'piece', unit_price_centavos: 30000 },
+    ]);
+    // Subtotal before: 10000 + 40000 + 90000 = 140000
+    expect(subtotal(items)).toBe(140000);
+
+    const idA = items[0].id;
+    const idC = items[2].id;
+    const after = removeAt(items, 1); // remove middle Row B
+
+    // Surviving rows keep their identity AND their data (no stale bleed-through).
+    expect(after).toHaveLength(2);
+    expect(after[0].id).toBe(idA);
+    expect(after[0].description).toBe('Row A');
+    expect(after[0].unit_price_centavos).toBe(10000);
+    expect(after[1].id).toBe(idC);
+    expect(after[1].description).toBe('Row C');
+    expect(after[1].unit_price_centavos).toBe(30000);
+
+    // Subtotal after removing the ₱200 row (qty 2 = 40000): 140000 - 40000.
+    expect(subtotal(after)).toBe(100000);
+  });
+
+  it('keying by item.id maps each surviving row to its own value (vs index)', () => {
+    // Build a key->value map the way React would with key={item.id}; prove the
+    // shifted-up Row C is still keyed to Row C's value, not Row B's.
+    const items = ensureIds([
+      { description: 'A', quantity: 1, unit: 'piece', unit_price_centavos: 100 },
+      { description: 'B', quantity: 1, unit: 'piece', unit_price_centavos: 200 },
+      { description: 'C', quantity: 1, unit: 'piece', unit_price_centavos: 300 },
+    ]);
+    const cId = items[2].id!;
+    const after = removeAt(items, 1);
+    const byId = new Map(after.map((i) => [i.id!, i.unit_price_centavos]));
+    expect(byId.get(cId)).toBe(300); // C still resolves to 300, not B's 200
   });
 });

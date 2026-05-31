@@ -10,6 +10,7 @@
  * Tested by: QA — duplicate payment handling, invoice/subscription linking
  */
 
+import * as Sentry from '@sentry/nextjs';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CreatePaymentPayload } from './schemas';
 
@@ -22,6 +23,45 @@ export interface RecordPaymentResult {
   inserted: boolean;
   /** The payment ID (null if duplicate and we couldn't fetch it) */
   paymentId: string | null;
+}
+
+/**
+ * Resolved AKBai subscription identity. Xendit only ever gives us its OWN
+ * subscription id (a non-UUID string). We must translate that into the
+ * internal `subscriptions.id` UUID before touching the payments FK or
+ * extending the billing period.
+ */
+export interface ResolvedSubscription {
+  /** Internal subscriptions.id (UUID) — the FK target for payments.subscription_id. */
+  id: string;
+  user_id: string;
+  tier: string;
+  current_period_end: string | null;
+  status: string;
+}
+
+/**
+ * Server-side expected monthly price per tier, in integer centavos. Used for
+ * P6 amount reconciliation on recurring renewals where no per-event invoice
+ * row exists. Tiers whose price we cannot independently assert are omitted —
+ * the caller skips reconciliation for those (we never block a legitimate
+ * renewal just because we lack a reference price).
+ *
+ * Pro Monthly = ₱499.00 = 49900 centavos (per terms page + paywall modal).
+ */
+export const TIER_EXPECTED_PRICE_CENTAVOS: Record<string, number> = {
+  pro: 49900,
+};
+
+/**
+ * Resolved AKBai invoice identity for a one-time invoice.paid event, including
+ * the server-side total used for amount reconciliation (P6).
+ */
+export interface ResolvedInvoice {
+  id: string;
+  user_id: string;
+  total_centavos: number;
+  status: string;
 }
 
 // ============================================================
@@ -80,6 +120,115 @@ export async function recordPayment(
 }
 
 // ============================================================
+// resolveSubscriptionByXenditId — Xendit sub id → internal UUID (P2)
+// Xendit's webhook carries data.subscription_id, which is XENDIT's
+// subscription id (a non-UUID string), NOT subscriptions.id. We MUST
+// look the row up by the xendit_subscription_id column to get the
+// internal UUID before using it as the payments.subscription_id FK
+// (REFERENCES subscriptions(id)) or extending the period.
+// Returns null when no matching live subscription exists.
+// ============================================================
+
+export async function resolveSubscriptionByXenditId(
+  serviceClient: SupabaseClient,
+  xenditSubscriptionId: string
+): Promise<ResolvedSubscription | null> {
+  const { data: sub, error } = await serviceClient
+    .from('subscriptions')
+    .select('id, user_id, tier, current_period_end, status')
+    .eq('xendit_subscription_id', xenditSubscriptionId)
+    .is('deleted_at', null)
+    .single();
+
+  if (error || !sub) {
+    console.error(
+      `[Payment] No subscription found for xendit_subscription_id ${xenditSubscriptionId}:`,
+      error?.message
+    );
+    return null;
+  }
+
+  return sub as ResolvedSubscription;
+}
+
+// ============================================================
+// resolveInvoiceForPayment — Find the AKBai invoice for a webhook (P3)
+// A one-time invoice.paid event references the originating AKBai invoice
+// via data.external_id (the external_id we set when creating the Xendit
+// invoice = the AKBai invoices.id). We resolve it scoped by user_id +
+// deleted_at IS NULL so a stolen/forged external_id from another tenant
+// can never be marked paid. Returns null when it can't be resolved.
+// ============================================================
+
+export async function resolveInvoiceForPayment(
+  serviceClient: SupabaseClient,
+  params: { invoiceId: string; userId: string }
+): Promise<ResolvedInvoice | null> {
+  const { invoiceId, userId } = params;
+
+  const { data: invoice, error } = await serviceClient
+    .from('invoices')
+    .select('id, user_id, total_centavos, status')
+    .eq('id', invoiceId)
+    .eq('user_id', userId)
+    .is('deleted_at', null)
+    .single();
+
+  if (error || !invoice) {
+    console.error(
+      `[Payment] Could not resolve invoice ${invoiceId} for user ${userId}:`,
+      error?.message
+    );
+    return null;
+  }
+
+  return invoice as ResolvedInvoice;
+}
+
+// ============================================================
+// reconcileAmount — Defense-in-depth amount check (P6)
+// The stored amount comes from the UNTRUSTED webhook payload (only a
+// static x-callback-token gates the request). Wherever we have a
+// server-side expected amount (resolved invoice total, or a tier's
+// expected price), we compare the webhook amount against it. On
+// mismatch we capture to Sentry and the caller MUST abort (do not mark
+// the invoice paid / do not extend the period). Equal centavos only —
+// no tolerance, money is integer centavos.
+// ============================================================
+
+export function reconcileAmount(params: {
+  observedCentavos: number;
+  expectedCentavos: number;
+  context: Record<string, unknown>;
+}): boolean {
+  const { observedCentavos, expectedCentavos, context } = params;
+
+  if (observedCentavos === expectedCentavos) {
+    return true;
+  }
+
+  Sentry.withScope((scope) => {
+    scope.setLevel('error');
+    scope.setTags({ alert: 'payment_amount_mismatch' });
+    scope.setExtras({
+      observed_centavos: observedCentavos,
+      expected_centavos: expectedCentavos,
+      ...context,
+    });
+    Sentry.captureMessage(
+      '[Xendit Webhook] Amount mismatch — payment NOT applied'
+    );
+  });
+
+  console.error(
+    `[Payment] Amount mismatch — observed ${observedCentavos}c, expected ${expectedCentavos}c. Refusing to apply.`,
+    context
+  );
+
+  return false;
+}
+
+// ============================================================
 // linkPaymentToInvoice — Mark an invoice as paid after payment
 // Updates the invoice status and links the payment record.
 // ============================================================
@@ -107,7 +256,11 @@ export async function linkPaymentToInvoice(
 }
 
 // ============================================================
-// linkPaymentToSubscription — Update subscription period on payment
+// linkPaymentToSubscription — Extend subscription period on renewal
+// IMPORTANT (P2): `subscriptionId` here is the INTERNAL subscriptions.id
+// UUID — already resolved from Xendit's id via resolveSubscriptionByXenditId.
+// Do NOT pass Xendit's data.subscription_id directly; that is a non-UUID
+// string keyed on the xendit_subscription_id column, not the PK.
 // Extends the subscription's current_period_end by one month.
 // ============================================================
 
@@ -116,7 +269,7 @@ export async function linkPaymentToSubscription(
   paymentId: string,
   subscriptionId: string
 ): Promise<void> {
-  // --- Fetch current subscription to calculate new period ---
+  // --- Fetch current subscription (by internal UUID PK) to calc new period ---
   const { data: sub, error: fetchError } = await serviceClient
     .from('subscriptions')
     .select('current_period_end, status')

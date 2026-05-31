@@ -28,7 +28,12 @@ vi.mock('web-push', () => ({
 
 // Per-test seam: the supabase service client returns rows the test plants.
 const mockSubscriptions: Array<Record<string, unknown>> = [];
-const mockPreference: { enabled: boolean } | null = null;
+// Mutable preference result so tests can exercise: no-row (default enabled),
+// disabled, and the G5 fail-safe path (a query error).
+const mockPreferenceResult: { data: { enabled: boolean } | null; error: unknown } = {
+  data: null,
+  error: null,
+};
 const mockInsert = vi.fn();
 const mockUpdate = vi.fn();
 
@@ -41,7 +46,10 @@ vi.mock('@/lib/supabase/service', () => ({
             eq: () => ({
               eq: () => ({
                 is: () => ({
-                  maybeSingle: async () => ({ data: mockPreference, error: null }),
+                  maybeSingle: async () => ({
+                    data: mockPreferenceResult.data,
+                    error: mockPreferenceResult.error,
+                  }),
                 }),
               }),
             }),
@@ -91,6 +99,9 @@ beforeEach(() => {
   mockInsert.mockReset();
   mockUpdate.mockReset();
   mockSubscriptions.length = 0;
+  // Reset preference seam to the default (no row → enabled).
+  mockPreferenceResult.data = null;
+  mockPreferenceResult.error = null;
   // Ensure VAPID env so getVapidConfig() doesn't throw on web-path tests.
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY = 'pub-key';
   process.env.VAPID_PRIVATE_KEY = 'priv-key';
@@ -243,6 +254,105 @@ describe('sendPushToUser — platform branching', () => {
     );
     expect(col).toBe('id');
     expect(ids).toEqual(['sub-web-malformed']);
+    errorSpy.mockRestore();
+  });
+});
+
+// ============================================================
+// sendPushToUser — notification preference handling (G5)
+// ============================================================
+
+describe('sendPushToUser — preference handling', () => {
+  it('sends when no preference row exists (default enabled)', async () => {
+    mockPreferenceResult.data = null;
+    mockPreferenceResult.error = null;
+    seedSubscriptions([
+      {
+        id: 'sub-web-1',
+        user_id: 'user-1',
+        endpoint: 'https://fcm.googleapis.com/fcm/send/abc',
+        p256dh_key: 'p256',
+        auth_key: 'auth',
+        created_at: '2026-05-01',
+        platform: 'web',
+        native_token: null,
+        device_id: null,
+      },
+    ]);
+    mockSendNotification.mockResolvedValue(undefined);
+
+    const { sendPushToUser } = await importSend();
+    const result = await sendPushToUser(
+      'user-1',
+      { title: 'Test', body: 'Body' },
+      'bir_deadline'
+    );
+
+    expect(mockSendNotification).toHaveBeenCalledOnce();
+    expect(result.sent).toBe(1);
+  });
+
+  it('does NOT send when preference row is explicitly disabled', async () => {
+    mockPreferenceResult.data = { enabled: false };
+    mockPreferenceResult.error = null;
+    seedSubscriptions([
+      {
+        id: 'sub-web-1',
+        user_id: 'user-1',
+        endpoint: 'https://fcm.googleapis.com/fcm/send/abc',
+        p256dh_key: 'p256',
+        auth_key: 'auth',
+        created_at: '2026-05-01',
+        platform: 'web',
+        native_token: null,
+        device_id: null,
+      },
+    ]);
+
+    const { sendPushToUser } = await importSend();
+    const result = await sendPushToUser(
+      'user-1',
+      { title: 'Test', body: 'Body' },
+      'bir_deadline'
+    );
+
+    expect(mockSendNotification).not.toHaveBeenCalled();
+    expect(result).toEqual({ sent: 0, total: 0 });
+  });
+
+  // --- G5 regression: a transient preference-read error must FAIL SAFE
+  // (treat as disabled), never push to a possibly-opted-out user. ---
+  it('fails safe (no push) when the preference query errors', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockPreferenceResult.data = null;
+    mockPreferenceResult.error = { message: 'connection reset' };
+    seedSubscriptions([
+      {
+        id: 'sub-web-1',
+        user_id: 'user-1',
+        endpoint: 'https://fcm.googleapis.com/fcm/send/abc',
+        p256dh_key: 'p256',
+        auth_key: 'auth',
+        created_at: '2026-05-01',
+        platform: 'web',
+        native_token: null,
+        device_id: null,
+      },
+    ]);
+    mockSendNotification.mockResolvedValue(undefined);
+
+    const { sendPushToUser } = await importSend();
+    const result = await sendPushToUser(
+      'user-1',
+      { title: 'Test', body: 'Body' },
+      'bir_deadline'
+    );
+
+    // No subscription query, no send, no notifications row — fully short-circuited.
+    expect(mockSendNotification).not.toHaveBeenCalled();
+    expect(mockInsert).not.toHaveBeenCalled();
+    expect(result).toEqual({ sent: 0, total: 0 });
+    expect(errorSpy).toHaveBeenCalled();
     errorSpy.mockRestore();
   });
 });

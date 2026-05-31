@@ -559,6 +559,142 @@ describe('parseReceipt', () => {
     // Should NOT trigger fallback since model was forced
     expect(mockCreate).toHaveBeenCalledTimes(1);
   });
+
+  // --- C3: accumulate token usage across BOTH calls on a Haiku→Sonnet fallback ---
+
+  it('accumulates token usage across both calls on a Sonnet fallback (C3)', async () => {
+    // Haiku: low confidence (triggers fallback)
+    mockCreate.mockResolvedValueOnce({
+      content: [{ type: 'text', text: JSON.stringify(MOCK_LOW_CONFIDENCE_EXTRACTION) }],
+      usage: { input_tokens: 800, output_tokens: 300 },
+    });
+    // Sonnet: higher confidence (wins)
+    const sonnetExtraction = {
+      ...MOCK_VALID_EXTRACTION,
+      confidence: { overall: 0.85, store_name: 0.9, date: 0.88, total: 0.95, items: 0.82 },
+    };
+    mockCreate.mockResolvedValueOnce({
+      content: [{ type: 'text', text: JSON.stringify(sonnetExtraction) }],
+      usage: { input_tokens: 900, output_tokens: 450 },
+    });
+
+    const { parseReceipt } = await import('../parse-receipt');
+    const result = await parseReceipt(Buffer.alloc(1024), 'image/jpeg');
+
+    expect(result.success).toBe(true);
+    expect(result.model).toBe('sonnet');
+    // Cumulative tokenUsage = Haiku + Sonnet
+    expect(result.tokenUsage.input).toBe(800 + 900);
+    expect(result.tokenUsage.output).toBe(300 + 450);
+    // Per-call breakdown records BOTH models so the route bills each at its rate
+    expect(result.tokenUsageBreakdown).toHaveLength(2);
+    expect(result.tokenUsageBreakdown?.[0]).toMatchObject({ model: 'haiku', input: 800, output: 300 });
+    expect(result.tokenUsageBreakdown?.[1]).toMatchObject({ model: 'sonnet', input: 900, output: 450 });
+  });
+
+  it('records a single-call breakdown for a high-confidence Haiku parse (C3)', async () => {
+    mockCreate.mockResolvedValueOnce({
+      content: [{ type: 'text', text: JSON.stringify(MOCK_VALID_EXTRACTION) }],
+      usage: { input_tokens: 800, output_tokens: 400 },
+    });
+
+    const { parseReceipt } = await import('../parse-receipt');
+    const result = await parseReceipt(Buffer.alloc(1024), 'image/jpeg');
+
+    expect(result.tokenUsageBreakdown).toHaveLength(1);
+    expect(result.tokenUsageBreakdown?.[0]).toMatchObject({ model: 'haiku', input: 800, output: 400 });
+    expect(result.tokenUsage).toEqual({ input: 800, output: 400 });
+  });
+
+  it('bills the Sonnet fallback call even when its result is discarded (C3)', async () => {
+    // Haiku low confidence → triggers fallback
+    mockCreate.mockResolvedValueOnce({
+      content: [{ type: 'text', text: JSON.stringify(MOCK_LOW_CONFIDENCE_EXTRACTION) }],
+      usage: { input_tokens: 800, output_tokens: 300 },
+    });
+    // Sonnet returns LOWER overall confidence → Haiku result is kept, but the
+    // Sonnet call still consumed tokens and must be billed.
+    const worseSonnet = {
+      ...MOCK_LOW_CONFIDENCE_EXTRACTION,
+      confidence: { ...MOCK_LOW_CONFIDENCE_EXTRACTION.confidence, overall: 0.3 },
+    };
+    mockCreate.mockResolvedValueOnce({
+      content: [{ type: 'text', text: JSON.stringify(worseSonnet) }],
+      usage: { input_tokens: 900, output_tokens: 250 },
+    });
+
+    const { parseReceipt } = await import('../parse-receipt');
+    const result = await parseReceipt(Buffer.alloc(1024), 'image/jpeg');
+
+    // Haiku result kept...
+    expect(result.model).toBe('haiku');
+    // ...but BOTH calls billed.
+    expect(result.tokenUsageBreakdown).toHaveLength(2);
+    expect(result.tokenUsage.input).toBe(800 + 900);
+    expect(result.tokenUsage.output).toBe(300 + 250);
+  });
+
+  // --- C2: only retry GENUINE parse failures, never API/auth/rate-limit errors ---
+
+  it('does NOT retry on an Anthropic-style API error (status set) (C2)', async () => {
+    const apiError = Object.assign(new Error('rate limited'), {
+      name: 'RateLimitError',
+      status: 429,
+    });
+    mockCreate.mockRejectedValueOnce(apiError);
+
+    const { parseReceipt } = await import('../parse-receipt');
+    const result = await parseReceipt(Buffer.alloc(1024), 'image/jpeg');
+
+    expect(result.success).toBe(false);
+    // No retry — the single failed call is the only call.
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+    // No tokens were billed (the API call itself threw).
+    expect(result.tokenUsage).toEqual({ input: 0, output: 0 });
+  });
+
+  it('retries once on a genuine JSON parse failure then bills both calls (C2 + C3)', async () => {
+    // Both attempts return non-JSON text → extractJSON throws "No JSON found".
+    mockCreate.mockResolvedValueOnce({
+      content: [{ type: 'text', text: 'I cannot read this receipt.' }],
+      usage: { input_tokens: 700, output_tokens: 40 },
+    });
+    mockCreate.mockResolvedValueOnce({
+      content: [{ type: 'text', text: 'Still cannot extract.' }],
+      usage: { input_tokens: 720, output_tokens: 45 },
+    });
+
+    const { parseReceipt } = await import('../parse-receipt');
+    const result = await parseReceipt(Buffer.alloc(1024), 'image/jpeg');
+
+    expect(result.success).toBe(false);
+    expect(mockCreate).toHaveBeenCalledTimes(2);
+    // Both billed calls surfaced for cost recording.
+    expect(result.tokenUsage.input).toBe(700 + 720);
+    expect(result.tokenUsageBreakdown).toHaveLength(2);
+  });
+
+  // --- C7: empty content array must not throw a TypeError ---
+
+  it('handles an empty content array without throwing (C7)', async () => {
+    // First call: empty content array (would be content[0].type → TypeError).
+    mockCreate.mockResolvedValueOnce({
+      content: [],
+      usage: { input_tokens: 600, output_tokens: 10 },
+    });
+    // Retry (No-JSON is retryable): also empty.
+    mockCreate.mockResolvedValueOnce({
+      content: [],
+      usage: { input_tokens: 600, output_tokens: 10 },
+    });
+
+    const { parseReceipt } = await import('../parse-receipt');
+    const result = await parseReceipt(Buffer.alloc(1024), 'image/jpeg');
+
+    // Degrades to the normal failure path, never a TypeError.
+    expect(result.success).toBe(false);
+    expect(result.errors).toBeDefined();
+  });
 });
 
 // --- ReceiptParseResult Schema Validation ---

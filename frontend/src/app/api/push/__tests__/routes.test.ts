@@ -59,6 +59,13 @@ vi.mock('@/lib/supabase/dev-auth', () => ({
   DEV_USER: { id: '00000000-0000-0000-0000-000000000000' },
 }));
 
+// Mock the push-send library so the /send route tests exercise the route's
+// auth + error handling (G4/G7) without touching web-push or the DB.
+const mockSendPushToUser = vi.fn();
+vi.mock('@/lib/push/send', () => ({
+  sendPushToUser: (...args: unknown[]) => mockSendPushToUser(...args),
+}));
+
 // ============================================================
 // Subscribe route tests
 // ============================================================
@@ -342,5 +349,117 @@ describe('PATCH /api/push/preferences', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
+  });
+});
+
+// ============================================================
+// Send route tests (service-role only) — G4 (constant-time bearer) + G7
+// (structured error envelope when the send path throws).
+// ============================================================
+
+describe('POST /api/push/send', () => {
+  const VALID_KEY = 'service-role-key-1234567890';
+  // A valid SendPushSchema body (user_id must be a UUID).
+  const validBody = {
+    user_id: '00000000-0000-0000-0000-000000000001',
+    notification_type: 'bir_deadline',
+    title: 'BIR Deadline',
+    body: 'Reminder',
+  };
+
+  beforeEach(() => {
+    resetChain();
+    mockSendPushToUser.mockReset();
+    process.env.SUPABASE_SERVICE_ROLE_KEY = VALID_KEY;
+  });
+
+  function sendReq(headers: Record<string, string>, body: unknown = validBody) {
+    return new Request('http://localhost/api/push/send', {
+      method: 'POST',
+      body: typeof body === 'string' ? body : JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json', ...headers },
+    });
+  }
+
+  it('returns 500 when service-role key is not configured', async () => {
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const { POST } = await import('../send/route');
+    const res = await POST(sendReq({ authorization: 'Bearer whatever' }) as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(500);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe('CONFIG_ERROR');
+  });
+
+  it('returns 403 when the Authorization header is missing', async () => {
+    const { POST } = await import('../send/route');
+    const res = await POST(sendReq({}) as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(403);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe('FORBIDDEN');
+    expect(mockSendPushToUser).not.toHaveBeenCalled();
+  });
+
+  it('returns 403 for a wrong bearer token (G4 constant-time compare still rejects)', async () => {
+    const { POST } = await import('../send/route');
+    const res = await POST(sendReq({ authorization: 'Bearer wrong-key' }) as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(403);
+    expect(json.error.code).toBe('FORBIDDEN');
+    expect(mockSendPushToUser).not.toHaveBeenCalled();
+  });
+
+  it('returns 403 for a malformed (non-Bearer) Authorization header', async () => {
+    const { POST } = await import('../send/route');
+    const res = await POST(sendReq({ authorization: VALID_KEY }) as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(403);
+    expect(json.error.code).toBe('FORBIDDEN');
+  });
+
+  it('returns 400 for an invalid body when the bearer is valid', async () => {
+    const { POST } = await import('../send/route');
+    const res = await POST(
+      sendReq({ authorization: `Bearer ${VALID_KEY}` }, { user_id: 'not-a-uuid' }) as never
+    );
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.error.code).toBe('INVALID_INPUT');
+    expect(mockSendPushToUser).not.toHaveBeenCalled();
+  });
+
+  it('returns 200 with sent/total on a successful send', async () => {
+    mockSendPushToUser.mockResolvedValue({ sent: 2, total: 3 });
+    const { POST } = await import('../send/route');
+    const res = await POST(sendReq({ authorization: `Bearer ${VALID_KEY}` }) as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(json.data).toEqual({ sent: 2, total: 3 });
+    expect(mockSendPushToUser).toHaveBeenCalledOnce();
+  });
+
+  // --- G7 regression: a throw in the send path (e.g. missing VAPID env →
+  // getVapidConfig() throws) must surface as the structured error envelope,
+  // not an opaque framework 500. ---
+  it('returns a structured 500 envelope when sendPushToUser throws (G7)', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockSendPushToUser.mockRejectedValue(new Error('Missing VAPID environment variables.'));
+    const { POST } = await import('../send/route');
+    const res = await POST(sendReq({ authorization: `Bearer ${VALID_KEY}` }) as never);
+    const json = await res.json();
+
+    expect(res.status).toBe(500);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe('PUSH_SEND_FAILED');
+    expect(typeof json.error.message).toBe('string');
+    errorSpy.mockRestore();
   });
 });

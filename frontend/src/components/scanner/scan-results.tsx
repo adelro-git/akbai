@@ -57,12 +57,27 @@ function fieldString(value: string | number | null): string {
   return String(value);
 }
 
-/** Extract number value from a ReceiptField (centavos), defaulting to 0 */
+/**
+ * Extract a centavo amount from a ReceiptField, defaulting to 0.
+ *
+ * Unit contract: the OCR pipeline emits `total.value` as an INTEGER number of
+ * centavos, so the number branch is passed through untouched. The field type
+ * also permits a string, so we harden that branch:
+ *   • An integer-looking string ("34500") is treated as centavos as-is.
+ *   • A decimal string ("345.00") is treated as a peso value and rounded to
+ *     centavos — `parseInt` would have truncated the decimals and corrupted
+ *     the amount, so we use `parseFloat` + `Math.round` instead.
+ */
 function fieldCentavos(value: string | number | null): number {
   if (typeof value === 'number') return value;
   if (typeof value === 'string') {
-    const parsed = parseInt(value, 10);
-    return isNaN(parsed) ? 0 : parsed;
+    const trimmed = value.trim();
+    const parsed = parseFloat(trimmed);
+    if (isNaN(parsed)) return 0;
+    // Whole-number string → already centavos. Decimal string → peso value.
+    return Number.isInteger(parsed) && !trimmed.includes('.')
+      ? parsed
+      : Math.round(parsed * 100);
   }
   return 0;
 }
