@@ -5,9 +5,60 @@
  * The actual push delivery is tested via API route tests (mocked).
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { buildDeadlinePushText } from '../deadline-triggers';
-import type { DeadlineNotification } from '@/lib/deadlines/types';
+import type { DeadlineNotification, DeadlineRow } from '@/lib/deadlines/types';
+
+// ============================================================
+// Mocks — sendPushToUser, supabase service client, timezone.
+// Used only by the triggerDeadlineNotifications() tests (G1/G2). The pure
+// buildDeadlinePushText tests below do not depend on these.
+// ============================================================
+
+const mockSendPushToUser = vi.fn();
+vi.mock('../send', () => ({
+  sendPushToUser: (...args: unknown[]) => mockSendPushToUser(...args),
+}));
+
+vi.mock('@/lib/timezone', () => ({
+  getManilaToday: () => '2026-04-15',
+}));
+
+// Mutable seams the trigger tests plant.
+const mockDeadlineRows: DeadlineRow[] = [];
+const mockFlagUpdate = vi.fn();
+// Result returned by the bir_deadlines .update().eq() chain (lets us simulate
+// a flag-write failure for the G2 logging path).
+const mockFlagUpdateResult: { error: unknown } = { error: null };
+
+vi.mock('@/lib/supabase/service', () => ({
+  createServiceClient: () => ({
+    from: (table: string) => {
+      if (table === 'bir_deadlines') {
+        return {
+          // Read chain: .select().eq().eq().is().order()
+          select: () => ({
+            eq: () => ({
+              eq: () => ({
+                is: () => ({
+                  order: async () => ({ data: mockDeadlineRows, error: null }),
+                }),
+              }),
+            }),
+          }),
+          // Write chain: .update().eq()
+          update: (values: Record<string, unknown>) => ({
+            eq: async (col: string, id: string) => {
+              mockFlagUpdate(values, col, id);
+              return { error: mockFlagUpdateResult.error };
+            },
+          }),
+        };
+      }
+      throw new Error(`unexpected table ${table}`);
+    },
+  }),
+}));
 
 // ============================================================
 // Helper — create a mock deadline notification
@@ -165,5 +216,100 @@ describe('buildDeadlinePushText — completeness', () => {
 
     // Should contain urgent Filipino language
     expect(body).toMatch(/Bukas|ngayon|I-file/);
+  });
+});
+
+// ============================================================
+// triggerDeadlineNotifications — notified-flag gating (G1/G2)
+// ============================================================
+
+function mockDeadlineRow(overrides: Partial<DeadlineRow> = {}): DeadlineRow {
+  return {
+    id: 'dl-1',
+    user_id: 'user-1',
+    form_name: '1701Q',
+    // getManilaToday() is mocked to 2026-04-15, so this is due TODAY (1d window).
+    due_date: '2026-04-15',
+    description: 'Quarterly Income Tax Return',
+    status: 'upcoming',
+    notified_7d: false,
+    notified_3d: false,
+    notified_1d: false,
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+    ...overrides,
+  };
+}
+
+async function importTriggers() {
+  return import('../deadline-triggers');
+}
+
+describe('triggerDeadlineNotifications — notified-flag gating (G1/G2)', () => {
+  beforeEach(() => {
+    mockSendPushToUser.mockReset();
+    mockFlagUpdate.mockReset();
+    mockDeadlineRows.length = 0;
+    mockFlagUpdateResult.error = null;
+  });
+
+  it('sets the notified flag when sent > 0', async () => {
+    mockDeadlineRows.push(mockDeadlineRow());
+    mockSendPushToUser.mockResolvedValue({ sent: 1, total: 1 });
+
+    const { triggerDeadlineNotifications } = await importTriggers();
+    const result = await triggerDeadlineNotifications('user-1');
+
+    expect(mockSendPushToUser).toHaveBeenCalledOnce();
+    expect(mockFlagUpdate).toHaveBeenCalledOnce();
+    const [values] = mockFlagUpdate.mock.calls[0];
+    expect((values as Record<string, unknown>).notified_1d).toBe(true);
+    expect(result.sent).toBe(1);
+    expect(result.notifications).toHaveLength(1);
+  });
+
+  // --- G1 regression: do NOT set the flag when nothing was delivered
+  // (no subs / preference disabled / all failed), or the reminder is lost. ---
+  it('does NOT set the notified flag when sent === 0', async () => {
+    mockDeadlineRows.push(mockDeadlineRow());
+    mockSendPushToUser.mockResolvedValue({ sent: 0, total: 0 });
+
+    const { triggerDeadlineNotifications } = await importTriggers();
+    const result = await triggerDeadlineNotifications('user-1');
+
+    expect(mockSendPushToUser).toHaveBeenCalledOnce();
+    expect(mockFlagUpdate).not.toHaveBeenCalled();
+    expect(result.sent).toBe(0);
+    // Nothing recorded as sent → eligible for re-send next cron.
+    expect(result.notifications).toHaveLength(0);
+  });
+
+  // --- G2: a flag-write failure AFTER a successful send is logged, not thrown
+  // (at-least-once: the push went out; the next cron may harmlessly re-send). ---
+  it('logs but does not throw when the flag write fails after a successful send', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockDeadlineRows.push(mockDeadlineRow());
+    mockSendPushToUser.mockResolvedValue({ sent: 1, total: 1 });
+    mockFlagUpdateResult.error = { message: 'write conflict' };
+
+    const { triggerDeadlineNotifications } = await importTriggers();
+    const result = await triggerDeadlineNotifications('user-1');
+
+    expect(mockFlagUpdate).toHaveBeenCalledOnce();
+    expect(errorSpy).toHaveBeenCalled();
+    // Send still counts even though the flag write failed.
+    expect(result.sent).toBe(1);
+    expect(result.notifications).toHaveLength(1);
+    errorSpy.mockRestore();
+  });
+
+  it('returns early with sent=0 when the user has no upcoming deadlines', async () => {
+    // mockDeadlineRows left empty.
+    const { triggerDeadlineNotifications } = await importTriggers();
+    const result = await triggerDeadlineNotifications('user-1');
+
+    expect(mockSendPushToUser).not.toHaveBeenCalled();
+    expect(mockFlagUpdate).not.toHaveBeenCalled();
+    expect(result).toEqual({ sent: 0, notifications: [] });
   });
 });

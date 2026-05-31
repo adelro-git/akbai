@@ -71,12 +71,25 @@ function format(centavos: number, signed: boolean): string {
   return `${sign}${centavosToPeso(Math.abs(centavos))}`;
 }
 
-/** Localized screen-reader label: integer pesos, grouped, peso → "piso". */
+/**
+ * Localized screen-reader label that matches the VISIBLE figure exactly.
+ *
+ * The display shows `±₱{whole}.{frac}` (magnitude formatted from the absolute
+ * centavos, sign prepended). The old label did `Math.round(centavos/100)` then
+ * `Math.abs`, which (a) dropped the centavos and (b) rounded the magnitude in a
+ * way that could announce a different peso figure than the one on screen
+ * (e.g. -₱34.50 visible, "-35 piso" announced). We now derive whole pesos and
+ * centavos from the same absolute integer the display uses, so they always
+ * agree: "34 piso at 50 sentimo".
+ */
 function ariaLabel(centavos: number, signed: boolean): string {
-  const pesos = Math.round(centavos / 100);
-  const sign = signed ? (centavos < 0 ? '-' : '+') : '';
-  const magnitude = Math.abs(pesos).toLocaleString('en-PH');
-  return `${sign}${magnitude} piso`;
+  const abs = Math.abs(centavos);
+  const whole = Math.trunc(abs / 100);
+  const frac = abs % 100;
+  const sign = centavos < 0 ? '-' : signed ? '+' : '';
+  const pisoPart = `${whole.toLocaleString('en-PH')} piso`;
+  const label = frac > 0 ? `${pisoPart} at ${frac} sentimo` : pisoPart;
+  return `${sign}${label}`;
 }
 
 export default function Money({

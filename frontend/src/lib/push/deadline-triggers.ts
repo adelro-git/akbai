@@ -109,23 +109,49 @@ export async function triggerDeadlineNotifications(
     totalSent += result.sent;
 
     // --- Update notified flag on the deadline row ---
-    const flagColumn = `notified_${notification.notification_type}` as
-      | 'notified_7d'
-      | 'notified_3d'
-      | 'notified_1d';
+    // G1 fix: only set the notified flag when we ACTUALLY delivered to at least
+    // one subscription. If result.sent === 0 (no subscriptions, preference
+    // disabled, or every send failed), setting the flag here would permanently
+    // suppress this reminder window — a BIR penalty risk. Leaving the flag false
+    // lets the next cron retry.
+    //
+    // G2 (at-least-once delivery semantics): send (above) and the flag write
+    // (below) are two non-transactional steps. A throw or crash between them
+    // means the flag stays false and the next cron re-sends — so deadline pushes
+    // are AT-LEAST-ONCE, not exactly-once. The per-window tag + the differently
+    // worded due-today copy keep duplicates rare and non-confusing. A flag-write
+    // failure is logged (not silently swallowed) so the re-send is observable.
+    if (result.sent > 0) {
+      const flagColumn = `notified_${notification.notification_type}` as
+        | 'notified_7d'
+        | 'notified_3d'
+        | 'notified_1d';
 
-    await supabase
-      .from('bir_deadlines')
-      .update({
-        [flagColumn]: true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', notification.deadline_id);
+      const { error: flagError } = await supabase
+        .from('bir_deadlines')
+        .update({
+          [flagColumn]: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', notification.deadline_id);
 
-    sentNotifications.push({
-      form_name: notification.form_name,
-      type: notification.notification_type,
-    });
+      if (flagError) {
+        // Flag write failed AFTER a successful send. We do not throw — the push
+        // already went out — but we log so the (harmless, at-least-once) re-send
+        // on the next cron is traceable rather than a silent mystery.
+        console.error(
+          `[deadline-triggers] failed to set ${flagColumn} for deadline ` +
+            `${notification.deadline_id} after a successful push — it will ` +
+            `re-send next cron (at-least-once):`,
+          flagError
+        );
+      }
+
+      sentNotifications.push({
+        form_name: notification.form_name,
+        type: notification.notification_type,
+      });
+    }
   }
 
   return { sent: totalSent, notifications: sentNotifications };

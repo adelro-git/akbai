@@ -21,11 +21,18 @@ function fieldString(value: string | number | null): string {
   return String(value);
 }
 
+// Mirrors scan-results.tsx fieldCentavos: number = centavos passthrough;
+// integer string = centavos; decimal string = peso value rounded to centavos
+// (parseFloat + Math.round, NOT parseInt which would truncate the decimals).
 function fieldCentavos(value: string | number | null): number {
   if (typeof value === 'number') return value;
   if (typeof value === 'string') {
-    const parsed = parseInt(value, 10);
-    return isNaN(parsed) ? 0 : parsed;
+    const trimmed = value.trim();
+    const parsed = parseFloat(trimmed);
+    if (isNaN(parsed)) return 0;
+    return Number.isInteger(parsed) && !trimmed.includes('.')
+      ? parsed
+      : Math.round(parsed * 100);
   }
   return 0;
 }
@@ -76,6 +83,27 @@ describe('ScanResults — field extraction helpers', () => {
     expect(fieldCentavos('34500')).toBe(34500);
     expect(fieldCentavos(null)).toBe(0);
     expect(fieldCentavos('not-a-number')).toBe(0);
+  });
+
+  // --- Test 2b: decimal peso strings are NOT truncated (U3 hardening) ---
+  it('parses a decimal peso string to centavos instead of truncating it', () => {
+    // parseInt('345.00', 10) === 345 would corrupt the amount to ₱3.45;
+    // parseFloat + *100 + round keeps the real ₱345.00 → 34500 centavos.
+    expect(fieldCentavos('345.00')).toBe(34500);
+    expect(fieldCentavos('34.50')).toBe(3450);
+    expect(fieldCentavos('0.99')).toBe(99);
+    // Rounds to the nearest centavo (no float drift / sub-centavo leakage).
+    expect(fieldCentavos('12.345')).toBe(1235);
+  });
+
+  it('still treats a whole-number string as centavos (live OCR contract)', () => {
+    expect(fieldCentavos('100')).toBe(100);
+    expect(fieldCentavos('  34500  ')).toBe(34500);
+  });
+
+  it('passes a number value straight through as centavos (unchanged branch)', () => {
+    expect(fieldCentavos(99)).toBe(99);
+    expect(fieldCentavos(0)).toBe(0);
   });
 
   // --- Test 3: centavosToInputPeso converts for input display ---

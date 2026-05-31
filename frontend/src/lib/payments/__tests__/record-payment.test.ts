@@ -7,13 +7,35 @@
  * Mocks: Supabase service client
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// --- Sentry mock: reconcileAmount + resolvers capture mismatches/unresolved ---
+const mockCaptureMessage = vi.fn();
+vi.mock('@sentry/nextjs', () => ({
+  captureMessage: (...args: unknown[]) => mockCaptureMessage(...args),
+  withScope: (fn: (scope: unknown) => void) =>
+    fn({
+      setLevel: vi.fn(),
+      setTags: vi.fn(),
+      setExtras: vi.fn(),
+      setFingerprint: vi.fn(),
+    }),
+}));
+
 import {
   recordPayment,
   linkPaymentToInvoice,
   linkPaymentToSubscription,
+  resolveSubscriptionByXenditId,
+  resolveInvoiceForPayment,
+  reconcileAmount,
+  TIER_EXPECTED_PRICE_CENTAVOS,
 } from '../record-payment';
 import type { CreatePaymentPayload } from '../schemas';
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 // ============================================================
 // Test Data
@@ -149,8 +171,8 @@ describe('linkPaymentToInvoice', () => {
 // linkPaymentToSubscription Tests
 // ============================================================
 
-describe('linkPaymentToSubscription', () => {
-  it('should extend subscription period by 30 days', async () => {
+describe('linkPaymentToSubscription (P2 — internal UUID, period advances)', () => {
+  it('should extend current_period_end by 30 days from the current end', async () => {
     // Need a more specific mock for this function since it does select then update
     const singleFn = vi.fn()
       .mockResolvedValueOnce({
@@ -158,27 +180,39 @@ describe('linkPaymentToSubscription', () => {
         error: null,
       });
 
+    // Capture the UPDATE payload so we can assert the period actually advances.
+    const updatePayloads: Array<Record<string, unknown>> = [];
     const isFnForUpdate = vi.fn().mockResolvedValue({ error: null });
     const isFnForSelect = vi.fn().mockReturnValue({ single: singleFn });
 
     const eqFnForUpdate = vi.fn().mockReturnValue({ is: isFnForUpdate });
     const eqFnForSelect = vi.fn().mockReturnValue({ is: isFnForSelect });
 
-    let callCount = 0;
     const mockClient = {
       from: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: eqFnForSelect,
         }),
-        update: vi.fn().mockReturnValue({
-          eq: eqFnForUpdate,
+        update: vi.fn((payload: Record<string, unknown>) => {
+          updatePayloads.push(payload);
+          return { eq: eqFnForUpdate };
         }),
       }),
     };
 
-    await linkPaymentToSubscription(mockClient as never, 'pay-001', 'sub-001');
+    // Internal subscriptions.id UUID (NOT the Xendit id) is what gets passed in.
+    await linkPaymentToSubscription(mockClient as never, 'pay-001', 'sub-uuid-001');
 
     expect(mockClient.from).toHaveBeenCalledWith('subscriptions');
+    // Looks up by the internal PK (id), not xendit_subscription_id.
+    expect(eqFnForSelect).toHaveBeenCalledWith('id', 'sub-uuid-001');
+    expect(eqFnForUpdate).toHaveBeenCalledWith('id', 'sub-uuid-001');
+
+    // Period must advance: 2026-05-12 + 30 days = 2026-06-11.
+    expect(updatePayloads).toHaveLength(1);
+    const newEnd = new Date(updatePayloads[0].current_period_end as string);
+    expect(newEnd.toISOString()).toBe('2026-06-11T00:00:00.000Z');
+    expect(updatePayloads[0].status).toBe('active');
   });
 
   it('should throw when subscription not found', async () => {
@@ -200,5 +234,172 @@ describe('linkPaymentToSubscription', () => {
     await expect(
       linkPaymentToSubscription(mockClient as never, 'pay-001', 'sub-001')
     ).rejects.toThrow('Subscription not found');
+  });
+});
+
+// ============================================================
+// resolveSubscriptionByXenditId Tests (P2)
+// Xendit's data.subscription_id is a NON-UUID string keyed on the
+// xendit_subscription_id column — resolve it to the internal UUID.
+// ============================================================
+
+describe('resolveSubscriptionByXenditId', () => {
+  it('should look up by xendit_subscription_id and return the internal UUID row', async () => {
+    const eqFn = vi.fn().mockReturnValue({
+      is: vi.fn().mockReturnValue({
+        single: vi.fn().mockResolvedValue({
+          data: {
+            id: 'sub-uuid-001',
+            user_id: 'user-1',
+            tier: 'pro',
+            current_period_end: '2026-05-12T00:00:00Z',
+            status: 'active',
+          },
+          error: null,
+        }),
+      }),
+    });
+    const mockClient = {
+      from: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({ eq: eqFn }),
+      }),
+    };
+
+    const resolved = await resolveSubscriptionByXenditId(
+      mockClient as never,
+      'xnd-sub-abc'
+    );
+
+    expect(mockClient.from).toHaveBeenCalledWith('subscriptions');
+    // Critical: query the xendit_subscription_id column, NOT the PK.
+    expect(eqFn).toHaveBeenCalledWith('xendit_subscription_id', 'xnd-sub-abc');
+    expect(resolved?.id).toBe('sub-uuid-001');
+    expect(resolved?.tier).toBe('pro');
+  });
+
+  it('should return null when no live subscription matches', async () => {
+    const mockClient = {
+      from: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            is: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({
+                data: null,
+                error: { message: 'Not found' },
+              }),
+            }),
+          }),
+        }),
+      }),
+    };
+
+    const resolved = await resolveSubscriptionByXenditId(
+      mockClient as never,
+      'xnd-sub-missing'
+    );
+
+    expect(resolved).toBeNull();
+  });
+});
+
+// ============================================================
+// resolveInvoiceForPayment Tests (P3)
+// Resolve the originating AKBai invoice via external_id, scoped to the
+// user so a forged external_id from another tenant cannot be paid.
+// ============================================================
+
+describe('resolveInvoiceForPayment', () => {
+  it('should resolve invoice scoped by id AND user_id', async () => {
+    const eqId = vi.fn();
+    const eqUser = vi.fn().mockReturnValue({
+      is: vi.fn().mockReturnValue({
+        single: vi.fn().mockResolvedValue({
+          data: {
+            id: 'inv-001',
+            user_id: 'user-1',
+            total_centavos: 250000,
+            status: 'sent',
+          },
+          error: null,
+        }),
+      }),
+    });
+    eqId.mockReturnValue({ eq: eqUser });
+
+    const mockClient = {
+      from: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({ eq: eqId }),
+      }),
+    };
+
+    const resolved = await resolveInvoiceForPayment(mockClient as never, {
+      invoiceId: 'inv-001',
+      userId: 'user-1',
+    });
+
+    expect(mockClient.from).toHaveBeenCalledWith('invoices');
+    expect(eqId).toHaveBeenCalledWith('id', 'inv-001');
+    expect(eqUser).toHaveBeenCalledWith('user_id', 'user-1');
+    expect(resolved?.total_centavos).toBe(250000);
+  });
+
+  it('should return null when invoice cannot be resolved', async () => {
+    const eqUser = vi.fn().mockReturnValue({
+      is: vi.fn().mockReturnValue({
+        single: vi.fn().mockResolvedValue({
+          data: null,
+          error: { message: 'Not found' },
+        }),
+      }),
+    });
+    const mockClient = {
+      from: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({ eq: eqUser }),
+        }),
+      }),
+    };
+
+    const resolved = await resolveInvoiceForPayment(mockClient as never, {
+      invoiceId: 'inv-missing',
+      userId: 'user-1',
+    });
+
+    expect(resolved).toBeNull();
+  });
+});
+
+// ============================================================
+// reconcileAmount Tests (P6 — defense-in-depth amount check)
+// ============================================================
+
+describe('reconcileAmount', () => {
+  it('should return true and not alert when amounts match exactly', () => {
+    const ok = reconcileAmount({
+      observedCentavos: 49900,
+      expectedCentavos: 49900,
+      context: { path: 'subscription_renewal' },
+    });
+
+    expect(ok).toBe(true);
+    expect(mockCaptureMessage).not.toHaveBeenCalled();
+  });
+
+  it('should return false and capture to Sentry on mismatch', () => {
+    const ok = reconcileAmount({
+      observedCentavos: 100, // ₱1.00 — tampered
+      expectedCentavos: 49900, // ₱499.00 expected
+      context: { path: 'subscription_renewal', tier: 'pro' },
+    });
+
+    expect(ok).toBe(false);
+    expect(mockCaptureMessage).toHaveBeenCalledTimes(1);
+    expect(mockCaptureMessage).toHaveBeenCalledWith(
+      expect.stringContaining('Amount mismatch')
+    );
+  });
+
+  it('exposes Pro tier expected price as ₱499 in centavos', () => {
+    expect(TIER_EXPECTED_PRICE_CENTAVOS.pro).toBe(49900);
   });
 });

@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SendPushSchema } from '@/lib/push/schemas';
 import { sendPushToUser } from '@/lib/push/send';
+import { verifyBearer } from '@/lib/security/constant-time';
 
 // ============================================================
 // POST — Send push notification (service-role only)
@@ -28,7 +29,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!authHeader || authHeader !== `Bearer ${serviceRoleKey}`) {
+  // G4 fix: constant-time Bearer compare via the shared security primitive
+  // (same as the cron + RevenueCat routes). A plain `!==` short-circuits on the
+  // first differing byte, leaking — via timing — how many leading bytes of a
+  // guessed key were correct. verifyBearer is fail-closed (unset secret →
+  // false) and does not early-exit on content.
+  if (!verifyBearer(authHeader, serviceRoleKey)) {
     return NextResponse.json(
       { success: false, error: { code: 'FORBIDDEN', message: 'Service-role key required' } },
       { status: 403 }
@@ -72,10 +78,28 @@ export async function POST(req: NextRequest) {
     tag,
   };
 
-  const result = await sendPushToUser(user_id, payload, notification_type);
+  // G7 fix: sendPushToUser → getVapidConfig() throws when VAPID env vars are
+  // missing (and other transient send-path errors can surface too). An unhandled
+  // throw here would bubble up as an opaque framework 500 with no structured
+  // body. Wrap it so callers always get the route's { success, error } envelope.
+  try {
+    const result = await sendPushToUser(user_id, payload, notification_type);
 
-  return NextResponse.json({
-    success: true,
-    data: { sent: result.sent, total: result.total },
-  });
+    return NextResponse.json({
+      success: true,
+      data: { sent: result.sent, total: result.total },
+    });
+  } catch (error: unknown) {
+    console.error('[push/send] sendPushToUser failed:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'PUSH_SEND_FAILED',
+          message: 'Hindi naipadala ang push notification. Subukan ulit mamaya.',
+        },
+      },
+      { status: 500 }
+    );
+  }
 }

@@ -125,7 +125,7 @@ export async function sendPushToUser(
   const supabase = createServiceClient();
 
   // --- Check notification preference — skip if disabled ---
-  const { data: prefRow } = await supabase
+  const { data: prefRow, error: prefError } = await supabase
     .from('notification_preferences')
     .select('enabled')
     .eq('user_id', userId)
@@ -133,7 +133,24 @@ export async function sendPushToUser(
     .is('deleted_at', null)
     .maybeSingle();
 
-  // If no preference row exists, default is enabled (send it)
+  // G5 fix (fail SAFE on preference read error): a transient query error yields
+  // prefRow === null, which previously fell through to "no row = enabled" and
+  // pushed to a user who may well have OPTED OUT. Pushing to an opted-out user
+  // on a DB hiccup is the wrong way to fail. So on any preference-read error we
+  // treat the preference as DISABLED and skip the send. The reminder is not
+  // lost: deadline pushes are at-least-once (the notified flag is only set when
+  // sent > 0), so the next cron retries once the DB recovers.
+  if (prefError) {
+    console.error(
+      `[push] notification_preferences read failed for user ${userId} ` +
+        `(type=${notificationType}) — failing safe, treating as disabled:`,
+      prefError
+    );
+    return { sent: 0, total: 0 };
+  }
+
+  // If no preference row exists, default is enabled (send it). This genuine
+  // no-row case is distinct from the error case above (prefError is null here).
   if (prefRow && !prefRow.enabled) {
     return { sent: 0, total: 0 };
   }

@@ -55,6 +55,63 @@ describe('calculateTotalCost', () => {
     const items = [{ unit_cost_centavos: 5000 }] as { quantity?: number; unit_cost_centavos: number }[];
     expect(calculateTotalCost(items)).toBe(5000);
   });
+
+  // ── B2: card total is exact-sum-then-round-once, NOT sum-of-rounded-rows ──
+
+  it('rounds the card total ONCE from the exact sum (no per-line drift)', () => {
+    // Each line is 0.5 * 2525 = 1262.5 centavos.
+    // Per-line rounding (old behaviour): Math.round(1262.5) = 1263 each → 3789.
+    // Exact-then-round (correct): 1262.5 * 3 = 3787.5 → Math.round → 3788.
+    const items = [
+      { quantity: 0.5, unit_cost_centavos: 2525 },
+      { quantity: 0.5, unit_cost_centavos: 2525 },
+      { quantity: 0.5, unit_cost_centavos: 2525 },
+    ];
+    expect(calculateTotalCost(items)).toBe(3788);
+    // Guard against regression to the per-line-rounded total.
+    expect(calculateTotalCost(items)).not.toBe(3789);
+  });
+
+  it('card total can diverge from the sum of displayed per-line totals (by design)', () => {
+    // Two fractional lines, each exactly 1262.5 centavos.
+    const items = [
+      { quantity: 0.5, unit_cost_centavos: 2525 },
+      { quantity: 0.5, unit_cost_centavos: 2525 },
+    ];
+    // Displayed per-line totals each round UP to 1263 → naive sum 2526.
+    const displayedSum =
+      calculateItemTotalCost(0.5, 2525) + calculateItemTotalCost(0.5, 2525);
+    expect(displayedSum).toBe(2526);
+    // Card total rounds the exact sum (2525) once → 2525, intentionally != 2526.
+    expect(calculateTotalCost(items)).toBe(2525);
+    expect(calculateTotalCost(items)).not.toBe(displayedSum);
+  });
+
+  it('still returns an integer-centavo card total for fractional inputs', () => {
+    const items = [{ quantity: 1.5, unit_cost_centavos: 3333 }]; // 4999.5 → 5000
+    const total = calculateTotalCost(items);
+    expect(Number.isInteger(total)).toBe(true);
+    expect(total).toBe(5000);
+  });
+
+  it('matches whole-quantity totals exactly (no behaviour change for integers)', () => {
+    const items = [
+      { quantity: 2, unit_cost_centavos: 5000 },
+      { quantity: 3, unit_cost_centavos: 1500 },
+    ];
+    // Integer quantities have no fractional remainder, so exact-then-round
+    // equals sum-of-rounded-rows: 10000 + 4500 = 14500.
+    expect(calculateTotalCost(items)).toBe(14500);
+  });
+});
+
+// ─── calculateItemTotalCost — per-line display rounding (B2) ─────────
+
+describe('calculateItemTotalCost (display rounding policy)', () => {
+  it('still rounds each displayed line to whole centavos', () => {
+    // 0.5 * 2525 = 1262.5 → rounds to 1263 for display.
+    expect(calculateItemTotalCost(0.5, 2525)).toBe(1263);
+  });
 });
 
 // ─── calculateSuggestedPrice ────────────────────────────────────────

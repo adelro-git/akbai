@@ -88,23 +88,36 @@ describe('<Money> — type/tone classes', () => {
 });
 
 describe('<Money> — accessibility', () => {
-  it('exposes a localized aria-label spelling the value as "piso"', () => {
+  it('exposes a localized aria-label spelling whole pesos as "piso"', () => {
+    // Exact pesos (no centavos) announce just the piso part.
     const html = renderToStaticMarkup(<Money centavos={345000} />);
     expect(html).toContain('aria-label="3,450 piso"');
+  });
+
+  it('announces centavos as "sentimo" so the label matches the visible value', () => {
+    // 3450 centavos = ₱34.50 visible → "34 piso at 50 sentimo" (NOT "35 piso").
+    const html = renderToStaticMarkup(<Money centavos={3450} />);
+    expect(html).toContain('aria-label="34 piso at 50 sentimo"');
   });
 
   it('aria-label includes the sign when signed', () => {
     expect(renderToStaticMarkup(<Money centavos={345000} signed />)).toContain(
       'aria-label="+3,450 piso"',
     );
-    expect(renderToStaticMarkup(<Money centavos={-3450} signed />)).toContain(
-      'aria-label="-34 piso"',
-    );
   });
 
-  it('aria-label rounds centavos to whole pesos', () => {
-    // 3450 centavos = ₱34.50 → rounds to 35 piso in the label
-    expect(renderToStaticMarkup(<Money centavos={3450} />)).toContain('aria-label="35 piso"');
+  it('negative .50 amounts announce the magnitude with a single minus (no off-by-one)', () => {
+    // Visible: -₱34.50 → label must agree: "-34 piso at 50 sentimo".
+    // The old Math.round(centavos/100) path announced "-35 piso" — a value the
+    // user never saw. Guard against that regression here.
+    const html = renderToStaticMarkup(<Money centavos={-3450} signed />);
+    expect(html).toContain('aria-label="-34 piso at 50 sentimo"');
+    expect(html).not.toContain('35 piso');
+  });
+
+  it('negative amounts are sign-aware even when unsigned (minus reflects reality)', () => {
+    const html = renderToStaticMarkup(<Money centavos={-3450} />);
+    expect(html).toContain('aria-label="-34 piso at 50 sentimo"');
   });
 });
 

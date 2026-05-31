@@ -25,6 +25,26 @@ function interpolate(template: string, vars: Record<string, string>): string {
   return result;
 }
 
+// ============================================================
+// C4 — classify_* feature guard.
+// FEATURE_PROMPTS.classify_expense / classify_intent contain template vars
+// ({{message}}/{{description}}/{{amount}}) that this assembler never fills —
+// they are INTERNAL classification tasks, not conversational features. They are
+// gated out of /api/chat at the route (the only client entry point), so they
+// can't reach here via user input. This guard is defense-in-depth: if an
+// internal caller ever passes them WITHOUT the required vars, fail loudly
+// instead of silently shipping literal mustache tokens to the model.
+//
+// Note: morning_briefing intentionally contains ILLUSTRATIVE tokens like
+// {{form_type}}/{{days}} that the model fills from BRIEFING_DATA — those are
+// part of the instruction text, so we only check the classify_* vars here,
+// scoped to the classify_* features.
+// ============================================================
+const CLASSIFY_REQUIRED_VARS: Partial<Record<KAFeature, readonly string[]>> = {
+  classify_expense: ['description', 'amount'],
+  classify_intent: ['message'],
+};
+
 /**
  * Assembles the system prompt from 4 layers:
  *   1. Core Persona (always)
@@ -47,7 +67,18 @@ export function assembleSystemPrompt(input: PromptAssemblyInput): string {
     layers.push(SCOPE_PROMPTS[scope]);
   }
 
-  // Layer 3 — Feature Context with template variable substitution
+  // Layer 3 — Feature Context with template variable substitution.
+  // C4 guard: classify_* features require vars this assembler can't supply.
+  // They're gated out of /api/chat; reaching here means an internal caller
+  // used the wrong path. Fail loudly rather than ship literal {{message}} etc.
+  if (input.feature in CLASSIFY_REQUIRED_VARS) {
+    throw new Error(
+      `[assembleSystemPrompt] '${input.feature}' is an internal classification ` +
+        `task and cannot be assembled via this path — its template vars ` +
+        `(${CLASSIFY_REQUIRED_VARS[input.feature]?.join(', ')}) are not supplied here.`
+    );
+  }
+
   const templateVars: Record<string, string> = {
     user_first_name: input.userContext?.firstName ?? 'ka-partner',
     business_type: input.userContext?.businessType ?? 'business',

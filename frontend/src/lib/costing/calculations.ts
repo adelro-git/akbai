@@ -13,8 +13,16 @@ import type { CreateCostingCardItemPayload } from './schemas';
 // ─── Total Cost ─────────────────────────────────────────────────────
 
 /**
- * Sum the total_cost_centavos of all line items.
- * Each item's total = quantity * unit_cost_centavos, rounded to integer.
+ * Per-line displayed total = quantity * unit_cost_centavos, rounded to
+ * integer centavos.
+ *
+ * Rounding policy: this is the ROW-LEVEL figure shown next to each line
+ * item, so it must be a whole centavo value Maria can read. The CARD
+ * total, however, is NOT the sum of these rounded rows — see
+ * calculateTotalCost — because summing per-line rounded values lets
+ * fractional quantities accumulate per-row rounding drift (e.g. three
+ * lines each off by +0.4 centavo would push the card total a full
+ * centavo off the true sum). Use this only for display.
  *
  * Accepts either full CostingCardItem rows (from DB) or
  * CreateCostingCardItemPayload (from form input) — both have
@@ -26,14 +34,23 @@ export function calculateItemTotalCost(quantity: number, unitCostCentavos: numbe
 
 /**
  * Calculate the aggregate total cost across all line items.
+ *
+ * Rounding policy: sum the EXACT (unrounded) quantity * unit_cost products
+ * and Math.round ONCE at the end. This keeps the stored card total an
+ * integer centavo value while avoiding the per-line rounding drift that
+ * would occur if we summed calculateItemTotalCost() results — that drift
+ * makes the card total diverge from the true sum when quantities are
+ * fractional. Downstream margin / break-even use this exact-then-rounded
+ * total.
  */
 export function calculateTotalCost(
   items: Pick<CostingCardItem, 'quantity' | 'unit_cost_centavos'>[] | CreateCostingCardItemPayload[]
 ): number {
-  return items.reduce((sum, item) => {
+  const exactTotal = items.reduce((sum, item) => {
     const qty = item.quantity ?? 1;
-    return sum + calculateItemTotalCost(qty, item.unit_cost_centavos);
+    return sum + qty * item.unit_cost_centavos;
   }, 0);
+  return Math.round(exactTotal);
 }
 
 // ─── Suggested Price ────────────────────────────────────────────────

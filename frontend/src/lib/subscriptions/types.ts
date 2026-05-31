@@ -86,6 +86,10 @@ export const SubscriptionInfoSchema = z.object({
   gracePeriod: GracePeriodResultSchema.nullable(),
   scansUsed: z.number().int().nonnegative(),
   scanLimit: z.number().int().nonnegative(),
+  // P1 — true when scanLimit is the UNLIMITED_SCANS sentinel. Consumers
+  // (usage meter / paywall) render a "walang-limit" label instead of the
+  // raw sentinel number when this is set.
+  unlimited: z.boolean(),
 });
 export type SubscriptionInfo = z.infer<typeof SubscriptionInfoSchema>;
 
@@ -122,15 +126,41 @@ export const XenditWebhookPayloadSchema = z.object({
 export type XenditWebhookPayload = z.infer<typeof XenditWebhookPayloadSchema>;
 
 // ============================================================
-// Scan Limits per Tier — enforced in Resibo Scanner API route
+// Scan Limits per Tier
 // ============================================================
+// NOTE: scan_limit is INFORMATIONAL — surfaced by /api/subscriptions and the
+// paywall usage meter. There is currently NO scans_used >= scan_limit hard
+// gate; the OCR route caps spend via the circuit-breaker COST caps, not this
+// number. So a large sentinel for "Unlimited" tiers is purely a display
+// concern, not an enforcement risk.
+//
+// UNLIMITED_SCANS is a safe sentinel: scan_limit is INTEGER (int4) per
+// migration 023, max ~2.1B, so 1,000,000 cannot overflow the column. The UI
+// renders this value as a "walang-limit" label (never the raw number) — see
+// isUnlimitedScans() + the subscriptions API `unlimited` flag.
+export const UNLIMITED_SCANS = 1_000_000;
 
 export const SCAN_LIMITS: Record<SubscriptionTier, number> = {
   free: 0,
   // Sprint 17 — Starter is the ₱299 lifetime IAP tier (100 scans/month per
   // project-context.md §4). No Kai chat; OCR + reports only.
   starter: 100,
-  pro: 50,
+  // P1 fix — project-context.md §4: Pro Monthly / Pro Annual = Unlimited scans.
+  // The previous literal 50 was BELOW Starter's 100, which mis-stated Pro as
+  // more limited than the cheaper lifetime tier.
+  pro: UNLIMITED_SCANS,
+  // business / scale are legacy Build-8 (Xendit-era) forward refs; unchanged.
   business: 80,
   scale: 200,
 };
+
+// ============================================================
+// isUnlimitedScans — true when a scan_limit value represents the
+// "Unlimited" sentinel. Use this at the UI layer to swap the raw
+// number for a "walang-limit" label. Treats any value at/above the
+// sentinel as unlimited so future tiers can reuse UNLIMITED_SCANS.
+// ============================================================
+
+export function isUnlimitedScans(scanLimit: number): boolean {
+  return scanLimit >= UNLIMITED_SCANS;
+}

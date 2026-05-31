@@ -97,6 +97,30 @@ export async function POST(req: NextRequest) {
 
     const { message, feature: requestedFeature, deadlineContext } = parsed.data;
 
+    // --- Reject internal-only classification features (C4) ---
+    // classify_expense / classify_intent are internal tasks invoked
+    // server-side (not via this conversational endpoint). Their prompt blocks
+    // expect template vars ({{message}}/{{description}}/{{amount}}) that the
+    // chat assembler never supplies, so selecting them here would ship literal
+    // mustache tokens to the model. They remain in KAFeature/FEATURE_PROMPTS
+    // for internal callers, but are NOT client-selectable through /api/chat.
+    if (
+      requestedFeature === 'classify_expense' ||
+      requestedFeature === 'classify_intent'
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_INPUT',
+            message: 'This feature is not available via chat',
+            message_tl: 'Hindi available ang feature na ito sa chat.',
+          },
+        },
+        { status: 400 }
+      );
+    }
+
     // ADR-017 §5 — sentinel "Kai opens" trigger. Skip user-message persist,
     // require deadlineContext, and force feature='general_chat'. Don't sanitize
     // the sentinel itself (it never reaches Claude as a user turn).
@@ -307,9 +331,13 @@ export async function POST(req: NextRequest) {
     });
 
     // --- Extract Response ---
+    // C7: guard against an empty content array — indexing content[0] on an
+    // empty array yields undefined → TypeError on `.type`. Fall back to the
+    // standard error message (same as a non-text block).
+    const firstBlock = Array.isArray(response.content) ? response.content[0] : undefined;
     const rawResponse =
-      response.content[0].type === 'text'
-        ? response.content[0].text
+      firstBlock && firstBlock.type === 'text'
+        ? firstBlock.text
         : KA_ERROR_MESSAGES.api_error;
 
     // --- Output Guardrails ---
@@ -318,18 +346,25 @@ export async function POST(req: NextRequest) {
     // --- Reply-Draft Output Guardrails ---
     // When this was a reply-drafting request, apply additional validation:
     // no impersonation, no unauthorized commitments, no financial advice.
+    let finalResponse: string;
     if (isReplyDraft) {
       const replyValidation = validateReplyOutput(filteredResponse);
       if (!replyValidation.valid) {
         console.warn(`[Chat] Reply-draft output guardrail triggered: ${replyValidation.reason}`);
-        filteredResponse = SAFE_FALLBACK_MESSAGE;
+        // Safe fallback contains no tax content — no BIR disclaimer needed.
+        finalResponse = SAFE_FALLBACK_MESSAGE;
       } else {
-        // Append the reply-draft disclaimer so users know to review before sending
-        filteredResponse = `${filteredResponse}\n\n${REPLY_DISCLAIMER}`;
+        // C5: apply the BIR disclaimer to the reply BODY first, THEN append the
+        // reply-draft notice. The old order appended REPLY_DISCLAIMER and then
+        // ran applyBIRDisclaimer on the combined string, so a tax-containing
+        // reply ended with two stacked disclaimers (and in the wrong order).
+        // Doing BIR first keeps a single, correctly-ordered disclaimer.
+        const withBir = applyBIRDisclaimer(filteredResponse, 'chat');
+        finalResponse = `${withBir}\n\n${REPLY_DISCLAIMER}`;
       }
+    } else {
+      finalResponse = applyBIRDisclaimer(filteredResponse, 'chat');
     }
-
-    const finalResponse = applyBIRDisclaimer(filteredResponse, 'chat');
 
     // --- Record Spend & Save Response ---
     // Use serviceSupabase for spend recording (needs service role for ai_spend table),

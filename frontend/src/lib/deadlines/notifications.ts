@@ -38,6 +38,14 @@ function buildNotificationMessage(
     case '3d':
       return `Malapit na ang deadline ng ${formName}! ${daysUntil} days na lang. Gawin na natin 'to.`;
     case '1d':
+      // B1 fix (BIR penalty risk): the '1d' window covers BOTH due-tomorrow
+      // (daysUntil===1) and due-today (daysUntil===0). Hardcoding 'Bukas na'
+      // wrongly told a user the deadline was tomorrow when it was actually
+      // TODAY — a real penalty risk. Branch on the actual daysUntil so the
+      // due-today copy is unambiguous and action-oriented.
+      if (daysUntil <= 0) {
+        return `Ngayong araw na ang deadline ng ${formName}! I-file na natin para walang penalty.`;
+      }
       return `Bukas na ang deadline ng ${formName}! I-file na natin para walang penalty.`;
   }
 }
@@ -76,7 +84,15 @@ export function getUpcomingNotifications(
     // Priority: 1d > 3d > 7d. If within a window but already notified for it,
     // do NOT fall through to a less specific window.
     if (daysLeft <= 1) {
-      if (!deadline.notified_1d) {
+      // B1 fix: the '1d' window spans daysLeft===1 (tomorrow) and daysLeft===0
+      // (today), but there is only ONE notified_1d flag (no notified_0d column).
+      // The day-before send sets notified_1d, which would otherwise suppress the
+      // critical due-today reminder. So: gate the day-before message on the flag,
+      // but ALWAYS allow the due-today message through — missing a "due TODAY"
+      // reminder is a BIR penalty risk we will not accept. The due-today copy is
+      // worded differently (see buildNotificationMessage) so it is not a dupe.
+      const isDueToday = daysLeft <= 0;
+      if (isDueToday || !deadline.notified_1d) {
         notifications.push({
           deadline_id: deadline.id,
           form_name: deadline.form_name,

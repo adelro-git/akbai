@@ -4,23 +4,42 @@
  *
  * Flow: RevenueCat POST → verify Authorization Bearer → parse + Zod →
  *       idempotent insert (event_id PRIMARY KEY) → re-compute tier via
- *       REST → set_user_tier_v2 RPC → mark processed → 200 OK always.
+ *       REST → set_user_tier_v2 RPC → mark processed → 200 OK (permanent)
+ *       / 5xx (transient).
  *
  * Security invariants (architect §3 + §10):
  *   - Authorization: Bearer <REVENUECAT_WEBHOOK_AUTH> constant-time compared.
  *     Fail-closed on missing env var (server misconfig).
  *   - Service role client (bypasses RLS) for all DB writes; matches
  *     Xendit handler line 196 pattern.
- *   - ALWAYS 200 OK — RevenueCat retries non-2xx for up to 24h; logging
- *     + Sentry is the failure surface, not retry storms.
  *   - NEVER writes directly to subscriptions.tier. All tier writes go
  *     through the set_user_tier_v2 SECURITY DEFINER RPC. CI grep guard
  *     in the engineer review: this file MUST contain ZERO matches for
  *     `.from('subscriptions').update(`.
  *
- * Idempotency (Gap G2):
- *   - INSERT INTO revenuecat_events (event_id PRIMARY KEY) with PG error
- *     code '23505' = duplicate-key → 200 OK with { deduped: true }.
+ * Retry semantics (P5 — idempotent recovery, no paid-upgrade loss):
+ *   - PERMANENT / non-retryable conditions → 200 OK so RevenueCat does NOT
+ *     retry (anti-retry-storm): bad signature, invalid JSON, Zod failure
+ *     (incl. unknown/ignored event types), log-only events, environment
+ *     skips, and any event already fully processed (deduped).
+ *   - TRANSIENT / unexpected failures of the downstream tier write (e.g. the
+ *     set_user_tier_v2 RPC throwing, REST entitlement lookup throwing) → 5xx
+ *     so RevenueCat retries with backoff. Without this, a transient RPC
+ *     failure would silently lose a paid-tier upgrade (the event row exists
+ *     but processed_at stays NULL and RevenueCat never re-delivers).
+ *
+ * Idempotency (Gap G2 + P5 recovery):
+ *   - INSERT INTO revenuecat_events (event_id PRIMARY KEY). The row is only
+ *     stamped processed_at AFTER handleEvent() succeeds, so the row's
+ *     processed_at is the authoritative "this event's side-effects landed"
+ *     marker.
+ *   - On a duplicate insert (PG '23505') we look up the existing row:
+ *       · processed_at IS NULL → a prior delivery inserted the row but its
+ *         tier write never completed (transient crash / RPC failure). We
+ *         REPROCESS handleEvent(), then stamp processed_at, and return 200.
+ *         This is the no-data-loss recovery path.
+ *       · processed_at IS NOT NULL → already fully handled → dedup, 200 OK
+ *         with { deduped: true }.
  *   - This is event-envelope-level dedup (not row-level). One event may
  *     produce zero, one, or many writes; the event boundary is the safe
  *     idempotency surface.
@@ -157,8 +176,47 @@ async function handleEvent(
 }
 
 // ============================================================
+// processAndMark — run the downstream side-effects for an event,
+// then stamp processed_at ONLY on success (P5). Shared by the
+// first-delivery path and the unprocessed-duplicate recovery path.
+//
+// Any throw from handleEvent (transient RPC/REST failure) propagates
+// up so the caller can return 5xx; processed_at is NOT stamped, so a
+// later re-delivery will retry via the recovery path.
+//
+// A failure to *stamp* processed_at after a successful handleEvent is
+// non-fatal here: the tier write already landed (idempotent — it just
+// re-resolves entitlements), so a re-delivery would safely reprocess.
+// We log it as a warning rather than throw, to avoid forcing a retry
+// of an already-applied tier write.
+// ============================================================
+
+async function processAndMark(
+  serviceClient: ReturnType<typeof createServiceClient>,
+  event: RevenueCatEvent,
+): Promise<void> {
+  await handleEvent(serviceClient, event);
+
+  const { error: updateError } = await serviceClient
+    .from('revenuecat_events')
+    .update({ processed_at: new Date().toISOString() })
+    .eq('event_id', event.id);
+
+  if (updateError) {
+    console.error(
+      `[RevenueCat Webhook] Failed to mark event ${event.id} processed:`,
+      updateError.message,
+    );
+    // Non-fatal — the tier write already landed and handleEvent is
+    // idempotent, so a future re-delivery will reconcile cleanly.
+  }
+}
+
+// ============================================================
 // POST Handler — Main webhook entry point
-// ALWAYS returns 200 OK. Errors → Sentry + log + 200 OK.
+// Permanent/non-retryable conditions → 200 OK (no retry storm).
+// Transient downstream failures → Sentry + log + 5xx (RevenueCat
+// retries with backoff so a paid-upgrade is never silently lost).
 // ============================================================
 
 export async function POST(req: NextRequest) {
@@ -203,10 +261,11 @@ export async function POST(req: NextRequest) {
   try {
     const serviceClient = createServiceClient();
 
-    // ----- Idempotent insert (Gap G2 resolution) -----
+    // ----- Idempotent insert (Gap G2 + P5 recovery) -----
     // event_id is PRIMARY KEY on revenuecat_events; PG '23505' is the
-    // duplicate-key error code. Treat as "already processed" → return
-    // 200 OK + { deduped: true } so RevenueCat doesn't retry.
+    // duplicate-key error code. The row is inserted with processed_at=NULL
+    // and only stamped AFTER handleEvent() succeeds, so processed_at is the
+    // authoritative "side-effects landed" marker.
     const { error: insertError } = await serviceClient
       .from('revenuecat_events')
       .insert({
@@ -220,36 +279,58 @@ export async function POST(req: NextRequest) {
 
     if (insertError) {
       if (insertError.code === '23505') {
-        console.log(`[RevenueCat Webhook] Duplicate event ${event.id} — deduped`);
+        // ----- Duplicate delivery: dedup OR recover (P5) -----
+        // Look up the existing row. If it was never fully processed
+        // (processed_at IS NULL — a prior delivery crashed/failed before
+        // the tier write landed), REPROCESS so a paid upgrade is not lost.
+        // If it is already processed, dedup as before.
+        const { data: existing, error: lookupError } = await serviceClient
+          .from('revenuecat_events')
+          .select('processed_at')
+          .eq('event_id', event.id)
+          .single();
+
+        if (lookupError) {
+          // Could not read the existing row — treat as transient so
+          // RevenueCat retries rather than silently dropping the event.
+          console.error(
+            `[RevenueCat Webhook] Duplicate-row lookup failed for ${event.id}:`,
+            lookupError.message,
+          );
+          throw new Error(`Duplicate-row lookup failed: ${lookupError.message}`);
+        }
+
+        if (existing?.processed_at) {
+          console.log(`[RevenueCat Webhook] Duplicate event ${event.id} — deduped`);
+          return NextResponse.json(
+            { success: true, data: { received: true, deduped: true } },
+            { status: 200 },
+          );
+        }
+
+        // Unprocessed duplicate → recover by reprocessing. A throw here
+        // (transient RPC/REST failure) propagates to the catch → 5xx.
+        console.warn(
+          `[RevenueCat Webhook] Re-delivered UNPROCESSED event ${event.id} — reprocessing`,
+        );
+        await processAndMark(serviceClient, event);
         return NextResponse.json(
-          { success: true, data: { received: true, deduped: true } },
+          { success: true, data: { received: true, reprocessed: true } },
           { status: 200 },
         );
       }
-      // Other DB error — log + 200 OK (no retry storm)
+      // Other insert DB error — transient/unexpected → 5xx so RevenueCat
+      // retries with backoff (the event was NOT recorded, so re-delivery
+      // is the only way to recover it).
       console.error('[RevenueCat Webhook] Event insert failed:', insertError.message);
-      return NextResponse.json(
-        { success: true, data: { received: true } },
-        { status: 200 },
-      );
+      throw new Error(`Event insert failed: ${insertError.message}`);
     }
 
-    // ----- Downstream tier write -----
-    await handleEvent(serviceClient, event);
-
-    // ----- Mark processed (non-fatal failure) -----
-    const { error: updateError } = await serviceClient
-      .from('revenuecat_events')
-      .update({ processed_at: new Date().toISOString() })
-      .eq('event_id', event.id);
-
-    if (updateError) {
-      console.error(
-        `[RevenueCat Webhook] Failed to mark event ${event.id} processed:`,
-        updateError.message,
-      );
-      // Non-fatal — a future event for the same user will reconcile tier.
-    }
+    // ----- First delivery: downstream tier write + mark processed -----
+    // A throw here (transient RPC/REST failure) propagates to the catch →
+    // 5xx. The row exists with processed_at=NULL, so a re-delivery hits the
+    // unprocessed-duplicate recovery branch above.
+    await processAndMark(serviceClient, event);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error(`[RevenueCat Webhook] Error processing ${event.type}:`, message);
@@ -267,6 +348,21 @@ export async function POST(req: NextRequest) {
         app_user_id: event.app_user_id,
       },
     });
+
+    // Transient/unexpected downstream failure → 5xx so RevenueCat retries
+    // with backoff. The event row (if inserted) stays processed_at=NULL and
+    // the retry recovers it; a paid-tier upgrade is never silently lost.
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'WEBHOOK_PROCESSING_FAILED',
+          message: 'Transient failure processing webhook; retry expected.',
+          message_tl: 'May pansamantalang problema sa pag-proseso; uulitin ito.',
+        },
+      },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json(

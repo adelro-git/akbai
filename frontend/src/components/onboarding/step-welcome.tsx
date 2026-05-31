@@ -14,10 +14,10 @@ export default function StepWelcome({ onComplete, loading, initialName }: StepWe
   const t = useTranslations('onboarding.step1');
   const tCommon = useTranslations('common');
 
-  // Pre-fill if resuming
-  if (nameRef.current && initialName && !nameRef.current.value) {
-    nameRef.current.value = initialName;
-  }
+  // Resume prefill is handled by the input's `defaultValue={initialName}`
+  // below. (The previous render-phase `nameRef.current.value = initialName`
+  // was a side effect during render AND a no-op on first paint — the ref is
+  // still null then — so it never actually did anything; removed.)
 
   const handleSubmit = () => {
     const name = nameRef.current?.value?.trim() ?? '';

@@ -13,7 +13,7 @@ import {
   cancelSubscription,
   renewSubscription,
 } from '../lifecycle';
-import { SCAN_LIMITS } from '../types';
+import { SCAN_LIMITS, UNLIMITED_SCANS, isUnlimitedScans } from '../types';
 
 // ============================================================
 // Mock Supabase Client Factory
@@ -61,6 +61,40 @@ function createMockClient(overrides?: {
 }
 
 // ============================================================
+// SCAN_LIMITS — tier entitlement correctness (P1)
+// ============================================================
+// project-context.md §4: Pro Monthly / Pro Annual = Unlimited scans.
+// Pro was previously the literal 50 — BELOW Starter's 100 — which made the
+// pricier subscription look more limited than the cheaper lifetime tier.
+
+describe('SCAN_LIMITS — tier entitlements', () => {
+  it('pro is the UNLIMITED_SCANS sentinel (NOT the legacy 50)', () => {
+    expect(SCAN_LIMITS.pro).toBe(UNLIMITED_SCANS);
+    expect(SCAN_LIMITS.pro).not.toBe(50);
+  });
+
+  it('pro scan limit is strictly greater than starter (entitlement ordering)', () => {
+    expect(SCAN_LIMITS.pro).toBeGreaterThan(SCAN_LIMITS.starter);
+  });
+
+  it('starter stays 100, free stays 0', () => {
+    expect(SCAN_LIMITS.starter).toBe(100);
+    expect(SCAN_LIMITS.free).toBe(0);
+  });
+
+  it('isUnlimitedScans flags the pro limit but not starter/free', () => {
+    expect(isUnlimitedScans(SCAN_LIMITS.pro)).toBe(true);
+    expect(isUnlimitedScans(SCAN_LIMITS.starter)).toBe(false);
+    expect(isUnlimitedScans(SCAN_LIMITS.free)).toBe(false);
+  });
+
+  it('UNLIMITED_SCANS cannot overflow the int4 scan_limit column', () => {
+    // Postgres int4 max is 2_147_483_647 (migration 023 scan_limit INTEGER).
+    expect(UNLIMITED_SCANS).toBeLessThan(2_147_483_647);
+  });
+});
+
+// ============================================================
 // activateSubscription Tests
 // ============================================================
 
@@ -79,6 +113,8 @@ describe('activateSubscription', () => {
     expect(upsertCall.tier).toBe('pro');
     expect(upsertCall.status).toBe('active');
     expect(upsertCall.scan_limit).toBe(SCAN_LIMITS.pro);
+    // P1 — activating Pro writes the unlimited sentinel, not 50.
+    expect(upsertCall.scan_limit).toBe(UNLIMITED_SCANS);
     expect(upsertCall.scans_used_this_period).toBe(0);
     expect(upsertCall.xendit_subscription_id).toBe('xnd-sub-123');
     expect(upsertCall.payment_method).toBe('gcash');

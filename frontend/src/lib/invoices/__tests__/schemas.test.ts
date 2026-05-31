@@ -61,6 +61,22 @@ describe('CreateInvoiceItemSchema', () => {
     });
     expect(result.success).toBe(false);
   });
+
+  // E2: fractional quantity is a legit use case (e.g. 2.5 hours). The schema
+  // intentionally allows it; the route handler rounds the resulting line total
+  // to integer centavos rather than the schema forbidding the input.
+  it('accepts a fractional quantity (e.g. hours)', () => {
+    const result = CreateInvoiceItemSchema.safeParse({
+      ...validItem,
+      quantity: 2.5,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects zero or negative quantity', () => {
+    expect(CreateInvoiceItemSchema.safeParse({ ...validItem, quantity: 0 }).success).toBe(false);
+    expect(CreateInvoiceItemSchema.safeParse({ ...validItem, quantity: -1 }).success).toBe(false);
+  });
 });
 
 // ─── CreateInvoiceSchema ─────────────────────────────────────────────

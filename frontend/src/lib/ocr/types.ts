@@ -42,18 +42,39 @@ export interface ReceiptFields {
   receiptNumber?: ReceiptField;
 }
 
+/** Token usage from a single Claude API call, tagged with the model that ran. */
+export interface OcrCallTokenUsage {
+  model: 'haiku' | 'sonnet';
+  input: number;
+  output: number;
+}
+
 /** Result of parsing a single receipt image through the OCR pipeline. */
 export interface ReceiptParseResult {
   success: boolean;
   fields: ReceiptFields;
   /** Full raw text extracted from the receipt */
   rawText: string;
-  /** Which Claude model was used for extraction */
+  /** Which Claude model produced the RETURNED result */
   model: 'haiku' | 'sonnet';
   /** Time taken to process in milliseconds */
   processingTimeMs: number;
-  /** Token usage from the Claude API call */
+  /**
+   * Cumulative token usage across EVERY Claude call made during parsing.
+   * On a Haiku→Sonnet fallback this is the SUM of both calls (C3) so the
+   * circuit breaker is charged for all tokens actually spent, not just the
+   * winning model's. The `model` here mirrors the returned result's model
+   * for backward compatibility — use `tokenUsageBreakdown` for per-call cost.
+   */
   tokenUsage: { input: number; output: number };
+  /**
+   * Per-call token usage breakdown (C3). One entry per Claude call made —
+   * a single entry for the common case, two entries for a Haiku→Sonnet
+   * fallback. The route records cost per entry so each model is billed at
+   * its own rate. Always present for successful parses; omitted on early
+   * failures (validation / missing key) where no call was made.
+   */
+  tokenUsageBreakdown?: OcrCallTokenUsage[];
   /** Any errors encountered during parsing */
   errors?: string[];
 }

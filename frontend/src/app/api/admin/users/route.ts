@@ -83,11 +83,31 @@ export async function GET(req: NextRequest) {
   }
 
   // --- Enrich: Get last sign-in from Supabase Auth admin API ---
-  const { data: authUsers } = await service.auth.admin.listUsers();
+  // GoTrue's listUsers() defaults to perPage=50 and does NOT paginate on its
+  // own (A1). Without looping, last_sign_in_at is null for every user past the
+  // first page. Walk pages until a short page is returned, capped at
+  // MAX_AUTH_PAGES so a misbehaving API can't spin us forever.
+  const PER_PAGE = 1000;
+  const MAX_AUTH_PAGES = 50; // hard ceiling: 50k auth users
   const signInMap = new Map<string, string | null>();
-  if (authUsers?.users) {
-    for (const au of authUsers.users) {
+
+  for (let page = 1; page <= MAX_AUTH_PAGES; page++) {
+    const { data: authPage, error: authError } = await service.auth.admin.listUsers({
+      page,
+      perPage: PER_PAGE,
+    });
+
+    if (authError || !authPage?.users || authPage.users.length === 0) {
+      break;
+    }
+
+    for (const au of authPage.users) {
       signInMap.set(au.id, au.last_sign_in_at ?? null);
+    }
+
+    // A short page (fewer than requested) means we've reached the end.
+    if (authPage.users.length < PER_PAGE) {
+      break;
     }
   }
 

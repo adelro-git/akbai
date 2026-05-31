@@ -11,7 +11,7 @@
  * Dependencies: money.ts (centavosToPeso, pesoToCentavos)
  */
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect, useMemo } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { pesoToCentavos } from '@/lib/utils/money';
 import Money from '@/components/ui/money';
@@ -21,6 +21,15 @@ import Money from '@/components/ui/money';
 // ============================================================
 
 export interface LineItemData {
+  /**
+   * Stable client-side identity for React reconciliation. Optional on the
+   * public API (the API payload never uses it) — the editor backfills one
+   * for any item that arrives without it (see `ensureIds`). Using a stable
+   * id as the list key (instead of the array index) is what stops a removed
+   * middle row's uncontrolled-input text from bleeding into the row that
+   * shifts up into its old index.
+   */
+  id?: string;
   description: string;
   quantity: number;
   unit: string;
@@ -31,6 +40,32 @@ export interface LineItemData {
 interface LineItemEditorProps {
   items: LineItemData[];
   onItemsChange: (items: LineItemData[]) => void;
+}
+
+// ============================================================
+// Stable id helpers
+// ============================================================
+
+/** Monotonic counter fallback for environments without crypto.randomUUID. */
+let lineItemIdCounter = 0;
+
+/** Generate a stable, collision-resistant line-item id. */
+function newLineItemId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  lineItemIdCounter += 1;
+  return `li-${Date.now().toString(36)}-${lineItemIdCounter}`;
+}
+
+/**
+ * Return `items` guaranteed to each carry an `id`. If every item already has
+ * one, the SAME array reference is returned (so callers can cheaply detect a
+ * no-op and avoid an extra render/state write).
+ */
+export function ensureIds(items: LineItemData[]): LineItemData[] {
+  if (items.every((item) => item.id)) return items;
+  return items.map((item) => (item.id ? item : { ...item, id: newLineItemId() }));
 }
 
 // ============================================================
@@ -60,7 +95,15 @@ function LineItemRow({ item, index, onUpdate, onRemove, canRemove }: LineItemRow
     const priceVal = parseFloat(priceRef.current?.value ?? '');
     const unit_price_centavos = isNaN(priceVal) ? item.unit_price_centavos : pesoToCentavos(priceVal);
 
-    onUpdate(index, { description, quantity, unit, unit_price_centavos });
+    // Preserve the row's stable id (and costing_card_id) so reconciliation
+    // by identity keeps holding after an edit.
+    onUpdate(index, {
+      ...item,
+      description,
+      quantity,
+      unit,
+      unit_price_centavos,
+    });
   }, [index, item, onUpdate]);
 
   return (
@@ -153,28 +196,41 @@ function LineItemRow({ item, index, onUpdate, onRemove, canRemove }: LineItemRow
 // ============================================================
 
 export default function LineItemEditor({ items, onItemsChange }: LineItemEditorProps) {
-  const subtotal = items.reduce(
+  // Reconcile by stable id, never by array index. Items may arrive without an
+  // id (e.g. initialData from an edited invoice), so we backfill once and push
+  // the id-bearing array back up to the parent state in an effect — after that
+  // the parent is the single source of truth and ids stay stable across
+  // add/remove/edit.
+  const normalized = useMemo(() => ensureIds(items), [items]);
+
+  useEffect(() => {
+    if (normalized !== items) onItemsChange(normalized);
+    // Only re-sync when the incoming `items` reference changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [normalized]);
+
+  const subtotal = normalized.reduce(
     (sum, item) => sum + item.unit_price_centavos * item.quantity,
     0
   );
 
   const handleUpdate = useCallback((index: number, updatedItem: LineItemData) => {
-    const newItems = [...items];
+    const newItems = [...normalized];
     newItems[index] = updatedItem;
     onItemsChange(newItems);
-  }, [items, onItemsChange]);
+  }, [normalized, onItemsChange]);
 
   const handleRemove = useCallback((index: number) => {
-    const newItems = items.filter((_, i) => i !== index);
+    const newItems = normalized.filter((_, i) => i !== index);
     onItemsChange(newItems);
-  }, [items, onItemsChange]);
+  }, [normalized, onItemsChange]);
 
   const handleAdd = useCallback(() => {
     onItemsChange([
-      ...items,
-      { description: '', quantity: 1, unit: 'piece', unit_price_centavos: 0 },
+      ...normalized,
+      { id: newLineItemId(), description: '', quantity: 1, unit: 'piece', unit_price_centavos: 0 },
     ]);
-  }, [items, onItemsChange]);
+  }, [normalized, onItemsChange]);
 
   return (
     <div className="space-y-3" data-testid="line-item-editor">
@@ -187,16 +243,18 @@ export default function LineItemEditor({ items, onItemsChange }: LineItemEditorP
         </span>
       </div>
 
-      {/* Item rows */}
+      {/* Item rows — keyed by stable id so React reconciles by identity, not
+          index. Removing a middle row no longer reuses an uncontrolled input
+          for a different item. */}
       <div className="space-y-2">
-        {items.map((item, index) => (
+        {normalized.map((item, index) => (
           <LineItemRow
-            key={index}
+            key={item.id}
             item={item}
             index={index}
             onUpdate={handleUpdate}
             onRemove={handleRemove}
-            canRemove={items.length > 1}
+            canRemove={normalized.length > 1}
           />
         ))}
       </div>

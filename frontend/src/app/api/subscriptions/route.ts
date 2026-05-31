@@ -16,6 +16,7 @@ import { SKIP_AUTH, DEV_USER } from '@/lib/supabase/dev-auth';
 import { checkGracePeriod } from '@/lib/subscriptions/grace-period';
 import type { SubscriptionInfo } from '@/lib/subscriptions/types';
 import type { SubscriptionTier, SubscriptionStatus } from '@/lib/subscriptions/types';
+import { isUnlimitedScans } from '@/lib/subscriptions/types';
 
 // ============================================================
 // GET — Return current user's subscription info
@@ -66,6 +67,7 @@ export async function GET() {
       gracePeriod: null,
       scansUsed: 0,
       scanLimit: 0,
+      unlimited: false,
     };
 
     return NextResponse.json({ success: true, data: defaultInfo }, { status: 200 });
@@ -76,13 +78,17 @@ export async function GET() {
     ? await checkGracePeriod(serviceClient, userId)
     : null;
 
+  // P1 — surface an `unlimited` flag so the usage meter renders a
+  // "walang-limit" label instead of the raw UNLIMITED_SCANS sentinel.
+  const scanLimit = sub.scan_limit ?? 0;
   const info: SubscriptionInfo = {
     tier: sub.tier as SubscriptionTier,
     status: sub.status as SubscriptionStatus,
     currentPeriodEnd: sub.current_period_end,
     gracePeriod,
     scansUsed: sub.scans_used_this_period ?? 0,
-    scanLimit: sub.scan_limit ?? 0,
+    scanLimit,
+    unlimited: isUnlimitedScans(scanLimit),
   };
 
   return NextResponse.json({ success: true, data: info }, { status: 200 });

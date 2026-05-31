@@ -33,6 +33,10 @@ function createMockSupabase(opts: {
   globalSpend?: number;
   userSpend?: number;
   userQueryCount?: number;
+  /** Simulate a DB read error on the global daily_api_spend query (C6). */
+  globalError?: { message: string };
+  /** Simulate a DB read error on the per-user daily_api_spend query (C6). */
+  userError?: { message: string };
 }) {
   const globalRows = opts.globalSpend !== undefined
     ? [{ total_cost_usd: opts.globalSpend }]
@@ -49,13 +53,20 @@ function createMockSupabase(opts: {
           eq: (col: string, val: unknown) => {
             if (col === 'date') {
               // Global spend query — returns array
-              return Promise.resolve({ data: globalRows, error: null });
+              return Promise.resolve({
+                data: opts.globalError ? null : globalRows,
+                error: opts.globalError ?? null,
+              });
             }
             if (col === 'user_id') {
-              // User spend query — needs .eq('date', ...).single()
+              // User spend query — needs .eq('date', ...).maybeSingle().
+              // .maybeSingle() resolves null (not an error) when no row exists.
               return {
                 eq: (_col: string, _val: unknown) => ({
-                  single: () => Promise.resolve({ data: userRow, error: null }),
+                  maybeSingle: () => Promise.resolve({
+                    data: opts.userError ? null : userRow,
+                    error: opts.userError ?? null,
+                  }),
                 }),
               };
             }
@@ -131,6 +142,83 @@ describe('checkCircuitBreaker', () => {
     const result = await checkCircuitBreaker(supabase, 'user-1', 0.01, 'free', undefined);
     expect(result.allowed).toBe(false);
     expect(result.reason).toBe('user_cap');
+  });
+
+  // --- C6: fail CLOSED on a real DB read error (was fail-open: discarded ---
+  //     error → treated as 0 spend → request allowed). The breaker must
+  //     THROW so the caller's existing fail-closed try/catch blocks. A
+  //     missing user row (maybeSingle → null, no error) is NOT an error and
+  //     still means 0 spend. ---
+
+  it('fails closed (throws) when the GLOBAL spend read errors', async () => {
+    const supabase = createMockSupabase({
+      userSpend: 0.05,
+      userQueryCount: 2,
+      globalError: { message: 'connection terminated' },
+    });
+    await expect(checkCircuitBreaker(supabase, 'user-1', 0.01)).rejects.toThrow(
+      /failing closed/i
+    );
+  });
+
+  it('fails closed (throws) when the per-USER spend read errors', async () => {
+    const supabase = createMockSupabase({
+      globalSpend: 0.5,
+      userError: { message: 'statement timeout' },
+    });
+    await expect(checkCircuitBreaker(supabase, 'user-1', 0.01)).rejects.toThrow(
+      /failing closed/i
+    );
+  });
+
+  it('treats a missing user row (maybeSingle null) as 0 spend and allows', async () => {
+    // globalSpend present, but NO userSpend → userRow is null, no error.
+    const supabase = createMockSupabase({ globalSpend: 0.5 });
+    const result = await checkCircuitBreaker(supabase, 'user-new', 0.01);
+    expect(result.allowed).toBe(true);
+  });
+});
+
+// ============================================================
+// C1 — defensive env cap parsing. An env var SET to '' must fall back to
+// the default, not yield 0/NaN (which would silently disable the cap or
+// make the warning ratio NaN). Each test sets the env to '' and asserts
+// the DEFAULT-cap behaviour still holds.
+// ============================================================
+
+describe('checkCircuitBreaker — env cap parsing (C1)', () => {
+  it('falls back to the default global cap when CIRCUIT_BREAKER_DAILY_CAP_USD is empty', async () => {
+    process.env.CIRCUIT_BREAKER_DAILY_CAP_USD = '';
+    // Spend 4.98 + est 0.05 = 5.03 > default 5.0 → should TRIP global cap.
+    // If '' had parsed to 0, EVERYTHING would trip with reason global_cap at
+    // 0; this asserts the default 5.0 is in force (allowed below, tripped above).
+    const tripping = createMockSupabase({ globalSpend: 4.98, userSpend: 0.1, userQueryCount: 2 });
+    const tripResult = await checkCircuitBreaker(tripping, 'user-1', 0.05);
+    expect(tripResult.allowed).toBe(false);
+    expect(tripResult.reason).toBe('global_cap');
+
+    const allowing = createMockSupabase({ globalSpend: 1.0, userSpend: 0.1, userQueryCount: 2 });
+    const allowResult = await checkCircuitBreaker(allowing, 'user-1', 0.01);
+    expect(allowResult.allowed).toBe(true);
+  });
+
+  it('falls back to the default user cap when CIRCUIT_BREAKER_USER_CAP_USD is empty', async () => {
+    process.env.CIRCUIT_BREAKER_USER_CAP_USD = '';
+    // user 0.49 + 0.05 = 0.54 > default 0.5 → TRIP user cap (not 0).
+    const supabase = createMockSupabase({ globalSpend: 1.0, userSpend: 0.49, userQueryCount: 5 });
+    const result = await checkCircuitBreaker(supabase, 'user-1', 0.05);
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toBe('user_cap');
+  });
+
+  it('falls back to the default warning pct when CIRCUIT_BREAKER_WARNING_PCT is empty (no NaN)', async () => {
+    process.env.CIRCUIT_BREAKER_WARNING_PCT = '';
+    // user 0.40 / 0.5 = 0.80 == default 0.8 → warning reached.
+    // If '' had parsed to NaN, the comparison would be false (NaN >= NaN).
+    const supabase = createMockSupabase({ globalSpend: 1.0, userSpend: 0.40, userQueryCount: 5 });
+    const result = await checkCircuitBreaker(supabase, 'user-1', 0.01);
+    expect(result.allowed).toBe(true);
+    expect(result.warningThresholdReached).toBe(true);
   });
 });
 

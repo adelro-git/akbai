@@ -22,6 +22,7 @@ import type {
   ReceiptFields,
   SupportedMimeType,
   ClaudeReceiptExtraction,
+  OcrCallTokenUsage,
 } from './types';
 import { MAX_IMAGE_SIZE_BYTES, SUPPORTED_MIME_TYPES } from './types';
 
@@ -195,7 +196,29 @@ export function validateImage(
 // --- Claude Vision API Call ---
 
 /**
+ * Error thrown when a Claude Vision call SUCCEEDED at the API level (tokens were
+ * spent) but its response failed to parse/validate (C3 + C2). Carries the token
+ * usage so the caller can still bill the consumed call, and `cause` so the
+ * retry-classifier (isRetryableParseError) can inspect the underlying
+ * SyntaxError / ZodError / "No JSON found" Error.
+ */
+class VisionParseError extends Error {
+  readonly tokenUsage: { input: number; output: number };
+  readonly cause: unknown;
+  constructor(cause: unknown, tokenUsage: { input: number; output: number }) {
+    super(cause instanceof Error ? cause.message : 'OCR response parse failed');
+    this.name = 'VisionParseError';
+    this.cause = cause;
+    this.tokenUsage = tokenUsage;
+  }
+}
+
+/**
  * Call Claude Vision API with a receipt image and return the raw extraction.
+ *
+ * On a parse/validation failure AFTER the API call (tokens already spent), this
+ * throws a {@link VisionParseError} carrying the token usage so the caller can
+ * record the cost of the consumed call (C3).
  */
 async function callClaudeVision(
   client: Anthropic,
@@ -207,6 +230,8 @@ async function callClaudeVision(
   extraction: ClaudeReceiptExtraction;
   tokenUsage: { input: number; output: number };
 }> {
+  // The API call itself — if THIS throws (auth/rate-limit/network), no tokens
+  // were billed and the error propagates unwrapped (not retryable as a parse).
   const response = await client.messages.create({
     model,
     max_tokens: OCR_MAX_TOKENS,
@@ -231,21 +256,30 @@ async function callClaudeVision(
     ],
   });
 
+  // C7: guard against an empty content array. Indexing content[0] on an empty
+  // array yields undefined → TypeError on `.type`. Fall back to '' so the
+  // existing JSON-extraction path throws the normal "No JSON found" error.
+  const firstBlock = Array.isArray(response.content) ? response.content[0] : undefined;
   const rawText =
-    response.content[0].type === 'text' ? response.content[0].text : '';
+    firstBlock && firstBlock.type === 'text' ? firstBlock.text : '';
 
   const tokenUsage = {
     input: response.usage.input_tokens,
     output: response.usage.output_tokens,
   };
 
-  // Parse JSON from Claude's response
-  const parsed = extractJSON(rawText);
-
-  // Validate against Zod schema
-  const validated = ClaudeReceiptExtractionSchema.parse(parsed);
-
-  return { extraction: validated as ClaudeReceiptExtraction, tokenUsage };
+  // From here the API call has already been billed. Wrap any parse/validation
+  // failure in a VisionParseError so the caller can (a) bill the spent tokens
+  // and (b) decide whether to retry — without losing the underlying error type.
+  try {
+    // Parse JSON from Claude's response
+    const parsed = extractJSON(rawText);
+    // Validate against Zod schema
+    const validated = ClaudeReceiptExtractionSchema.parse(parsed);
+    return { extraction: validated as ClaudeReceiptExtraction, tokenUsage };
+  } catch (parseError) {
+    throw new VisionParseError(parseError, tokenUsage);
+  }
 }
 
 // --- Main Parse Function ---
@@ -317,6 +351,13 @@ export async function parseReceipt(
   const modelLabel: 'haiku' | 'sonnet' =
     options?.forceModel === 'sonnet' ? 'sonnet' : 'haiku';
 
+  // --- Token accounting (C3) ---
+  // Every Claude call appends to this breakdown so the route can record cost
+  // for ALL calls made (e.g. both the Haiku attempt AND the Sonnet fallback),
+  // not just the winning model. Without this, a fallback under-counts spend in
+  // the circuit breaker.
+  const tokenUsageBreakdown: OcrCallTokenUsage[] = [];
+
   // --- Stage 4: Call Claude Vision (Haiku first) ---
   try {
     const { extraction, tokenUsage } = await callClaudeVision(
@@ -326,6 +367,7 @@ export async function parseReceipt(
       useModel,
       RECEIPT_OCR_PROMPT
     );
+    tokenUsageBreakdown.push({ model: modelLabel, ...tokenUsage });
 
     const result = transformExtraction(
       extraction,
@@ -354,6 +396,9 @@ export async function parseReceipt(
             SONNET_MODEL,
             RECEIPT_OCR_PROMPT
           );
+        // Record the Sonnet call's tokens regardless of which result we keep —
+        // the call was made and billed (C3).
+        tokenUsageBreakdown.push({ model: 'sonnet', ...sonnetTokens });
 
         const sonnetResult = transformExtraction(
           sonnetExtraction,
@@ -366,10 +411,7 @@ export async function parseReceipt(
         if (
           sonnetExtraction.confidence.overall > extraction.confidence.overall
         ) {
-          return {
-            ...sonnetResult,
-            processingTimeMs: Date.now() - startTime,
-          };
+          return finalizeResult(sonnetResult, tokenUsageBreakdown, startTime);
         }
       } catch (sonnetError) {
         console.error('[OCR] Sonnet fallback failed, using Haiku result:', sonnetError);
@@ -377,11 +419,25 @@ export async function parseReceipt(
       }
     }
 
-    return result;
+    return finalizeResult(result, tokenUsageBreakdown, startTime);
   } catch (error) {
-    // --- Stage 4b: Structured Retry (one retry on parse failure) ---
-    if (error instanceof SyntaxError || error instanceof Error) {
-      console.warn('[OCR] First attempt failed, retrying with structured prompt');
+    // The first call's tokens are only spent if it reached the API and got a
+    // billed response (VisionParseError carries them); a raw APIError means no
+    // tokens were billed. Record any spent tokens so the route bills them (C3).
+    if (error instanceof VisionParseError) {
+      tokenUsageBreakdown.push({ model: modelLabel, ...error.tokenUsage });
+    }
+
+    // --- Stage 4b: Structured Retry (C2) ---
+    // Only retry on a GENUINE parse failure — a SyntaxError from JSON.parse,
+    // the "No JSON found" Error thrown by extractJSON, or a ZodError from
+    // schema validation. Retrying these with a more structured prompt can fix
+    // a malformed response. Do NOT retry on Anthropic APIError (401 auth, 429
+    // rate-limit, 5xx) — those won't be fixed by re-prompting the same model
+    // with no backoff, and re-issuing burns quota/spend. The old guard
+    // (`SyntaxError || Error`) was always true, so it retried everything.
+    if (isRetryableParseError(error)) {
+      console.warn('[OCR] First attempt failed (parse error), retrying with structured prompt');
       try {
         const { extraction, tokenUsage } = await callClaudeVision(
           client,
@@ -390,32 +446,110 @@ export async function parseReceipt(
           useModel,
           RECEIPT_OCR_PROMPT + RECEIPT_OCR_RETRY_SUFFIX
         );
+        tokenUsageBreakdown.push({ model: modelLabel, ...tokenUsage });
 
-        return transformExtraction(
-          extraction,
-          modelLabel,
-          Date.now() - startTime,
-          tokenUsage
+        return finalizeResult(
+          transformExtraction(
+            extraction,
+            modelLabel,
+            Date.now() - startTime,
+            tokenUsage
+          ),
+          tokenUsageBreakdown,
+          startTime
         );
       } catch (retryError) {
+        // The retry's tokens, too, if it got a billed-but-unparseable response.
+        if (retryError instanceof VisionParseError) {
+          tokenUsageBreakdown.push({ model: modelLabel, ...retryError.tokenUsage });
+        }
         console.error('[OCR] Retry also failed:', retryError);
       }
     }
 
-    // All attempts failed
+    // All attempts failed. Surface whatever tokens WERE spent (e.g. a first
+    // call that returned then failed Zod, plus a failed retry) so the route
+    // still records that cost.
     return {
       success: false,
       fields: emptyFields(),
       rawText: '',
       model: modelLabel,
       processingTimeMs: Date.now() - startTime,
-      tokenUsage: { input: 0, output: 0 },
+      tokenUsage: sumTokenUsage(tokenUsageBreakdown),
+      tokenUsageBreakdown: tokenUsageBreakdown.length > 0 ? tokenUsageBreakdown : undefined,
       errors: [
-        error instanceof Error ? error.message : 'Unknown OCR error',
+        unwrapErrorMessage(error),
         'Hindi ma-process ang receipt — subukan ulit o i-type manually.',
       ],
     };
   }
+}
+
+// --- Helper: Finalize Result with Cumulative Token Usage (C3) ---
+
+/**
+ * Stamp a transformed result with the cumulative token usage across all calls
+ * and the per-call breakdown, and recompute total processing time.
+ */
+function finalizeResult(
+  result: ReceiptParseResult,
+  breakdown: OcrCallTokenUsage[],
+  startTime: number
+): ReceiptParseResult {
+  return {
+    ...result,
+    processingTimeMs: Date.now() - startTime,
+    tokenUsage: sumTokenUsage(breakdown),
+    tokenUsageBreakdown: breakdown,
+  };
+}
+
+/** Sum input/output tokens across every recorded call. */
+function sumTokenUsage(
+  breakdown: OcrCallTokenUsage[]
+): { input: number; output: number } {
+  return breakdown.reduce(
+    (acc, call) => ({ input: acc.input + call.input, output: acc.output + call.output }),
+    { input: 0, output: 0 }
+  );
+}
+
+// --- Helper: Classify Retryable Parse Errors (C2) ---
+
+/**
+ * True ONLY for errors that re-prompting the same model with a more structured
+ * prompt can plausibly fix:
+ * - JSON.parse SyntaxError (malformed JSON in the response)
+ * - ZodError from schema validation (right JSON, wrong shape) — duck-typed by
+ *   `name` so we don't need a hard zod import here
+ * - the "No JSON found in Claude response" Error thrown by extractJSON
+ *
+ * Anthropic SDK errors (APIError/AuthenticationError/RateLimitError — all carry
+ * a numeric `status`) and any other error are NOT retryable: a retry with no
+ * backoff and the same model won't fix a 401/429/5xx and only burns quota.
+ *
+ * Unwraps VisionParseError to inspect the underlying cause (parse/validation
+ * failures are wrapped so their token usage can be billed).
+ */
+function isRetryableParseError(error: unknown): boolean {
+  const cause = error instanceof VisionParseError ? error.cause : error;
+  if (cause instanceof SyntaxError) return true;
+  if (!(cause instanceof Error)) return false;
+  // Anthropic SDK errors expose a numeric `status` — never retry those.
+  if (typeof (cause as { status?: unknown }).status === 'number') return false;
+  // ZodError — match by name to avoid importing zod into this module.
+  if (cause.name === 'ZodError') return true;
+  // The only plain Error the parse path raises is extractJSON's "No JSON found".
+  return cause.message.includes('No JSON found');
+}
+
+/** Surface the most useful message from an error, unwrapping VisionParseError. */
+function unwrapErrorMessage(error: unknown): string {
+  if (error instanceof VisionParseError) {
+    return error.cause instanceof Error ? error.cause.message : error.message;
+  }
+  return error instanceof Error ? error.message : 'Unknown OCR error';
 }
 
 // --- Helper: Should Retry with Sonnet ---
